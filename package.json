@@ -15,7 +15,8 @@
     "test": "vitest run --project unit",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build",
     "data:download": "uv run --project scripts/data python scripts/data/download_sources.py",
-    "data:extract": "uv run --project scripts/data python scripts/data/extract_circuit.py"
+    "data:extract": "uv run --project scripts/data python scripts/data/extract_circuit.py",
+    "data:verify": "uv run --project scripts/data python scripts/data/verify_circuit.py"
   },
   "dependencies": {
     "react": "^19.2.8",

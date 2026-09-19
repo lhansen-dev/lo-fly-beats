@@ -79,6 +79,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 1 | Resolved `react@19.3.0`, `vite@8.3.0`, `@vitejs/plugin-react@6.1.1`, `typescript@6.0.3`, `oxlint@1.83.0`, `vitest@5.0.1`, and `zod@4.6.5`; preserve the template TypeScript range `~6.0.2`. | Versions read from `package-lock.json`. Clean `npm ci`, `npm run check`, and the production preview title check passed on Node 22.22.3. |
 | 2026-09-19 | 2 | Read connection row counts directly from IPC message metadata and skip data bodies; add three focused Python source-tool tests and ignore Python bytecode. | Both source sizes and MD5 checksums match R3. The second download run skips both files and leaves retrieval metadata byte-identical. The schema report reproduces all R3 row, batch, type, and side counts. Tests cover corrupt caches, failed-download cleanup, and compressed/dictionary/empty-batch metadata. Python 3.12.14, pyarrow 25.0.1, pandas 3.0.6, and networkx 3.6.1 are locked. |
 | 2026-09-19 | 3 | Extract all configured MBON neurons, scan connections in Arrow batches, and serialize both outputs deterministically. The manifest retrieval date is the latest input retrieval date if they differ. | Counts, threshold comparisons, self-connection removal, all eight starts, and both example records match R3. Two extractions produced identical SHA-256 hashes for both files. The output has 97 neurons, 936 connections, and 25,379 synapses. |
+| 2026-09-19 | 4 | Independently verify all retained weights as well as the required 20 samples, annotation records, checksums, and complete connection set. | `npm run data:verify` passes: 20/20 samples, 97/97 annotation records, all 936 retained weights, manifest counts, threshold comparisons, and starts agree with upstream data. The report identifies four MBON10 dead ends and one MBON15 dead end, with out-degree median 7, p90 22, and maximum 41. |
 
 ## Reference
 
@@ -1271,21 +1272,21 @@ Write the script that produces the committed circuit and manifest.
 
 Check the export against the upstream files with code that does not reuse the extraction script, then document the result.
 
-- [ ] Write `scripts/data/verify_circuit.py`. Do not import `extract_circuit.py`. It must:
+- [x] Write `scripts/data/verify_circuit.py`. Do not import `extract_circuit.py`. It must:
   1. Recompute the SHA-256 of `circuit.json` and compare it with `manifest.output.sha256`.
   2. Recompute the SHA-256 of both cached source files and compare them with the manifest.
   3. Read the annotation rows for all 97 exported IDs and assert that `type`, `instance`, `class`, `superclass`, and `somaSide` equal the exported values, treating missing as `null`.
   4. Choose 20 sample connections: the 5 with the highest synapse counts, the 5 with the lowest (ties broken by source, then target), and the connections at positions 0, 100, 200, and so on through 900 in file order. Remove duplicates and fill any gap from the next position. Stream the upstream connections file and assert each sample's `weight` equals its exported `synapseCount`.
   5. Assert that the set of upstream pairs among the selected neurons with weight at least 3, excluding self-connections, exactly equals the exported set.
   6. Write `scripts/data/reports/mbon-v1-extraction.md` with sections for: source files and checksums; selection criteria and filtering rules; counts; the threshold comparison; in-degree and out-degree distributions (minimum, median, 90th percentile, maximum); dead ends with type and side; connected components; start neurons (ID, type, side, out-degree, and total outgoing synapses); the 20 samples showing upstream and exported counts; and regeneration commands.
-- [ ] Add the `data:verify` script from R2.
+- [x] Add the `data:verify` script from R2.
 
 **Verify**
 
 1. `npm run data:verify` exits with status 0 and reports 20 of 20 matching samples, 97 of 97 matching annotation records, and matching connection sets.
 2. The report lists the dead ends as four MBON10 neurons and one MBON15 neuron.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 5: Load and validate the circuit in TypeScript
 
