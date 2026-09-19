@@ -13,7 +13,8 @@
     "preview": "vite preview --port 4173 --strictPort",
     "typecheck": "tsc -b",
     "test": "vitest run --project unit",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "data:download": "uv run --project scripts/data python scripts/data/download_sources.py"
   },
   "dependencies": {
     "react": "^19.2.8",

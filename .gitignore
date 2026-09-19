@@ -25,6 +25,7 @@ dist-ssr
 
 scripts/data/.cache/
 scripts/data/.venv/
+scripts/data/__pycache__/
 .venv/
 test-results/
 playwright-report/

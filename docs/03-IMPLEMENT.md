@@ -77,6 +77,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-12 | Prep | Serve the app with Vite `base: './'` so the same build works at a domain root or in a subdirectory. | The plan requires deployment-base-aware paths, and no host has been chosen. |
 | 2026-09-19 | 1 | Use conventional commit messages with phase numbers, one commit per phase. | The user explicitly requested conventional commits; this supersedes the original `Phase N:` message format. |
 | 2026-09-19 | 1 | Resolved `react@19.3.0`, `vite@8.3.0`, `@vitejs/plugin-react@6.1.1`, `typescript@6.0.3`, `oxlint@1.83.0`, `vitest@5.0.1`, and `zod@4.6.5`; preserve the template TypeScript range `~6.0.2`. | Versions read from `package-lock.json`. Clean `npm ci`, `npm run check`, and the production preview title check passed on Node 22.22.3. |
+| 2026-09-19 | 2 | Read connection row counts directly from IPC message metadata and skip data bodies; add three focused Python source-tool tests and ignore Python bytecode. | Both source sizes and MD5 checksums match R3. The second download run skips both files and leaves retrieval metadata byte-identical. The schema report reproduces all R3 row, batch, type, and side counts. Tests cover corrupt caches, failed-download cleanup, and compressed/dictionary/empty-batch metadata. Python 3.12.14, pyarrow 25.0.1, pandas 3.0.6, and networkx 3.6.1 are locked. |
 
 ## Reference
 
@@ -1201,8 +1202,8 @@ Create the Vite React TypeScript app in the repository root without disturbing `
 
 Create a reproducible Python environment and download the two MaleCNS files with checksum verification.
 
-- [ ] Create the uv project: `uv init --bare --name lofly-data --python 3.12 scripts/data`, then `uv add --project scripts/data pyarrow pandas networkx`. Commit `scripts/data/pyproject.toml`, `scripts/data/uv.lock`, and `scripts/data/.python-version` (create it containing `3.12` if uv did not).
-- [ ] Create `scripts/data/config/mbon-v1.json`:
+- [x] Create the uv project: `uv init --bare --name lofly-data --python 3.12 scripts/data`, then `uv add --project scripts/data pyarrow pandas networkx`. Commit `scripts/data/pyproject.toml`, `scripts/data/uv.lock`, and `scripts/data/.python-version` (create it containing `3.12` if uv did not).
+- [x] Create `scripts/data/config/mbon-v1.json`:
 
   ```json
   {
@@ -1223,9 +1224,9 @@ Create a reproducible Python environment and download the two MaleCNS files with
   }
   ```
 
-- [ ] Write `scripts/data/download_sources.py`. For each configured file, skip the download if `scripts/data/.cache/<name>` already has the expected size and MD5. Otherwise stream it to `<name>.part` in 8 MiB chunks, check the byte count and base64 MD5, and rename it. On a mismatch, delete the partial file and exit with a nonzero status and a clear message. After verification, compute SHA-256 and write `scripts/data/.cache/retrieval.json` as `{ "<name>": { "retrievedOn": "YYYY-MM-DD", "sha256": "<hex>" } }`, keeping the existing date for files that were skipped.
-- [ ] Write `scripts/data/inspect_sources.py`, which writes `scripts/data/reports/source-schema.md` containing: the annotation row count, column names, and types; the connections schema, record batch count, and total row count (from batch metadata, without loading the table); and a table of MBON neuron counts by type and by `somaSide`.
-- [ ] Add the `data:download` script from R2.
+- [x] Write `scripts/data/download_sources.py`. For each configured file, skip the download if `scripts/data/.cache/<name>` already has the expected size and MD5. Otherwise stream it to `<name>.part` in 8 MiB chunks, check the byte count and base64 MD5, and rename it. On a mismatch, delete the partial file and exit with a nonzero status and a clear message. After verification, compute SHA-256 and write `scripts/data/.cache/retrieval.json` as `{ "<name>": { "retrievedOn": "YYYY-MM-DD", "sha256": "<hex>" } }`, keeping the existing date for files that were skipped.
+- [x] Write `scripts/data/inspect_sources.py`, which writes `scripts/data/reports/source-schema.md` containing: the annotation row count, column names, and types; the connections schema, record batch count, and total row count (from batch metadata, without loading the table); and a table of MBON neuron counts by type and by `somaSide`.
+- [x] Add the `data:download` script from R2.
 
 **Verify**
 
@@ -1233,7 +1234,7 @@ Create a reproducible Python environment and download the two MaleCNS files with
 2. `uv run --project scripts/data python scripts/data/inspect_sources.py` produces a report showing 211,577 annotation rows, 151,856,684 connection rows in 2,318 batches, and 97 MBON neurons (48 L, 49 R) of 37 types.
 3. `git status --short` shows nothing from `scripts/data/.cache/`.
 
-- [ ] All verification steps pass and the report matches R3.
+- [x] All verification steps pass and the report matches R3.
 
 ## Phase 3: Extract the MBON circuit
 

@@ -1,0 +1,16 @@
+{
+  "circuitId": "mbon-v1",
+  "release": "male-cns:v1.0",
+  "baseUrl": "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/",
+  "files": {
+    "annotations": { "name": "body-annotations-male-cns-v1.0-minconf-0.5.feather", "bytes": 14483314, "md5Base64": "UKdxh3DFciDxYLpPQxq4ng==" },
+    "connections": { "name": "connectome-weights-male-cns-v1.0-minconf-0.5.feather", "bytes": 1051241946, "md5Base64": "8w6dzKJc/QIb8eez2XVZng==" }
+  },
+  "selection": { "column": "class", "equals": "MBON" },
+  "minSynapseCount": 3,
+  "compareThresholds": [1, 3, 5],
+  "removeSelfConnections": true,
+  "limits": { "minNeurons": 32, "maxNeurons": 128, "maxConnections": 2000 },
+  "startNeurons": { "count": 8, "onePerType": true },
+  "outputDir": "public/data/circuits/mbon-v1"
+}
