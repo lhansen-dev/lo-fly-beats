@@ -17,14 +17,17 @@
     "data:download": "uv run --project scripts/data python scripts/data/download_sources.py",
     "data:extract": "uv run --project scripts/data python scripts/data/extract_circuit.py",
     "data:verify": "uv run --project scripts/data python scripts/data/verify_circuit.py",
-    "data:validate": "vitest run --project unit tests/data"
+    "data:validate": "vitest run --project unit tests/data",
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "tone": "15.1.22",
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",

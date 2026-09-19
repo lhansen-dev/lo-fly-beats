@@ -82,6 +82,11 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 4 | Independently verify all retained weights as well as the required 20 samples, annotation records, checksums, and complete connection set. | `npm run data:verify` passes: 20/20 samples, 97/97 annotation records, all 936 retained weights, manifest counts, threshold comparisons, and starts agree with upstream data. The report identifies four MBON10 dead ends and one MBON15 dead end, with out-degree median 7, p90 22, and maximum 41. |
 | 2026-09-19 | 5 | Validate both JSON schemas, graph invariants, verified checksums, and circuit byte length before exposing the graph. Deduplicate the temporary app load across React StrictMode effects. | `npm run check` passes with 31 unit/data tests. Loader tests cover root, relative, and subdirectory bases plus network/schema/checksum failures. Deliberately changing one committed synapse count makes `data:validate` fail with a checksum mismatch; the original file was restored. No React or Tone imports occur in `src/connectome/`. |
 | 2026-09-19 | 6 | Encode and inspect canonical 44-byte, 16-bit PCM WAV files, with explicit invalid-input and header-size checks. | `npm run check` passes with 43 tests, including exact stereo header values, signed sample conversion/clamping, interleaving, mono round trips, peak detection, invalid channel/rate/sample rejection, and truncated-file rejection. |
+| 2026-09-19 | 7 | Render the spike with `new Tone.OfflineContext(2, 3, 44100)` and explicit contexts on the synth and destination. No fallback to `Tone.Offline` was needed. | All three browser tests render successfully with no page errors and can restart live playback afterward. Each WAV has 132,300 frames, 2 channels, 44,100 Hz, 16-bit PCM, and 529,200 data bytes. Offline synth, buffer, and context are disposed. |
+| 2026-09-19 | 7 | Dynamically import Tone only inside button actions; keep the temporary MIDI-to-Hz conversion in the spike until the shared timing adapter is introduced. | Tone 15.1.22's entry point initializes its global context on import, so an eager import would create audio before interaction. The app owns one start operation and revokes replaced/unmounted download URLs. `npm run check` passes with 45 unit/data tests, including strongest-edge, tie-order, and dead-end traversal checks. |
+| 2026-09-19 | 7 | Chromium 153.0.8010.12 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,102, and playback works again after export. Human listening and the two-minute background-tab check remain Phase 8. |
+| 2026-09-19 | 7 | Firefox 155.0 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. Human listening and the two-minute background-tab check remain Phase 8. |
+| 2026-09-19 | 7 | WebKit 26.6 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. This does not replace the Phase 8 review in desktop Safari. |
 
 ## Reference
 
@@ -1340,24 +1345,24 @@ Build and test the WAV encoder before any audio code depends on it.
 
 Prove, before building the real engine, that a real traversal can play live, keep playing in a background tab, and render to WAV through an explicitly supplied offline context.
 
-- [ ] Run `npm install --save-exact tone@15.1.22`.
-- [ ] Create temporary `src/audio/spike.ts` (Phase 16 deletes it):
+- [x] Run `npm install --save-exact tone@15.1.22`.
+- [x] Create temporary `src/audio/spike.ts` (Phase 16 deletes it):
   - `spikeNotes(graph)` starts at `graph.startNeuronIds[0]` and repeatedly follows the outgoing connection with the most synapses (the first in sorted order on a tie), collecting up to 8 neurons and stopping at a dead end. It maps each ID to `[62, 65, 67, 69, 72][Number(BigInt(id) % 5n)]` and returns `{ neuronId, type, midi }[]`.
   - `startSpike(graph)` awaits `Tone.start()`, takes `const context = Tone.getContext()`, creates `new Tone.PolySynth({ context, voice: Tone.FMSynth, volume: -10 })` connected to `context.destination`, sets `context.transport.bpm.value = 90`, and schedules one `context.transport.scheduleRepeat` callback every `'8n'` that plays the next note at the supplied `time` for 0.3 s, looping through the notes. Then it starts the transport.
   - `stopSpike()` stops the transport, cancels its events, and disposes the synth.
   - `renderSpikeWav(graph)` creates `new Tone.OfflineContext(2, 3, 44100)` and a synth with `{ context: offlineContext }` connected to `offlineContext.destination`. It triggers the notes at `i / 3` seconds for 0.3 s each, awaits `offlineContext.render()`, reads both channels with `getChannelData`, and returns a `Blob` of `encodeWav16` output with type `audio/wav`.
-- [ ] Add a temporary spike section to `App.tsx` showing the circuit status, the traversal (ID, type, note), **Play spike**, **Stop spike**, and **Render spike WAV** buttons, `data-testid="audio-state"` with the live context state (updated on `statechange`), and a download link `data-testid="spike-download"` with `download="lofly-spike.wav"`. Revoke the previous object URL before rendering again.
-- [ ] If rendering with an explicit context throws (for example, a cross-context connection error), try `Tone.Offline` with the live transport stopped. Keep only the approach that works, and record the result and any error text in the Decision log.
-- [ ] Run `npm install --save-dev --save-exact @playwright/test@1.63` and `npx playwright install chromium firefox webkit`. Create `playwright.config.ts` with `testDir: 'tests/browser'`; `webServer: { command: 'npm run build && npm run preview', url: 'http://localhost:4173', reuseExistingServer: !process.env.CI, timeout: 120_000 }`; `use: { baseURL: 'http://localhost:4173', trace: 'retain-on-failure' }`; and projects `chromium`, `firefox`, and `webkit` using `devices['Desktop Chrome']`, `devices['Desktop Firefox']`, and `devices['Desktop Safari']`. Add the config to `tsconfig.node.json` and add the `test:browser` script.
-- [ ] Write `tests/browser/spike.spec.ts`: wait for `circuit-status` to contain "97 neurons"; click Play spike and expect `audio-state` to read `running` within 5 s; wait 1.5 s and click Stop spike; click Render spike WAV; click `spike-download` and capture the `download` event; read the file and assert with `parseWavHeader` that it has 2 channels, 44,100 Hz, 16 bits, a duration within 0.01 s of 3 s, and a peak above 1,000.
-- [ ] Add Decision log rows for the offline rendering approach and each browser's result, including error text for failures.
+- [x] Add a temporary spike section to `App.tsx` showing the circuit status, the traversal (ID, type, note), **Play spike**, **Stop spike**, and **Render spike WAV** buttons, `data-testid="audio-state"` with the live context state (updated on `statechange`), and a download link `data-testid="spike-download"` with `download="lofly-spike.wav"`. Revoke the previous object URL before rendering again.
+- [x] If rendering with an explicit context throws (for example, a cross-context connection error), try `Tone.Offline` with the live transport stopped. Keep only the approach that works, and record the result and any error text in the Decision log.
+- [x] Run `npm install --save-dev --save-exact @playwright/test@1.63` and `npx playwright install chromium firefox webkit`. Create `playwright.config.ts` with `testDir: 'tests/browser'`; `webServer: { command: 'npm run build && npm run preview', url: 'http://localhost:4173', reuseExistingServer: !process.env.CI, timeout: 120_000 }`; `use: { baseURL: 'http://localhost:4173', trace: 'retain-on-failure' }`; and projects `chromium`, `firefox`, and `webkit` using `devices['Desktop Chrome']`, `devices['Desktop Firefox']`, and `devices['Desktop Safari']`. Add the config to `tsconfig.node.json` and add the `test:browser` script.
+- [x] Write `tests/browser/spike.spec.ts`: wait for `circuit-status` to contain "97 neurons"; click Play spike and expect `audio-state` to read `running` within 5 s; wait 1.5 s and click Stop spike; click Render spike WAV; click `spike-download` and capture the `download` event; read the file and assert with `parseWavHeader` that it has 2 channels, 44,100 Hz, 16 bits, a duration within 0.01 s of 3 s, and a peak above 1,000.
+- [x] Add Decision log rows for the offline rendering approach and each browser's result, including error text for failures.
 
 **Verify**
 
 1. `npm run check` passes.
 2. `npm run test:browser` passes in Chromium. For Firefox and WebKit, the spec passes or the failure is recorded in the Decision log with its error text.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 8: Human gate — review the data and the audio spike
 
