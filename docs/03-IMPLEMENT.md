@@ -80,6 +80,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 2 | Read connection row counts directly from IPC message metadata and skip data bodies; add three focused Python source-tool tests and ignore Python bytecode. | Both source sizes and MD5 checksums match R3. The second download run skips both files and leaves retrieval metadata byte-identical. The schema report reproduces all R3 row, batch, type, and side counts. Tests cover corrupt caches, failed-download cleanup, and compressed/dictionary/empty-batch metadata. Python 3.12.14, pyarrow 25.0.1, pandas 3.0.6, and networkx 3.6.1 are locked. |
 | 2026-09-19 | 3 | Extract all configured MBON neurons, scan connections in Arrow batches, and serialize both outputs deterministically. The manifest retrieval date is the latest input retrieval date if they differ. | Counts, threshold comparisons, self-connection removal, all eight starts, and both example records match R3. Two extractions produced identical SHA-256 hashes for both files. The output has 97 neurons, 936 connections, and 25,379 synapses. |
 | 2026-09-19 | 4 | Independently verify all retained weights as well as the required 20 samples, annotation records, checksums, and complete connection set. | `npm run data:verify` passes: 20/20 samples, 97/97 annotation records, all 936 retained weights, manifest counts, threshold comparisons, and starts agree with upstream data. The report identifies four MBON10 dead ends and one MBON15 dead end, with out-degree median 7, p90 22, and maximum 41. |
+| 2026-09-19 | 5 | Validate both JSON schemas, graph invariants, verified checksums, and circuit byte length before exposing the graph. Deduplicate the temporary app load across React StrictMode effects. | `npm run check` passes with 31 unit/data tests. Loader tests cover root, relative, and subdirectory bases plus network/schema/checksum failures. Deliberately changing one committed synapse count makes `data:validate` fail with a checksum mismatch; the original file was restored. No React or Tone imports occur in `src/connectome/`. |
 
 ## Reference
 
@@ -1294,14 +1295,14 @@ Check the export against the upstream files with code that does not reuse the ex
 
 Implement the browser data path and the checks that protect it.
 
-- [ ] Create `src/connectome/types.ts`, `src/connectome/schema.ts`, `src/connectome/graph.ts` (`compareIds`, `buildGraph`), and `src/connectome/load.ts` (`loadCircuit` and `sha256Hex(bytes: ArrayBuffer): Promise<string>`), following R4.
-- [ ] Create the fixture `tests/fixtures/graphs/branching/circuit.json` and `manifest.json` in the R4 formats. Neurons: `"1"` type Alpha, `"2"` Beta, `"3"` Gamma, `"4"` Delta, and `"5"` with type `null`; other annotation fields `null`. Connections: 1→2 (9), 1→3 (1), 2→1 (4), 2→4 (4), 3→1 (2), 4→5 (3). Neuron 5 is a dead end. Set `startNeuronIds` to `["1", "2"]`, `minSynapseCount` to 1, and counts to 5 neurons, 6 connections, and 23 synapses. Set `output.sha256` to the output of `shasum -a 256` on the fixture `circuit.json`.
-- [ ] Create `tsconfig.test.json` covering `tests/**/*.ts` (with `"types": ["node", "vite/client"]`, strict mode, bundler module resolution, and `noEmit`), and add it to the references in `tsconfig.json`.
-- [ ] Write `tests/unit/connectome/graph.test.ts`. The fixture must build; the outgoing list for `"1"` must be `[{ target: "2", synapseCount: 9 }, { target: "3", synapseCount: 1 }]`; and `"5"` must have an empty list. Add one failing case for each rule in R4: schema failure, `circuitId` mismatch, duplicate neuron ID, unsorted neurons, duplicate pair, self-connection, missing endpoint, non-integer count, count below the minimum, count mismatch with the manifest, and a start neuron that is unknown or a dead end. Assert each error's `code`.
-- [ ] Write `tests/unit/connectome/load.test.ts` with a fake `fetchImpl` covering success, a 404 response (`network`), a rejected fetch (`network`), altered bytes (`checksum`), and invalid JSON with a matching checksum (`schema`).
-- [ ] Write `tests/data/real-circuit.test.ts`. Read the committed files with `node:fs`, hash with `node:crypto`, and compare against the manifest. Assert that `buildGraph` succeeds, the counts equal 97, 936, and 25,379, `startNeuronIds` equals the R3 list, and every neuron's `class` is `MBON`.
-- [ ] Add `data:validate` and update `check` as described in R2.
-- [ ] Temporarily make `App.tsx` call `loadCircuit(import.meta.env.BASE_URL)` once and show `data-testid="circuit-status"` with "Circuit ready: 97 neurons, 936 connections" or the error code and message.
+- [x] Create `src/connectome/types.ts`, `src/connectome/schema.ts`, `src/connectome/graph.ts` (`compareIds`, `buildGraph`), and `src/connectome/load.ts` (`loadCircuit` and `sha256Hex(bytes: ArrayBuffer): Promise<string>`), following R4.
+- [x] Create the fixture `tests/fixtures/graphs/branching/circuit.json` and `manifest.json` in the R4 formats. Neurons: `"1"` type Alpha, `"2"` Beta, `"3"` Gamma, `"4"` Delta, and `"5"` with type `null`; other annotation fields `null`. Connections: 1→2 (9), 1→3 (1), 2→1 (4), 2→4 (4), 3→1 (2), 4→5 (3). Neuron 5 is a dead end. Set `startNeuronIds` to `["1", "2"]`, `minSynapseCount` to 1, and counts to 5 neurons, 6 connections, and 23 synapses. Set `output.sha256` to the output of `shasum -a 256` on the fixture `circuit.json`.
+- [x] Create `tsconfig.test.json` covering `tests/**/*.ts` (with `"types": ["node", "vite/client"]`, strict mode, bundler module resolution, and `noEmit`), and add it to the references in `tsconfig.json`.
+- [x] Write `tests/unit/connectome/graph.test.ts`. The fixture must build; the outgoing list for `"1"` must be `[{ target: "2", synapseCount: 9 }, { target: "3", synapseCount: 1 }]`; and `"5"` must have an empty list. Add one failing case for each rule in R4: schema failure, `circuitId` mismatch, duplicate neuron ID, unsorted neurons, duplicate pair, self-connection, missing endpoint, non-integer count, count below the minimum, count mismatch with the manifest, and a start neuron that is unknown or a dead end. Assert each error's `code`.
+- [x] Write `tests/unit/connectome/load.test.ts` with a fake `fetchImpl` covering success, a 404 response (`network`), a rejected fetch (`network`), altered bytes (`checksum`), and invalid JSON with a matching checksum (`schema`).
+- [x] Write `tests/data/real-circuit.test.ts`. Read the committed files with `node:fs`, hash with `node:crypto`, and compare against the manifest. Assert that `buildGraph` succeeds, the counts equal 97, 936, and 25,379, `startNeuronIds` equals the R3 list, and every neuron's `class` is `MBON`.
+- [x] Add `data:validate` and update `check` as described in R2.
+- [x] Temporarily make `App.tsx` call `loadCircuit(import.meta.env.BASE_URL)` once and show `data-testid="circuit-status"` with "Circuit ready: 97 neurons, 936 connections" or the error code and message.
 
 **Verify**
 
@@ -1309,7 +1310,7 @@ Implement the browser data path and the checks that protect it.
 2. Change one `synapseCount` in `public/data/circuits/mbon-v1/circuit.json`, confirm `npm run data:validate` fails with a checksum mismatch, then restore the file with `git checkout -- public/data`.
 3. `grep -rnE "from '(react|tone)'" src/connectome` prints nothing.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 6: Encode WAV files
 

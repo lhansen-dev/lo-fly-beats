@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "circuitId": "branching",
+  "title": "Hand-checkable branching fixture",
+  "description": "Synthetic directed graph for tests; not application data.",
+  "source": {
+    "dataset": "Synthetic fixture",
+    "release": "fixture:v1",
+    "homepage": "https://example.invalid/fixtures/",
+    "downloadPage": "https://example.invalid/fixtures/",
+    "citation": "Authored test fixture; no biological source.",
+    "paperUrl": "https://example.invalid/fixtures/",
+    "retrievedOn": "2026-09-19",
+    "files": []
+  },
+  "license": {
+    "name": "Test fixture",
+    "url": "https://example.invalid/fixtures/",
+    "attribution": "Authored for Lo-fly beats tests."
+  },
+  "extraction": {
+    "script": "tests/fixtures/graphs/branching/circuit.json",
+    "scriptVersion": 1,
+    "config": "tests/fixtures/graphs/branching/manifest.json",
+    "configSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "neuronSelection": "Five authored test neurons.",
+    "minSynapseCount": 1,
+    "selfConnectionsRemoved": 0,
+    "rules": [
+      "Authored test graph; no upstream extraction."
+    ],
+    "thresholdComparison": [
+      {
+        "minSynapseCount": 1,
+        "connections": 6,
+        "largestStronglyConnected": 3,
+        "deadEnds": 1
+      }
+    ],
+    "startNeuronRule": "Start at neuron 1 or neuron 2."
+  },
+  "counts": {
+    "neurons": 5,
+    "cellTypes": 4,
+    "connections": 6,
+    "synapses": 23,
+    "largestStronglyConnected": 3,
+    "weaklyConnectedComponents": 1,
+    "deadEnds": 1
+  },
+  "startNeuronIds": [
+    "1",
+    "2"
+  ],
+  "output": {
+    "file": "circuit.json",
+    "bytes": 1300,
+    "sha256": "518eff9ad6d061554df88bf413776cca12afe9c650804832145a272a034aef84"
+  }
+}

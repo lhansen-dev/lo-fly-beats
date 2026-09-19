@@ -13,10 +13,11 @@
     "preview": "vite preview --port 4173 --strictPort",
     "typecheck": "tsc -b",
     "test": "vitest run --project unit",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run data:validate && npm run build",
     "data:download": "uv run --project scripts/data python scripts/data/download_sources.py",
     "data:extract": "uv run --project scripts/data python scripts/data/extract_circuit.py",
-    "data:verify": "uv run --project scripts/data python scripts/data/verify_circuit.py"
+    "data:verify": "uv run --project scripts/data python scripts/data/verify_circuit.py",
+    "data:validate": "vitest run --project unit tests/data"
   },
   "dependencies": {
     "react": "^19.2.8",

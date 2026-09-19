@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "circuitId": "branching",
+  "neurons": [
+    {
+      "id": "1",
+      "type": "Alpha",
+      "instance": null,
+      "class": null,
+      "superclass": null,
+      "somaSide": null
+    },
+    {
+      "id": "2",
+      "type": "Beta",
+      "instance": null,
+      "class": null,
+      "superclass": null,
+      "somaSide": null
+    },
+    {
+      "id": "3",
+      "type": "Gamma",
+      "instance": null,
+      "class": null,
+      "superclass": null,
+      "somaSide": null
+    },
+    {
+      "id": "4",
+      "type": "Delta",
+      "instance": null,
+      "class": null,
+      "superclass": null,
+      "somaSide": null
+    },
+    {
+      "id": "5",
+      "type": null,
+      "instance": null,
+      "class": null,
+      "superclass": null,
+      "somaSide": null
+    }
+  ],
+  "connections": [
+    {
+      "source": "1",
+      "target": "2",
+      "synapseCount": 9
+    },
+    {
+      "source": "1",
+      "target": "3",
+      "synapseCount": 1
+    },
+    {
+      "source": "2",
+      "target": "1",
+      "synapseCount": 4
+    },
+    {
+      "source": "2",
+      "target": "4",
+      "synapseCount": 4
+    },
+    {
+      "source": "3",
+      "target": "1",
+      "synapseCount": 2
+    },
+    {
+      "source": "4",
+      "target": "5",
+      "synapseCount": 3
+    }
+  ]
+}
