@@ -1,0 +1,5464 @@
+{
+  "schemaVersion": 1,
+  "circuitId": "mbon-v1",
+  "neurons": [
+    {
+      "id": "10013",
+      "type": "MBON01",
+      "instance": "MBON01(y5B'2a)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "10079",
+      "type": "MBON06",
+      "instance": "MBON06(B1>a)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "10267",
+      "type": "MBON14",
+      "instance": "MBON14(a3)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "10495",
+      "type": "MBON05",
+      "instance": "MBON05(y4>y1y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "10599",
+      "type": "MBON35",
+      "instance": "MBON35(y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "10704",
+      "type": "MBON11",
+      "instance": "MBON11(y1pedc>a/B)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "10804",
+      "type": "MBON20",
+      "instance": "MBON20(y1y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "10816",
+      "type": "MBON31",
+      "instance": "MBON31(a'1a)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "10826",
+      "type": "MBON21",
+      "instance": "MBON21(y4y5)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "11145",
+      "type": "MBON20",
+      "instance": "MBON20(y1y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "11176",
+      "type": "MBON26",
+      "instance": "MBON26(b'2d)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "11402",
+      "type": "MBON11",
+      "instance": "MBON11(y1pedc>a/B)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "11455",
+      "type": "MBON32",
+      "instance": "MBON32(y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "11777",
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "11785",
+      "type": "MBON33",
+      "instance": "MBON33(y2y3)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "11805",
+      "type": "MBON31",
+      "instance": "MBON31(a'1a)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "11873",
+      "type": "MBON14",
+      "instance": "MBON14(a3)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "11990",
+      "type": "MBON22",
+      "instance": "MBON22(calyx)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "12690",
+      "type": "MBON06",
+      "instance": "MBON06(B1>a)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "12726",
+      "type": "MBON13",
+      "instance": "MBON13(a'2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "12859",
+      "type": "MBON07",
+      "instance": "MBON07(a1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "12918",
+      "type": "MBON22",
+      "instance": "MBON22(calyx)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "13728",
+      "type": "MBON12",
+      "instance": "MBON12(y2a'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "13768",
+      "type": "MBON12",
+      "instance": "MBON12(y2a'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "14221",
+      "type": "MBON18",
+      "instance": "MBON18(a2sc)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "15626",
+      "type": "MBON07",
+      "instance": "MBON07(a1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "15708",
+      "type": "MBON24",
+      "instance": "MBON24(B2y5)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "17946",
+      "type": "MBON14",
+      "instance": "MBON14(a3)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "18406",
+      "type": "MBON24",
+      "instance": "MBON24(B2y5)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "18603",
+      "type": "MBON07",
+      "instance": "MBON07(a1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "18713",
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "19267",
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "19366",
+      "type": "MBON14",
+      "instance": "MBON14(a3)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "20835",
+      "type": "MBON23",
+      "instance": "MBON23(a2sp)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "21242",
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "26485",
+      "type": "MBON28",
+      "instance": "MBON28(a'3a)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "26853",
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "28622",
+      "type": "MBON28",
+      "instance": "MBON28(a'3a)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "31016",
+      "type": "MBON17",
+      "instance": "MBON17(a'3m)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "31083",
+      "type": "MBON15-like",
+      "instance": "MBON15-like(a'1a'2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "33617",
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "36094",
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "38853",
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "38859",
+      "type": "MBON15-like",
+      "instance": "MBON15-like(a'1a'2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "39608",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "41692",
+      "type": "MBON17",
+      "instance": "MBON17(a'3m)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "44619",
+      "type": "MBON15-like",
+      "instance": "MBON15-like(a'1a'2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "47551",
+      "type": "MBON19",
+      "instance": "MBON19(a2p3p)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "49262",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "58401",
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "70924",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "76585",
+      "type": "MBON25-like",
+      "instance": "MBON25-like(y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "87077",
+      "type": "MBON25",
+      "instance": "MBON25(y1y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "92112",
+      "type": "MBON34",
+      "instance": "MBON34(y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "110448",
+      "type": "MBON25-like",
+      "instance": "MBON25-like(y1y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "133427",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "160320",
+      "type": "MBON25-like",
+      "instance": "MBON25-like(y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "187741",
+      "type": "MBON15-like",
+      "instance": "MBON15-like(a'1a'2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "208566",
+      "type": "MBON34",
+      "instance": "MBON34(y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "394860",
+      "type": "MBON25",
+      "instance": "MBON25(y1y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "508595",
+      "type": "MBON35",
+      "instance": "MBON35(y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "512788",
+      "type": "MBON18",
+      "instance": "MBON18(a2sc)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "512789",
+      "type": "MBON23",
+      "instance": "MBON23(a2sp)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "513174",
+      "type": "MBON30",
+      "instance": "MBON30(y1y2y3)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "513387",
+      "type": "MBON17-like",
+      "instance": "MBON17-like(a'2a'3)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "513391",
+      "type": "MBON17-like",
+      "instance": "MBON17-like(a'2a'3)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "514853",
+      "type": "MBON13",
+      "instance": "MBON13(a'2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "515015",
+      "type": "MBON30",
+      "instance": "MBON30(y1y2y3)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "515034",
+      "type": "MBON27",
+      "instance": "MBON27(y5d)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "515338",
+      "type": "MBON07",
+      "instance": "MBON07(a1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "519128",
+      "type": "MBON27",
+      "instance": "MBON27(y5d)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "519131",
+      "type": "MBON32",
+      "instance": "MBON32(y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "519368",
+      "type": "MBON12",
+      "instance": "MBON12(y2a'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "519371",
+      "type": "MBON05",
+      "instance": "MBON05(y4>y1y2)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "519373",
+      "type": "MBON03",
+      "instance": "MBON03(B'2mp)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "519619",
+      "type": "MBON29",
+      "instance": "MBON29(y4y5)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "520151",
+      "type": "MBON01",
+      "instance": "MBON01(y5B'2a)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "520186",
+      "type": "MBON16",
+      "instance": "MBON16(a'3ap)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "520395",
+      "type": "MBON15",
+      "instance": "MBON15(a'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "521086",
+      "type": "MBON12",
+      "instance": "MBON12(y2a'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "521526",
+      "type": "MBON03",
+      "instance": "MBON03(B'2mp)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "522444",
+      "type": "MBON02",
+      "instance": "MBON02(B2B'2a)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "522749",
+      "type": "MBON02",
+      "instance": "MBON02(B2B'2a)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "523043",
+      "type": "MBON33",
+      "instance": "MBON33(y2y3)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "523060",
+      "type": "MBON09",
+      "instance": "MBON09(y3B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "523628",
+      "type": "MBON21",
+      "instance": "MBON21(y4y5)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "523987",
+      "type": "MBON29",
+      "instance": "MBON29(y4y5)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "524733",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "524893",
+      "type": "MBON26",
+      "instance": "MBON26(b'2d)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "525780",
+      "type": "MBON04",
+      "instance": "MBON04(B'2mp_bilateral)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "530875",
+      "type": "MBON04",
+      "instance": "MBON04(B'2mp_bilateral)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "531829",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_L",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "L"
+    },
+    {
+      "id": "540383",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "556300",
+      "type": "MBON25-like",
+      "instance": "MBON25-like(y1y2)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "558665",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "562782",
+      "type": "MBON16",
+      "instance": "MBON16(a'3ap)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    },
+    {
+      "id": "579919",
+      "type": "MBON10",
+      "instance": "MBON10(B'1)_R",
+      "class": "MBON",
+      "superclass": "cb_intrinsic",
+      "somaSide": "R"
+    }
+  ],
+  "connections": [
+    {
+      "source": "10013",
+      "target": "10495",
+      "synapseCount": 16
+    },
+    {
+      "source": "10013",
+      "target": "10816",
+      "synapseCount": 6
+    },
+    {
+      "source": "10013",
+      "target": "11176",
+      "synapseCount": 28
+    },
+    {
+      "source": "10013",
+      "target": "11805",
+      "synapseCount": 53
+    },
+    {
+      "source": "10013",
+      "target": "13728",
+      "synapseCount": 5
+    },
+    {
+      "source": "10013",
+      "target": "18713",
+      "synapseCount": 43
+    },
+    {
+      "source": "10013",
+      "target": "19267",
+      "synapseCount": 37
+    },
+    {
+      "source": "10013",
+      "target": "21242",
+      "synapseCount": 86
+    },
+    {
+      "source": "10013",
+      "target": "49262",
+      "synapseCount": 13
+    },
+    {
+      "source": "10013",
+      "target": "133427",
+      "synapseCount": 19
+    },
+    {
+      "source": "10013",
+      "target": "508595",
+      "synapseCount": 4
+    },
+    {
+      "source": "10013",
+      "target": "514853",
+      "synapseCount": 4
+    },
+    {
+      "source": "10013",
+      "target": "519131",
+      "synapseCount": 58
+    },
+    {
+      "source": "10013",
+      "target": "519368",
+      "synapseCount": 11
+    },
+    {
+      "source": "10013",
+      "target": "519371",
+      "synapseCount": 202
+    },
+    {
+      "source": "10013",
+      "target": "519373",
+      "synapseCount": 58
+    },
+    {
+      "source": "10013",
+      "target": "521086",
+      "synapseCount": 3
+    },
+    {
+      "source": "10013",
+      "target": "521526",
+      "synapseCount": 13
+    },
+    {
+      "source": "10013",
+      "target": "523043",
+      "synapseCount": 3
+    },
+    {
+      "source": "10013",
+      "target": "523060",
+      "synapseCount": 101
+    },
+    {
+      "source": "10013",
+      "target": "523628",
+      "synapseCount": 4
+    },
+    {
+      "source": "10013",
+      "target": "525780",
+      "synapseCount": 5
+    },
+    {
+      "source": "10013",
+      "target": "530875",
+      "synapseCount": 47
+    },
+    {
+      "source": "10013",
+      "target": "540383",
+      "synapseCount": 20
+    },
+    {
+      "source": "10013",
+      "target": "558665",
+      "synapseCount": 6
+    },
+    {
+      "source": "10013",
+      "target": "579919",
+      "synapseCount": 6
+    },
+    {
+      "source": "10079",
+      "target": "10704",
+      "synapseCount": 78
+    },
+    {
+      "source": "10079",
+      "target": "11402",
+      "synapseCount": 29
+    },
+    {
+      "source": "10079",
+      "target": "11873",
+      "synapseCount": 74
+    },
+    {
+      "source": "10079",
+      "target": "15626",
+      "synapseCount": 94
+    },
+    {
+      "source": "10079",
+      "target": "18603",
+      "synapseCount": 106
+    },
+    {
+      "source": "10079",
+      "target": "18713",
+      "synapseCount": 3
+    },
+    {
+      "source": "10079",
+      "target": "19267",
+      "synapseCount": 4
+    },
+    {
+      "source": "10079",
+      "target": "19366",
+      "synapseCount": 63
+    },
+    {
+      "source": "10079",
+      "target": "21242",
+      "synapseCount": 9
+    },
+    {
+      "source": "10079",
+      "target": "36094",
+      "synapseCount": 54
+    },
+    {
+      "source": "10079",
+      "target": "47551",
+      "synapseCount": 39
+    },
+    {
+      "source": "10079",
+      "target": "92112",
+      "synapseCount": 4
+    },
+    {
+      "source": "10079",
+      "target": "512788",
+      "synapseCount": 88
+    },
+    {
+      "source": "10079",
+      "target": "512789",
+      "synapseCount": 207
+    },
+    {
+      "source": "10079",
+      "target": "513174",
+      "synapseCount": 7
+    },
+    {
+      "source": "10079",
+      "target": "513387",
+      "synapseCount": 3
+    },
+    {
+      "source": "10079",
+      "target": "515015",
+      "synapseCount": 9
+    },
+    {
+      "source": "10079",
+      "target": "522444",
+      "synapseCount": 58
+    },
+    {
+      "source": "10079",
+      "target": "522749",
+      "synapseCount": 49
+    },
+    {
+      "source": "10079",
+      "target": "523060",
+      "synapseCount": 7
+    },
+    {
+      "source": "10267",
+      "target": "12690",
+      "synapseCount": 22
+    },
+    {
+      "source": "10267",
+      "target": "12859",
+      "synapseCount": 9
+    },
+    {
+      "source": "10267",
+      "target": "15708",
+      "synapseCount": 5
+    },
+    {
+      "source": "10267",
+      "target": "17946",
+      "synapseCount": 39
+    },
+    {
+      "source": "10267",
+      "target": "26853",
+      "synapseCount": 14
+    },
+    {
+      "source": "10267",
+      "target": "33617",
+      "synapseCount": 18
+    },
+    {
+      "source": "10267",
+      "target": "515338",
+      "synapseCount": 4
+    },
+    {
+      "source": "10267",
+      "target": "522444",
+      "synapseCount": 4
+    },
+    {
+      "source": "10495",
+      "target": "10079",
+      "synapseCount": 3
+    },
+    {
+      "source": "10495",
+      "target": "10599",
+      "synapseCount": 5
+    },
+    {
+      "source": "10495",
+      "target": "10704",
+      "synapseCount": 181
+    },
+    {
+      "source": "10495",
+      "target": "10816",
+      "synapseCount": 7
+    },
+    {
+      "source": "10495",
+      "target": "10826",
+      "synapseCount": 4
+    },
+    {
+      "source": "10495",
+      "target": "11145",
+      "synapseCount": 169
+    },
+    {
+      "source": "10495",
+      "target": "13728",
+      "synapseCount": 14
+    },
+    {
+      "source": "10495",
+      "target": "13768",
+      "synapseCount": 9
+    },
+    {
+      "source": "10495",
+      "target": "18713",
+      "synapseCount": 83
+    },
+    {
+      "source": "10495",
+      "target": "19267",
+      "synapseCount": 72
+    },
+    {
+      "source": "10495",
+      "target": "21242",
+      "synapseCount": 13
+    },
+    {
+      "source": "10495",
+      "target": "39608",
+      "synapseCount": 27
+    },
+    {
+      "source": "10495",
+      "target": "70924",
+      "synapseCount": 10
+    },
+    {
+      "source": "10495",
+      "target": "394860",
+      "synapseCount": 48
+    },
+    {
+      "source": "10495",
+      "target": "513174",
+      "synapseCount": 583
+    },
+    {
+      "source": "10495",
+      "target": "515015",
+      "synapseCount": 175
+    },
+    {
+      "source": "10495",
+      "target": "520151",
+      "synapseCount": 76
+    },
+    {
+      "source": "10495",
+      "target": "523060",
+      "synapseCount": 10
+    },
+    {
+      "source": "10495",
+      "target": "523987",
+      "synapseCount": 3
+    },
+    {
+      "source": "10495",
+      "target": "524733",
+      "synapseCount": 13
+    },
+    {
+      "source": "10495",
+      "target": "524893",
+      "synapseCount": 4
+    },
+    {
+      "source": "10495",
+      "target": "525780",
+      "synapseCount": 5
+    },
+    {
+      "source": "10495",
+      "target": "531829",
+      "synapseCount": 15
+    },
+    {
+      "source": "10495",
+      "target": "556300",
+      "synapseCount": 12
+    },
+    {
+      "source": "10599",
+      "target": "11145",
+      "synapseCount": 3
+    },
+    {
+      "source": "10599",
+      "target": "11455",
+      "synapseCount": 13
+    },
+    {
+      "source": "10599",
+      "target": "11785",
+      "synapseCount": 46
+    },
+    {
+      "source": "10704",
+      "target": "10013",
+      "synapseCount": 13
+    },
+    {
+      "source": "10704",
+      "target": "10079",
+      "synapseCount": 39
+    },
+    {
+      "source": "10704",
+      "target": "10267",
+      "synapseCount": 4
+    },
+    {
+      "source": "10704",
+      "target": "11145",
+      "synapseCount": 5
+    },
+    {
+      "source": "10704",
+      "target": "11402",
+      "synapseCount": 53
+    },
+    {
+      "source": "10704",
+      "target": "11873",
+      "synapseCount": 31
+    },
+    {
+      "source": "10704",
+      "target": "11990",
+      "synapseCount": 12
+    },
+    {
+      "source": "10704",
+      "target": "12690",
+      "synapseCount": 32
+    },
+    {
+      "source": "10704",
+      "target": "12859",
+      "synapseCount": 9
+    },
+    {
+      "source": "10704",
+      "target": "12918",
+      "synapseCount": 12
+    },
+    {
+      "source": "10704",
+      "target": "14221",
+      "synapseCount": 29
+    },
+    {
+      "source": "10704",
+      "target": "15626",
+      "synapseCount": 22
+    },
+    {
+      "source": "10704",
+      "target": "15708",
+      "synapseCount": 9
+    },
+    {
+      "source": "10704",
+      "target": "17946",
+      "synapseCount": 3
+    },
+    {
+      "source": "10704",
+      "target": "18406",
+      "synapseCount": 24
+    },
+    {
+      "source": "10704",
+      "target": "18603",
+      "synapseCount": 25
+    },
+    {
+      "source": "10704",
+      "target": "19366",
+      "synapseCount": 27
+    },
+    {
+      "source": "10704",
+      "target": "20835",
+      "synapseCount": 7
+    },
+    {
+      "source": "10704",
+      "target": "28622",
+      "synapseCount": 4
+    },
+    {
+      "source": "10704",
+      "target": "31016",
+      "synapseCount": 17
+    },
+    {
+      "source": "10704",
+      "target": "36094",
+      "synapseCount": 6
+    },
+    {
+      "source": "10704",
+      "target": "38859",
+      "synapseCount": 4
+    },
+    {
+      "source": "10704",
+      "target": "47551",
+      "synapseCount": 7
+    },
+    {
+      "source": "10704",
+      "target": "92112",
+      "synapseCount": 8
+    },
+    {
+      "source": "10704",
+      "target": "512788",
+      "synapseCount": 46
+    },
+    {
+      "source": "10704",
+      "target": "512789",
+      "synapseCount": 5
+    },
+    {
+      "source": "10704",
+      "target": "513174",
+      "synapseCount": 11
+    },
+    {
+      "source": "10704",
+      "target": "513387",
+      "synapseCount": 11
+    },
+    {
+      "source": "10704",
+      "target": "515015",
+      "synapseCount": 8
+    },
+    {
+      "source": "10704",
+      "target": "515338",
+      "synapseCount": 12
+    },
+    {
+      "source": "10704",
+      "target": "519373",
+      "synapseCount": 36
+    },
+    {
+      "source": "10704",
+      "target": "519619",
+      "synapseCount": 207
+    },
+    {
+      "source": "10704",
+      "target": "520151",
+      "synapseCount": 8
+    },
+    {
+      "source": "10704",
+      "target": "520186",
+      "synapseCount": 11
+    },
+    {
+      "source": "10704",
+      "target": "521526",
+      "synapseCount": 37
+    },
+    {
+      "source": "10704",
+      "target": "522444",
+      "synapseCount": 40
+    },
+    {
+      "source": "10704",
+      "target": "522749",
+      "synapseCount": 35
+    },
+    {
+      "source": "10704",
+      "target": "523987",
+      "synapseCount": 209
+    },
+    {
+      "source": "10704",
+      "target": "525780",
+      "synapseCount": 6
+    },
+    {
+      "source": "10704",
+      "target": "530875",
+      "synapseCount": 6
+    },
+    {
+      "source": "10704",
+      "target": "562782",
+      "synapseCount": 3
+    },
+    {
+      "source": "10804",
+      "target": "11402",
+      "synapseCount": 59
+    },
+    {
+      "source": "10804",
+      "target": "508595",
+      "synapseCount": 4
+    },
+    {
+      "source": "10804",
+      "target": "515015",
+      "synapseCount": 5
+    },
+    {
+      "source": "10804",
+      "target": "519371",
+      "synapseCount": 6
+    },
+    {
+      "source": "10816",
+      "target": "11176",
+      "synapseCount": 123
+    },
+    {
+      "source": "10816",
+      "target": "11455",
+      "synapseCount": 12
+    },
+    {
+      "source": "10816",
+      "target": "13768",
+      "synapseCount": 3
+    },
+    {
+      "source": "10816",
+      "target": "519128",
+      "synapseCount": 4
+    },
+    {
+      "source": "10816",
+      "target": "519131",
+      "synapseCount": 6
+    },
+    {
+      "source": "10816",
+      "target": "524893",
+      "synapseCount": 141
+    },
+    {
+      "source": "10816",
+      "target": "531829",
+      "synapseCount": 3
+    },
+    {
+      "source": "10826",
+      "target": "10804",
+      "synapseCount": 20
+    },
+    {
+      "source": "10826",
+      "target": "11145",
+      "synapseCount": 68
+    },
+    {
+      "source": "10826",
+      "target": "11176",
+      "synapseCount": 73
+    },
+    {
+      "source": "10826",
+      "target": "19267",
+      "synapseCount": 6
+    },
+    {
+      "source": "10826",
+      "target": "21242",
+      "synapseCount": 3
+    },
+    {
+      "source": "10826",
+      "target": "38853",
+      "synapseCount": 5
+    },
+    {
+      "source": "10826",
+      "target": "187741",
+      "synapseCount": 3
+    },
+    {
+      "source": "10826",
+      "target": "513174",
+      "synapseCount": 3
+    },
+    {
+      "source": "10826",
+      "target": "515034",
+      "synapseCount": 3
+    },
+    {
+      "source": "10826",
+      "target": "519128",
+      "synapseCount": 18
+    },
+    {
+      "source": "10826",
+      "target": "523060",
+      "synapseCount": 11
+    },
+    {
+      "source": "10826",
+      "target": "523628",
+      "synapseCount": 8
+    },
+    {
+      "source": "10826",
+      "target": "524893",
+      "synapseCount": 111
+    },
+    {
+      "source": "10826",
+      "target": "525780",
+      "synapseCount": 49
+    },
+    {
+      "source": "10826",
+      "target": "530875",
+      "synapseCount": 35
+    },
+    {
+      "source": "11145",
+      "target": "10495",
+      "synapseCount": 4
+    },
+    {
+      "source": "11145",
+      "target": "10599",
+      "synapseCount": 4
+    },
+    {
+      "source": "11145",
+      "target": "10704",
+      "synapseCount": 35
+    },
+    {
+      "source": "11145",
+      "target": "11785",
+      "synapseCount": 3
+    },
+    {
+      "source": "11145",
+      "target": "13768",
+      "synapseCount": 6
+    },
+    {
+      "source": "11145",
+      "target": "394860",
+      "synapseCount": 5
+    },
+    {
+      "source": "11145",
+      "target": "513174",
+      "synapseCount": 8
+    },
+    {
+      "source": "11145",
+      "target": "519128",
+      "synapseCount": 3
+    },
+    {
+      "source": "11176",
+      "target": "10816",
+      "synapseCount": 11
+    },
+    {
+      "source": "11176",
+      "target": "11455",
+      "synapseCount": 5
+    },
+    {
+      "source": "11176",
+      "target": "11805",
+      "synapseCount": 10
+    },
+    {
+      "source": "11176",
+      "target": "15708",
+      "synapseCount": 3
+    },
+    {
+      "source": "11176",
+      "target": "519131",
+      "synapseCount": 8
+    },
+    {
+      "source": "11176",
+      "target": "524893",
+      "synapseCount": 166
+    },
+    {
+      "source": "11176",
+      "target": "540383",
+      "synapseCount": 3
+    },
+    {
+      "source": "11402",
+      "target": "10013",
+      "synapseCount": 33
+    },
+    {
+      "source": "11402",
+      "target": "10079",
+      "synapseCount": 15
+    },
+    {
+      "source": "11402",
+      "target": "10267",
+      "synapseCount": 26
+    },
+    {
+      "source": "11402",
+      "target": "10704",
+      "synapseCount": 74
+    },
+    {
+      "source": "11402",
+      "target": "10804",
+      "synapseCount": 7
+    },
+    {
+      "source": "11402",
+      "target": "11176",
+      "synapseCount": 5
+    },
+    {
+      "source": "11402",
+      "target": "11990",
+      "synapseCount": 21
+    },
+    {
+      "source": "11402",
+      "target": "12690",
+      "synapseCount": 73
+    },
+    {
+      "source": "11402",
+      "target": "12859",
+      "synapseCount": 26
+    },
+    {
+      "source": "11402",
+      "target": "12918",
+      "synapseCount": 18
+    },
+    {
+      "source": "11402",
+      "target": "14221",
+      "synapseCount": 39
+    },
+    {
+      "source": "11402",
+      "target": "15626",
+      "synapseCount": 11
+    },
+    {
+      "source": "11402",
+      "target": "15708",
+      "synapseCount": 36
+    },
+    {
+      "source": "11402",
+      "target": "17946",
+      "synapseCount": 34
+    },
+    {
+      "source": "11402",
+      "target": "18406",
+      "synapseCount": 16
+    },
+    {
+      "source": "11402",
+      "target": "18603",
+      "synapseCount": 15
+    },
+    {
+      "source": "11402",
+      "target": "20835",
+      "synapseCount": 14
+    },
+    {
+      "source": "11402",
+      "target": "26485",
+      "synapseCount": 3
+    },
+    {
+      "source": "11402",
+      "target": "26853",
+      "synapseCount": 4
+    },
+    {
+      "source": "11402",
+      "target": "31016",
+      "synapseCount": 8
+    },
+    {
+      "source": "11402",
+      "target": "33617",
+      "synapseCount": 4
+    },
+    {
+      "source": "11402",
+      "target": "38859",
+      "synapseCount": 3
+    },
+    {
+      "source": "11402",
+      "target": "44619",
+      "synapseCount": 6
+    },
+    {
+      "source": "11402",
+      "target": "512788",
+      "synapseCount": 8
+    },
+    {
+      "source": "11402",
+      "target": "513174",
+      "synapseCount": 12
+    },
+    {
+      "source": "11402",
+      "target": "513391",
+      "synapseCount": 8
+    },
+    {
+      "source": "11402",
+      "target": "515015",
+      "synapseCount": 24
+    },
+    {
+      "source": "11402",
+      "target": "515338",
+      "synapseCount": 26
+    },
+    {
+      "source": "11402",
+      "target": "519131",
+      "synapseCount": 3
+    },
+    {
+      "source": "11402",
+      "target": "519371",
+      "synapseCount": 24
+    },
+    {
+      "source": "11402",
+      "target": "519373",
+      "synapseCount": 44
+    },
+    {
+      "source": "11402",
+      "target": "519619",
+      "synapseCount": 212
+    },
+    {
+      "source": "11402",
+      "target": "521526",
+      "synapseCount": 36
+    },
+    {
+      "source": "11402",
+      "target": "522444",
+      "synapseCount": 36
+    },
+    {
+      "source": "11402",
+      "target": "522749",
+      "synapseCount": 32
+    },
+    {
+      "source": "11402",
+      "target": "523628",
+      "synapseCount": 11
+    },
+    {
+      "source": "11402",
+      "target": "523987",
+      "synapseCount": 267
+    },
+    {
+      "source": "11402",
+      "target": "525780",
+      "synapseCount": 5
+    },
+    {
+      "source": "11402",
+      "target": "530875",
+      "synapseCount": 9
+    },
+    {
+      "source": "11455",
+      "target": "10599",
+      "synapseCount": 11
+    },
+    {
+      "source": "11455",
+      "target": "10816",
+      "synapseCount": 10
+    },
+    {
+      "source": "11455",
+      "target": "11176",
+      "synapseCount": 259
+    },
+    {
+      "source": "11455",
+      "target": "11805",
+      "synapseCount": 51
+    },
+    {
+      "source": "11455",
+      "target": "513174",
+      "synapseCount": 4
+    },
+    {
+      "source": "11455",
+      "target": "519128",
+      "synapseCount": 44
+    },
+    {
+      "source": "11455",
+      "target": "524893",
+      "synapseCount": 210
+    },
+    {
+      "source": "11777",
+      "target": "11176",
+      "synapseCount": 3
+    },
+    {
+      "source": "11777",
+      "target": "49262",
+      "synapseCount": 3
+    },
+    {
+      "source": "11777",
+      "target": "558665",
+      "synapseCount": 3
+    },
+    {
+      "source": "11785",
+      "target": "11455",
+      "synapseCount": 4
+    },
+    {
+      "source": "11785",
+      "target": "76585",
+      "synapseCount": 3
+    },
+    {
+      "source": "11805",
+      "target": "11176",
+      "synapseCount": 160
+    },
+    {
+      "source": "11805",
+      "target": "11455",
+      "synapseCount": 8
+    },
+    {
+      "source": "11805",
+      "target": "508595",
+      "synapseCount": 5
+    },
+    {
+      "source": "11805",
+      "target": "515034",
+      "synapseCount": 4
+    },
+    {
+      "source": "11805",
+      "target": "519131",
+      "synapseCount": 9
+    },
+    {
+      "source": "11805",
+      "target": "519368",
+      "synapseCount": 5
+    },
+    {
+      "source": "11805",
+      "target": "521086",
+      "synapseCount": 4
+    },
+    {
+      "source": "11805",
+      "target": "523043",
+      "synapseCount": 3
+    },
+    {
+      "source": "11805",
+      "target": "524893",
+      "synapseCount": 128
+    },
+    {
+      "source": "11873",
+      "target": "10079",
+      "synapseCount": 23
+    },
+    {
+      "source": "11873",
+      "target": "10704",
+      "synapseCount": 13
+    },
+    {
+      "source": "11873",
+      "target": "18406",
+      "synapseCount": 9
+    },
+    {
+      "source": "11873",
+      "target": "19366",
+      "synapseCount": 39
+    },
+    {
+      "source": "11873",
+      "target": "28622",
+      "synapseCount": 3
+    },
+    {
+      "source": "11873",
+      "target": "36094",
+      "synapseCount": 20
+    },
+    {
+      "source": "11873",
+      "target": "47551",
+      "synapseCount": 6
+    },
+    {
+      "source": "11873",
+      "target": "512789",
+      "synapseCount": 3
+    },
+    {
+      "source": "11873",
+      "target": "522749",
+      "synapseCount": 13
+    },
+    {
+      "source": "11990",
+      "target": "12918",
+      "synapseCount": 7
+    },
+    {
+      "source": "11990",
+      "target": "15708",
+      "synapseCount": 22
+    },
+    {
+      "source": "11990",
+      "target": "18406",
+      "synapseCount": 38
+    },
+    {
+      "source": "11990",
+      "target": "18713",
+      "synapseCount": 5
+    },
+    {
+      "source": "11990",
+      "target": "21242",
+      "synapseCount": 7
+    },
+    {
+      "source": "11990",
+      "target": "28622",
+      "synapseCount": 15
+    },
+    {
+      "source": "11990",
+      "target": "513174",
+      "synapseCount": 4
+    },
+    {
+      "source": "11990",
+      "target": "523060",
+      "synapseCount": 9
+    },
+    {
+      "source": "11990",
+      "target": "523987",
+      "synapseCount": 4
+    },
+    {
+      "source": "11990",
+      "target": "525780",
+      "synapseCount": 5
+    },
+    {
+      "source": "12690",
+      "target": "10267",
+      "synapseCount": 69
+    },
+    {
+      "source": "12690",
+      "target": "10704",
+      "synapseCount": 41
+    },
+    {
+      "source": "12690",
+      "target": "11402",
+      "synapseCount": 99
+    },
+    {
+      "source": "12690",
+      "target": "12859",
+      "synapseCount": 89
+    },
+    {
+      "source": "12690",
+      "target": "14221",
+      "synapseCount": 90
+    },
+    {
+      "source": "12690",
+      "target": "17946",
+      "synapseCount": 73
+    },
+    {
+      "source": "12690",
+      "target": "18713",
+      "synapseCount": 4
+    },
+    {
+      "source": "12690",
+      "target": "20835",
+      "synapseCount": 207
+    },
+    {
+      "source": "12690",
+      "target": "21242",
+      "synapseCount": 7
+    },
+    {
+      "source": "12690",
+      "target": "26853",
+      "synapseCount": 60
+    },
+    {
+      "source": "12690",
+      "target": "33617",
+      "synapseCount": 42
+    },
+    {
+      "source": "12690",
+      "target": "41692",
+      "synapseCount": 6
+    },
+    {
+      "source": "12690",
+      "target": "133427",
+      "synapseCount": 4
+    },
+    {
+      "source": "12690",
+      "target": "513174",
+      "synapseCount": 6
+    },
+    {
+      "source": "12690",
+      "target": "513391",
+      "synapseCount": 3
+    },
+    {
+      "source": "12690",
+      "target": "515015",
+      "synapseCount": 12
+    },
+    {
+      "source": "12690",
+      "target": "515338",
+      "synapseCount": 92
+    },
+    {
+      "source": "12690",
+      "target": "522444",
+      "synapseCount": 60
+    },
+    {
+      "source": "12690",
+      "target": "522749",
+      "synapseCount": 35
+    },
+    {
+      "source": "12690",
+      "target": "523060",
+      "synapseCount": 7
+    },
+    {
+      "source": "12726",
+      "target": "10704",
+      "synapseCount": 5
+    },
+    {
+      "source": "12726",
+      "target": "13728",
+      "synapseCount": 4
+    },
+    {
+      "source": "12726",
+      "target": "13768",
+      "synapseCount": 6
+    },
+    {
+      "source": "12726",
+      "target": "18406",
+      "synapseCount": 57
+    },
+    {
+      "source": "12726",
+      "target": "28622",
+      "synapseCount": 21
+    },
+    {
+      "source": "12726",
+      "target": "31083",
+      "synapseCount": 26
+    },
+    {
+      "source": "12726",
+      "target": "38853",
+      "synapseCount": 18
+    },
+    {
+      "source": "12726",
+      "target": "38859",
+      "synapseCount": 24
+    },
+    {
+      "source": "12726",
+      "target": "39608",
+      "synapseCount": 14
+    },
+    {
+      "source": "12726",
+      "target": "70924",
+      "synapseCount": 5
+    },
+    {
+      "source": "12726",
+      "target": "512788",
+      "synapseCount": 5
+    },
+    {
+      "source": "12726",
+      "target": "512789",
+      "synapseCount": 9
+    },
+    {
+      "source": "12726",
+      "target": "513387",
+      "synapseCount": 7
+    },
+    {
+      "source": "12726",
+      "target": "520151",
+      "synapseCount": 7
+    },
+    {
+      "source": "12726",
+      "target": "520395",
+      "synapseCount": 3
+    },
+    {
+      "source": "12726",
+      "target": "521526",
+      "synapseCount": 14
+    },
+    {
+      "source": "12726",
+      "target": "522749",
+      "synapseCount": 5
+    },
+    {
+      "source": "12726",
+      "target": "531829",
+      "synapseCount": 18
+    },
+    {
+      "source": "12859",
+      "target": "17946",
+      "synapseCount": 3
+    },
+    {
+      "source": "12859",
+      "target": "515338",
+      "synapseCount": 23
+    },
+    {
+      "source": "12918",
+      "target": "10816",
+      "synapseCount": 3
+    },
+    {
+      "source": "12918",
+      "target": "11990",
+      "synapseCount": 5
+    },
+    {
+      "source": "12918",
+      "target": "15708",
+      "synapseCount": 25
+    },
+    {
+      "source": "12918",
+      "target": "18406",
+      "synapseCount": 28
+    },
+    {
+      "source": "12918",
+      "target": "18713",
+      "synapseCount": 3
+    },
+    {
+      "source": "12918",
+      "target": "19267",
+      "synapseCount": 5
+    },
+    {
+      "source": "12918",
+      "target": "28622",
+      "synapseCount": 7
+    },
+    {
+      "source": "12918",
+      "target": "519373",
+      "synapseCount": 3
+    },
+    {
+      "source": "12918",
+      "target": "519619",
+      "synapseCount": 4
+    },
+    {
+      "source": "12918",
+      "target": "522444",
+      "synapseCount": 4
+    },
+    {
+      "source": "12918",
+      "target": "523060",
+      "synapseCount": 6
+    },
+    {
+      "source": "12918",
+      "target": "525780",
+      "synapseCount": 7
+    },
+    {
+      "source": "12918",
+      "target": "530875",
+      "synapseCount": 4
+    },
+    {
+      "source": "13728",
+      "target": "10495",
+      "synapseCount": 4
+    },
+    {
+      "source": "13728",
+      "target": "10816",
+      "synapseCount": 10
+    },
+    {
+      "source": "13728",
+      "target": "11145",
+      "synapseCount": 36
+    },
+    {
+      "source": "13728",
+      "target": "11455",
+      "synapseCount": 3
+    },
+    {
+      "source": "13728",
+      "target": "12726",
+      "synapseCount": 5
+    },
+    {
+      "source": "13728",
+      "target": "13768",
+      "synapseCount": 9
+    },
+    {
+      "source": "13728",
+      "target": "18406",
+      "synapseCount": 24
+    },
+    {
+      "source": "13728",
+      "target": "28622",
+      "synapseCount": 6
+    },
+    {
+      "source": "13728",
+      "target": "31083",
+      "synapseCount": 9
+    },
+    {
+      "source": "13728",
+      "target": "38853",
+      "synapseCount": 33
+    },
+    {
+      "source": "13728",
+      "target": "38859",
+      "synapseCount": 3
+    },
+    {
+      "source": "13728",
+      "target": "39608",
+      "synapseCount": 4
+    },
+    {
+      "source": "13728",
+      "target": "70924",
+      "synapseCount": 14
+    },
+    {
+      "source": "13728",
+      "target": "76585",
+      "synapseCount": 13
+    },
+    {
+      "source": "13728",
+      "target": "394860",
+      "synapseCount": 3
+    },
+    {
+      "source": "13728",
+      "target": "513174",
+      "synapseCount": 31
+    },
+    {
+      "source": "13728",
+      "target": "519619",
+      "synapseCount": 11
+    },
+    {
+      "source": "13728",
+      "target": "520395",
+      "synapseCount": 21
+    },
+    {
+      "source": "13728",
+      "target": "521526",
+      "synapseCount": 8
+    },
+    {
+      "source": "13728",
+      "target": "524733",
+      "synapseCount": 8
+    },
+    {
+      "source": "13728",
+      "target": "531829",
+      "synapseCount": 6
+    },
+    {
+      "source": "13728",
+      "target": "556300",
+      "synapseCount": 5
+    },
+    {
+      "source": "13768",
+      "target": "10816",
+      "synapseCount": 6
+    },
+    {
+      "source": "13768",
+      "target": "11145",
+      "synapseCount": 21
+    },
+    {
+      "source": "13768",
+      "target": "11455",
+      "synapseCount": 3
+    },
+    {
+      "source": "13768",
+      "target": "11777",
+      "synapseCount": 4
+    },
+    {
+      "source": "13768",
+      "target": "12726",
+      "synapseCount": 4
+    },
+    {
+      "source": "13768",
+      "target": "13728",
+      "synapseCount": 10
+    },
+    {
+      "source": "13768",
+      "target": "18406",
+      "synapseCount": 17
+    },
+    {
+      "source": "13768",
+      "target": "28622",
+      "synapseCount": 4
+    },
+    {
+      "source": "13768",
+      "target": "31083",
+      "synapseCount": 25
+    },
+    {
+      "source": "13768",
+      "target": "38853",
+      "synapseCount": 30
+    },
+    {
+      "source": "13768",
+      "target": "38859",
+      "synapseCount": 9
+    },
+    {
+      "source": "13768",
+      "target": "39608",
+      "synapseCount": 5
+    },
+    {
+      "source": "13768",
+      "target": "70924",
+      "synapseCount": 3
+    },
+    {
+      "source": "13768",
+      "target": "76585",
+      "synapseCount": 7
+    },
+    {
+      "source": "13768",
+      "target": "394860",
+      "synapseCount": 6
+    },
+    {
+      "source": "13768",
+      "target": "513174",
+      "synapseCount": 39
+    },
+    {
+      "source": "13768",
+      "target": "515015",
+      "synapseCount": 4
+    },
+    {
+      "source": "13768",
+      "target": "519619",
+      "synapseCount": 8
+    },
+    {
+      "source": "13768",
+      "target": "520151",
+      "synapseCount": 6
+    },
+    {
+      "source": "13768",
+      "target": "520395",
+      "synapseCount": 30
+    },
+    {
+      "source": "13768",
+      "target": "521526",
+      "synapseCount": 5
+    },
+    {
+      "source": "13768",
+      "target": "523987",
+      "synapseCount": 3
+    },
+    {
+      "source": "13768",
+      "target": "524733",
+      "synapseCount": 20
+    },
+    {
+      "source": "13768",
+      "target": "525780",
+      "synapseCount": 8
+    },
+    {
+      "source": "13768",
+      "target": "531829",
+      "synapseCount": 6
+    },
+    {
+      "source": "14221",
+      "target": "512788",
+      "synapseCount": 8
+    },
+    {
+      "source": "15626",
+      "target": "18603",
+      "synapseCount": 12
+    },
+    {
+      "source": "15626",
+      "target": "19366",
+      "synapseCount": 3
+    },
+    {
+      "source": "15626",
+      "target": "522749",
+      "synapseCount": 4
+    },
+    {
+      "source": "15708",
+      "target": "530875",
+      "synapseCount": 7
+    },
+    {
+      "source": "17946",
+      "target": "10267",
+      "synapseCount": 21
+    },
+    {
+      "source": "17946",
+      "target": "12690",
+      "synapseCount": 13
+    },
+    {
+      "source": "17946",
+      "target": "26853",
+      "synapseCount": 15
+    },
+    {
+      "source": "17946",
+      "target": "33617",
+      "synapseCount": 13
+    },
+    {
+      "source": "17946",
+      "target": "522444",
+      "synapseCount": 6
+    },
+    {
+      "source": "18406",
+      "target": "12726",
+      "synapseCount": 3
+    },
+    {
+      "source": "18406",
+      "target": "512789",
+      "synapseCount": 6
+    },
+    {
+      "source": "18406",
+      "target": "525780",
+      "synapseCount": 3
+    },
+    {
+      "source": "18603",
+      "target": "15626",
+      "synapseCount": 21
+    },
+    {
+      "source": "18603",
+      "target": "522749",
+      "synapseCount": 6
+    },
+    {
+      "source": "18713",
+      "target": "10013",
+      "synapseCount": 101
+    },
+    {
+      "source": "18713",
+      "target": "10079",
+      "synapseCount": 50
+    },
+    {
+      "source": "18713",
+      "target": "10495",
+      "synapseCount": 15
+    },
+    {
+      "source": "18713",
+      "target": "10826",
+      "synapseCount": 140
+    },
+    {
+      "source": "18713",
+      "target": "11145",
+      "synapseCount": 73
+    },
+    {
+      "source": "18713",
+      "target": "11990",
+      "synapseCount": 69
+    },
+    {
+      "source": "18713",
+      "target": "12918",
+      "synapseCount": 94
+    },
+    {
+      "source": "18713",
+      "target": "19267",
+      "synapseCount": 48
+    },
+    {
+      "source": "18713",
+      "target": "92112",
+      "synapseCount": 5
+    },
+    {
+      "source": "18713",
+      "target": "513174",
+      "synapseCount": 111
+    },
+    {
+      "source": "18713",
+      "target": "515015",
+      "synapseCount": 7
+    },
+    {
+      "source": "18713",
+      "target": "519373",
+      "synapseCount": 67
+    },
+    {
+      "source": "18713",
+      "target": "520151",
+      "synapseCount": 123
+    },
+    {
+      "source": "18713",
+      "target": "521526",
+      "synapseCount": 3
+    },
+    {
+      "source": "18713",
+      "target": "522444",
+      "synapseCount": 3
+    },
+    {
+      "source": "18713",
+      "target": "523628",
+      "synapseCount": 72
+    },
+    {
+      "source": "18713",
+      "target": "525780",
+      "synapseCount": 6
+    },
+    {
+      "source": "18713",
+      "target": "530875",
+      "synapseCount": 4
+    },
+    {
+      "source": "18713",
+      "target": "540383",
+      "synapseCount": 4
+    },
+    {
+      "source": "19267",
+      "target": "10013",
+      "synapseCount": 86
+    },
+    {
+      "source": "19267",
+      "target": "10079",
+      "synapseCount": 37
+    },
+    {
+      "source": "19267",
+      "target": "10495",
+      "synapseCount": 7
+    },
+    {
+      "source": "19267",
+      "target": "10826",
+      "synapseCount": 162
+    },
+    {
+      "source": "19267",
+      "target": "11145",
+      "synapseCount": 55
+    },
+    {
+      "source": "19267",
+      "target": "11805",
+      "synapseCount": 5
+    },
+    {
+      "source": "19267",
+      "target": "11990",
+      "synapseCount": 46
+    },
+    {
+      "source": "19267",
+      "target": "12918",
+      "synapseCount": 63
+    },
+    {
+      "source": "19267",
+      "target": "18713",
+      "synapseCount": 73
+    },
+    {
+      "source": "19267",
+      "target": "92112",
+      "synapseCount": 6
+    },
+    {
+      "source": "19267",
+      "target": "513174",
+      "synapseCount": 148
+    },
+    {
+      "source": "19267",
+      "target": "515015",
+      "synapseCount": 3
+    },
+    {
+      "source": "19267",
+      "target": "519373",
+      "synapseCount": 35
+    },
+    {
+      "source": "19267",
+      "target": "520151",
+      "synapseCount": 112
+    },
+    {
+      "source": "19267",
+      "target": "521526",
+      "synapseCount": 4
+    },
+    {
+      "source": "19267",
+      "target": "523628",
+      "synapseCount": 88
+    },
+    {
+      "source": "19267",
+      "target": "525780",
+      "synapseCount": 10
+    },
+    {
+      "source": "19267",
+      "target": "530875",
+      "synapseCount": 4
+    },
+    {
+      "source": "19267",
+      "target": "558665",
+      "synapseCount": 4
+    },
+    {
+      "source": "19366",
+      "target": "10079",
+      "synapseCount": 26
+    },
+    {
+      "source": "19366",
+      "target": "10704",
+      "synapseCount": 10
+    },
+    {
+      "source": "19366",
+      "target": "11873",
+      "synapseCount": 31
+    },
+    {
+      "source": "19366",
+      "target": "15626",
+      "synapseCount": 15
+    },
+    {
+      "source": "19366",
+      "target": "18406",
+      "synapseCount": 15
+    },
+    {
+      "source": "19366",
+      "target": "18603",
+      "synapseCount": 8
+    },
+    {
+      "source": "19366",
+      "target": "36094",
+      "synapseCount": 15
+    },
+    {
+      "source": "19366",
+      "target": "47551",
+      "synapseCount": 7
+    },
+    {
+      "source": "19366",
+      "target": "512789",
+      "synapseCount": 3
+    },
+    {
+      "source": "19366",
+      "target": "522749",
+      "synapseCount": 11
+    },
+    {
+      "source": "20835",
+      "target": "12690",
+      "synapseCount": 7
+    },
+    {
+      "source": "20835",
+      "target": "15708",
+      "synapseCount": 43
+    },
+    {
+      "source": "21242",
+      "target": "10013",
+      "synapseCount": 152
+    },
+    {
+      "source": "21242",
+      "target": "10079",
+      "synapseCount": 12
+    },
+    {
+      "source": "21242",
+      "target": "10804",
+      "synapseCount": 30
+    },
+    {
+      "source": "21242",
+      "target": "10826",
+      "synapseCount": 63
+    },
+    {
+      "source": "21242",
+      "target": "11990",
+      "synapseCount": 94
+    },
+    {
+      "source": "21242",
+      "target": "12690",
+      "synapseCount": 29
+    },
+    {
+      "source": "21242",
+      "target": "12918",
+      "synapseCount": 81
+    },
+    {
+      "source": "21242",
+      "target": "18713",
+      "synapseCount": 4
+    },
+    {
+      "source": "21242",
+      "target": "39608",
+      "synapseCount": 6
+    },
+    {
+      "source": "21242",
+      "target": "70924",
+      "synapseCount": 4
+    },
+    {
+      "source": "21242",
+      "target": "208566",
+      "synapseCount": 3
+    },
+    {
+      "source": "21242",
+      "target": "513174",
+      "synapseCount": 9
+    },
+    {
+      "source": "21242",
+      "target": "515015",
+      "synapseCount": 84
+    },
+    {
+      "source": "21242",
+      "target": "519371",
+      "synapseCount": 8
+    },
+    {
+      "source": "21242",
+      "target": "519373",
+      "synapseCount": 23
+    },
+    {
+      "source": "21242",
+      "target": "520151",
+      "synapseCount": 59
+    },
+    {
+      "source": "21242",
+      "target": "521526",
+      "synapseCount": 93
+    },
+    {
+      "source": "21242",
+      "target": "522444",
+      "synapseCount": 6
+    },
+    {
+      "source": "21242",
+      "target": "522749",
+      "synapseCount": 3
+    },
+    {
+      "source": "21242",
+      "target": "523060",
+      "synapseCount": 37
+    },
+    {
+      "source": "21242",
+      "target": "523628",
+      "synapseCount": 141
+    },
+    {
+      "source": "21242",
+      "target": "530875",
+      "synapseCount": 4
+    },
+    {
+      "source": "26485",
+      "target": "28622",
+      "synapseCount": 6
+    },
+    {
+      "source": "26853",
+      "target": "10267",
+      "synapseCount": 5
+    },
+    {
+      "source": "26853",
+      "target": "17946",
+      "synapseCount": 10
+    },
+    {
+      "source": "26853",
+      "target": "33617",
+      "synapseCount": 27
+    },
+    {
+      "source": "28622",
+      "target": "11777",
+      "synapseCount": 5
+    },
+    {
+      "source": "28622",
+      "target": "26485",
+      "synapseCount": 13
+    },
+    {
+      "source": "28622",
+      "target": "31016",
+      "synapseCount": 13
+    },
+    {
+      "source": "28622",
+      "target": "38859",
+      "synapseCount": 3
+    },
+    {
+      "source": "28622",
+      "target": "513387",
+      "synapseCount": 4
+    },
+    {
+      "source": "28622",
+      "target": "520186",
+      "synapseCount": 4
+    },
+    {
+      "source": "31016",
+      "target": "28622",
+      "synapseCount": 8
+    },
+    {
+      "source": "31016",
+      "target": "41692",
+      "synapseCount": 7
+    },
+    {
+      "source": "31016",
+      "target": "512789",
+      "synapseCount": 3
+    },
+    {
+      "source": "31016",
+      "target": "513387",
+      "synapseCount": 9
+    },
+    {
+      "source": "31016",
+      "target": "520186",
+      "synapseCount": 8
+    },
+    {
+      "source": "31016",
+      "target": "522749",
+      "synapseCount": 3
+    },
+    {
+      "source": "31083",
+      "target": "10816",
+      "synapseCount": 19
+    },
+    {
+      "source": "31083",
+      "target": "13728",
+      "synapseCount": 3
+    },
+    {
+      "source": "31083",
+      "target": "26485",
+      "synapseCount": 3
+    },
+    {
+      "source": "31083",
+      "target": "70924",
+      "synapseCount": 3
+    },
+    {
+      "source": "31083",
+      "target": "520395",
+      "synapseCount": 6
+    },
+    {
+      "source": "31083",
+      "target": "524893",
+      "synapseCount": 3
+    },
+    {
+      "source": "33617",
+      "target": "10267",
+      "synapseCount": 9
+    },
+    {
+      "source": "33617",
+      "target": "17946",
+      "synapseCount": 6
+    },
+    {
+      "source": "33617",
+      "target": "26853",
+      "synapseCount": 25
+    },
+    {
+      "source": "36094",
+      "target": "47551",
+      "synapseCount": 26
+    },
+    {
+      "source": "38853",
+      "target": "31083",
+      "synapseCount": 3
+    },
+    {
+      "source": "38853",
+      "target": "70924",
+      "synapseCount": 3
+    },
+    {
+      "source": "38853",
+      "target": "531829",
+      "synapseCount": 4
+    },
+    {
+      "source": "38859",
+      "target": "10816",
+      "synapseCount": 7
+    },
+    {
+      "source": "38859",
+      "target": "12726",
+      "synapseCount": 6
+    },
+    {
+      "source": "38859",
+      "target": "13728",
+      "synapseCount": 3
+    },
+    {
+      "source": "38859",
+      "target": "26485",
+      "synapseCount": 6
+    },
+    {
+      "source": "38859",
+      "target": "28622",
+      "synapseCount": 6
+    },
+    {
+      "source": "41692",
+      "target": "14221",
+      "synapseCount": 3
+    },
+    {
+      "source": "41692",
+      "target": "20835",
+      "synapseCount": 4
+    },
+    {
+      "source": "41692",
+      "target": "26485",
+      "synapseCount": 8
+    },
+    {
+      "source": "41692",
+      "target": "28622",
+      "synapseCount": 4
+    },
+    {
+      "source": "41692",
+      "target": "31016",
+      "synapseCount": 3
+    },
+    {
+      "source": "41692",
+      "target": "513387",
+      "synapseCount": 4
+    },
+    {
+      "source": "41692",
+      "target": "562782",
+      "synapseCount": 7
+    },
+    {
+      "source": "44619",
+      "target": "11805",
+      "synapseCount": 8
+    },
+    {
+      "source": "44619",
+      "target": "38859",
+      "synapseCount": 4
+    },
+    {
+      "source": "44619",
+      "target": "187741",
+      "synapseCount": 5
+    },
+    {
+      "source": "44619",
+      "target": "514853",
+      "synapseCount": 3
+    },
+    {
+      "source": "47551",
+      "target": "31016",
+      "synapseCount": 3
+    },
+    {
+      "source": "47551",
+      "target": "36094",
+      "synapseCount": 26
+    },
+    {
+      "source": "47551",
+      "target": "513387",
+      "synapseCount": 3
+    },
+    {
+      "source": "58401",
+      "target": "11176",
+      "synapseCount": 3
+    },
+    {
+      "source": "70924",
+      "target": "524893",
+      "synapseCount": 4
+    },
+    {
+      "source": "76585",
+      "target": "10804",
+      "synapseCount": 32
+    },
+    {
+      "source": "76585",
+      "target": "10816",
+      "synapseCount": 9
+    },
+    {
+      "source": "76585",
+      "target": "10826",
+      "synapseCount": 7
+    },
+    {
+      "source": "76585",
+      "target": "11145",
+      "synapseCount": 51
+    },
+    {
+      "source": "76585",
+      "target": "13768",
+      "synapseCount": 3
+    },
+    {
+      "source": "76585",
+      "target": "160320",
+      "synapseCount": 3
+    },
+    {
+      "source": "76585",
+      "target": "394860",
+      "synapseCount": 4
+    },
+    {
+      "source": "76585",
+      "target": "523628",
+      "synapseCount": 7
+    },
+    {
+      "source": "76585",
+      "target": "556300",
+      "synapseCount": 3
+    },
+    {
+      "source": "87077",
+      "target": "10804",
+      "synapseCount": 94
+    },
+    {
+      "source": "87077",
+      "target": "10826",
+      "synapseCount": 5
+    },
+    {
+      "source": "87077",
+      "target": "11145",
+      "synapseCount": 34
+    },
+    {
+      "source": "87077",
+      "target": "11402",
+      "synapseCount": 31
+    },
+    {
+      "source": "87077",
+      "target": "110448",
+      "synapseCount": 3
+    },
+    {
+      "source": "87077",
+      "target": "160320",
+      "synapseCount": 3
+    },
+    {
+      "source": "87077",
+      "target": "208566",
+      "synapseCount": 5
+    },
+    {
+      "source": "87077",
+      "target": "508595",
+      "synapseCount": 6
+    },
+    {
+      "source": "87077",
+      "target": "519131",
+      "synapseCount": 12
+    },
+    {
+      "source": "87077",
+      "target": "519368",
+      "synapseCount": 4
+    },
+    {
+      "source": "87077",
+      "target": "521086",
+      "synapseCount": 4
+    },
+    {
+      "source": "87077",
+      "target": "556300",
+      "synapseCount": 4
+    },
+    {
+      "source": "92112",
+      "target": "10826",
+      "synapseCount": 12
+    },
+    {
+      "source": "92112",
+      "target": "11145",
+      "synapseCount": 4
+    },
+    {
+      "source": "92112",
+      "target": "523628",
+      "synapseCount": 12
+    },
+    {
+      "source": "110448",
+      "target": "10599",
+      "synapseCount": 4
+    },
+    {
+      "source": "110448",
+      "target": "10804",
+      "synapseCount": 17
+    },
+    {
+      "source": "110448",
+      "target": "10826",
+      "synapseCount": 3
+    },
+    {
+      "source": "110448",
+      "target": "11145",
+      "synapseCount": 9
+    },
+    {
+      "source": "110448",
+      "target": "11402",
+      "synapseCount": 20
+    },
+    {
+      "source": "110448",
+      "target": "208566",
+      "synapseCount": 4
+    },
+    {
+      "source": "110448",
+      "target": "394860",
+      "synapseCount": 3
+    },
+    {
+      "source": "110448",
+      "target": "508595",
+      "synapseCount": 7
+    },
+    {
+      "source": "110448",
+      "target": "519128",
+      "synapseCount": 3
+    },
+    {
+      "source": "110448",
+      "target": "519131",
+      "synapseCount": 3
+    },
+    {
+      "source": "110448",
+      "target": "519619",
+      "synapseCount": 3
+    },
+    {
+      "source": "110448",
+      "target": "523987",
+      "synapseCount": 4
+    },
+    {
+      "source": "133427",
+      "target": "11176",
+      "synapseCount": 9
+    },
+    {
+      "source": "133427",
+      "target": "521086",
+      "synapseCount": 3
+    },
+    {
+      "source": "160320",
+      "target": "10599",
+      "synapseCount": 5
+    },
+    {
+      "source": "160320",
+      "target": "10804",
+      "synapseCount": 44
+    },
+    {
+      "source": "160320",
+      "target": "11145",
+      "synapseCount": 20
+    },
+    {
+      "source": "160320",
+      "target": "11402",
+      "synapseCount": 23
+    },
+    {
+      "source": "160320",
+      "target": "508595",
+      "synapseCount": 4
+    },
+    {
+      "source": "160320",
+      "target": "519131",
+      "synapseCount": 14
+    },
+    {
+      "source": "160320",
+      "target": "519368",
+      "synapseCount": 5
+    },
+    {
+      "source": "160320",
+      "target": "521086",
+      "synapseCount": 4
+    },
+    {
+      "source": "160320",
+      "target": "523628",
+      "synapseCount": 4
+    },
+    {
+      "source": "187741",
+      "target": "11805",
+      "synapseCount": 14
+    },
+    {
+      "source": "187741",
+      "target": "31083",
+      "synapseCount": 3
+    },
+    {
+      "source": "187741",
+      "target": "513391",
+      "synapseCount": 3
+    },
+    {
+      "source": "187741",
+      "target": "519368",
+      "synapseCount": 3
+    },
+    {
+      "source": "187741",
+      "target": "579919",
+      "synapseCount": 5
+    },
+    {
+      "source": "208566",
+      "target": "10804",
+      "synapseCount": 9
+    },
+    {
+      "source": "208566",
+      "target": "10826",
+      "synapseCount": 4
+    },
+    {
+      "source": "208566",
+      "target": "11145",
+      "synapseCount": 10
+    },
+    {
+      "source": "208566",
+      "target": "519128",
+      "synapseCount": 3
+    },
+    {
+      "source": "208566",
+      "target": "523628",
+      "synapseCount": 10
+    },
+    {
+      "source": "208566",
+      "target": "523987",
+      "synapseCount": 9
+    },
+    {
+      "source": "208566",
+      "target": "556300",
+      "synapseCount": 3
+    },
+    {
+      "source": "394860",
+      "target": "10599",
+      "synapseCount": 5
+    },
+    {
+      "source": "394860",
+      "target": "10704",
+      "synapseCount": 32
+    },
+    {
+      "source": "394860",
+      "target": "10804",
+      "synapseCount": 22
+    },
+    {
+      "source": "394860",
+      "target": "10826",
+      "synapseCount": 6
+    },
+    {
+      "source": "394860",
+      "target": "11145",
+      "synapseCount": 76
+    },
+    {
+      "source": "394860",
+      "target": "11455",
+      "synapseCount": 7
+    },
+    {
+      "source": "394860",
+      "target": "13728",
+      "synapseCount": 6
+    },
+    {
+      "source": "394860",
+      "target": "13768",
+      "synapseCount": 3
+    },
+    {
+      "source": "394860",
+      "target": "508595",
+      "synapseCount": 3
+    },
+    {
+      "source": "394860",
+      "target": "523628",
+      "synapseCount": 9
+    },
+    {
+      "source": "508595",
+      "target": "10804",
+      "synapseCount": 6
+    },
+    {
+      "source": "508595",
+      "target": "519131",
+      "synapseCount": 15
+    },
+    {
+      "source": "508595",
+      "target": "523043",
+      "synapseCount": 17
+    },
+    {
+      "source": "512788",
+      "target": "12690",
+      "synapseCount": 3
+    },
+    {
+      "source": "512788",
+      "target": "14221",
+      "synapseCount": 10
+    },
+    {
+      "source": "512788",
+      "target": "15708",
+      "synapseCount": 5
+    },
+    {
+      "source": "512788",
+      "target": "31083",
+      "synapseCount": 3
+    },
+    {
+      "source": "512789",
+      "target": "10079",
+      "synapseCount": 12
+    },
+    {
+      "source": "512789",
+      "target": "18406",
+      "synapseCount": 38
+    },
+    {
+      "source": "512789",
+      "target": "512788",
+      "synapseCount": 3
+    },
+    {
+      "source": "513174",
+      "target": "10013",
+      "synapseCount": 3
+    },
+    {
+      "source": "513174",
+      "target": "10079",
+      "synapseCount": 29
+    },
+    {
+      "source": "513174",
+      "target": "10495",
+      "synapseCount": 3
+    },
+    {
+      "source": "513174",
+      "target": "10704",
+      "synapseCount": 16
+    },
+    {
+      "source": "513174",
+      "target": "10826",
+      "synapseCount": 6
+    },
+    {
+      "source": "513174",
+      "target": "11145",
+      "synapseCount": 9
+    },
+    {
+      "source": "513174",
+      "target": "11176",
+      "synapseCount": 54
+    },
+    {
+      "source": "513174",
+      "target": "11402",
+      "synapseCount": 4
+    },
+    {
+      "source": "513174",
+      "target": "11455",
+      "synapseCount": 3
+    },
+    {
+      "source": "513174",
+      "target": "12690",
+      "synapseCount": 29
+    },
+    {
+      "source": "513174",
+      "target": "13768",
+      "synapseCount": 4
+    },
+    {
+      "source": "513174",
+      "target": "15708",
+      "synapseCount": 24
+    },
+    {
+      "source": "513174",
+      "target": "18406",
+      "synapseCount": 29
+    },
+    {
+      "source": "513174",
+      "target": "394860",
+      "synapseCount": 20
+    },
+    {
+      "source": "513174",
+      "target": "515034",
+      "synapseCount": 8
+    },
+    {
+      "source": "513174",
+      "target": "519128",
+      "synapseCount": 127
+    },
+    {
+      "source": "513174",
+      "target": "519619",
+      "synapseCount": 40
+    },
+    {
+      "source": "513174",
+      "target": "523628",
+      "synapseCount": 6
+    },
+    {
+      "source": "513174",
+      "target": "523987",
+      "synapseCount": 56
+    },
+    {
+      "source": "513174",
+      "target": "524893",
+      "synapseCount": 118
+    },
+    {
+      "source": "513174",
+      "target": "525780",
+      "synapseCount": 72
+    },
+    {
+      "source": "513174",
+      "target": "530875",
+      "synapseCount": 174
+    },
+    {
+      "source": "513387",
+      "target": "28622",
+      "synapseCount": 5
+    },
+    {
+      "source": "513387",
+      "target": "31016",
+      "synapseCount": 4
+    },
+    {
+      "source": "513387",
+      "target": "522749",
+      "synapseCount": 3
+    },
+    {
+      "source": "513391",
+      "target": "26485",
+      "synapseCount": 6
+    },
+    {
+      "source": "513391",
+      "target": "28622",
+      "synapseCount": 7
+    },
+    {
+      "source": "513391",
+      "target": "41692",
+      "synapseCount": 3
+    },
+    {
+      "source": "513391",
+      "target": "513387",
+      "synapseCount": 3
+    },
+    {
+      "source": "514853",
+      "target": "10013",
+      "synapseCount": 5
+    },
+    {
+      "source": "514853",
+      "target": "11777",
+      "synapseCount": 9
+    },
+    {
+      "source": "514853",
+      "target": "14221",
+      "synapseCount": 18
+    },
+    {
+      "source": "514853",
+      "target": "15708",
+      "synapseCount": 36
+    },
+    {
+      "source": "514853",
+      "target": "20835",
+      "synapseCount": 5
+    },
+    {
+      "source": "514853",
+      "target": "26485",
+      "synapseCount": 14
+    },
+    {
+      "source": "514853",
+      "target": "31083",
+      "synapseCount": 3
+    },
+    {
+      "source": "514853",
+      "target": "33617",
+      "synapseCount": 4
+    },
+    {
+      "source": "514853",
+      "target": "41692",
+      "synapseCount": 3
+    },
+    {
+      "source": "514853",
+      "target": "44619",
+      "synapseCount": 8
+    },
+    {
+      "source": "514853",
+      "target": "49262",
+      "synapseCount": 10
+    },
+    {
+      "source": "514853",
+      "target": "58401",
+      "synapseCount": 10
+    },
+    {
+      "source": "514853",
+      "target": "133427",
+      "synapseCount": 4
+    },
+    {
+      "source": "514853",
+      "target": "187741",
+      "synapseCount": 11
+    },
+    {
+      "source": "514853",
+      "target": "513391",
+      "synapseCount": 5
+    },
+    {
+      "source": "514853",
+      "target": "519368",
+      "synapseCount": 3
+    },
+    {
+      "source": "514853",
+      "target": "519373",
+      "synapseCount": 19
+    },
+    {
+      "source": "514853",
+      "target": "521086",
+      "synapseCount": 5
+    },
+    {
+      "source": "514853",
+      "target": "522444",
+      "synapseCount": 7
+    },
+    {
+      "source": "514853",
+      "target": "558665",
+      "synapseCount": 3
+    },
+    {
+      "source": "514853",
+      "target": "579919",
+      "synapseCount": 14
+    },
+    {
+      "source": "515015",
+      "target": "10079",
+      "synapseCount": 59
+    },
+    {
+      "source": "515015",
+      "target": "10495",
+      "synapseCount": 5
+    },
+    {
+      "source": "515015",
+      "target": "10804",
+      "synapseCount": 16
+    },
+    {
+      "source": "515015",
+      "target": "10826",
+      "synapseCount": 3
+    },
+    {
+      "source": "515015",
+      "target": "11176",
+      "synapseCount": 139
+    },
+    {
+      "source": "515015",
+      "target": "11402",
+      "synapseCount": 17
+    },
+    {
+      "source": "515015",
+      "target": "12690",
+      "synapseCount": 11
+    },
+    {
+      "source": "515015",
+      "target": "15708",
+      "synapseCount": 17
+    },
+    {
+      "source": "515015",
+      "target": "18406",
+      "synapseCount": 18
+    },
+    {
+      "source": "515015",
+      "target": "87077",
+      "synapseCount": 18
+    },
+    {
+      "source": "515015",
+      "target": "110448",
+      "synapseCount": 7
+    },
+    {
+      "source": "515015",
+      "target": "160320",
+      "synapseCount": 3
+    },
+    {
+      "source": "515015",
+      "target": "515034",
+      "synapseCount": 78
+    },
+    {
+      "source": "515015",
+      "target": "519128",
+      "synapseCount": 3
+    },
+    {
+      "source": "515015",
+      "target": "519619",
+      "synapseCount": 18
+    },
+    {
+      "source": "515015",
+      "target": "523628",
+      "synapseCount": 8
+    },
+    {
+      "source": "515015",
+      "target": "523987",
+      "synapseCount": 25
+    },
+    {
+      "source": "515015",
+      "target": "524893",
+      "synapseCount": 55
+    },
+    {
+      "source": "515015",
+      "target": "525780",
+      "synapseCount": 150
+    },
+    {
+      "source": "515015",
+      "target": "530875",
+      "synapseCount": 34
+    },
+    {
+      "source": "515034",
+      "target": "10816",
+      "synapseCount": 21
+    },
+    {
+      "source": "515034",
+      "target": "11176",
+      "synapseCount": 7
+    },
+    {
+      "source": "515034",
+      "target": "133427",
+      "synapseCount": 4
+    },
+    {
+      "source": "515034",
+      "target": "515015",
+      "synapseCount": 3
+    },
+    {
+      "source": "515034",
+      "target": "519131",
+      "synapseCount": 6
+    },
+    {
+      "source": "515034",
+      "target": "524893",
+      "synapseCount": 69
+    },
+    {
+      "source": "515338",
+      "target": "10267",
+      "synapseCount": 4
+    },
+    {
+      "source": "515338",
+      "target": "12859",
+      "synapseCount": 13
+    },
+    {
+      "source": "519128",
+      "target": "10816",
+      "synapseCount": 8
+    },
+    {
+      "source": "519128",
+      "target": "11176",
+      "synapseCount": 50
+    },
+    {
+      "source": "519128",
+      "target": "11455",
+      "synapseCount": 3
+    },
+    {
+      "source": "519128",
+      "target": "11805",
+      "synapseCount": 37
+    },
+    {
+      "source": "519128",
+      "target": "515034",
+      "synapseCount": 3
+    },
+    {
+      "source": "519128",
+      "target": "524893",
+      "synapseCount": 8
+    },
+    {
+      "source": "519131",
+      "target": "10816",
+      "synapseCount": 23
+    },
+    {
+      "source": "519131",
+      "target": "11176",
+      "synapseCount": 153
+    },
+    {
+      "source": "519131",
+      "target": "508595",
+      "synapseCount": 3
+    },
+    {
+      "source": "519131",
+      "target": "515015",
+      "synapseCount": 6
+    },
+    {
+      "source": "519131",
+      "target": "515034",
+      "synapseCount": 35
+    },
+    {
+      "source": "519131",
+      "target": "523043",
+      "synapseCount": 3
+    },
+    {
+      "source": "519131",
+      "target": "524893",
+      "synapseCount": 283
+    },
+    {
+      "source": "519368",
+      "target": "10013",
+      "synapseCount": 6
+    },
+    {
+      "source": "519368",
+      "target": "10804",
+      "synapseCount": 14
+    },
+    {
+      "source": "519368",
+      "target": "11777",
+      "synapseCount": 9
+    },
+    {
+      "source": "519368",
+      "target": "11805",
+      "synapseCount": 5
+    },
+    {
+      "source": "519368",
+      "target": "15708",
+      "synapseCount": 12
+    },
+    {
+      "source": "519368",
+      "target": "38853",
+      "synapseCount": 4
+    },
+    {
+      "source": "519368",
+      "target": "58401",
+      "synapseCount": 23
+    },
+    {
+      "source": "519368",
+      "target": "87077",
+      "synapseCount": 3
+    },
+    {
+      "source": "519368",
+      "target": "110448",
+      "synapseCount": 3
+    },
+    {
+      "source": "519368",
+      "target": "133427",
+      "synapseCount": 9
+    },
+    {
+      "source": "519368",
+      "target": "187741",
+      "synapseCount": 9
+    },
+    {
+      "source": "519368",
+      "target": "515015",
+      "synapseCount": 30
+    },
+    {
+      "source": "519368",
+      "target": "519131",
+      "synapseCount": 3
+    },
+    {
+      "source": "519368",
+      "target": "519373",
+      "synapseCount": 5
+    },
+    {
+      "source": "519368",
+      "target": "521086",
+      "synapseCount": 12
+    },
+    {
+      "source": "519368",
+      "target": "523628",
+      "synapseCount": 3
+    },
+    {
+      "source": "519368",
+      "target": "523987",
+      "synapseCount": 15
+    },
+    {
+      "source": "519368",
+      "target": "530875",
+      "synapseCount": 3
+    },
+    {
+      "source": "519368",
+      "target": "540383",
+      "synapseCount": 5
+    },
+    {
+      "source": "519368",
+      "target": "579919",
+      "synapseCount": 5
+    },
+    {
+      "source": "519371",
+      "target": "10013",
+      "synapseCount": 55
+    },
+    {
+      "source": "519371",
+      "target": "10804",
+      "synapseCount": 156
+    },
+    {
+      "source": "519371",
+      "target": "11402",
+      "synapseCount": 225
+    },
+    {
+      "source": "519371",
+      "target": "11805",
+      "synapseCount": 6
+    },
+    {
+      "source": "519371",
+      "target": "12859",
+      "synapseCount": 4
+    },
+    {
+      "source": "519371",
+      "target": "18713",
+      "synapseCount": 4
+    },
+    {
+      "source": "519371",
+      "target": "19267",
+      "synapseCount": 7
+    },
+    {
+      "source": "519371",
+      "target": "21242",
+      "synapseCount": 30
+    },
+    {
+      "source": "519371",
+      "target": "44619",
+      "synapseCount": 3
+    },
+    {
+      "source": "519371",
+      "target": "49262",
+      "synapseCount": 5
+    },
+    {
+      "source": "519371",
+      "target": "87077",
+      "synapseCount": 34
+    },
+    {
+      "source": "519371",
+      "target": "110448",
+      "synapseCount": 10
+    },
+    {
+      "source": "519371",
+      "target": "133427",
+      "synapseCount": 8
+    },
+    {
+      "source": "519371",
+      "target": "160320",
+      "synapseCount": 16
+    },
+    {
+      "source": "519371",
+      "target": "508595",
+      "synapseCount": 10
+    },
+    {
+      "source": "519371",
+      "target": "513174",
+      "synapseCount": 161
+    },
+    {
+      "source": "519371",
+      "target": "515015",
+      "synapseCount": 481
+    },
+    {
+      "source": "519371",
+      "target": "515034",
+      "synapseCount": 8
+    },
+    {
+      "source": "519371",
+      "target": "519368",
+      "synapseCount": 7
+    },
+    {
+      "source": "519371",
+      "target": "521086",
+      "synapseCount": 8
+    },
+    {
+      "source": "519371",
+      "target": "523060",
+      "synapseCount": 42
+    },
+    {
+      "source": "519371",
+      "target": "523628",
+      "synapseCount": 25
+    },
+    {
+      "source": "519371",
+      "target": "558665",
+      "synapseCount": 6
+    },
+    {
+      "source": "519371",
+      "target": "579919",
+      "synapseCount": 6
+    },
+    {
+      "source": "519373",
+      "target": "10013",
+      "synapseCount": 6
+    },
+    {
+      "source": "519373",
+      "target": "10704",
+      "synapseCount": 4
+    },
+    {
+      "source": "519373",
+      "target": "10816",
+      "synapseCount": 18
+    },
+    {
+      "source": "519373",
+      "target": "11402",
+      "synapseCount": 3
+    },
+    {
+      "source": "519373",
+      "target": "11777",
+      "synapseCount": 12
+    },
+    {
+      "source": "519373",
+      "target": "11805",
+      "synapseCount": 36
+    },
+    {
+      "source": "519373",
+      "target": "12726",
+      "synapseCount": 30
+    },
+    {
+      "source": "519373",
+      "target": "13728",
+      "synapseCount": 26
+    },
+    {
+      "source": "519373",
+      "target": "13768",
+      "synapseCount": 17
+    },
+    {
+      "source": "519373",
+      "target": "15708",
+      "synapseCount": 3
+    },
+    {
+      "source": "519373",
+      "target": "18713",
+      "synapseCount": 50
+    },
+    {
+      "source": "519373",
+      "target": "19267",
+      "synapseCount": 41
+    },
+    {
+      "source": "519373",
+      "target": "21242",
+      "synapseCount": 11
+    },
+    {
+      "source": "519373",
+      "target": "31083",
+      "synapseCount": 9
+    },
+    {
+      "source": "519373",
+      "target": "38853",
+      "synapseCount": 5
+    },
+    {
+      "source": "519373",
+      "target": "44619",
+      "synapseCount": 4
+    },
+    {
+      "source": "519373",
+      "target": "58401",
+      "synapseCount": 17
+    },
+    {
+      "source": "519373",
+      "target": "133427",
+      "synapseCount": 4
+    },
+    {
+      "source": "519373",
+      "target": "187741",
+      "synapseCount": 23
+    },
+    {
+      "source": "519373",
+      "target": "514853",
+      "synapseCount": 136
+    },
+    {
+      "source": "519373",
+      "target": "519368",
+      "synapseCount": 101
+    },
+    {
+      "source": "519373",
+      "target": "521086",
+      "synapseCount": 130
+    },
+    {
+      "source": "519373",
+      "target": "523060",
+      "synapseCount": 15
+    },
+    {
+      "source": "519373",
+      "target": "525780",
+      "synapseCount": 5
+    },
+    {
+      "source": "519373",
+      "target": "530875",
+      "synapseCount": 7
+    },
+    {
+      "source": "519373",
+      "target": "540383",
+      "synapseCount": 4
+    },
+    {
+      "source": "519373",
+      "target": "579919",
+      "synapseCount": 10
+    },
+    {
+      "source": "519619",
+      "target": "10704",
+      "synapseCount": 5
+    },
+    {
+      "source": "519619",
+      "target": "10826",
+      "synapseCount": 3
+    },
+    {
+      "source": "519619",
+      "target": "11176",
+      "synapseCount": 34
+    },
+    {
+      "source": "519619",
+      "target": "11402",
+      "synapseCount": 4
+    },
+    {
+      "source": "519619",
+      "target": "15708",
+      "synapseCount": 4
+    },
+    {
+      "source": "519619",
+      "target": "515034",
+      "synapseCount": 14
+    },
+    {
+      "source": "519619",
+      "target": "519128",
+      "synapseCount": 46
+    },
+    {
+      "source": "519619",
+      "target": "523628",
+      "synapseCount": 4
+    },
+    {
+      "source": "519619",
+      "target": "523987",
+      "synapseCount": 29
+    },
+    {
+      "source": "519619",
+      "target": "524893",
+      "synapseCount": 45
+    },
+    {
+      "source": "519619",
+      "target": "525780",
+      "synapseCount": 10
+    },
+    {
+      "source": "519619",
+      "target": "530875",
+      "synapseCount": 102
+    },
+    {
+      "source": "520151",
+      "target": "10079",
+      "synapseCount": 13
+    },
+    {
+      "source": "520151",
+      "target": "10495",
+      "synapseCount": 205
+    },
+    {
+      "source": "520151",
+      "target": "10599",
+      "synapseCount": 19
+    },
+    {
+      "source": "520151",
+      "target": "10816",
+      "synapseCount": 58
+    },
+    {
+      "source": "520151",
+      "target": "10826",
+      "synapseCount": 9
+    },
+    {
+      "source": "520151",
+      "target": "11455",
+      "synapseCount": 78
+    },
+    {
+      "source": "520151",
+      "target": "13728",
+      "synapseCount": 5
+    },
+    {
+      "source": "520151",
+      "target": "13768",
+      "synapseCount": 4
+    },
+    {
+      "source": "520151",
+      "target": "18713",
+      "synapseCount": 99
+    },
+    {
+      "source": "520151",
+      "target": "19267",
+      "synapseCount": 84
+    },
+    {
+      "source": "520151",
+      "target": "21242",
+      "synapseCount": 38
+    },
+    {
+      "source": "520151",
+      "target": "39608",
+      "synapseCount": 7
+    },
+    {
+      "source": "520151",
+      "target": "70924",
+      "synapseCount": 14
+    },
+    {
+      "source": "520151",
+      "target": "519373",
+      "synapseCount": 7
+    },
+    {
+      "source": "520151",
+      "target": "521526",
+      "synapseCount": 50
+    },
+    {
+      "source": "520151",
+      "target": "523060",
+      "synapseCount": 40
+    },
+    {
+      "source": "520151",
+      "target": "524733",
+      "synapseCount": 36
+    },
+    {
+      "source": "520151",
+      "target": "524893",
+      "synapseCount": 14
+    },
+    {
+      "source": "520151",
+      "target": "525780",
+      "synapseCount": 62
+    },
+    {
+      "source": "520151",
+      "target": "531829",
+      "synapseCount": 25
+    },
+    {
+      "source": "520186",
+      "target": "26485",
+      "synapseCount": 4
+    },
+    {
+      "source": "520186",
+      "target": "28622",
+      "synapseCount": 11
+    },
+    {
+      "source": "520186",
+      "target": "31016",
+      "synapseCount": 12
+    },
+    {
+      "source": "520186",
+      "target": "36094",
+      "synapseCount": 3
+    },
+    {
+      "source": "520186",
+      "target": "38859",
+      "synapseCount": 6
+    },
+    {
+      "source": "520186",
+      "target": "513387",
+      "synapseCount": 4
+    },
+    {
+      "source": "520186",
+      "target": "562782",
+      "synapseCount": 3
+    },
+    {
+      "source": "521086",
+      "target": "10804",
+      "synapseCount": 20
+    },
+    {
+      "source": "521086",
+      "target": "11777",
+      "synapseCount": 25
+    },
+    {
+      "source": "521086",
+      "target": "11805",
+      "synapseCount": 7
+    },
+    {
+      "source": "521086",
+      "target": "15708",
+      "synapseCount": 28
+    },
+    {
+      "source": "521086",
+      "target": "38853",
+      "synapseCount": 10
+    },
+    {
+      "source": "521086",
+      "target": "49262",
+      "synapseCount": 5
+    },
+    {
+      "source": "521086",
+      "target": "58401",
+      "synapseCount": 19
+    },
+    {
+      "source": "521086",
+      "target": "87077",
+      "synapseCount": 7
+    },
+    {
+      "source": "521086",
+      "target": "110448",
+      "synapseCount": 4
+    },
+    {
+      "source": "521086",
+      "target": "133427",
+      "synapseCount": 7
+    },
+    {
+      "source": "521086",
+      "target": "160320",
+      "synapseCount": 3
+    },
+    {
+      "source": "521086",
+      "target": "187741",
+      "synapseCount": 7
+    },
+    {
+      "source": "521086",
+      "target": "515015",
+      "synapseCount": 25
+    },
+    {
+      "source": "521086",
+      "target": "519131",
+      "synapseCount": 3
+    },
+    {
+      "source": "521086",
+      "target": "519368",
+      "synapseCount": 10
+    },
+    {
+      "source": "521086",
+      "target": "519373",
+      "synapseCount": 9
+    },
+    {
+      "source": "521086",
+      "target": "523987",
+      "synapseCount": 6
+    },
+    {
+      "source": "521086",
+      "target": "530875",
+      "synapseCount": 6
+    },
+    {
+      "source": "521086",
+      "target": "540383",
+      "synapseCount": 12
+    },
+    {
+      "source": "521086",
+      "target": "558665",
+      "synapseCount": 4
+    },
+    {
+      "source": "521526",
+      "target": "10816",
+      "synapseCount": 80
+    },
+    {
+      "source": "521526",
+      "target": "11805",
+      "synapseCount": 3
+    },
+    {
+      "source": "521526",
+      "target": "12726",
+      "synapseCount": 207
+    },
+    {
+      "source": "521526",
+      "target": "13728",
+      "synapseCount": 177
+    },
+    {
+      "source": "521526",
+      "target": "13768",
+      "synapseCount": 147
+    },
+    {
+      "source": "521526",
+      "target": "18713",
+      "synapseCount": 10
+    },
+    {
+      "source": "521526",
+      "target": "19267",
+      "synapseCount": 8
+    },
+    {
+      "source": "521526",
+      "target": "21242",
+      "synapseCount": 76
+    },
+    {
+      "source": "521526",
+      "target": "31083",
+      "synapseCount": 33
+    },
+    {
+      "source": "521526",
+      "target": "38853",
+      "synapseCount": 43
+    },
+    {
+      "source": "521526",
+      "target": "38859",
+      "synapseCount": 22
+    },
+    {
+      "source": "521526",
+      "target": "70924",
+      "synapseCount": 5
+    },
+    {
+      "source": "521526",
+      "target": "187741",
+      "synapseCount": 7
+    },
+    {
+      "source": "521526",
+      "target": "514853",
+      "synapseCount": 22
+    },
+    {
+      "source": "521526",
+      "target": "519368",
+      "synapseCount": 20
+    },
+    {
+      "source": "521526",
+      "target": "520151",
+      "synapseCount": 5
+    },
+    {
+      "source": "521526",
+      "target": "520395",
+      "synapseCount": 19
+    },
+    {
+      "source": "521526",
+      "target": "521086",
+      "synapseCount": 17
+    },
+    {
+      "source": "521526",
+      "target": "522444",
+      "synapseCount": 3
+    },
+    {
+      "source": "521526",
+      "target": "523060",
+      "synapseCount": 78
+    },
+    {
+      "source": "521526",
+      "target": "524733",
+      "synapseCount": 3
+    },
+    {
+      "source": "521526",
+      "target": "524893",
+      "synapseCount": 4
+    },
+    {
+      "source": "521526",
+      "target": "525780",
+      "synapseCount": 7
+    },
+    {
+      "source": "522444",
+      "target": "10267",
+      "synapseCount": 82
+    },
+    {
+      "source": "522444",
+      "target": "10704",
+      "synapseCount": 27
+    },
+    {
+      "source": "522444",
+      "target": "11402",
+      "synapseCount": 56
+    },
+    {
+      "source": "522444",
+      "target": "11777",
+      "synapseCount": 3
+    },
+    {
+      "source": "522444",
+      "target": "12690",
+      "synapseCount": 123
+    },
+    {
+      "source": "522444",
+      "target": "12859",
+      "synapseCount": 48
+    },
+    {
+      "source": "522444",
+      "target": "15708",
+      "synapseCount": 4
+    },
+    {
+      "source": "522444",
+      "target": "17946",
+      "synapseCount": 86
+    },
+    {
+      "source": "522444",
+      "target": "31016",
+      "synapseCount": 25
+    },
+    {
+      "source": "522444",
+      "target": "31083",
+      "synapseCount": 4
+    },
+    {
+      "source": "522444",
+      "target": "38859",
+      "synapseCount": 3
+    },
+    {
+      "source": "522444",
+      "target": "41692",
+      "synapseCount": 29
+    },
+    {
+      "source": "522444",
+      "target": "58401",
+      "synapseCount": 3
+    },
+    {
+      "source": "522444",
+      "target": "513387",
+      "synapseCount": 8
+    },
+    {
+      "source": "522444",
+      "target": "513391",
+      "synapseCount": 6
+    },
+    {
+      "source": "522444",
+      "target": "514853",
+      "synapseCount": 8
+    },
+    {
+      "source": "522444",
+      "target": "515338",
+      "synapseCount": 68
+    },
+    {
+      "source": "522444",
+      "target": "519371",
+      "synapseCount": 15
+    },
+    {
+      "source": "522444",
+      "target": "520186",
+      "synapseCount": 7
+    },
+    {
+      "source": "522749",
+      "target": "10079",
+      "synapseCount": 107
+    },
+    {
+      "source": "522749",
+      "target": "10495",
+      "synapseCount": 8
+    },
+    {
+      "source": "522749",
+      "target": "10704",
+      "synapseCount": 76
+    },
+    {
+      "source": "522749",
+      "target": "11402",
+      "synapseCount": 12
+    },
+    {
+      "source": "522749",
+      "target": "11777",
+      "synapseCount": 3
+    },
+    {
+      "source": "522749",
+      "target": "11873",
+      "synapseCount": 110
+    },
+    {
+      "source": "522749",
+      "target": "12726",
+      "synapseCount": 17
+    },
+    {
+      "source": "522749",
+      "target": "15626",
+      "synapseCount": 84
+    },
+    {
+      "source": "522749",
+      "target": "15708",
+      "synapseCount": 3
+    },
+    {
+      "source": "522749",
+      "target": "18603",
+      "synapseCount": 65
+    },
+    {
+      "source": "522749",
+      "target": "19366",
+      "synapseCount": 102
+    },
+    {
+      "source": "522749",
+      "target": "28622",
+      "synapseCount": 8
+    },
+    {
+      "source": "522749",
+      "target": "31016",
+      "synapseCount": 31
+    },
+    {
+      "source": "522749",
+      "target": "38853",
+      "synapseCount": 3
+    },
+    {
+      "source": "522749",
+      "target": "38859",
+      "synapseCount": 14
+    },
+    {
+      "source": "522749",
+      "target": "41692",
+      "synapseCount": 12
+    },
+    {
+      "source": "522749",
+      "target": "44619",
+      "synapseCount": 4
+    },
+    {
+      "source": "522749",
+      "target": "513387",
+      "synapseCount": 6
+    },
+    {
+      "source": "522749",
+      "target": "513391",
+      "synapseCount": 10
+    },
+    {
+      "source": "522749",
+      "target": "520151",
+      "synapseCount": 15
+    },
+    {
+      "source": "522749",
+      "target": "520186",
+      "synapseCount": 11
+    },
+    {
+      "source": "522749",
+      "target": "520395",
+      "synapseCount": 9
+    },
+    {
+      "source": "522749",
+      "target": "522444",
+      "synapseCount": 4
+    },
+    {
+      "source": "522749",
+      "target": "562782",
+      "synapseCount": 4
+    },
+    {
+      "source": "523043",
+      "target": "508595",
+      "synapseCount": 5
+    },
+    {
+      "source": "523043",
+      "target": "519131",
+      "synapseCount": 3
+    },
+    {
+      "source": "523043",
+      "target": "519371",
+      "synapseCount": 4
+    },
+    {
+      "source": "523060",
+      "target": "10013",
+      "synapseCount": 173
+    },
+    {
+      "source": "523060",
+      "target": "10079",
+      "synapseCount": 3
+    },
+    {
+      "source": "523060",
+      "target": "10804",
+      "synapseCount": 59
+    },
+    {
+      "source": "523060",
+      "target": "10816",
+      "synapseCount": 4
+    },
+    {
+      "source": "523060",
+      "target": "10826",
+      "synapseCount": 83
+    },
+    {
+      "source": "523060",
+      "target": "11990",
+      "synapseCount": 92
+    },
+    {
+      "source": "523060",
+      "target": "12690",
+      "synapseCount": 26
+    },
+    {
+      "source": "523060",
+      "target": "12918",
+      "synapseCount": 78
+    },
+    {
+      "source": "523060",
+      "target": "21242",
+      "synapseCount": 87
+    },
+    {
+      "source": "523060",
+      "target": "39608",
+      "synapseCount": 3
+    },
+    {
+      "source": "523060",
+      "target": "70924",
+      "synapseCount": 3
+    },
+    {
+      "source": "523060",
+      "target": "513174",
+      "synapseCount": 3
+    },
+    {
+      "source": "523060",
+      "target": "515015",
+      "synapseCount": 113
+    },
+    {
+      "source": "523060",
+      "target": "519371",
+      "synapseCount": 6
+    },
+    {
+      "source": "523060",
+      "target": "519373",
+      "synapseCount": 10
+    },
+    {
+      "source": "523060",
+      "target": "520151",
+      "synapseCount": 73
+    },
+    {
+      "source": "523060",
+      "target": "521526",
+      "synapseCount": 58
+    },
+    {
+      "source": "523060",
+      "target": "522444",
+      "synapseCount": 3
+    },
+    {
+      "source": "523060",
+      "target": "522749",
+      "synapseCount": 3
+    },
+    {
+      "source": "523060",
+      "target": "523628",
+      "synapseCount": 152
+    },
+    {
+      "source": "523060",
+      "target": "530875",
+      "synapseCount": 4
+    },
+    {
+      "source": "523628",
+      "target": "10804",
+      "synapseCount": 64
+    },
+    {
+      "source": "523628",
+      "target": "10826",
+      "synapseCount": 9
+    },
+    {
+      "source": "523628",
+      "target": "11145",
+      "synapseCount": 12
+    },
+    {
+      "source": "523628",
+      "target": "11176",
+      "synapseCount": 88
+    },
+    {
+      "source": "523628",
+      "target": "11777",
+      "synapseCount": 4
+    },
+    {
+      "source": "523628",
+      "target": "18713",
+      "synapseCount": 3
+    },
+    {
+      "source": "523628",
+      "target": "19267",
+      "synapseCount": 7
+    },
+    {
+      "source": "523628",
+      "target": "21242",
+      "synapseCount": 10
+    },
+    {
+      "source": "523628",
+      "target": "38853",
+      "synapseCount": 3
+    },
+    {
+      "source": "523628",
+      "target": "187741",
+      "synapseCount": 3
+    },
+    {
+      "source": "523628",
+      "target": "515015",
+      "synapseCount": 3
+    },
+    {
+      "source": "523628",
+      "target": "515034",
+      "synapseCount": 24
+    },
+    {
+      "source": "523628",
+      "target": "519128",
+      "synapseCount": 3
+    },
+    {
+      "source": "523628",
+      "target": "523060",
+      "synapseCount": 10
+    },
+    {
+      "source": "523628",
+      "target": "524893",
+      "synapseCount": 81
+    },
+    {
+      "source": "523628",
+      "target": "525780",
+      "synapseCount": 23
+    },
+    {
+      "source": "523628",
+      "target": "530875",
+      "synapseCount": 35
+    },
+    {
+      "source": "523987",
+      "target": "10079",
+      "synapseCount": 5
+    },
+    {
+      "source": "523987",
+      "target": "11176",
+      "synapseCount": 36
+    },
+    {
+      "source": "523987",
+      "target": "11402",
+      "synapseCount": 3
+    },
+    {
+      "source": "523987",
+      "target": "18406",
+      "synapseCount": 11
+    },
+    {
+      "source": "523987",
+      "target": "515034",
+      "synapseCount": 32
+    },
+    {
+      "source": "523987",
+      "target": "519128",
+      "synapseCount": 17
+    },
+    {
+      "source": "523987",
+      "target": "519619",
+      "synapseCount": 18
+    },
+    {
+      "source": "523987",
+      "target": "524893",
+      "synapseCount": 56
+    },
+    {
+      "source": "523987",
+      "target": "525780",
+      "synapseCount": 77
+    },
+    {
+      "source": "523987",
+      "target": "530875",
+      "synapseCount": 42
+    },
+    {
+      "source": "524733",
+      "target": "524893",
+      "synapseCount": 7
+    },
+    {
+      "source": "524893",
+      "target": "10816",
+      "synapseCount": 12
+    },
+    {
+      "source": "524893",
+      "target": "11176",
+      "synapseCount": 179
+    },
+    {
+      "source": "524893",
+      "target": "11455",
+      "synapseCount": 18
+    },
+    {
+      "source": "524893",
+      "target": "11805",
+      "synapseCount": 24
+    },
+    {
+      "source": "524893",
+      "target": "513174",
+      "synapseCount": 3
+    },
+    {
+      "source": "524893",
+      "target": "515034",
+      "synapseCount": 4
+    },
+    {
+      "source": "524893",
+      "target": "519128",
+      "synapseCount": 6
+    },
+    {
+      "source": "524893",
+      "target": "519131",
+      "synapseCount": 8
+    },
+    {
+      "source": "524893",
+      "target": "524733",
+      "synapseCount": 3
+    },
+    {
+      "source": "524893",
+      "target": "525780",
+      "synapseCount": 3
+    },
+    {
+      "source": "524893",
+      "target": "531829",
+      "synapseCount": 3
+    },
+    {
+      "source": "525780",
+      "target": "10599",
+      "synapseCount": 6
+    },
+    {
+      "source": "525780",
+      "target": "10816",
+      "synapseCount": 5
+    },
+    {
+      "source": "525780",
+      "target": "11455",
+      "synapseCount": 4
+    },
+    {
+      "source": "525780",
+      "target": "13728",
+      "synapseCount": 36
+    },
+    {
+      "source": "525780",
+      "target": "13768",
+      "synapseCount": 42
+    },
+    {
+      "source": "525780",
+      "target": "38853",
+      "synapseCount": 4
+    },
+    {
+      "source": "525780",
+      "target": "519373",
+      "synapseCount": 3
+    },
+    {
+      "source": "525780",
+      "target": "521526",
+      "synapseCount": 6
+    },
+    {
+      "source": "525780",
+      "target": "531829",
+      "synapseCount": 3
+    },
+    {
+      "source": "530875",
+      "target": "11176",
+      "synapseCount": 4
+    },
+    {
+      "source": "530875",
+      "target": "13728",
+      "synapseCount": 6
+    },
+    {
+      "source": "530875",
+      "target": "58401",
+      "synapseCount": 3
+    },
+    {
+      "source": "530875",
+      "target": "133427",
+      "synapseCount": 3
+    },
+    {
+      "source": "530875",
+      "target": "519368",
+      "synapseCount": 50
+    },
+    {
+      "source": "530875",
+      "target": "519373",
+      "synapseCount": 17
+    },
+    {
+      "source": "530875",
+      "target": "521086",
+      "synapseCount": 77
+    },
+    {
+      "source": "530875",
+      "target": "540383",
+      "synapseCount": 3
+    },
+    {
+      "source": "531829",
+      "target": "10816",
+      "synapseCount": 3
+    },
+    {
+      "source": "531829",
+      "target": "13728",
+      "synapseCount": 4
+    },
+    {
+      "source": "540383",
+      "target": "11176",
+      "synapseCount": 16
+    },
+    {
+      "source": "556300",
+      "target": "10704",
+      "synapseCount": 9
+    },
+    {
+      "source": "556300",
+      "target": "10804",
+      "synapseCount": 10
+    },
+    {
+      "source": "556300",
+      "target": "10826",
+      "synapseCount": 3
+    },
+    {
+      "source": "556300",
+      "target": "11145",
+      "synapseCount": 19
+    },
+    {
+      "source": "556300",
+      "target": "11455",
+      "synapseCount": 7
+    },
+    {
+      "source": "562782",
+      "target": "26485",
+      "synapseCount": 7
+    },
+    {
+      "source": "562782",
+      "target": "41692",
+      "synapseCount": 9
+    },
+    {
+      "source": "562782",
+      "target": "513391",
+      "synapseCount": 3
+    }
+  ]
+}

@@ -78,6 +78,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 1 | Use conventional commit messages with phase numbers, one commit per phase. | The user explicitly requested conventional commits; this supersedes the original `Phase N:` message format. |
 | 2026-09-19 | 1 | Resolved `react@19.3.0`, `vite@8.3.0`, `@vitejs/plugin-react@6.1.1`, `typescript@6.0.3`, `oxlint@1.83.0`, `vitest@5.0.1`, and `zod@4.6.5`; preserve the template TypeScript range `~6.0.2`. | Versions read from `package-lock.json`. Clean `npm ci`, `npm run check`, and the production preview title check passed on Node 22.22.3. |
 | 2026-09-19 | 2 | Read connection row counts directly from IPC message metadata and skip data bodies; add three focused Python source-tool tests and ignore Python bytecode. | Both source sizes and MD5 checksums match R3. The second download run skips both files and leaves retrieval metadata byte-identical. The schema report reproduces all R3 row, batch, type, and side counts. Tests cover corrupt caches, failed-download cleanup, and compressed/dictionary/empty-batch metadata. Python 3.12.14, pyarrow 25.0.1, pandas 3.0.6, and networkx 3.6.1 are locked. |
+| 2026-09-19 | 3 | Extract all configured MBON neurons, scan connections in Arrow batches, and serialize both outputs deterministically. The manifest retrieval date is the latest input retrieval date if they differ. | Counts, threshold comparisons, self-connection removal, all eight starts, and both example records match R3. Two extractions produced identical SHA-256 hashes for both files. The output has 97 neurons, 936 connections, and 25,379 synapses. |
 
 ## Reference
 
@@ -1242,7 +1243,7 @@ Create a reproducible Python environment and download the two MaleCNS files with
 
 Write the script that produces the committed circuit and manifest.
 
-- [ ] Write `scripts/data/extract_circuit.py`, driven by `scripts/data/config/mbon-v1.json`. It fails with a clear message if `scripts/data/.cache/retrieval.json` or either source file is missing.
+- [x] Write `scripts/data/extract_circuit.py`, driven by `scripts/data/config/mbon-v1.json`. It fails with a clear message if `scripts/data/.cache/retrieval.json` or either source file is missing.
   1. Load the annotations and select rows where `class == "MBON"`. Assert the body IDs are unique and the count is within `limits`.
   2. Stream the connections file batch by batch (R3) and keep rows whose `body_pre` and `body_post` are both selected.
   3. Assert there are no null values and no duplicate `(body_pre, body_post)` pairs, and that every weight is a positive integer. Count and remove self-connections.
@@ -1252,8 +1253,8 @@ Write the script that produces the committed circuit and manifest.
   7. Write `circuit.json` using the R4 serialization rules, converting pandas missing values to `null`.
   8. Write `manifest.json` exactly as shown in R4. Take `retrievedOn` and input SHA-256 values from `retrieval.json`, compute `configSha256` from the config file bytes, and compute `output.bytes` and `output.sha256` from the written `circuit.json`.
   9. Print a summary of every count and the start neurons.
-- [ ] The only date in the output is `retrievedOn`, so two runs produce byte-identical files.
-- [ ] Add the `data:extract` script from R2.
+- [x] The only date in the output is `retrievedOn`, so two runs produce byte-identical files.
+- [x] Add the `data:extract` script from R2.
 
 **Verify**
 
@@ -1262,7 +1263,7 @@ Write the script that produces the committed circuit and manifest.
 3. `node -e "const c=require('./public/data/circuits/mbon-v1/circuit.json'); console.log(c.neurons.length, c.connections.length)"` prints `97 936`.
 4. `circuit.json` contains the neuron and connection records given as examples in R3.
 
-- [ ] All verification steps pass and every value matches R3 exactly.
+- [x] All verification steps pass and every value matches R3 exactly.
 
 ## Phase 4: Verify the export and write the extraction report
 
