@@ -81,6 +81,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 3 | Extract all configured MBON neurons, scan connections in Arrow batches, and serialize both outputs deterministically. The manifest retrieval date is the latest input retrieval date if they differ. | Counts, threshold comparisons, self-connection removal, all eight starts, and both example records match R3. Two extractions produced identical SHA-256 hashes for both files. The output has 97 neurons, 936 connections, and 25,379 synapses. |
 | 2026-09-19 | 4 | Independently verify all retained weights as well as the required 20 samples, annotation records, checksums, and complete connection set. | `npm run data:verify` passes: 20/20 samples, 97/97 annotation records, all 936 retained weights, manifest counts, threshold comparisons, and starts agree with upstream data. The report identifies four MBON10 dead ends and one MBON15 dead end, with out-degree median 7, p90 22, and maximum 41. |
 | 2026-09-19 | 5 | Validate both JSON schemas, graph invariants, verified checksums, and circuit byte length before exposing the graph. Deduplicate the temporary app load across React StrictMode effects. | `npm run check` passes with 31 unit/data tests. Loader tests cover root, relative, and subdirectory bases plus network/schema/checksum failures. Deliberately changing one committed synapse count makes `data:validate` fail with a checksum mismatch; the original file was restored. No React or Tone imports occur in `src/connectome/`. |
+| 2026-09-19 | 6 | Encode and inspect canonical 44-byte, 16-bit PCM WAV files, with explicit invalid-input and header-size checks. | `npm run check` passes with 43 tests, including exact stereo header values, signed sample conversion/clamping, interleaving, mono round trips, peak detection, invalid channel/rate/sample rejection, and truncated-file rejection. |
 
 ## Reference
 
@@ -1318,9 +1319,9 @@ Implement the browser data path and the checks that protect it.
 
 Build and test the WAV encoder before any audio code depends on it.
 
-- [ ] Implement `encodeWav16` in `src/audio/wav.ts` as specified in R11. Throw if there are no channels or if channel lengths differ.
-- [ ] Implement `parseWavHeader(buffer: ArrayBuffer)` in `src/audio/wavInfo.ts`, returning `{ channels, sampleRate, bitsPerSample, dataBytes, frames, durationSeconds, peak }`, where `peak` is the largest absolute 16-bit sample value.
-- [ ] Write `src/audio/wav.test.ts`:
+- [x] Implement `encodeWav16` in `src/audio/wav.ts` as specified in R11. Throw if there are no channels or if channel lengths differ.
+- [x] Implement `parseWavHeader(buffer: ArrayBuffer)` in `src/audio/wavInfo.ts`, returning `{ channels, sampleRate, bitsPerSample, dataBytes, frames, durationSeconds, peak }`, where `peak` is the largest absolute 16-bit sample value.
+- [x] Write `src/audio/wav.test.ts`:
   - A stereo, 44,100 Hz, 441-frame input produces a total length of 1,808 bytes, a ChunkSize of 1,800, a ByteRate of 176,400, a BlockAlign of 4, and a data size of 1,764.
   - Sample conversion: 1 → 32767, −1 → −32768, 0.5 → 16384, −0.25 → −8192, 2 → 32767, and −3 → −32768.
   - Samples are interleaved as left 0, right 0, left 1, right 1.
@@ -1331,7 +1332,7 @@ Build and test the WAV encoder before any audio code depends on it.
 
 1. `npm run check` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 7: Build the audio spike with a real traversal
 
