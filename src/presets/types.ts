@@ -11,6 +11,16 @@ export interface ChordDef {
 
 export type DrumHits = Record<DrumVoice, ReadonlyArray<readonly [step: number, velocity: number]>>
 
+export interface SoundParams {
+  keysCutoffHz: number
+  bassCutoffHz: number
+  masterCutoffHz: number
+  reverbSend: number
+  saturationWet: number
+  rainLevel: number
+  crackleLevel: number
+}
+
 export interface PresetDefinition {
   id: PresetId
   version: number
@@ -23,4 +33,5 @@ export interface PresetDefinition {
   embellishChance: number
   fillChance: number
   drums: { main: DrumHits; turn: DrumHits; fill: DrumHits }
+  sound: SoundParams
 }

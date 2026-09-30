@@ -92,6 +92,8 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 13 | Advance `MAPPING_VERSION` from 1 to 2 when drums, embellishments, and humanization begin changing composed events. | R1 rule 4 requires a mapping version bump whenever composition output changes. Historical traversal vectors and the Phase 10 traversal test retain their explicit version-1 seed text; current composition streams use version 2. |
 | 2026-09-30 | 13 | Complete the delayed Phase 13 verification. | `npm run check` passes: typecheck, lint, 78 unit tests, 5 data validation tests, and the production build. |
 | 2026-09-30 | 14 | Use one named seeded stream per buffer and consume successive draws for stereo channels; place rain drips and crackle clicks at deterministic random sample positions. Smooth the final 1 ms of looped ambience toward its first sample after the prescribed equal-power overlap. | R5 pins each stream to `buffer|${name}|${sampleRate}`. The 44.1 kHz rain seam measured 0.172 after the required overlap and peak scaling; smoothing the final 1 ms brought it below the specified 0.1 threshold. The six 48 kHz buffers generated in 48.1 ms. |
+| 2026-09-30 | 15 | Ramp bass cutoff changes through a Tone `Multiply` node on the filter-envelope signal. | Tone's `FrequencyEnvelope.baseFrequency` setter changes immediately and has no automation API. Scaling its output preserves the configured envelope and applies the required 0.5 s ramp using the supplied audio context. |
+| 2026-09-30 | 15 | Pin `@vitest/browser-playwright` to 5.0.1 to match the repository's `vitest` 5.0.1. | The `@5` install range resolved 5.0.3, whose exact Vitest peer conflicts with 5.0.1. Using 5.0.1 keeps the peer graph aligned and `npm ls` clean. |
 
 ## Reference
 
@@ -1520,18 +1522,18 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 
 **Agent** · **Read:** R1 (rule 2), R9 (timing adapter), R10
 
-- [ ] Add `SoundParams` from R10 to `src/presets/types.ts`, and add each preset's `sound` values from the R10 table.
-- [ ] Implement `createRig` in `src/audio/rig.ts` as specified in R10, including a helper that converts buffer data to a native `AudioBuffer`. Every Tone node receives the context argument.
-- [ ] Run `npm install --save-dev --save-exact @vitest/browser-playwright@5`. Add a second project to `vitest.config.ts`: `{ test: { name: 'audio', include: ['tests/audio/**/*.test.ts'], browser: { enabled: true, headless: true, provider: playwright(), instances: [{ browser: 'chromium' }] } } }`, importing `playwright` from `@vitest/browser-playwright`. Add the `test:audio` script, and set `resolveJsonModule: true` in `tsconfig.test.json`.
-- [ ] Write `tests/audio/rig.test.ts`. For each preset, compose phrase 0 of seed 1 at variation 0.5 on the branching fixture (imported as JSON). Render the first bar's events offline with `new Tone.OfflineContext(2, 16 * secondsPerStep(bpm) + 1, 44100)`, triggering each event at `eventTimeSeconds`. Assert that no sample is NaN, the absolute peak is at most 1.0, and RMS is above 0.01.
-- [ ] In the same file, assert that rendering with all three layers muted and ambience off gives a peak below 0.001, and that muting only the drums changes the output compared with the full mix.
+- [x] Add `SoundParams` from R10 to `src/presets/types.ts`, and add each preset's `sound` values from the R10 table.
+- [x] Implement `createRig` in `src/audio/rig.ts` as specified in R10, including a helper that converts buffer data to a native `AudioBuffer`. Every Tone node receives the context argument.
+- [x] Run `npm install --save-dev --save-exact @vitest/browser-playwright@5`. Add a second project to `vitest.config.ts`: `{ test: { name: 'audio', include: ['tests/audio/**/*.test.ts'], browser: { enabled: true, headless: true, provider: playwright(), instances: [{ browser: 'chromium' }] } } }`, importing `playwright` from `@vitest/browser-playwright`. Add the `test:audio` script, and set `resolveJsonModule: true` in `tsconfig.test.json`.
+- [x] Write `tests/audio/rig.test.ts`. For each preset, compose phrase 0 of seed 1 at variation 0.5 on the branching fixture (imported as JSON). Render the first bar's events offline with `new Tone.OfflineContext(2, 16 * secondsPerStep(bpm) + 1, 44100)`, triggering each event at `eventTimeSeconds`. Assert that no sample is NaN, the absolute peak is at most 1.0, and RMS is above 0.01.
+- [x] In the same file, assert that rendering with all three layers muted and ambience off gives a peak below 0.001, and that muting only the drums changes the output compared with the full mix.
 
 **Verify**
 
-1. `npm run check` passes.
-2. `npm run test:audio` passes.
+1. [x] `npm run check` passes.
+2. [x] `npm run test:audio` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 16: Build the live engine and audition page
 
