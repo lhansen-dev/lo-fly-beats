@@ -1428,9 +1428,9 @@ Exit criteria from the plan: a real-graph arrangement plays for five minutes; th
 
 **Agent** · **Read:** R7 (chord qualities, harmony), R8
 
-- [ ] Create `src/presets/presets.ts` with the R8 `PRESETS` literal, `DEFAULT_PRESET_ID = 'rainy-windowsill'`, and `getPreset(id)`.
-- [ ] Create `src/music/harmony.ts` with `CHORD_QUALITIES`; `chordPitchClasses(chord)`; `voicingCandidates(chord, range)`; `chooseVoicing(chord, range, previous: number[] | null)`; `bassRootMidi(rootPitchClass)`; `ringIndexFor(neuron)`; the pure helper `applyRingRule(rawIndices: number[]): { index: number; stepped: boolean }[]`; and `chooseChordSlots(graph, walk, preset): ChordSlot[]`.
-- [ ] Write `src/music/harmony.test.ts`:
+- [x] Create `src/presets/presets.ts` with the R8 `PRESETS` literal, `DEFAULT_PRESET_ID = 'rainy-windowsill'`, and `getPreset(id)`.
+- [x] Create `src/music/harmony.ts` with `CHORD_QUALITIES`; `chordPitchClasses(chord)`; `voicingCandidates(chord, range)`; `chooseVoicing(chord, range, previous: number[] | null)`; `bassRootMidi(rootPitchClass)`; `ringIndexFor(neuron)`; the pure helper `applyRingRule(rawIndices: number[]): { index: number; stepped: boolean }[]`; and `chooseChordSlots(graph, walk, preset): ChordSlot[]`.
+- [x] Write `src/music/harmony.test.ts`:
   - Each preset has 6 chords.
   - Every voicing pitch class and every root-plus-7 pitch class belongs to its key: D natural minor {0, 2, 4, 5, 7, 9, 10}, C natural minor {0, 2, 3, 5, 7, 8, 10}, or A Dorian {0, 2, 4, 6, 7, 9, 11}.
   - The five voicing test vectors in R7 are reproduced.
@@ -1443,7 +1443,7 @@ Exit criteria from the plan: a real-graph arrangement plays for five minutes; th
 
 1. `npm run check` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 12: Compose chords, bass, and keys
 
