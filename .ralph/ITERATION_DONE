@@ -1,0 +1,2 @@
+Implemented pure PlaybackSequencer with phrase/event indexing and reset behavior.
+Added unit coverage; targeted vitest run passes (4 tests).
