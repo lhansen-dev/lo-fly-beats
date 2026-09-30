@@ -87,6 +87,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 7 | Chromium 153.0.8010.12 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,102, and playback works again after export. Human listening and the two-minute background-tab check remain Phase 8. |
 | 2026-09-19 | 7 | Firefox 155.0 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. Human listening and the two-minute background-tab check remain Phase 8. |
 | 2026-09-19 | 7 | WebKit 26.6 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. This does not replace the Phase 8 review in desktop Safari. |
+| 2026-09-30 | 8 | User approved continuing to Phase 9: "ah yeah it's good. continue". | Approval was given in conversation after the Phase 8 review request. A fresh Luna baseline audit passed `npm run check` (45 unit/data tests) and all three Playwright browser projects. Detailed manual browser versions and results were not supplied; the human checklist remains available for the user to record them. |
 
 ## Reference
 
@@ -1368,7 +1369,7 @@ Prove, before building the real engine, that a real traversal can play live, kee
 
 **User** · **Read:** R3, the extraction report
 
-Agents: do not check these boxes. Stop and report that Phase 8 is waiting for the user.
+**Gate status:** Approved to continue by the user on 2026-09-30 (see Decision log). Proceed to Phase 9. The checkboxes below remain user-owned records of the individual manual checks.
 
 - [ ] Run `npm run build && npm run preview` and open http://localhost:4173 in current desktop Chrome, Firefox, and Safari. In each, press **Play spike** and confirm the phrase sounds clean. Record the browser versions in the Decision log.
 - [ ] In each browser, start the spike, switch to another tab for 2 minutes, and return. Confirm the audio kept playing without stuttering and without a burst of catch-up notes. Record the results.
@@ -1385,20 +1386,20 @@ Exit criteria from the plan: a real-graph arrangement plays for five minutes; th
 
 **Agent** · **Read:** R1, R5, R6 (types), R7 (types), R8 (types)
 
-- [ ] Create `src/music/versions.ts` exactly as in R5.
-- [ ] Create `src/music/rng.ts` with the exact `fnv1a32`, `mulberry32`, `Rng`, and `createRng` from R5, and `clamp(value, min, max)` in `src/music/math.ts`.
-- [ ] Create `src/music/streams.ts` with `compositionPhraseIndex(variation, phraseIndex)`, `compositionStreams(sessionSeed, compositionPhraseIndex)` returning `{ traversal, rhythm, humanize }`, `animationRng(sessionSeed)`, `jokesRng(sessionSeed)`, `bufferRng(name, sampleRate)`, and `seedHex(seed)`, all using the seed texts in R5.
-- [ ] Create `src/app/seed.ts` with `randomSessionSeed()` using `crypto.getRandomValues`.
-- [ ] Create `src/music/types.ts` containing `WalkStep` (R6) and the R7 types. Create `src/presets/types.ts` with the R8 types, leaving out `sound` and `visual` for now.
-- [ ] Write `src/music/rng.test.ts` covering every R5 test vector; `int` staying within range; `pick` throwing on an empty array; identical sequences for identical seed texts; and different sequences for different texts.
-- [ ] Write `src/music/streams.test.ts`: `seedHex(1)` is `00000001`; `seedHex(0xdeadbeef)` is `deadbeef`; `compositionPhraseIndex(0, 7)` is 0; `compositionPhraseIndex(0.3, 7)` is 7; and the traversal stream for seed 1, phrase 0 produces the same first three values as `createRng('1|0|1|traversal')`.
+- [x] Create `src/music/versions.ts` exactly as in R5.
+- [x] Create `src/music/rng.ts` with the exact `fnv1a32`, `mulberry32`, `Rng`, and `createRng` from R5, and `clamp(value, min, max)` in `src/music/math.ts`.
+- [x] Create `src/music/streams.ts` with `compositionPhraseIndex(variation, phraseIndex)`, `compositionStreams(sessionSeed, compositionPhraseIndex)` returning `{ traversal, rhythm, humanize }`, `animationRng(sessionSeed)`, `jokesRng(sessionSeed)`, `bufferRng(name, sampleRate)`, and `seedHex(seed)`, all using the seed texts in R5.
+- [x] Create `src/app/seed.ts` with `randomSessionSeed()` using `crypto.getRandomValues`.
+- [x] Create `src/music/types.ts` containing `WalkStep` (R6) and the R7 types. Create `src/presets/types.ts` with the R8 types, leaving out `sound` and `visual` for now.
+- [x] Write `src/music/rng.test.ts` covering every R5 test vector; `int` staying within range; `pick` throwing on an empty array; identical sequences for identical seed texts; and different sequences for different texts.
+- [x] Write `src/music/streams.test.ts`: `seedHex(1)` is `00000001`; `seedHex(0xdeadbeef)` is `deadbeef`; `compositionPhraseIndex(0, 7)` is 0; `compositionPhraseIndex(0.3, 7)` is 7; and the traversal stream for seed 1, phrase 0 produces the same first three values as `createRng('1|0|1|traversal')`.
 
 **Verify**
 
 1. `npm run check` passes.
 2. `grep -rn "Math.random" src` prints nothing.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 10: Implement seeded graph traversal
 
