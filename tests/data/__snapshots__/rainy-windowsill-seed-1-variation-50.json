@@ -1,0 +1,2455 @@
+{
+  "scoreVersion": 1,
+  "mappingVersion": 2,
+  "presetId": "rainy-windowsill",
+  "presetVersion": 1,
+  "sessionSeed": 1,
+  "phraseIndex": 0,
+  "compositionPhraseIndex": 0,
+  "variation": 0.5,
+  "graphChecksum": "95a7781dac7989cf56a9bcf0383d715569b45d421b0b44d606813bacf825ad3c",
+  "bars": 8,
+  "stepsPerBar": 16,
+  "chords": [
+    {
+      "bar": 0,
+      "traceBeat": 0,
+      "ringIndex": 4,
+      "ringStepped": false,
+      "symbol": "Fmaj9",
+      "rootMidi": 41,
+      "voicing": [
+        57,
+        60,
+        64,
+        67
+      ]
+    },
+    {
+      "bar": 2,
+      "traceBeat": 8,
+      "ringIndex": 1,
+      "ringStepped": false,
+      "symbol": "Bbmaj9",
+      "rootMidi": 46,
+      "voicing": [
+        57,
+        60,
+        62,
+        65
+      ]
+    },
+    {
+      "bar": 4,
+      "traceBeat": 16,
+      "ringIndex": 2,
+      "ringStepped": true,
+      "symbol": "Gm9",
+      "rootMidi": 43,
+      "voicing": [
+        57,
+        58,
+        62,
+        65
+      ]
+    },
+    {
+      "bar": 6,
+      "traceBeat": 24,
+      "ringIndex": 1,
+      "ringStepped": false,
+      "symbol": "Bbmaj9",
+      "rootMidi": 46,
+      "voicing": [
+        57,
+        60,
+        62,
+        65
+      ]
+    }
+  ],
+  "events": [
+    {
+      "layer": "drums",
+      "step": 0,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.9013,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 0,
+      "microOffset": 0.0051,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.5268,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 0,
+      "microOffset": 0.0148,
+      "durationSteps": 3,
+      "midi": 41,
+      "drum": null,
+      "velocity": 0.9424,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 0,
+      "microOffset": 0.0182,
+      "durationSteps": 7,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6801,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 0,
+      "microOffset": 0.0133,
+      "durationSteps": 7,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.7372,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 0,
+      "microOffset": 0.0189,
+      "durationSteps": 7,
+      "midi": 64,
+      "drum": null,
+      "velocity": 0.6872,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 0,
+      "microOffset": 0.0027,
+      "durationSteps": 7,
+      "midi": 67,
+      "drum": null,
+      "velocity": 0.6908,
+      "traceBeat": 0
+    },
+    {
+      "layer": "drums",
+      "step": 2,
+      "microOffset": 0.0417,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3083,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 3,
+      "microOffset": 0.0266,
+      "durationSteps": 1,
+      "midi": 48,
+      "drum": null,
+      "velocity": 0.6225,
+      "traceBeat": 0
+    },
+    {
+      "layer": "drums",
+      "step": 4,
+      "microOffset": 0.0289,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7675,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 4,
+      "microOffset": 0.0069,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4329,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 4,
+      "microOffset": 0.007,
+      "durationSteps": 2,
+      "midi": 52,
+      "drum": null,
+      "velocity": 0.6368,
+      "traceBeat": 1
+    },
+    {
+      "layer": "drums",
+      "step": 6,
+      "microOffset": 0.021,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3081,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 6,
+      "microOffset": 0.0226,
+      "durationSteps": 2,
+      "midi": 48,
+      "drum": null,
+      "velocity": 0.6117,
+      "traceBeat": 1
+    },
+    {
+      "layer": "drums",
+      "step": 8,
+      "microOffset": 0.0276,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4989,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 8,
+      "microOffset": 0.0193,
+      "durationSteps": 2,
+      "midi": 41,
+      "drum": null,
+      "velocity": 0.8543,
+      "traceBeat": 2
+    },
+    {
+      "layer": "keys",
+      "step": 8,
+      "microOffset": 0.0384,
+      "durationSteps": 7,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6033,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 8,
+      "microOffset": 0.0073,
+      "durationSteps": 7,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.591,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 8,
+      "microOffset": 0.0283,
+      "durationSteps": 7,
+      "midi": 64,
+      "drum": null,
+      "velocity": 0.6205,
+      "traceBeat": 0
+    },
+    {
+      "layer": "keys",
+      "step": 8,
+      "microOffset": 0.0062,
+      "durationSteps": 7,
+      "midi": 67,
+      "drum": null,
+      "velocity": 0.5888,
+      "traceBeat": 0
+    },
+    {
+      "layer": "drums",
+      "step": 10,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7479,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 10,
+      "microOffset": 0.0583,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2899,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 10,
+      "microOffset": 0.0201,
+      "durationSteps": 2,
+      "midi": 53,
+      "drum": null,
+      "velocity": 0.6547,
+      "traceBeat": 2
+    },
+    {
+      "layer": "drums",
+      "step": 12,
+      "microOffset": 0.0227,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7943,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 12,
+      "microOffset": 0.053,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4357,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 14,
+      "microOffset": 0.0013,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3338,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 14,
+      "microOffset": 0.0057,
+      "durationSteps": 2,
+      "midi": 48,
+      "drum": null,
+      "velocity": 0.6978,
+      "traceBeat": 3
+    },
+    {
+      "layer": "keys",
+      "step": 14,
+      "microOffset": 0.0059,
+      "durationSteps": 2,
+      "midi": 79,
+      "drum": null,
+      "velocity": 0.4759,
+      "traceBeat": 3
+    },
+    {
+      "layer": "drums",
+      "step": 15,
+      "microOffset": 0.0495,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.1733,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 16,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.9279,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 16,
+      "microOffset": 0.048,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.5073,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 16,
+      "microOffset": 0.0292,
+      "durationSteps": 2,
+      "midi": 41,
+      "drum": null,
+      "velocity": 0.9526,
+      "traceBeat": 4
+    },
+    {
+      "layer": "drums",
+      "step": 18,
+      "microOffset": 0.0501,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2931,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 18,
+      "microOffset": 0.004,
+      "durationSteps": 2,
+      "midi": 53,
+      "drum": null,
+      "velocity": 0.6707,
+      "traceBeat": 4
+    },
+    {
+      "layer": "keys",
+      "step": 18,
+      "microOffset": 0.0641,
+      "durationSteps": 13,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.692,
+      "traceBeat": 4
+    },
+    {
+      "layer": "keys",
+      "step": 18,
+      "microOffset": 0.0478,
+      "durationSteps": 13,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.6928,
+      "traceBeat": 4
+    },
+    {
+      "layer": "keys",
+      "step": 18,
+      "microOffset": 0.0127,
+      "durationSteps": 13,
+      "midi": 64,
+      "drum": null,
+      "velocity": 0.6878,
+      "traceBeat": 4
+    },
+    {
+      "layer": "keys",
+      "step": 18,
+      "microOffset": 0.0773,
+      "durationSteps": 13,
+      "midi": 67,
+      "drum": null,
+      "velocity": 0.6744,
+      "traceBeat": 4
+    },
+    {
+      "layer": "drums",
+      "step": 20,
+      "microOffset": 0.0348,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8408,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 20,
+      "microOffset": 0.0404,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4439,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 22,
+      "microOffset": 0.0342,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3071,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 24,
+      "microOffset": 0.046,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4707,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 24,
+      "microOffset": 0.0028,
+      "durationSteps": 2,
+      "midi": 41,
+      "drum": null,
+      "velocity": 0.9245,
+      "traceBeat": 6
+    },
+    {
+      "layer": "drums",
+      "step": 26,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7189,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 26,
+      "microOffset": 0.0311,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2955,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 26,
+      "microOffset": 0.0296,
+      "durationSteps": 2,
+      "midi": 53,
+      "drum": null,
+      "velocity": 0.642,
+      "traceBeat": 6
+    },
+    {
+      "layer": "drums",
+      "step": 28,
+      "microOffset": 0.0332,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8133,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 28,
+      "microOffset": 0.0133,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.476,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 30,
+      "microOffset": 0.0506,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3468,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 31,
+      "microOffset": 0.0329,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.1854,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 32,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.8623,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 32,
+      "microOffset": 0.0302,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.5209,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 32,
+      "microOffset": 0.0269,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.9209,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 32,
+      "microOffset": 0.0092,
+      "durationSteps": 5,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.7145,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 32,
+      "microOffset": 0.0011,
+      "durationSteps": 5,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.7505,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 32,
+      "microOffset": 0.071,
+      "durationSteps": 5,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.7171,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 32,
+      "microOffset": 0.0619,
+      "durationSteps": 5,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.7085,
+      "traceBeat": 8
+    },
+    {
+      "layer": "drums",
+      "step": 34,
+      "microOffset": 0.0171,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2877,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 36,
+      "microOffset": 0.0381,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7883,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 36,
+      "microOffset": 0.0305,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4704,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 38,
+      "microOffset": 0.0151,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3104,
+      "traceBeat": null
+    },
+    {
+      "layer": "keys",
+      "step": 38,
+      "microOffset": 0.0413,
+      "durationSteps": 9,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.5874,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 38,
+      "microOffset": 0.0074,
+      "durationSteps": 9,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.6072,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 38,
+      "microOffset": 0.0291,
+      "durationSteps": 9,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.6539,
+      "traceBeat": 8
+    },
+    {
+      "layer": "keys",
+      "step": 38,
+      "microOffset": 0.0465,
+      "durationSteps": 9,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.6189,
+      "traceBeat": 8
+    },
+    {
+      "layer": "drums",
+      "step": 40,
+      "microOffset": 0.0567,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4846,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 40,
+      "microOffset": 0.0262,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.8593,
+      "traceBeat": 10
+    },
+    {
+      "layer": "drums",
+      "step": 42,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7292,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 42,
+      "microOffset": 0.0516,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.313,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 42,
+      "microOffset": 0.0236,
+      "durationSteps": 2,
+      "midi": 58,
+      "drum": null,
+      "velocity": 0.6517,
+      "traceBeat": 10
+    },
+    {
+      "layer": "drums",
+      "step": 44,
+      "microOffset": 0.0281,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8126,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 44,
+      "microOffset": 0.0329,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4241,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 46,
+      "microOffset": 0.0207,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3515,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 47,
+      "microOffset": 0.0477,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.1837,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 48,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.9058,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 48,
+      "microOffset": 0.0404,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4824,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 48,
+      "microOffset": 0.0102,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.8952,
+      "traceBeat": 12
+    },
+    {
+      "layer": "drums",
+      "step": 50,
+      "microOffset": 0.0023,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3104,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 50,
+      "microOffset": 0.0259,
+      "durationSteps": 2,
+      "midi": 58,
+      "drum": null,
+      "velocity": 0.6453,
+      "traceBeat": 12
+    },
+    {
+      "layer": "keys",
+      "step": 50,
+      "microOffset": 0.0572,
+      "durationSteps": 13,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6503,
+      "traceBeat": 12
+    },
+    {
+      "layer": "keys",
+      "step": 50,
+      "microOffset": 0.0039,
+      "durationSteps": 13,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.6775,
+      "traceBeat": 12
+    },
+    {
+      "layer": "keys",
+      "step": 50,
+      "microOffset": 0.0198,
+      "durationSteps": 13,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.6475,
+      "traceBeat": 12
+    },
+    {
+      "layer": "keys",
+      "step": 50,
+      "microOffset": 0.0131,
+      "durationSteps": 13,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.6476,
+      "traceBeat": 12
+    },
+    {
+      "layer": "drums",
+      "step": 52,
+      "microOffset": 0.0185,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7675,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 52,
+      "microOffset": 0.0365,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4353,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 54,
+      "microOffset": 0.0036,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3024,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 55,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.5198,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 56,
+      "microOffset": 0.0486,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.488,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 56,
+      "microOffset": 0.006,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.9159,
+      "traceBeat": 14
+    },
+    {
+      "layer": "drums",
+      "step": 58,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7433,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 58,
+      "microOffset": 0.0424,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3042,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 58,
+      "microOffset": 0.0038,
+      "durationSteps": 2,
+      "midi": 58,
+      "drum": null,
+      "velocity": 0.6657,
+      "traceBeat": 14
+    },
+    {
+      "layer": "drums",
+      "step": 60,
+      "microOffset": 0.0204,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8296,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 60,
+      "microOffset": 0.0229,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4502,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 62,
+      "microOffset": 0.002,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3439,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 63,
+      "microOffset": 0.01,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.2581,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 64,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.9011,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 64,
+      "microOffset": 0.0469,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4858,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 64,
+      "microOffset": 0.0132,
+      "durationSteps": 2,
+      "midi": 43,
+      "drum": null,
+      "velocity": 0.8586,
+      "traceBeat": 16
+    },
+    {
+      "layer": "drums",
+      "step": 66,
+      "microOffset": 0.019,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2918,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 66,
+      "microOffset": 0.0223,
+      "durationSteps": 2,
+      "midi": 55,
+      "drum": null,
+      "velocity": 0.6127,
+      "traceBeat": 16
+    },
+    {
+      "layer": "keys",
+      "step": 66,
+      "microOffset": 0.0666,
+      "durationSteps": 13,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6925,
+      "traceBeat": 16
+    },
+    {
+      "layer": "keys",
+      "step": 66,
+      "microOffset": 0.0324,
+      "durationSteps": 13,
+      "midi": 58,
+      "drum": null,
+      "velocity": 0.6379,
+      "traceBeat": 16
+    },
+    {
+      "layer": "keys",
+      "step": 66,
+      "microOffset": 0.0643,
+      "durationSteps": 13,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.653,
+      "traceBeat": 16
+    },
+    {
+      "layer": "keys",
+      "step": 66,
+      "microOffset": 0.0661,
+      "durationSteps": 13,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.6542,
+      "traceBeat": 16
+    },
+    {
+      "layer": "drums",
+      "step": 68,
+      "microOffset": 0.0077,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7894,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 68,
+      "microOffset": 0.0392,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4753,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 70,
+      "microOffset": 0.0581,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3164,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 72,
+      "microOffset": 0.0467,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.5166,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 72,
+      "microOffset": 0.0023,
+      "durationSteps": 2,
+      "midi": 43,
+      "drum": null,
+      "velocity": 0.8765,
+      "traceBeat": 18
+    },
+    {
+      "layer": "drums",
+      "step": 74,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7404,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 74,
+      "microOffset": 0.0367,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3151,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 74,
+      "microOffset": 0.0108,
+      "durationSteps": 2,
+      "midi": 55,
+      "drum": null,
+      "velocity": 0.6329,
+      "traceBeat": 18
+    },
+    {
+      "layer": "drums",
+      "step": 76,
+      "microOffset": 0.0287,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8297,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 76,
+      "microOffset": 0.0329,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4546,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 78,
+      "microOffset": 0.0429,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3485,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 79,
+      "microOffset": 0.0158,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.1809,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 80,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.9266,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 80,
+      "microOffset": 0.0106,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.5154,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 80,
+      "microOffset": 0.0245,
+      "durationSteps": 2,
+      "midi": 43,
+      "drum": null,
+      "velocity": 0.9402,
+      "traceBeat": 20
+    },
+    {
+      "layer": "drums",
+      "step": 82,
+      "microOffset": 0.0129,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3159,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 82,
+      "microOffset": 0.026,
+      "durationSteps": 2,
+      "midi": 55,
+      "drum": null,
+      "velocity": 0.6226,
+      "traceBeat": 20
+    },
+    {
+      "layer": "keys",
+      "step": 82,
+      "microOffset": 0.0397,
+      "durationSteps": 13,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6976,
+      "traceBeat": 20
+    },
+    {
+      "layer": "keys",
+      "step": 82,
+      "microOffset": 0.0558,
+      "durationSteps": 13,
+      "midi": 58,
+      "drum": null,
+      "velocity": 0.653,
+      "traceBeat": 20
+    },
+    {
+      "layer": "keys",
+      "step": 82,
+      "microOffset": 0.0233,
+      "durationSteps": 13,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.6281,
+      "traceBeat": 20
+    },
+    {
+      "layer": "keys",
+      "step": 82,
+      "microOffset": 0.0606,
+      "durationSteps": 13,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.65,
+      "traceBeat": 20
+    },
+    {
+      "layer": "drums",
+      "step": 84,
+      "microOffset": 0.0397,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7744,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 84,
+      "microOffset": 0.0052,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4532,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 86,
+      "microOffset": 0.0435,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3087,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 88,
+      "microOffset": 0.0368,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.5026,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 88,
+      "microOffset": 0.0187,
+      "durationSteps": 2,
+      "midi": 43,
+      "drum": null,
+      "velocity": 0.8555,
+      "traceBeat": 22
+    },
+    {
+      "layer": "drums",
+      "step": 90,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7475,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 90,
+      "microOffset": 0.0002,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2913,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 90,
+      "microOffset": 0.0003,
+      "durationSteps": 2,
+      "midi": 55,
+      "drum": null,
+      "velocity": 0.647,
+      "traceBeat": 22
+    },
+    {
+      "layer": "drums",
+      "step": 92,
+      "microOffset": 0.0397,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.801,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 92,
+      "microOffset": 0.0247,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4301,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 94,
+      "microOffset": 0.0054,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3626,
+      "traceBeat": null
+    },
+    {
+      "layer": "keys",
+      "step": 94,
+      "microOffset": 0.0371,
+      "durationSteps": 2,
+      "midi": 74,
+      "drum": null,
+      "velocity": 0.4286,
+      "traceBeat": 23
+    },
+    {
+      "layer": "drums",
+      "step": 95,
+      "microOffset": 0.0082,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.175,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 96,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.9306,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 96,
+      "microOffset": 0.0258,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4859,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 96,
+      "microOffset": 0.001,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.9333,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 96,
+      "microOffset": 0.0703,
+      "durationSteps": 5,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6936,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 96,
+      "microOffset": 0.0157,
+      "durationSteps": 5,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.6975,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 96,
+      "microOffset": 0.0319,
+      "durationSteps": 5,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.7199,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 96,
+      "microOffset": 0.007,
+      "durationSteps": 5,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.7183,
+      "traceBeat": 24
+    },
+    {
+      "layer": "drums",
+      "step": 98,
+      "microOffset": 0.044,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3105,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 100,
+      "microOffset": 0.0299,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8327,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 100,
+      "microOffset": 0.0407,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4499,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 102,
+      "microOffset": 0.0542,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2885,
+      "traceBeat": null
+    },
+    {
+      "layer": "keys",
+      "step": 102,
+      "microOffset": 0.0104,
+      "durationSteps": 9,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6315,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 102,
+      "microOffset": 0.0072,
+      "durationSteps": 9,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.5899,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 102,
+      "microOffset": 0.043,
+      "durationSteps": 9,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.5922,
+      "traceBeat": 24
+    },
+    {
+      "layer": "keys",
+      "step": 102,
+      "microOffset": 0.0281,
+      "durationSteps": 9,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.6316,
+      "traceBeat": 24
+    },
+    {
+      "layer": "drums",
+      "step": 104,
+      "microOffset": 0.0083,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4706,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 104,
+      "microOffset": 0.0047,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.8825,
+      "traceBeat": 26
+    },
+    {
+      "layer": "drums",
+      "step": 106,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7527,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 106,
+      "microOffset": 0.0059,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2849,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 106,
+      "microOffset": 0.0039,
+      "durationSteps": 2,
+      "midi": 58,
+      "drum": null,
+      "velocity": 0.6403,
+      "traceBeat": 26
+    },
+    {
+      "layer": "drums",
+      "step": 108,
+      "microOffset": 0.0176,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.7865,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 108,
+      "microOffset": 0.0464,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4521,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 110,
+      "microOffset": 0.0102,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3296,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 111,
+      "microOffset": 0.0194,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.1798,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 112,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.8824,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 112,
+      "microOffset": 0.0211,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4969,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 112,
+      "microOffset": 0.0274,
+      "durationSteps": 3,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.9727,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 112,
+      "microOffset": 0.0509,
+      "durationSteps": 7,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.7093,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 112,
+      "microOffset": 0.018,
+      "durationSteps": 7,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.6667,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 112,
+      "microOffset": 0.08,
+      "durationSteps": 7,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.7387,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 112,
+      "microOffset": 0.0237,
+      "durationSteps": 7,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.6963,
+      "traceBeat": 28
+    },
+    {
+      "layer": "drums",
+      "step": 114,
+      "microOffset": 0.0032,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2924,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 115,
+      "microOffset": 0.0185,
+      "durationSteps": 1,
+      "midi": 53,
+      "drum": null,
+      "velocity": 0.6055,
+      "traceBeat": 28
+    },
+    {
+      "layer": "drums",
+      "step": 116,
+      "microOffset": 0.0285,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8015,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 116,
+      "microOffset": 0.04,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4593,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 118,
+      "microOffset": 0.0501,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2962,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 118,
+      "microOffset": 0.024,
+      "durationSteps": 2,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.7551,
+      "traceBeat": 29
+    },
+    {
+      "layer": "drums",
+      "step": 119,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.5784,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 120,
+      "microOffset": 0.0523,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.4858,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 120,
+      "microOffset": 0.0292,
+      "durationSteps": 3,
+      "midi": 46,
+      "drum": null,
+      "velocity": 0.8998,
+      "traceBeat": 30
+    },
+    {
+      "layer": "keys",
+      "step": 120,
+      "microOffset": 0.0595,
+      "durationSteps": 7,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6353,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 120,
+      "microOffset": 0.0032,
+      "durationSteps": 7,
+      "midi": 60,
+      "drum": null,
+      "velocity": 0.5936,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 120,
+      "microOffset": 0.0563,
+      "durationSteps": 7,
+      "midi": 62,
+      "drum": null,
+      "velocity": 0.5801,
+      "traceBeat": 28
+    },
+    {
+      "layer": "keys",
+      "step": 120,
+      "microOffset": 0.0742,
+      "durationSteps": 7,
+      "midi": 65,
+      "drum": null,
+      "velocity": 0.5746,
+      "traceBeat": 28
+    },
+    {
+      "layer": "drums",
+      "step": 122,
+      "microOffset": 0,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "kick",
+      "velocity": 0.7524,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 122,
+      "microOffset": 0.042,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.2917,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 123,
+      "microOffset": 0.0061,
+      "durationSteps": 1,
+      "midi": 53,
+      "drum": null,
+      "velocity": 0.6279,
+      "traceBeat": 30
+    },
+    {
+      "layer": "drums",
+      "step": 124,
+      "microOffset": 0.027,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.8131,
+      "traceBeat": null
+    },
+    {
+      "layer": "drums",
+      "step": 124,
+      "microOffset": 0.0101,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.47,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 124,
+      "microOffset": 0.0009,
+      "durationSteps": 2,
+      "midi": 57,
+      "drum": null,
+      "velocity": 0.6769,
+      "traceBeat": 31
+    },
+    {
+      "layer": "drums",
+      "step": 126,
+      "microOffset": 0.0503,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "hat",
+      "velocity": 0.3575,
+      "traceBeat": null
+    },
+    {
+      "layer": "bass",
+      "step": 126,
+      "microOffset": 0.0044,
+      "durationSteps": 2,
+      "midi": 53,
+      "drum": null,
+      "velocity": 0.6291,
+      "traceBeat": 31
+    },
+    {
+      "layer": "drums",
+      "step": 127,
+      "microOffset": 0.0315,
+      "durationSteps": 1,
+      "midi": null,
+      "drum": "snare",
+      "velocity": 0.2415,
+      "traceBeat": null
+    }
+  ],
+  "trace": [
+    {
+      "beat": 0,
+      "kind": "start",
+      "neuronId": "21242",
+      "bar": 0,
+      "beatInBar": 0,
+      "neuronType": "MBON09",
+      "uses": [
+        "keys halves",
+        "bass root-push",
+        "chord Fmaj9"
+      ]
+    },
+    {
+      "beat": 1,
+      "kind": "edge",
+      "neuronId": "10013",
+      "from": "21242",
+      "synapseCount": 152,
+      "probability": 0.1896927245702197,
+      "bar": 0,
+      "beatInBar": 1,
+      "neuronType": "MBON01",
+      "uses": [
+        "bass seventh-fifth"
+      ]
+    },
+    {
+      "beat": 2,
+      "kind": "edge",
+      "neuronId": "519131",
+      "from": "10013",
+      "synapseCount": 58,
+      "probability": 0.06541288781993233,
+      "bar": 0,
+      "beatInBar": 2,
+      "neuronType": "MBON32",
+      "uses": [
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 3,
+      "kind": "edge",
+      "neuronId": "10816",
+      "from": "519131",
+      "synapseCount": 23,
+      "probability": 0.02720240730539655,
+      "bar": 0,
+      "beatInBar": 3,
+      "neuronType": "MBON31",
+      "uses": [
+        "bass approach",
+        "keys embellishment"
+      ]
+    },
+    {
+      "beat": 4,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "10816",
+      "synapseCount": 123,
+      "probability": 0.43540823152223396,
+      "bar": 1,
+      "beatInBar": 0,
+      "neuronType": "MBON26",
+      "uses": [
+        "keys late",
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 5,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 1,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 6,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 1,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 7,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 1,
+      "beatInBar": 3,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 8,
+      "kind": "edge",
+      "neuronId": "11805",
+      "from": "524893",
+      "synapseCount": 24,
+      "probability": 0.06545494781916593,
+      "bar": 2,
+      "beatInBar": 0,
+      "neuronType": "MBON31",
+      "uses": [
+        "keys push",
+        "bass root-short",
+        "chord Bbmaj9"
+      ]
+    },
+    {
+      "beat": 9,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11805",
+      "synapseCount": 128,
+      "probability": 0.40661127590641916,
+      "bar": 2,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 10,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 2,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 11,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 2,
+      "beatInBar": 3,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 12,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 3,
+      "beatInBar": 0,
+      "neuronType": "MBON26",
+      "uses": [
+        "keys late",
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 13,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 3,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 14,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 3,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 15,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 3,
+      "beatInBar": 3,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 16,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 4,
+      "beatInBar": 0,
+      "neuronType": "MBON26",
+      "uses": [
+        "keys late",
+        "bass root-octave",
+        "chord Gm9"
+      ]
+    },
+    {
+      "beat": 17,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 4,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 18,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 4,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 19,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 4,
+      "beatInBar": 3,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 20,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 5,
+      "beatInBar": 0,
+      "neuronType": "MBON26",
+      "uses": [
+        "keys late",
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 21,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 5,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest"
+      ]
+    },
+    {
+      "beat": 22,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 5,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-octave"
+      ]
+    },
+    {
+      "beat": 23,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 5,
+      "beatInBar": 3,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest",
+        "keys embellishment"
+      ]
+    },
+    {
+      "beat": 24,
+      "kind": "edge",
+      "neuronId": "11805",
+      "from": "524893",
+      "synapseCount": 24,
+      "probability": 0.06545494781916593,
+      "bar": 6,
+      "beatInBar": 0,
+      "neuronType": "MBON31",
+      "uses": [
+        "keys push (reused from bar 3)",
+        "bass root-short (reused from bar 3)",
+        "chord Bbmaj9"
+      ]
+    },
+    {
+      "beat": 25,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "11805",
+      "synapseCount": 160,
+      "probability": 0.5374238481679378,
+      "bar": 6,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest (reused from bar 3)"
+      ]
+    },
+    {
+      "beat": 26,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 6,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-octave (reused from bar 3)"
+      ]
+    },
+    {
+      "beat": 27,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 6,
+      "beatInBar": 3,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass rest (reused from bar 3)"
+      ]
+    },
+    {
+      "beat": 28,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 7,
+      "beatInBar": 0,
+      "neuronType": "MBON26",
+      "uses": [
+        "keys halves",
+        "bass root-push"
+      ]
+    },
+    {
+      "beat": 29,
+      "kind": "edge",
+      "neuronId": "11176",
+      "from": "524893",
+      "synapseCount": 179,
+      "probability": 0.8067606692296089,
+      "bar": 7,
+      "beatInBar": 1,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass and-root"
+      ]
+    },
+    {
+      "beat": 30,
+      "kind": "edge",
+      "neuronId": "524893",
+      "from": "11176",
+      "synapseCount": 166,
+      "probability": 0.8994052282636646,
+      "bar": 7,
+      "beatInBar": 2,
+      "neuronType": "MBON26",
+      "uses": [
+        "bass root-push"
+      ]
+    },
+    {
+      "beat": 31,
+      "kind": "edge",
+      "neuronId": "11805",
+      "from": "524893",
+      "synapseCount": 24,
+      "probability": 0.06545494781916593,
+      "bar": 7,
+      "beatInBar": 3,
+      "neuronType": "MBON31",
+      "uses": [
+        "bass seventh-fifth"
+      ]
+    }
+  ],
+  "fill": false
+}

@@ -89,6 +89,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 7 | WebKit 26.6 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. This does not replace the Phase 8 review in desktop Safari. |
 | 2026-09-30 | 8 | User approved continuing to Phase 9: "ah yeah it's good. continue". | Approval was given in conversation after the Phase 8 review request. A fresh Luna baseline audit passed `npm run check` (45 unit/data tests) and all three Playwright browser projects. Detailed manual browser versions and results were not supplied; the human checklist remains available for the user to record them. |
 | 2026-09-30 | 12 | Keep per-bar reuse and embellishment decisions in a local rhythm plan during phrase composition. | This consumes the R7 rhythm draws in the required order while keeping `PhraseScore` limited to its documented fields; Phase 13 can add embellishment notes while processing that local plan. |
+| 2026-09-30 | 13 | Advance `MAPPING_VERSION` from 1 to 2 when drums, embellishments, and humanization begin changing composed events. | R1 rule 4 requires a mapping version bump whenever composition output changes. Historical traversal vectors and the Phase 10 traversal test retain their explicit version-1 seed text; current composition streams use version 2. |
 
 ## Reference
 
@@ -379,7 +380,7 @@ export class CircuitError extends Error {
 
 ```ts
 export const ENGINE_VERSION = '1.0.0';
-export const MAPPING_VERSION = 1;
+export const MAPPING_VERSION = 2;
 export const SCORE_VERSION = 1;
 export const DEFAULT_SESSION_SEED = 1; // Phase 18 may replace this with a seed chosen at the listening review
 ```
@@ -439,6 +440,8 @@ jokes       `${sessionSeed}|jokes`                                              
 buffers     `buffer|${name}|${sampleRate}`                                             drum, ambience, and impulse-response buffers (R10)
 ```
 
+The current mapping version is 2, advanced in Phase 13 when drums, embellishments, and humanization began changing composed events. The explicit version-1 seed strings in the R5 vectors and historical traversal test remain fixed regression vectors.
+
 - `sessionSeed` is an unsigned 32-bit integer. **New beat** creates one with `crypto.getRandomValues(new Uint32Array(1))[0]`. Display it, and use it in file names, as 8 lowercase hexadecimal digits (`seedHex`).
 - `compositionPhraseIndex` is `0` when `variation === 0` and `phraseIndex` otherwise, so at variation 0 every phrase repeats phrase 0.
 - A first visit with no saved settings uses `DEFAULT_SESSION_SEED`.
@@ -467,7 +470,7 @@ A phrase is 8 bars of 4 beats. The walk takes one step per beat:
 
 Every bar therefore begins with a neuron: a start, a restart, or an edge. A dead end at beat `b` produces rests until the next bar boundary, then a restart. Restarts and phrase starts are authored resets, not biological connections, and the explanation panel labels them that way.
 
-### R7. Composition, mapping version 1
+### R7. Composition, mapping version 2
 
 These rules are the authored musical system. The graph chooses among authored options; it does not produce pitches directly. Listening review may change the values, and any change that alters output increments `MAPPING_VERSION`.
 
@@ -1475,15 +1478,15 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 
 **Agent** · **Read:** R5, R7 (rhythm stream, drums, canonical order and humanization), R8
 
-- [ ] Add drum events to `composePhrase`: the `main` pattern in bars 0–2 and 4–6, the `turn` pattern in bars 3 and 7, and the fill replacement in bar 7 when `score.fill` is true.
-- [ ] Add embellishment notes from the decisions stored in Phase 12.
-- [ ] Apply humanization last, as specified in R7.
-- [ ] Extend the tests:
+- [x] Add drum events to `composePhrase`: the `main` pattern in bars 0–2 and 4–6, the `turn` pattern in bars 3 and 7, and the fill replacement in bar 7 when `score.fill` is true.
+- [x] Add embellishment notes from the decisions stored in Phase 12.
+- [x] Apply humanization last, as specified in R7.
+- [x] Extend the tests:
   - Drum hits match the preset patterns, including turn bars. Fills replace bar 7's steps 12–15 only when `score.fill` is true.
   - Variation 0 never produces embellishments. For Fruit Bowl Finals at variation 1, at least one seed from 1 to 50 has an embellishment.
   - Humanized velocities are between 0.05 and 1. Each `microOffset` is at least 0 and at most its voice's maximum.
   - Events remain in canonical order, and the per-bar density and polyphony limits hold.
-- [ ] Add `tests/data/compose-snapshot.test.ts` using `toMatchFileSnapshot('__snapshots__/rainy-windowsill-seed-1-variation-50.json')` for the real circuit, seed 1, phrase 0, variation 0.5, and Rainy Windowsill. Increment `MAPPING_VERSION` and update this snapshot whenever composition output changes.
+- [x] Add `tests/data/compose-snapshot.test.ts` using `toMatchFileSnapshot('__snapshots__/rainy-windowsill-seed-1-variation-50.json')` for the real circuit, seed 1, phrase 0, variation 0.5, and Rainy Windowsill. Increment `MAPPING_VERSION` and update this snapshot whenever composition output changes.
 
 **Verify**
 

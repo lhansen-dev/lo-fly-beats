@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createRng } from './rng'
 import { compositionPhraseIndex, compositionStreams, seedHex } from './streams'
+import { MAPPING_VERSION } from './versions'
 
 describe('random stream derivation', () => {
   it('formats unsigned seeds and reuses phrase zero at zero variation', () => {
@@ -11,7 +12,7 @@ describe('random stream derivation', () => {
   })
 
   it('derives the traversal stream from the documented seed text', () => {
-    const expected = createRng('1|0|1|traversal')
+    const expected = createRng(`1|0|${MAPPING_VERSION}|traversal`)
     const actual = compositionStreams(1, compositionPhraseIndex(0, 0)).traversal
     expect(Array.from({ length: 3 }, () => actual.float())).toEqual(
       Array.from({ length: 3 }, () => expected.float()),

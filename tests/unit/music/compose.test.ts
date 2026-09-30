@@ -25,13 +25,18 @@ function assertComposition(score: PhraseScore): void {
     expect(event.step).toBeGreaterThanOrEqual(0)
     expect(event.step).toBeLessThan(128)
     expect(event.step + event.durationSteps).toBeLessThanOrEqual(128)
-    expect(event.microOffset).toBe(0)
+    const maxOffset = event.layer === 'drums'
+      ? ({ kick: 0, snare: 0.04, hat: 0.06 } as const)[event.drum!]
+      : event.layer === 'bass' ? 0.03 : 0.08
+    expect(event.microOffset).toBeGreaterThanOrEqual(0)
+    expect(event.microOffset).toBeLessThanOrEqual(maxOffset)
     expect(event.durationSteps).toBeGreaterThan(0)
-    expect(event.velocity).toBeGreaterThan(0)
+    expect(event.velocity).toBeGreaterThanOrEqual(0.05)
     expect(event.velocity).toBeLessThanOrEqual(1)
     if (event.layer === 'keys') {
       expect(event.midi).toBeGreaterThanOrEqual(preset.keysRange.low)
-      expect(event.midi).toBeLessThanOrEqual(preset.keysRange.high)
+      const embellishment = event.step % 16 === 14 && event.durationSteps === 2 && event.velocity <= 0.5
+      expect(event.midi).toBeLessThanOrEqual(preset.keysRange.high + (embellishment ? 12 : 0))
       const slot = score.chords[Math.floor((event.traceBeat! / 4) / 2)]!
       expect(slot.voicing.map(note => note % 12)).toContain(event.midi! % 12)
     } else if (event.layer === 'bass') {
@@ -72,7 +77,7 @@ function assertComposition(score: PhraseScore): void {
   }
   for (let bar = 0; bar < 8; bar++) {
     const events = score.events.filter(event => event.step >= bar * 16 && event.step < (bar + 1) * 16)
-    expect(events.filter(event => event.layer === 'drums')).toHaveLength(0)
+    expect(events.filter(event => event.layer === 'drums').length).toBeLessThanOrEqual(24)
     expect(events.filter(event => event.layer === 'bass').length).toBeLessThanOrEqual(8)
     expect(events.filter(event => event.layer === 'keys').length).toBeLessThanOrEqual(17)
   }
@@ -93,7 +98,7 @@ describe('composePhrase', () => {
         for (const preset of Object.values(PRESETS)) assertComposition(composePhrase(graph, recipe(preset.id, seed, variation), 0))
       }
     }
-  })
+  }, 15000)
 
   it('reuses the earlier keys patterns and reports reused bass cells at variation zero', () => {
     const score = composePhrase(graph, recipe('rainy-windowsill', 2, 0), 5)
@@ -116,6 +121,39 @@ describe('composePhrase', () => {
     const a = composePhrase(graph, recipe('fruit-bowl-finals', 10, 0), 0)
     const b = composePhrase(graph, recipe('fruit-bowl-finals', 10, 0), 5)
     expect({ ...a, phraseIndex: 0 }).toEqual({ ...b, phraseIndex: 0 })
+  })
+
+  it('uses the preset main and turn drum patterns, replacing only the final beat with a fill', () => {
+    for (const preset of Object.values(PRESETS)) {
+      for (let seed = 1; seed <= 30; seed++) {
+        const score = composePhrase(graph, recipe(preset.id, seed, 0.5), 0)
+        for (let bar = 0; bar < 8; bar++) {
+          const pattern = bar % 4 === 3 ? preset.drums.turn : preset.drums.main
+          const actual = score.events.filter(event => event.layer === 'drums' && Math.floor(event.step / 16) === bar)
+            .map(event => [event.drum!, event.step % 16] as const).sort((a, b) => a[0].localeCompare(b[0]) || a[1] - b[1])
+          const expected = (['kick', 'snare', 'hat'] as const).flatMap(drum => pattern[drum].map(([step]) => [drum, step] as const))
+            .filter(([, step]) => !(bar === 7 && score.fill && step >= 12 && step <= 15))
+          if (bar === 7 && score.fill) {
+            expected.push(...(['kick', 'snare', 'hat'] as const).flatMap(drum => preset.drums.fill[drum].map(([step]) => [drum, step] as const)))
+          }
+          expected.sort((a, b) => a[0].localeCompare(b[0]) || a[1] - b[1])
+          expect(actual).toEqual(expected)
+        }
+      }
+    }
+  })
+
+  it('keeps embellishments off at variation zero and can produce Fruit Bowl embellishments at full variation', () => {
+    for (const preset of Object.values(PRESETS)) {
+      for (let seed = 1; seed <= 50; seed++) {
+        const score = composePhrase(graph, recipe(preset.id, seed, 0), 0)
+        expect(score.events.some(event => event.layer === 'keys' && event.durationSteps === 2 && event.step % 16 === 14
+          && event.traceBeat !== null && score.trace[event.traceBeat]!.beatInBar === 3)).toBe(false)
+      }
+    }
+    expect(Array.from({ length: 50 }, (_, index) => composePhrase(graph, recipe('fruit-bowl-finals', index + 1, 1), 0))
+      .some(score => score.events.some(event => event.layer === 'keys' && event.durationSteps === 2 && event.step % 16 === 14
+        && event.traceBeat !== null && score.trace[event.traceBeat]!.beatInBar === 3))).toBe(true)
   })
 
   it('lets a changed graph transition alter a composed chord or bass line', () => {

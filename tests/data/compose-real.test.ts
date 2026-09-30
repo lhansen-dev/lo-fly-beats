@@ -31,12 +31,17 @@ function assertRealComposition(score: PhraseScore): void {
     expect(event.step).toBeGreaterThanOrEqual(0)
     expect(event.step + event.durationSteps).toBeLessThanOrEqual(128)
     expect(event.durationSteps).toBeGreaterThan(0)
-    expect(event.microOffset).toBe(0)
-    expect(event.velocity).toBeGreaterThan(0)
+    const maxOffset = event.layer === 'drums'
+      ? ({ kick: 0, snare: 0.04, hat: 0.06 } as const)[event.drum!]
+      : event.layer === 'bass' ? 0.03 : 0.08
+    expect(event.microOffset).toBeGreaterThanOrEqual(0)
+    expect(event.microOffset).toBeLessThanOrEqual(maxOffset)
+    expect(event.velocity).toBeGreaterThanOrEqual(0.05)
     expect(event.velocity).toBeLessThanOrEqual(1)
     if (event.layer === 'keys') {
       expect(event.midi).toBeGreaterThanOrEqual(preset.keysRange.low)
-      expect(event.midi).toBeLessThanOrEqual(preset.keysRange.high)
+      const embellishment = event.step % 16 === 14 && event.durationSteps === 2 && event.velocity <= 0.5
+      expect(event.midi).toBeLessThanOrEqual(preset.keysRange.high + (embellishment ? 12 : 0))
       const beat = score.trace[event.traceBeat!]!
       const chord = score.chords[Math.floor(beat.bar / 2)]!
       expect(chord.voicing.map(note => note % 12)).toContain(event.midi! % 12)

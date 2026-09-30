@@ -2,6 +2,7 @@ import type { CircuitGraph } from '../connectome/types'
 import { getPreset } from '../presets/presets'
 import { CHORD_QUALITIES, chooseChordSlots } from './harmony'
 import { fnv1a32 } from './rng'
+import { clamp } from './math'
 import { compositionPhraseIndex, compositionStreams } from './streams'
 import { walkPhrase } from './traversal'
 import type { ChordSlot, NoteEvent, PhraseScore, SessionRecipe, TraceStep } from './types'
@@ -51,6 +52,27 @@ function pushKeys(events: NoteEvent[], pattern: KeysPattern, bar: number, traceB
       layer: 'keys', step: bar * 16 + hit.step, microOffset: 0, durationSteps: hit.durationSteps,
       midi, drum: null, velocity: hit.velocity, traceBeat,
     })
+  }
+}
+
+function pushDrums(events: NoteEvent[], pattern: ReturnType<typeof getPreset>['drums']['main'], bar: number): void {
+  for (const drum of ['kick', 'snare', 'hat'] as const) {
+    for (const [step, velocity] of pattern[drum]) events.push({
+      layer: 'drums', step: bar * 16 + step, microOffset: 0, durationSteps: 1,
+      midi: null, drum, velocity, traceBeat: null,
+    })
+  }
+}
+
+function humanize(events: NoteEvent[], rng: ReturnType<typeof compositionStreams>['humanize']): void {
+  const maxOffsets = { kick: 0, snare: 0.04, hat: 0.06, bass: 0.03, keys: 0.08 } as const
+  const round4 = (value: number) => Math.round(value * 10000) / 10000
+  for (const event of events) {
+    const a = rng.float()
+    const b = rng.float()
+    const voice = event.layer === 'drums' ? event.drum! : event.layer
+    event.velocity = clamp(round4(event.velocity * (1 + (a * 2 - 1) * 0.06)), 0.05, 1)
+    event.microOffset = round4(b * maxOffsets[voice])
   }
 }
 
@@ -105,6 +127,29 @@ export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phrase
     }
     const slot = chords.find(item => item.traceBeat === start.beat)
     if (slot) start.uses.push(`chord ${slot.symbol}`)
+
+    const beat3 = trace[bar * 4 + 3]!
+    if (rhythmPlan[bar]!.embellish && beat3.kind !== 'rest') {
+      const embellishmentChord = chordForBar(chords, bar)
+      const midi = embellishmentChord.voicing[fnv1a32(`emb|${beat3.neuronId}`) % embellishmentChord.voicing.length]! + 12
+      events.push({
+        layer: 'keys', step: bar * 16 + 14, microOffset: 0, durationSteps: 2,
+        midi, drum: null, velocity: 0.45, traceBeat: beat3.beat,
+      })
+      beat3.uses.push('keys embellishment')
+    }
+  }
+
+  for (let bar = 0; bar < 8; bar++) {
+    const pattern = bar % 4 === 3 ? preset.drums.turn : preset.drums.main
+    pushDrums(events, pattern, bar)
+  }
+  if (fill) {
+    for (let i = events.length - 1; i >= 0; i--) {
+      const event = events[i]!
+      if (event.layer === 'drums' && event.step >= 7 * 16 + 12 && event.step <= 7 * 16 + 15) events.splice(i, 1)
+    }
+    pushDrums(events, preset.drums.fill, 7)
   }
 
   // Shorten each bass note to the next onset so the line is monophonic.
@@ -115,6 +160,7 @@ export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phrase
     event.durationSteps = Math.max(1, Math.min(event.durationSteps, gap))
   }
   events.sort(compareEvents)
+  humanize(events, streams.humanize)
 
   const score: PhraseScore = {
     scoreVersion: SCORE_VERSION, mappingVersion: MAPPING_VERSION, presetId: recipe.presetId,
