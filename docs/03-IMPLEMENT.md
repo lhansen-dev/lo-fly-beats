@@ -88,6 +88,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-19 | 7 | Firefox 155.0 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. Human listening and the two-minute background-tab check remain Phase 8. |
 | 2026-09-19 | 7 | WebKit 26.6 (Playwright 1.63.0, headless): pass. | Live context becomes running after Play, Stop works, WAV download is 3 seconds with peak 5,103, and playback works again after export. This does not replace the Phase 8 review in desktop Safari. |
 | 2026-09-30 | 8 | User approved continuing to Phase 9: "ah yeah it's good. continue". | Approval was given in conversation after the Phase 8 review request. A fresh Luna baseline audit passed `npm run check` (45 unit/data tests) and all three Playwright browser projects. Detailed manual browser versions and results were not supplied; the human checklist remains available for the user to record them. |
+| 2026-09-30 | 12 | Keep per-bar reuse and embellishment decisions in a local rhythm plan during phrase composition. | This consumes the R7 rhythm draws in the required order while keeping `PhraseScore` limited to its documented fields; Phase 13 can add embellishment notes while processing that local plan. |
 
 ## Reference
 
@@ -1451,10 +1452,10 @@ Exit criteria from the plan: a real-graph arrangement plays for five minutes; th
 
 Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and humanization.
 
-- [ ] Create `src/music/patterns.ts` containing the bass cell lists and keys comping patterns from R7.
-- [ ] Create `src/music/compose.ts` with `composePhrase`. In this phase it implements R7 steps 1–5 and produces bass and keys events in canonical order, with `microOffset` 0 and unmodified velocities. Implement every rhythm-stream draw now, including the embellishment and fill decisions, so that Phase 13 does not change the draw order; store the embellishment decisions for Phase 13 to turn into notes, and set `score.fill`.
-- [ ] Fill in each trace step's `neuronType` and `uses` as described in R7.
-- [ ] Write `tests/unit/music/compose.test.ts` using the branching fixture and every preset:
+- [x] Create `src/music/patterns.ts` containing the bass cell lists and keys comping patterns from R7.
+- [x] Create `src/music/compose.ts` with `composePhrase`. In this phase it implements R7 steps 1–5 and produces bass and keys events in canonical order, with `microOffset` 0 and unmodified velocities. Implement every rhythm-stream draw now, including the embellishment and fill decisions, so that Phase 13 does not change the draw order; store the embellishment decisions for Phase 13 to turn into notes, and set `score.fill`.
+- [x] Fill in each trace step's `neuronType` and `uses` as described in R7.
+- [x] Write `tests/unit/music/compose.test.ts` using the branching fixture and every preset:
   - Composing twice with the same inputs gives deeply equal scores.
   - There are 4 chord slots and 32 trace steps with correct `bar` and `beatInBar`.
   - For seeds 1–100 at variations 0, 0.5, and 1, all bass and keys invariants from R7 hold.
@@ -1462,13 +1463,13 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
   - At variation 0, bars 4–7 reuse bars 0–3's keys patterns, and their `uses` text says so.
   - At variation 0, phrases 0 and 5 are equal except for `phraseIndex`.
   - Changing connection 1→3 from 1 to 9 synapses changes the chord slots or bass cells for at least one seed from 1 to 20.
-- [ ] Write `tests/data/compose-real.test.ts`. For seeds 1–30, every preset, and variations 0, 0.5, and 1 on the real circuit, all invariants hold and every trace edge is valid.
+- [x] Write `tests/data/compose-real.test.ts`. For seeds 1–30, every preset, and variations 0, 0.5, and 1 on the real circuit, all invariants hold and every trace edge is valid.
 
 **Verify**
 
 1. `npm run check` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 13: Compose drums, variation, and humanization
 
