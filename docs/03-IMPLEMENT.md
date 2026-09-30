@@ -1405,24 +1405,24 @@ Exit criteria from the plan: a real-graph arrangement plays for five minutes; th
 
 **Agent** · **Read:** R4 (TypeScript contract), R5, R6
 
-- [ ] Implement `walkPhrase` in `src/music/traversal.ts` exactly as specified in R6.
-- [ ] Create test helpers: `tests/unit/helpers/fixtureGraph.ts`, which loads the branching fixture with `node:fs` and `buildGraph` and accepts an optional function to modify the connections before building; and `tests/unit/helpers/scriptedRng.ts`, which returns listed floats in order and then continues with `createRng('scripted-fallback')`.
-- [ ] Write `tests/unit/music/traversal.test.ts` using the branching fixture:
+- [x] Implement `walkPhrase` in `src/music/traversal.ts` exactly as specified in R6.
+- [x] Create test helpers: `tests/unit/helpers/fixtureGraph.ts`, which loads the branching fixture with `node:fs` and `buildGraph` and accepts an optional function to modify the connections before building; and `tests/unit/helpers/scriptedRng.ts`, which returns listed floats in order and then continues with `createRng('scripted-fallback')`.
+- [x] Write `tests/unit/music/traversal.test.ts` using the branching fixture:
   1. Start choice: first float 0.0 starts at `"1"`; 0.5 starts at `"2"`.
   2. At variation 0, the edges from `"1"` have weights 81 and 1 (total 82). A float of 0.5 chooses `"2"` with probability 81/82; a float of 0.99 chooses `"3"`.
   3. Graph contribution: with connection 1→3 changed to 9 synapses, a float of 0.6 chooses `"3"`; with the original weights, 0.6 chooses `"2"`.
   4. At variation 1 (alpha 0.5), the weights from `"1"` are 3 and 1. A float of 0.7 chooses `"2"`; 0.8 chooses `"3"`.
   5. Dead end: floats `[0.5, 0.75, 0.1, 0.0]` produce beats 0–4 of `start "2"`, `edge "4"`, `edge "5"`, `rest`, `restart "1"`.
   6. The number of floats consumed equals 1 plus the number of `edge` steps plus the number of `restart` steps.
-- [ ] Write `tests/data/traversal-real.test.ts` on the real circuit. For seeds 1–50 at variations 0, 0.5, and 1, using `createRng(`${seed}|0|1|traversal`)`: each walk has 32 steps; beats 0, 4, …, 28 are never rests; every edge exists in `graph.outgoing` with a matching synapse count; every start and restart uses a start neuron; and every probability is greater than 0 and at most 1.
-- [ ] In the same file, assert that seed 1, phrase 0, variation 0 produces these first eight steps: `start 13768`, `edge 38853`, `edge 531829`, `edge 13728`, `edge 38853`, `edge 531829`, `edge 13728`, `edge 521526`. This sequence was computed during preparation with the R5 and R6 rules.
+- [x] Write `tests/data/traversal-real.test.ts` on the real circuit. For seeds 1–50 at variations 0, 0.5, and 1, using `createRng(`${seed}|0|1|traversal`)`: each walk has 32 steps; beats 0, 4, …, 28 are never rests; every edge exists in `graph.outgoing` with a matching synapse count; every start and restart uses a start neuron; and every probability is greater than 0 and at most 1.
+- [x] In the same file, assert that seed 1, phrase 0, variation 0 produces these first eight steps: `start 13768`, `edge 38853`, `edge 531829`, `edge 13728`, `edge 38853`, `edge 531829`, `edge 13728`, `edge 521526`. This sequence was computed during preparation with the R5 and R6 rules.
 
 **Verify**
 
 1. `npm run check` passes.
 2. `grep -rnE "from '(react|tone)'" src/music` prints nothing.
 
-- [ ] All verification steps pass. If the real-graph sequence differs, stop and report it.
+- [x] All verification steps pass. The real-graph sequence matches the prepared sequence.
 
 ## Phase 11: Define presets and harmony
 
