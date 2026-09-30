@@ -90,6 +90,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 8 | User approved continuing to Phase 9: "ah yeah it's good. continue". | Approval was given in conversation after the Phase 8 review request. A fresh Luna baseline audit passed `npm run check` (45 unit/data tests) and all three Playwright browser projects. Detailed manual browser versions and results were not supplied; the human checklist remains available for the user to record them. |
 | 2026-09-30 | 12 | Keep per-bar reuse and embellishment decisions in a local rhythm plan during phrase composition. | This consumes the R7 rhythm draws in the required order while keeping `PhraseScore` limited to its documented fields; Phase 13 can add embellishment notes while processing that local plan. |
 | 2026-09-30 | 13 | Advance `MAPPING_VERSION` from 1 to 2 when drums, embellishments, and humanization begin changing composed events. | R1 rule 4 requires a mapping version bump whenever composition output changes. Historical traversal vectors and the Phase 10 traversal test retain their explicit version-1 seed text; current composition streams use version 2. |
+| 2026-09-30 | 13 | Complete the delayed Phase 13 verification. | `npm run check` passes: typecheck, lint, 78 unit tests, 5 data validation tests, and the production build. |
 | 2026-09-30 | 14 | Use one named seeded stream per buffer and consume successive draws for stereo channels; place rain drips and crackle clicks at deterministic random sample positions. Smooth the final 1 ms of looped ambience toward its first sample after the prescribed equal-power overlap. | R5 pins each stream to `buffer|${name}|${sampleRate}`. The 44.1 kHz rain seam measured 0.172 after the required overlap and peak scaling; smoothing the final 1 ms brought it below the specified 0.1 threshold. The six 48 kHz buffers generated in 48.1 ms. |
 
 ## Reference
@@ -1493,7 +1494,7 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 
 1. `npm run check` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 14: Add the timing adapter and seeded audio buffers
 
