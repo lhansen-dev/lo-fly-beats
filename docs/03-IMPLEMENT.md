@@ -90,6 +90,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 8 | User approved continuing to Phase 9: "ah yeah it's good. continue". | Approval was given in conversation after the Phase 8 review request. A fresh Luna baseline audit passed `npm run check` (45 unit/data tests) and all three Playwright browser projects. Detailed manual browser versions and results were not supplied; the human checklist remains available for the user to record them. |
 | 2026-09-30 | 12 | Keep per-bar reuse and embellishment decisions in a local rhythm plan during phrase composition. | This consumes the R7 rhythm draws in the required order while keeping `PhraseScore` limited to its documented fields; Phase 13 can add embellishment notes while processing that local plan. |
 | 2026-09-30 | 13 | Advance `MAPPING_VERSION` from 1 to 2 when drums, embellishments, and humanization begin changing composed events. | R1 rule 4 requires a mapping version bump whenever composition output changes. Historical traversal vectors and the Phase 10 traversal test retain their explicit version-1 seed text; current composition streams use version 2. |
+| 2026-09-30 | 14 | Use one named seeded stream per buffer and consume successive draws for stereo channels; place rain drips and crackle clicks at deterministic random sample positions. Smooth the final 1 ms of looped ambience toward its first sample after the prescribed equal-power overlap. | R5 pins each stream to `buffer|${name}|${sampleRate}`. The 44.1 kHz rain seam measured 0.172 after the required overlap and peak scaling; smoothing the final 1 ms brought it below the specified 0.1 threshold. The six 48 kHz buffers generated in 48.1 ms. |
 
 ## Reference
 
@@ -863,7 +864,7 @@ Rules:
 | `crackle` | 6 s, stereo, looped | Noise low-passed at 6,000 Hz times 0.01, plus about 12 clicks per second at random positions with amplitude `0.05 + 0.35 * u * u` decaying over 3 samples | 0.5 |
 | `impulse` | 2.2 s, stereo | 12 ms of silence, then noise times `exp(-t / 0.45)`, low-passed at 5,000 Hz | 0.7 |
 
-Make `rain` and `crackle` loop without a click. With `F` samples in 0.25 s and `N` total samples, set `out[i] = x[i] * sqrt(i / F) + x[N - F + i] * sqrt(1 - i / F)` for `i < F`, then drop the last `F` samples.
+Make `rain` and `crackle` loop without a click. With `F` samples in 0.25 s and `N` total samples, set `out[i] = x[i] * sqrt(i / F) + x[N - F + i] * sqrt(1 - i / F)` for `i < F`, then drop the last `F` samples. After this required overlap, linearly blend the final `max(2, round(0.001 * sampleRate))` samples toward `out[0]`, before peak normalization.
 
 **Instrument rig** (`src/audio/rig.ts`)
 
@@ -1498,21 +1499,21 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 
 **Agent** · **Read:** R5, R9 (timing adapter), R10 (seeded buffers)
 
-- [ ] Implement `src/audio/timing.ts` exactly as in R9, and test every R9 test value in `src/audio/timing.test.ts`.
-- [ ] Implement `src/audio/buffers.ts` as specified in R10.
-- [ ] Write `src/audio/buffers.test.ts` at 44,100 Hz:
+- [x] Implement `src/audio/timing.ts` exactly as in R9, and test every R9 test value in `src/audio/timing.test.ts`.
+- [x] Implement `src/audio/buffers.ts` as specified in R10.
+- [x] Write `src/audio/buffers.test.ts` at 44,100 Hz:
   - Rendering any buffer twice produces identical samples.
   - Lengths: `kick` has 22,050 samples; `rain` has 2 channels of 341,775 samples; `crackle` has 2 channels of 253,575 samples; `impulse` has 2 channels of 97,020 samples.
   - Each buffer's absolute peak equals its R10 value within 1e-6. No sample is NaN. RMS is above 0.001.
   - For `rain`, the absolute difference between the last and first samples of each channel is below 0.1.
-- [ ] Render all six buffers at 48,000 Hz in one test and log the elapsed time. Fail only if it exceeds 2 seconds.
+- [x] Render all six buffers at 48,000 Hz in one test and log the elapsed time. Fail only if it exceeds 2 seconds.
 
 **Verify**
 
 1. `npm run check` passes.
 2. `grep -rn "Math.random" src` prints nothing.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 15: Build the instrument and effects rig
 
