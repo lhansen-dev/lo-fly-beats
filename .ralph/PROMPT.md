@@ -1,7 +1,4 @@
-You are working on: Phase 16 of `docs/03-IMPLEMENT.md` — build the live playback
-engine (`PlaybackSequencer` + singleton engine), replace the Phase 7 audio spike
-with a temporary audition page and a `?debug=1` diagnostics panel, and add the
-Chromium engine and soak browser specs.
+You are working on: Phase 16 of `docs/03-IMPLEMENT.md` — build the live playback engine (`PlaybackSequencer` + singleton engine), replace the temporary Phase 7 spike UI with a temporary audition page plus a `?debug=1` diagnostics panel, delete all spike code, and add the Chromium `engine` and `soak` browser specs.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -39,24 +36,28 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Project hints:
-- `docs/03-IMPLEMENT.md` is the specification. Read the exact section your task
-  names (use `grep -n '^### R9' docs/03-IMPLEMENT.md` and friends to find it)
-  before writing code, and inspect the existing files instead of assuming their
-  contents. Do not edit `docs/01-IDEAS.md` or `docs/02-PLAN.md`.
-- Code style: 2-space indent, single quotes, no semicolons, named exports.
-  TypeScript has `strict`, `noUnusedLocals`, `noUnusedParameters` and
-  `erasableSyntaxOnly` (so: no `enum`, no `namespace`, no constructor parameter
-  properties — declare class fields explicitly).
-- Only files in `src/audio/` may use `tone`; `src/music/` and `src/connectome/`
-  never import `react` or `tone`. `Math.random` is banned everywhere in `src/`.
-  Engine and rig code always uses the context it was given (`context.transport`,
-  `context.draw`, `context.destination`), never `Tone.getTransport()`,
-  `Tone.getDraw()`, `Tone.Frequency()` or `Tone.now()`.
-- Importing `tone` at module scope creates a global AudioContext immediately, so
-  React modules must never import it, directly or transitively.
-- Useful commands: `npx tsc -b` (typecheck), `npm run build`,
-  `npx vitest run --project unit <file>` (node tests),
-  `npx playwright test <spec> --project=chromium` (browser tests; the config
-  builds and serves the app automatically). Never run `npm run check`,
-  `npm test` or the whole Playwright suite.
+## Repository hints
+
+- `docs/03-IMPLEMENT.md` is the spec. Find a section with grep, e.g.
+  `grep -n '^### R9\.' docs/03-IMPLEMENT.md`, `grep -n '^### R12\.' docs/03-IMPLEMENT.md`,
+  `grep -n '^## Phase 16:' docs/03-IMPLEMENT.md`. Read the relevant part before coding, and
+  inspect the existing files instead of assuming what they contain.
+- Layout: `src/audio/` (timing, buffers, wav, rig, sequencer, engine), `src/music/`
+  (rng, traversal, harmony, patterns, compose, types), `src/presets/`, `src/app/`,
+  `src/components/`, `src/connectome/`; unit tests sit beside their module as `*.test.ts`
+  (vitest `unit` project), Playwright specs live in `tests/browser/`.
+- Code rules that break the build if ignored: only files in `src/audio/` may import `tone`;
+  `src/music/` and `src/connectome/` import neither `react` nor `tone`; engine/rig code always
+  uses the audio context it was given (`context.transport`, `context.draw`,
+  `context.destination`) and never `Tone.getTransport()`, `Tone.getDraw()`, `Tone.now()` or
+  `Tone.Frequency()`; `Math.random` is banned in `src/`; TypeScript runs with
+  `erasableSyntaxOnly` (no `enum`, no `namespace`, no constructor parameter properties —
+  declare class fields explicitly), `noUnusedLocals` and `noUnusedParameters`.
+- Style: 2-space indent, single quotes, no trailing semicolons, `import type` for type-only
+  imports (`verbatimModuleSyntax` is on).
+- Useful commands: `npx tsc -b` (typecheck), `npm run build` (typecheck + vite build),
+  `npx vitest run --project unit <file>` (unit test — always name the file; the config sets
+  `passWithNoTests: true`, so a typo silently "passes"),
+  `npx playwright test <spec> --project=chromium` (browser spec; the config builds and previews
+  the app for you). Do not run `npm run check`, `npm test` or the whole Playwright suite.
+</content>
