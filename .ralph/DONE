@@ -1,0 +1,4 @@
+Phase 16 checklist recorded
+- Checked the seven completed implementation tasks; left soak and final verification unchecked for user completion.
+- Appended three Phase 16 decision-log entries for verification limitations, IPv4 Playwright configuration, and Start / Restart behavior.
+- Updated `docs/03-IMPLEMENT.md` only; targeted grep checks passed.
