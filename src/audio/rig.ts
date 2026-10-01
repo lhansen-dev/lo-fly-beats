@@ -28,6 +28,7 @@ export interface InstrumentRig {
   startAmbience(time: number): void
   stopAmbience(time: number): void
   releaseAll(time: number): void
+  rampMasterGain(target: number, rampSeconds: number, time: number): void
   readonly keysActiveVoices: number
   dispose(): void
 }
@@ -192,6 +193,10 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
       keys.releaseAll(time)
       bass.triggerRelease(time)
       drums.releaseAll(time)
+    },
+    rampMasterGain(target, rampSeconds, time) {
+      if (disposed) return
+      master.gain.rampTo(target, rampSeconds, time)
     },
     get keysActiveVoices() {
       return keys.activeVoices
