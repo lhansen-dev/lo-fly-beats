@@ -29,6 +29,10 @@ export class PlaybackSequencer {
   private score: PhraseScore | null = null
   private eventsByStep: readonly NoteEvent[][] = []
   private tempoNeedsApply = true
+  private pendingTempo: number | null = null
+  private pendingVariation: number | null = null
+  private pendingSeed: number | null = null
+  private pendingPreset: { presetId: PresetId; tempoBpm: number } | null = null
 
   constructor(compose: (recipe: SessionRecipe, phraseIndex: number) => PhraseScore, recipe: SessionRecipe) {
     this.compose = compose
@@ -37,7 +41,15 @@ export class PlaybackSequencer {
 
   get active(): SessionRecipe { return this.recipe }
 
-  get pending(): Readonly<Partial<Pick<SessionRecipe, 'tempoBpm' | 'variation' | 'sessionSeed' | 'presetId'>>> { return {} }
+  get pending(): Readonly<Partial<Pick<SessionRecipe, 'tempoBpm' | 'variation' | 'sessionSeed' | 'presetId'>>> {
+    const result: Partial<Pick<SessionRecipe, 'tempoBpm' | 'variation' | 'sessionSeed' | 'presetId'>> = {}
+    const tempoBpm = this.pendingPreset?.tempoBpm ?? this.pendingTempo
+    if (tempoBpm !== null) result.tempoBpm = tempoBpm
+    if (this.pendingVariation !== null) result.variation = this.pendingVariation
+    if (this.pendingSeed !== null) result.sessionSeed = this.pendingSeed
+    if (this.pendingPreset !== null) result.presetId = this.pendingPreset.presetId
+    return result
+  }
 
   get currentScore(): PhraseScore | null { return this.score }
 
@@ -45,10 +57,38 @@ export class PlaybackSequencer {
 
   reset(recipe: SessionRecipe): void {
     this.recipe = recipe
+    this.pendingTempo = null
+    this.pendingVariation = null
+    this.pendingSeed = null
+    this.pendingPreset = null
     this.globalStep = 0
     this.recipeStartStep = 0
     this.score = null
     this.eventsByStep = []
+    this.tempoNeedsApply = true
+  }
+
+  request(change: PendingChange): void {
+    if (this.currentScore === null) {
+      switch (change.kind) {
+        case 'tempo': this.recipe = { ...this.recipe, tempoBpm: change.tempoBpm }; this.tempoNeedsApply = true; break
+        case 'variation': this.recipe = { ...this.recipe, variation: change.variation }; break
+        case 'newBeat': this.recipe = { ...this.recipe, sessionSeed: change.sessionSeed }; break
+        case 'preset': this.recipe = { ...this.recipe, presetId: change.presetId, tempoBpm: change.tempoBpm }; this.tempoNeedsApply = true; break
+      }
+      return
+    }
+    switch (change.kind) {
+      case 'tempo': this.pendingTempo = change.tempoBpm; break
+      case 'variation': this.pendingVariation = change.variation; break
+      case 'newBeat': this.pendingSeed = change.sessionSeed; break
+      case 'preset': this.pendingPreset = { presetId: change.presetId, tempoBpm: change.tempoBpm }; break
+    }
+  }
+
+  applyTempoNow(tempoBpm: number): void {
+    this.recipe = { ...this.recipe, tempoBpm }
+    this.pendingTempo = null
     this.tempoNeedsApply = true
   }
 
@@ -65,6 +105,13 @@ export class PlaybackSequencer {
       for (const event of phraseStarted.events) indexed[event.step]?.push(event)
       this.eventsByStep = indexed
     }
+    const applied: PendingChange['kind'][] = []
+    if (stepInPhrase % 16 === 0 && this.pendingTempo !== null) {
+      this.recipe = { ...this.recipe, tempoBpm: this.pendingTempo }
+      this.pendingTempo = null
+      this.tempoNeedsApply = true
+      applied.push('tempo')
+    }
     const tempoChanged = this.tempoNeedsApply
     this.tempoNeedsApply = false
     return {
@@ -72,7 +119,7 @@ export class PlaybackSequencer {
       bar: Math.floor(stepInPhrase / 16),
       beat: Math.floor((stepInPhrase % 16) / 4),
       tempoBpm: this.recipe.tempoBpm, tempoChanged, phraseStarted,
-      applied: [], events: this.eventsByStep[stepInPhrase] ?? [],
+      applied, events: this.eventsByStep[stepInPhrase] ?? [],
     }
   }
 }

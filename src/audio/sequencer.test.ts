@@ -18,11 +18,13 @@ const makeScore = (phraseIndex: number): PhraseScore => ({
 
 const create = () => {
   const calls: number[] = []
-  const sequencer = new PlaybackSequencer((_recipe, phrase) => {
+  const recipes: SessionRecipe[] = []
+  const sequencer = new PlaybackSequencer((recipe, phrase) => {
+    recipes.push({ ...recipe })
     calls.push(phrase)
     return makeScore(phrase)
   }, recipe)
-  return { calls, sequencer }
+  return { calls, recipes, sequencer }
 }
 
 describe('PlaybackSequencer', () => {
@@ -63,6 +65,37 @@ describe('PlaybackSequencer', () => {
     expect(plan.stepInPhrase).toBe(0)
     expect(plan.tempoChanged).toBe(true)
     expect(calls).toEqual([0, 0])
+  })
+
+  it('applies a requested tempo at the next bar', () => {
+    const { sequencer } = create()
+    for (let i = 0; i < 6; i++) sequencer.advance()
+    sequencer.request({ kind: 'tempo', tempoBpm: 90 })
+    const plans = Array.from({ length: 10 }, () => sequencer.advance())
+    for (const plan of plans.slice(0, 9)) {
+      expect(plan.tempoBpm).toBe(72)
+      expect(plan.tempoChanged).toBe(false)
+      expect(plan.applied).toEqual([])
+    }
+    const step16 = sequencer.advance()
+    expect(step16).toMatchObject({ globalStep: 16, tempoBpm: 90, tempoChanged: true, applied: ['tempo'] })
+  })
+
+  it('applies requests made before the first phrase immediately', () => {
+    const { recipes, sequencer } = create()
+    sequencer.request({ kind: 'variation', variation: 0.5 })
+    expect(sequencer.active.variation).toBe(0.5)
+    expect(sequencer.pending).toEqual({})
+    sequencer.advance()
+    expect(recipes[0].variation).toBe(0.5)
+  })
+
+  it('applyTempoNow changes the tempo without moving the position', () => {
+    const { sequencer } = create()
+    for (let i = 0; i < 10; i++) sequencer.advance()
+    sequencer.applyTempoNow(90)
+    expect(sequencer.active.tempoBpm).toBe(90)
+    expect(sequencer.advance()).toMatchObject({ globalStep: 10, stepInPhrase: 10, tempoBpm: 90, tempoChanged: true })
   })
 
   it('never retains more than two scores', () => {
