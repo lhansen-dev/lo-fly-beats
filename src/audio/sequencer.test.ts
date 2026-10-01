@@ -18,11 +18,13 @@ const makeScore = (phraseIndex: number): PhraseScore => ({
 
 const create = () => {
   const calls: number[] = []
-  const sequencer = new PlaybackSequencer((_recipe, phrase) => {
+  const recipes: SessionRecipe[] = []
+  const sequencer = new PlaybackSequencer((recipe, phrase) => {
+    recipes.push({ ...recipe })
     calls.push(phrase)
     return makeScore(phrase)
   }, recipe)
-  return { calls, sequencer }
+  return { calls, recipes, sequencer }
 }
 
 describe('PlaybackSequencer', () => {
@@ -63,6 +65,85 @@ describe('PlaybackSequencer', () => {
     expect(plan.stepInPhrase).toBe(0)
     expect(plan.tempoChanged).toBe(true)
     expect(calls).toEqual([0, 0])
+  })
+
+  it('applies a requested tempo at the next bar', () => {
+    const { sequencer } = create()
+    for (let i = 0; i < 6; i++) sequencer.advance()
+    sequencer.request({ kind: 'tempo', tempoBpm: 90 })
+    const plans = Array.from({ length: 10 }, () => sequencer.advance())
+    for (const plan of plans.slice(0, 9)) {
+      expect(plan.tempoBpm).toBe(72)
+      expect(plan.tempoChanged).toBe(false)
+      expect(plan.applied).toEqual([])
+    }
+    const step16 = sequencer.advance()
+    expect(step16).toMatchObject({ globalStep: 16, tempoBpm: 90, tempoChanged: true, applied: ['tempo'] })
+  })
+
+  it('applies requests made before the first phrase immediately', () => {
+    const { recipes, sequencer } = create()
+    sequencer.request({ kind: 'variation', variation: 0.5 })
+    expect(sequencer.active.variation).toBe(0.5)
+    expect(sequencer.pending).toEqual({})
+    sequencer.advance()
+    expect(recipes[0].variation).toBe(0.5)
+  })
+
+  it('applyTempoNow changes the tempo without moving the position', () => {
+    const { sequencer } = create()
+    for (let i = 0; i < 10; i++) sequencer.advance()
+    sequencer.applyTempoNow(90)
+    expect(sequencer.active.tempoBpm).toBe(90)
+    expect(sequencer.advance()).toMatchObject({ globalStep: 10, stepInPhrase: 10, tempoBpm: 90, tempoChanged: true })
+  })
+
+  it('applies a requested variation at the next phrase', () => {
+    const { recipes, sequencer } = create()
+    for (let i = 0; i < 6; i++) sequencer.advance()
+    sequencer.request({ kind: 'variation', variation: 0.5 })
+    for (let step = 6; step <= 127; step++) {
+      const plan = sequencer.advance()
+      expect(plan.applied).toEqual([])
+      expect(sequencer.active.variation).toBe(0)
+    }
+    const plan = sequencer.advance()
+    expect(plan.globalStep).toBe(128)
+    expect(plan.applied).toEqual(['variation'])
+    expect(sequencer.active.variation).toBe(0.5)
+    expect(recipes.at(-1)?.variation).toBe(0.5)
+  })
+
+  it('applies a requested preset and its tempo at the next phrase and keeps phrase numbering', () => {
+    const { calls, recipes, sequencer } = create()
+    for (let i = 0; i < 50; i++) sequencer.advance()
+    sequencer.request({ kind: 'preset', presetId: 'fruit-bowl-finals', tempoBpm: 86 })
+    for (let step = 50; step <= 127; step++) sequencer.advance()
+    const plan = sequencer.advance()
+    expect(plan).toMatchObject({ globalStep: 128, applied: ['preset'], tempoBpm: 86, tempoChanged: true, phraseIndex: 1 })
+    expect(calls.at(-1)).toBe(1)
+    expect(recipes.at(-1)?.presetId).toBe('fruit-bowl-finals')
+  })
+
+  it('applies a requested New beat at the next phrase and restarts phrase numbering', () => {
+    const { calls, recipes, sequencer } = create()
+    for (let i = 0; i < 50; i++) sequencer.advance()
+    sequencer.request({ kind: 'newBeat', sessionSeed: 99 })
+    for (let step = 50; step <= 127; step++) sequencer.advance()
+    const plan = sequencer.advance()
+    expect(plan).toMatchObject({ globalStep: 128, applied: ['newBeat'], phraseIndex: 0 })
+    expect(calls.at(-1)).toBe(0)
+    expect(recipes.at(-1)?.sessionSeed).toBe(99)
+  })
+
+  it('replaces an earlier request for the same field', () => {
+    const { sequencer } = create()
+    for (let i = 0; i < 6; i++) sequencer.advance()
+    sequencer.request({ kind: 'tempo', tempoBpm: 80 })
+    sequencer.request({ kind: 'tempo', tempoBpm: 95 })
+    expect(sequencer.pending.tempoBpm).toBe(95)
+    for (let step = 6; step <= 15; step++) sequencer.advance()
+    expect(sequencer.advance()).toMatchObject({ globalStep: 16, tempoBpm: 95 })
   })
 
   it('never retains more than two scores', () => {
