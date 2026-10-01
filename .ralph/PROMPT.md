@@ -1,6 +1,4 @@
-You are working on: closing out Phase 18 of `docs/03-IMPLEMENT.md` in the
-lo-fly-beats repo — recording the Phase 17 listening-gate approval and applying
-the listening review as a no-code-change ("Approved as is") review.
+You are working on: recording Phase 18's no-code-change rationale and its blocked-verification status in `docs/03-IMPLEMENT.md` (documentation only — no source, test, or config file may change).
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -38,29 +36,24 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-## Project notes (read these before editing)
+Project hints:
 
-- This card deliberately changes **no source code**. The only file you may edit
-  is `docs/03-IMPLEMENT.md` (plus `.ralph/ITERATION_DONE` and `.ralph/DONE`).
-  Never edit anything under `src/`, `tests/`, or any config file.
-- `docs/03-IMPLEMENT.md` is a long checklist. Phase 17 (around line 1563) is a
-  **human gate**: never tick, reword, or delete its seven `- [ ]` checkboxes or
-  the `- *(The user writes notes here.)*` line — they belong to the user.
-  Phase 18 (around line 1581) is the agent phase you are closing out.
-- Many lines in that file are duplicated across phases (for example
-  `- [ ] Add a Decision log row summarizing the changes.` and
-  `- [ ] All verification steps pass.`). When your task supplies a multi-line
-  anchor for an edit, use it exactly as given instead of a shorter one, and copy
-  every literal string from the task byte-for-byte (quotes, backticks, dashes).
-  Literal blocks in a task may be indented two spaces for readability — strip
-  that indent when copying, so the text you search for matches the file.
-- The **Decision log** is a 4-column markdown table near the top of the file
-  that ends just before the `## Reference` heading (around line 100). New rows
-  go at the END of the table. Never put a `|` character inside a cell's text.
-- When your assigned task explicitly names commands to run (for example
-  `npm run check`, `npm run test:audio`, or
-  `npx playwright test --project=chromium`), those named commands ARE that
-  task's check: run exactly them, and nothing broader.
-- Report truthfully. Never tick a verification checkbox for a command that
-  failed or that you did not run; if a command fails, record its exact error
-  text where the task says to and say so in your summary.
+- `docs/03-IMPLEMENT.md` is the only file any task here edits. Its Decision log
+  is a markdown table under the `## Decision log` heading that ends just before
+  the `## Reference` heading; new rows go on their own line at the END of that
+  table, with exactly four cells (`| Date | Phase | Decision | Reason or
+  evidence |`) and no literal `|` character inside a cell. Phase 18 lives
+  between the headings `## Phase 18: Apply the listening review` and
+  `## Milestone 3: Complete the player and export`.
+- Do NOT edit anything under `src/` or `tests/`, and do not edit
+  `playwright.config.ts`, `vitest.config.ts`, or `package.json`. The listening
+  review was a blanket approval, so this phase changes no code on purpose.
+- Do NOT touch Phase 17's seven `- [ ]` checkboxes or its
+  `- *(The user writes notes here.)*` line: those are user-owned records.
+- If your task explicitly names a command to run (for example
+  `npm run test:audio` or `npx playwright test --project=chromium`), running it
+  IS part of that task — run it even though it is broad. Those two commands are
+  expected to fail in this sandbox with `listen EPERM: operation not permitted`
+  because local socket binds are denied; that is an environment policy, not a
+  bug. Record the failure as the task instructs and never try to "fix" it by
+  changing config or code.
