@@ -1,4 +1,6 @@
-You are working on: making tempo, variation, preset and New-beat changes apply at the right musical boundary (Phase 20 of `docs/03-IMPLEMENT.md`) in this React + Tone.js lo-fi beat generator.
+You are working on: removing two dead TypeScript imports in `src/app/controller.ts`
+and `src/app/controller.test.ts` so that `tsc -b` stops failing with TS6133 and the
+Phase 20 "apply pending changes at musical boundaries" work builds cleanly.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -36,23 +38,16 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Repository hints (read the files the task names before editing them):
-- Reference contracts live in `docs/03-IMPLEMENT.md`: section `### R9` (around
-  line 761) defines the sequencer/engine behaviour, `### R12` (around line
-  1003) defines the control-behaviour table, the store and the `data-testid`
-  list, and `## Phase 20` (around line 1626) is this card's phase.
-- This sandbox cannot bind local sockets: NEVER run `npx playwright test`,
-  `npm run test:audio`, `npm run test:browser`, `npm run check`, or a bare
-  `npx vitest run` (the browser-mode `audio` project would try to launch a
-  browser). Unit tests must be run as
-  `npx vitest run --project unit <path/to/file.test.ts>`.
-- Code rules enforced by this repo: `src/music/` and `src/connectome/` never
-  import `react` or `tone`; only `src/audio/` imports `tone`; `src/main.tsx`
-  and `src/app/` may reference engine types only through `import type`, and the
-  engine module itself only through a dynamic `import()` inside a click
-  handler/factory, because importing `tone` creates an audio context; no
-  `Math.random` anywhere in `src/`; `erasableSyntaxOnly` is on, so no `enum`,
-  no `namespace`, and no constructor parameter properties — declare class
-  fields explicitly.
-- Style: 2-space indent, no semicolons, single quotes, `import type` for
-  type-only imports; match the surrounding file.
+Hints for this repository:
+- The TypeScript projects set `"noUnusedLocals": true` (see `tsconfig.app.json`
+  and `tsconfig.test.json`), so an unused import is a hard `error TS6133`, not a
+  warning. `npm run typecheck` is `tsc -b`; `npm run build` is `tsc -b && vite build`.
+- `dist/` and `node_modules/` are gitignored, so running a build leaves no files
+  you need to clean up or worry about in `git status`.
+- The surrounding Phase 20 feature code (`PlaybackSequencer.request` /
+  `applyTempoNow`, `EngineLike`, `SessionController`, `ControllerContext.tsx`,
+  `tests/browser/boundaries.spec.ts`) is already written and reviewed — do not
+  redesign, refactor, or "improve" it, and do not add or remove tests unless your
+  assigned task explicitly says to.
+- Playwright / browser tests cannot run here (the sandbox denies local socket
+  binds); never try to start a dev or preview server.
