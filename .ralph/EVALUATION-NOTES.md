@@ -1,0 +1,31 @@
+# Evaluation notes — Phase 19 app state store + settings persistence
+
+- Read .ralph/DONE and git log: 5 task commits (task1-5) + plan commits. Working tree clean, HEAD = 7d72325.
+- git diff main...HEAD --stat: 7 files changed (docs/03-IMPLEMENT.md, src/app/{persistence,state,store}.ts + .test.ts). Matches card scope.
+- Read src/app/state.ts, src/app/store.ts, src/app/persistence.ts in full — compared against R12 spec in docs/03-IMPLEMENT.md (lines 1003-1080ish). AppState shape matches spec verbatim.
+- Read docs/03-IMPLEMENT.md Phase 19 section (line ~1612-1627): all 5 task boxes [x], Verify "All verification steps pass" still [ ] (expected — card says "no browser tests in this phase", loop left the final verify box unchecked deliberately per DONE note).
+- AC1 (state.ts exports): PASS exit 0.
+- AC2 (16 actions present): PASS exit 0.
+- AC3 (store.ts exports): PASS exit 0.
+- AC4 (persistence.ts key/exports/zod/catch): PASS exit 0.
+- AC5 (state.test.ts exists, vitest run): PASS, 10 tests passed.
+- AC6 (immediate/pending/changesApplied in state.test.ts): PASS.
+- AC7 (store.test.ts exists, vitest run): PASS, 5 tests passed.
+- AC8 (persistence.test.ts exists, vitest run): PASS, 9 tests passed.
+- AC9 (useFakeTimers + SETTINGS_KEY in persistence.test.ts): PASS.
+- AC10 (Phase 19 task box ticked for persistence.ts line): PASS.
+- Regression: npx tsc -b: PASS exit 0.
+- Regression: npx oxlint: PASS, 0 warnings/errors on 56 files.
+- Regression: grep useAppState in App.tsx absent (test $? -ne 0): PASS — confirmed no UI wiring.
+- Regression: npx vitest run --project unit src/audio/sequencer.test.ts: PASS, 4 tests.
+- Full `npm run check` (typecheck+lint+test+data:validate+build): PASS, 104 unit tests, build succeeded.
+- Manual review: AppState/RestoredSettings/AppAction shapes verbatim-match R12 spec block in docs/03-IMPLEMENT.md (lines 1003-1030).
+- Manual review: reducer immediate/pending/changesApplied logic matches R12 control-behavior rules and the Phase 19 task-list bullet text exactly for tempo/variation/newBeat/preset/changesApplied.
+- Manual review: zod schema field ranges cross-checked against SessionRecipe/MixSettings/PresetId usage elsewhere (tempoBpm 60-100 int matches R12 table and all 3 presets' tempos; variation 0-1 float matches compose.ts usage as a probability factor; mix shape matches src/audio/rig.ts MixSettings exactly).
+- Manual review: persistence.ts never touches global `localStorage` directly — fully abstracted behind getStorage() accessor, every call site wrapped in try/catch (loadSettings, writePending, isStorageAvailable). Matches "wiring deferred to Phase 20" scope note.
+- Manual review: git diff main...HEAD -- . ':!.ralph' touches only the 7 expected files (docs/03-IMPLEMENT.md + 3 new modules + 3 new test files); docs diff only flips the 5 Phase 19 task checkboxes, nothing else rewritten.
+- Checked for stray usage of useAppState/getAppStore/createAppStore outside store.ts/tests: none found.
+- No console.log/debugger/TODO/FIXME left in src/app/*.ts.
+- Noted (non-blocking) for human review: useAppState's getSnapshot calls selector(store.getState()) fresh each render without memoization — fine for now since nothing consumes it yet (Phase 20 wires it up), but a selector returning a new object/array reference each call will trigger React's "getSnapshot should be cached" warning/infinite loop once real UI uses it with non-primitive selectors.
+- Noted (non-blocking): RestoredSettings carries mappingVersion/presetVersion but createInitialState never compares them to the app's current MAPPING_VERSION to discard stale settings; not required by the card's explicit bullet list or by R12's persistence text ("ignore invalid saved data" only covers schema validity, not version staleness), so left as a forward-looking suggestion for Phase 20.
+- VERDICT: approve — all 10 primary + 4 regression acceptance criteria pass verbatim; implementation matches R12 and the Phase 19 task list precisely; no out-of-scope changes.
