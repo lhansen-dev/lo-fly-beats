@@ -1,4 +1,8 @@
-You are working on: Phase 16 of `docs/03-IMPLEMENT.md` — build the live playback engine (`PlaybackSequencer` + singleton engine), replace the temporary Phase 7 spike UI with a temporary audition page plus a `?debug=1` diagnostics panel, delete all spike code, and add the Chromium `engine` and `soak` browser specs.
+You are working on: finishing Phase 16 of `docs/03-IMPLEMENT.md` in this Vite +
+React + TypeScript lo-fi music app — adding the missing 5-minute Playwright soak
+spec, fixing the audition page's Start / Restart flow, pointing the Playwright
+preview server at the IPv4 loopback, and recording Phase 16 in the
+implementation checklist.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -36,28 +40,22 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-## Repository hints
-
-- `docs/03-IMPLEMENT.md` is the spec. Find a section with grep, e.g.
-  `grep -n '^### R9\.' docs/03-IMPLEMENT.md`, `grep -n '^### R12\.' docs/03-IMPLEMENT.md`,
-  `grep -n '^## Phase 16:' docs/03-IMPLEMENT.md`. Read the relevant part before coding, and
-  inspect the existing files instead of assuming what they contain.
-- Layout: `src/audio/` (timing, buffers, wav, rig, sequencer, engine), `src/music/`
-  (rng, traversal, harmony, patterns, compose, types), `src/presets/`, `src/app/`,
-  `src/components/`, `src/connectome/`; unit tests sit beside their module as `*.test.ts`
-  (vitest `unit` project), Playwright specs live in `tests/browser/`.
-- Code rules that break the build if ignored: only files in `src/audio/` may import `tone`;
-  `src/music/` and `src/connectome/` import neither `react` nor `tone`; engine/rig code always
-  uses the audio context it was given (`context.transport`, `context.draw`,
-  `context.destination`) and never `Tone.getTransport()`, `Tone.getDraw()`, `Tone.now()` or
-  `Tone.Frequency()`; `Math.random` is banned in `src/`; TypeScript runs with
-  `erasableSyntaxOnly` (no `enum`, no `namespace`, no constructor parameter properties —
-  declare class fields explicitly), `noUnusedLocals` and `noUnusedParameters`.
-- Style: 2-space indent, single quotes, no trailing semicolons, `import type` for type-only
-  imports (`verbatimModuleSyntax` is on).
-- Useful commands: `npx tsc -b` (typecheck), `npm run build` (typecheck + vite build),
-  `npx vitest run --project unit <file>` (unit test — always name the file; the config sets
-  `passWithNoTests: true`, so a typo silently "passes"),
-  `npx playwright test <spec> --project=chromium` (browser spec; the config builds and previews
-  the app for you). Do not run `npm run check`, `npm test` or the whole Playwright suite.
-</content>
+Environment hints for this repository:
+- This sandbox DENIES binding a local HTTP server (`listen EPERM ...
+  ::1:4173`). Never run `npx playwright test`, `npm run test:browser`, or
+  `npm run test:audio` (Vitest browser mode): they need a server/browser that
+  cannot start here and will fail for reasons unrelated to your change. The
+  operator runs those. Writing and typechecking the specs is your job.
+- Never run `npm run check` or `npm test` — they run the whole suite.
+  `npm run typecheck` (`tsc -b`) is fast and typechecks `src/`, `tests/`, and
+  the root config files; it is the right check when a task names it.
+- Useful landmarks: the audition page is `src/app/App.tsx`, the engine and
+  sequencer are `src/audio/engine.ts` and `src/audio/sequencer.ts`, the debug
+  panel is `src/components/DiagnosticsPanel.tsx`, the existing end-to-end spec
+  to copy style from is `tests/browser/engine.spec.ts`, and the implementation
+  checklist with its Decision log table is `docs/03-IMPLEMENT.md` (Phase 16
+  starts at `## Phase 16: Build the live engine and audition page`).
+- `docs/03-IMPLEMENT.md` Phase 17 is a human gate: never tick its boxes, and do
+  not edit any phase other than the one your task names.
+- If a check fails because of something you did not touch, make the smallest
+  fix that makes it pass and mention it in `.ralph/ITERATION_DONE`.
