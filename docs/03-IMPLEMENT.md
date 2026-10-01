@@ -1611,11 +1611,11 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Agent** · **Read:** R5, R10 (`MixSettings`), R12
 
-- [ ] Create `src/app/store.ts` with `createStore` and `useAppState` (R12).
-- [ ] Create `src/app/state.ts` with `AppState`, `createInitialState(restoredSettings)`, an action union, and a reducer. Actions: `circuitLoading`, `circuitLoaded`, `circuitFailed`, `engineStatusChanged`, `audioNoticeChanged`, `tempoRequested`, `variationRequested`, `newBeatRequested`, `presetRequested` (each request carries `immediate: boolean`), `changesApplied`, `phraseStarted`, `positionChanged`, `mixChanged`, `exportStateChanged`, `animationToggled`, and `storageUnavailable`.
-- [ ] Reducer rules: an immediate request updates `active` and clears that field from `pending`; an immediate New beat or preset also resets `position` to phrase 0, bar 0, beat 0 and clears `activeScore`; a non-immediate request sets the `pending` field; `changesApplied` replaces `active` and removes pending fields that now equal the active values. A preset request also sets the preset's tempo.
-- [ ] Create `src/app/persistence.ts` with `loadSettings(getStorage)` and `createSettingsSaver(getStorage, delayMs = 500)` following R12. `getStorage` is a function so tests can make storage access throw.
-- [ ] Write reducer tests for every action and rule, and persistence tests covering an in-memory storage, invalid JSON, a wrong shape, storage whose access throws, and debouncing with `vi.useFakeTimers()`.
+- [x] Create `src/app/store.ts` with `createStore` and `useAppState` (R12).
+- [x] Create `src/app/state.ts` with `AppState`, `createInitialState(restoredSettings)`, an action union, and a reducer. Actions: `circuitLoading`, `circuitLoaded`, `circuitFailed`, `engineStatusChanged`, `audioNoticeChanged`, `tempoRequested`, `variationRequested`, `newBeatRequested`, `presetRequested` (each request carries `immediate: boolean`), `changesApplied`, `phraseStarted`, `positionChanged`, `mixChanged`, `exportStateChanged`, `animationToggled`, and `storageUnavailable`.
+- [x] Reducer rules: an immediate request updates `active` and clears that field from `pending`; an immediate New beat or preset also resets `position` to phrase 0, bar 0, beat 0 and clears `activeScore`; a non-immediate request sets the `pending` field; `changesApplied` replaces `active` and removes pending fields that now equal the active values. A preset request also sets the preset's tempo.
+- [x] Create `src/app/persistence.ts` with `loadSettings(getStorage)` and `createSettingsSaver(getStorage, delayMs = 500)` following R12. `getStorage` is a function so tests can make storage access throw.
+- [x] Write reducer tests for every action and rule, and persistence tests covering an in-memory storage, invalid JSON, a wrong shape, storage whose access throws, and debouncing with `vi.useFakeTimers()`.
 
 **Verify**
 
