@@ -97,6 +97,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 16 | Phase 16 Verify steps 3 and 4 could not be run because the sandbox denies the local server bind (`listen EPERM ... ::1:4173`); the soak box and final verification box stay unchecked for the user to complete. | Playwright Chromium and the 5-minute soak require the blocked local server. |
 | 2026-09-30 | 16 | Change the Playwright `webServer` command, `url`, and `baseURL` to `127.0.0.1:4173` instead of `localhost:4173`. | Node resolved `localhost` to the blocked IPv6 loopback. |
 | 2026-09-30 | 16 | Audition page Start / Restart pauses a playing engine before `engine.reset(recipe)` so `engine.play()` can resume. | R9 defines `reset` for the paused state and `play()` only resumes from `paused`. |
+| 2026-10-01 | 17 | User closed the Phase 17 listening gate with a blanket approval and no concrete requests: "lgtm, do your best to continue without my feedback". Phase 18 therefore changes no code. | Approval was given in conversation while Phase 17's Listening notes were still empty, matching the Phase 8 precedent ("ah yeah it's good. continue"). Phase 17's seven checkboxes and its Listening notes line stay user-owned records; no agent listened to the audio. |
 
 ## Reference
 
@@ -1563,6 +1564,8 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 ## Phase 17: Human gate — listening review
 
 **User** · **Read:** R7, R8, R10
+
+**Gate status:** Approved to continue by the user on 2026-10-01 (see Decision log): "lgtm, do your best to continue without my feedback". The user gave no concrete listening requests, so Phase 18 changes no code. Proceed to Phase 18. The seven checkboxes below and the **Listening notes** line remain user-owned records of the individual manual checks; no agent listened to the audio.
 
 Agents: do not check these boxes. Stop and report that Phase 17 is waiting for the user.
 
