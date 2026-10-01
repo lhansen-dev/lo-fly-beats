@@ -9,6 +9,7 @@ import { DEFAULT_SESSION_SEED } from '../music/versions'
 import { randomSessionSeed } from './seed'
 import { DEFAULT_MIX } from '../audio/rig'
 import type { EngineStatus } from '../audio/engine'
+import DiagnosticsPanel from '../components/DiagnosticsPanel'
 
 let circuitRequest: Promise<CircuitGraph> | undefined
 
@@ -24,6 +25,7 @@ export default function App() {
   const [score, setScore] = useState<PhraseScore | null>(null)
   const [trace, setTrace] = useState<string[]>([])
   const [engine, setEngine] = useState<Awaited<ReturnType<typeof import('../audio/engine').getEngine>> | null>(null)
+  const debugMode = new URLSearchParams(window.location.search).get('debug') === '1'
 
   useEffect(() => {
     let active = true
@@ -79,5 +81,6 @@ export default function App() {
     <p data-testid="position">Phrase {position.phrase} · Bar {position.bar} · Beat {position.beat}</p>
     <p data-testid="chords">{score?.chords.map(chord => chord.symbol).join(' · ') ?? ''}</p>
     <pre data-testid="trace">{trace.join('\n')}</pre>
+    {debugMode && <DiagnosticsPanel getDiagnostics={() => engine?.getDiagnostics() ?? null} />}
   </main>
 }
