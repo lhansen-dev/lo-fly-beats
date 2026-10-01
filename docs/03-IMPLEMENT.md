@@ -98,6 +98,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 16 | Change the Playwright `webServer` command, `url`, and `baseURL` to `127.0.0.1:4173` instead of `localhost:4173`. | Node resolved `localhost` to the blocked IPv6 loopback. |
 | 2026-09-30 | 16 | Audition page Start / Restart pauses a playing engine before `engine.reset(recipe)` so `engine.play()` can resume. | R9 defines `reset` for the paused state and `play()` only resumes from `paused`. |
 | 2026-10-01 | 17 | User closed the Phase 17 listening gate with a blanket approval and no concrete requests: "lgtm, do your best to continue without my feedback". Phase 18 therefore changes no code. | Approval was given in conversation while Phase 17's Listening notes were still empty, matching the Phase 8 precedent ("ah yeah it's good. continue"). Phase 17's seven checkboxes and its Listening notes line stay user-owned records; no agent listened to the audio. |
+| 2026-10-01 | 20 | Apply pending tempo at the next bar and pending variation, New beat, and preset at the next phrase through `PlaybackSequencer.request`/`applyTempoNow`, the engine's `request`/`applyTempoNow`/`EngineLike`, and the new `SessionController`. | `npx playwright test --project=chromium` (Verify step 2) could not be run because this sandbox denies local socket binds, the same limitation recorded for Phases 16 and 18; Phase 20's final verification box stays unchecked for the operator. |
 | 2026-10-01 | 18 | Phase 18 verification: npm run check passed, npm run test:audio failed, and npx playwright test --project=chromium failed, which failed with: listen EPERM: operation not permitted ::1:63315; preview server listen EPERM: operation not permitted 127.0.0.1:4173. The final verification box stays unchecked. | Reporting the failure instead of checking the box, as Phase 16's Decision log row did for the same sandbox limitation when the local preview server could not be bound. |
 | 2026-10-01 | 18 | No code changed in Phase 18: MAPPING_VERSION stays at 2 and DEFAULT_SESSION_SEED stays at 1 in src/music/versions.ts, the three presets in src/presets/presets.ts keep their tempo and swing values, and R5, R7, R8, and R10 are unchanged, because the Phase 17 listening approval contained no concrete requests. | The Phase 17 gate closed with a blanket approval ("lgtm, do your best to continue without my feedback") that named no sound parameter, no preset change, no composition rule, no default seed, and no sample-based voice, so every conditional Phase 18 task resolved to no change and tests/data/compose-snapshot.test.ts needed no new snapshot. |
 | 2026-10-01 | 18 | Re-ran Phase 18 Verify steps 2 and 3 after the review: npm run test:audio and npx playwright test --project=chromium both still fail with listen EPERM: operation not permitted (vitest browser mode binds ::1 and the Playwright preview server binds 127.0.0.1:4173), so Phase 18's final verification box stays unchecked and both steps still need to be run outside the sandbox by the operator or CI before it can be ticked. | This sandbox denies every local socket bind, the same limitation recorded for Phase 16 on 2026-09-30; Verify step 1 npm run check passes and Phase 18's only diff is in docs/03-IMPLEMENT.md, so nothing in this phase can cause or fix the bind failure. Checklist rule 7 says to stop and report rather than guess. |
@@ -1627,8 +1628,8 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Agent** · **Read:** R9 (sequencer, engine), R12 (control behavior)
 
-- [ ] Add `request` and `applyTempoNow` to `PlaybackSequencer` (R9), and report applied kinds in each `StepPlan`.
-- [ ] Extend `src/audio/sequencer.test.ts`:
+- [x] Add `request` and `applyTempoNow` to `PlaybackSequencer` (R9), and report applied kinds in each `StepPlan`.
+- [x] Extend `src/audio/sequencer.test.ts`:
   - A tempo requested at step 5 applies at step 16, not earlier.
   - A variation requested at step 5 applies at step 128.
   - A preset requested mid-phrase applies at step 128 together with its tempo, and phrase numbering continues.
@@ -1636,12 +1637,12 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
   - A second request for the same field replaces the first.
   - Requests made before the first composition apply immediately.
   - `applyTempoNow` changes the tempo without moving the position.
-- [ ] Add `request(change)` and `applyTempoNow(bpm)` to the engine. Set `transport.bpm` at the step's audio time and emit `applied`. Export an `EngineLike` interface from `engine.ts` describing the engine's public methods and events.
-- [ ] Create `src/app/controller.ts` with `SessionController`, which depends on `EngineLike`. Implement `loadCircuit`, `startListening`, `togglePlay`, `setTempo`, `setVariation`, `newBeat`, and `selectPreset` using the R12 control table. While paused, tempo uses `applyTempoNow`, and New beat or preset uses `engine.reset(newRecipe)`. Before the first start, all changes update the store only. Subscribe to engine `status`, `phraseStarted`, `applied`, and `position` events, dispatch matching actions, and save settings on every change.
-- [ ] Create `src/app/ControllerContext.tsx` with a provider and a `useController()` hook, and create the controller once in `main.tsx`.
-- [ ] Switch the temporary audition page to the controller and add `pending-changes` text.
-- [ ] Write `src/app/controller.test.ts` with a fake `EngineLike`, verifying which engine method is called and what the store contains for each control in each state (idle, playing, paused).
-- [ ] Write `tests/browser/boundaries.spec.ts` (Chromium). Start at 100 BPM. While playing, change variation; `pending-changes` shows it; it clears after the phrase index advances (within 21 s). Change tempo while playing; the pending text appears and clears within 3 s.
+- [x] Add `request(change)` and `applyTempoNow(bpm)` to the engine. Set `transport.bpm` at the step's audio time and emit `applied`. Export an `EngineLike` interface from `engine.ts` describing the engine's public methods and events.
+- [x] Create `src/app/controller.ts` with `SessionController`, which depends on `EngineLike`. Implement `loadCircuit`, `startListening`, `togglePlay`, `setTempo`, `setVariation`, `newBeat`, and `selectPreset` using the R12 control table. While paused, tempo uses `applyTempoNow`, and New beat or preset uses `engine.reset(newRecipe)`. Before the first start, all changes update the store only. Subscribe to engine `status`, `phraseStarted`, `applied`, and `position` events, dispatch matching actions, and save settings on every change.
+- [x] Create `src/app/ControllerContext.tsx` with a provider and a `useController()` hook, and create the controller once in `main.tsx`.
+- [x] Switch the temporary audition page to the controller and add `pending-changes` text.
+- [x] Write `src/app/controller.test.ts` with a fake `EngineLike`, verifying which engine method is called and what the store contains for each control in each state (idle, playing, paused).
+- [x] Write `tests/browser/boundaries.spec.ts` (Chromium). Start at 100 BPM. While playing, change variation; `pending-changes` shows it; it clears after the phrase index advances (within 21 s). Change tempo while playing; the pending text appears and clears within 3 s.
 
 **Verify**
 
