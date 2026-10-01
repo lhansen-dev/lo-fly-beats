@@ -87,6 +87,55 @@ describe('SessionController', () => {
     expect(store.getState().pending).toEqual({})
   })
 
+  it('applies controls immediately before the first start and saves settings', () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const saves: unknown[] = []
+    const controller = new SessionController({ store, createEngine: async () => new FakeEngine(), loadGraph: async () => graph, saveSettings: value => saves.push(value), randomSeed: () => 123 })
+    controller.setTempo(110)
+    controller.setVariation(0.6)
+    controller.newBeat()
+    controller.selectPreset('overripe-2am')
+    expect(store.getState().active).toMatchObject({ tempoBpm: 64, variation: 0.6, sessionSeed: 123, presetId: 'overripe-2am' })
+    expect(store.getState().pending).toEqual({})
+    expect(saves).toHaveLength(4)
+    expect(saves.map(value => (value as { tempoBpm: number }).tempoBpm)).toEqual([110, 110, 110, store.getState().active.tempoBpm])
+  })
+
+  it('routes playing controls to requests and clears pending on applied', async () => {
+    const { controller, store, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    store.dispatch({ type: 'engineStatusChanged', status: 'playing' })
+    const original = store.getState().active
+    controller.setTempo(111)
+    expect(engine.calls.at(-1)).toEqual({ method: 'request', arg: { kind: 'tempo', tempoBpm: 111 } })
+    expect(store.getState().active).toEqual(original)
+    expect(store.getState().pending).toEqual({ tempoBpm: 111 })
+    engine.emit('applied', { kinds: ['tempo'], recipe: { ...original, tempoBpm: 111 } })
+    expect(store.getState().pending).toEqual({})
+    controller.setVariation(0.4)
+    expect(engine.calls.at(-1)).toEqual({ method: 'request', arg: { kind: 'variation', variation: 0.4 } })
+    controller.newBeat()
+    expect(engine.calls.at(-1)).toEqual({ method: 'request', arg: { kind: 'newBeat', sessionSeed: expect.any(Number) } })
+    controller.selectPreset('overripe-2am')
+    expect(engine.calls.at(-1)).toEqual({ method: 'request', arg: { kind: 'preset', presetId: 'overripe-2am', tempoBpm: expect.any(Number) } })
+  })
+
+  it('uses immediate engine operations while paused', async () => {
+    const { controller, store, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    controller.setTempo(112)
+    expect(engine.calls.at(-1)).toEqual({ method: 'applyTempoNow', arg: 112 })
+    controller.setVariation(0.5)
+    expect(engine.calls.at(-1)).toEqual({ method: 'request', arg: { kind: 'variation', variation: 0.5 } })
+    controller.newBeat()
+    expect(engine.calls.at(-1)).toMatchObject({ method: 'reset', arg: { sessionSeed: store.getState().active.sessionSeed } })
+    controller.selectPreset('overripe-2am')
+    expect(engine.calls.at(-1)).toMatchObject({ method: 'reset', arg: { presetId: 'overripe-2am', tempoBpm: store.getState().active.tempoBpm } })
+    expect(store.getState().pending).toEqual({ variation: 0.5 })
+  })
+
   it('toggles playback according to status', async () => {
     const { controller, store, engine } = setup()
     await controller.loadCircuit()

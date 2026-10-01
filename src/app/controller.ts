@@ -4,6 +4,8 @@ import { CircuitError } from '../connectome/types'
 import type { CircuitGraph } from '../connectome/types'
 import { getPreset } from '../presets/presets'
 import { MAPPING_VERSION } from '../music/versions'
+import type { PresetId } from '../presets/types'
+import { randomSessionSeed } from './seed'
 import type { AppAction, AppState, RestoredSettings } from './state'
 import type { Store } from './store'
 
@@ -20,6 +22,7 @@ export class SessionController {
   private readonly createEngine: () => Promise<EngineLike>
   private readonly loadGraph: () => Promise<CircuitGraph>
   private readonly saveSettings: (settings: RestoredSettings) => void
+  private readonly randomSeed: () => number
   private graph: CircuitGraph | null = null
   private engine: EngineLike | null = null
   private startPromise: Promise<void> | null = null
@@ -30,6 +33,7 @@ export class SessionController {
     this.createEngine = options.createEngine
     this.loadGraph = options.loadGraph
     this.saveSettings = options.saveSettings
+    this.randomSeed = options.randomSeed ?? randomSessionSeed
   }
 
   async loadCircuit(): Promise<void> {
@@ -79,6 +83,46 @@ export class SessionController {
     if (status === 'starting' || status === 'exporting') return
     if (status === 'playing') this.engine.pause()
     else this.engine.play()
+  }
+
+  setTempo(tempoBpm: number): void {
+    const playing = this.store.getState().engineStatus === 'playing'
+    if (playing) this.engine!.request({ kind: 'tempo', tempoBpm })
+    else this.engine?.applyTempoNow(tempoBpm)
+    this.store.dispatch({ type: 'tempoRequested', tempoBpm, immediate: !playing })
+    this.save()
+  }
+
+  setVariation(variation: number): void {
+    if (this.engine) this.engine.request({ kind: 'variation', variation })
+    this.store.dispatch({ type: 'variationRequested', variation, immediate: this.engine === null })
+    this.save()
+  }
+
+  newBeat(): void {
+    const sessionSeed = this.randomSeed()
+    const playing = this.store.getState().engineStatus === 'playing'
+    if (playing) {
+      this.engine!.request({ kind: 'newBeat', sessionSeed })
+      this.store.dispatch({ type: 'newBeatRequested', sessionSeed, immediate: false })
+    } else {
+      this.store.dispatch({ type: 'newBeatRequested', sessionSeed, immediate: true })
+      if (this.engine) this.engine.reset(this.store.getState().active)
+    }
+    this.save()
+  }
+
+  selectPreset(presetId: PresetId): void {
+    const tempoBpm = getPreset(presetId).tempoBpm
+    const playing = this.store.getState().engineStatus === 'playing'
+    if (playing) {
+      this.engine!.request({ kind: 'preset', presetId, tempoBpm })
+      this.store.dispatch({ type: 'presetRequested', presetId, tempoBpm, immediate: false })
+    } else {
+      this.store.dispatch({ type: 'presetRequested', presetId, tempoBpm, immediate: true })
+      if (this.engine) this.engine.reset(this.store.getState().active)
+    }
+    this.save()
   }
 
   getDiagnostics(): EngineDiagnostics | null {
