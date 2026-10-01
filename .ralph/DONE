@@ -1,0 +1,4 @@
+Phase 18 verification retry recorded
+- Re-ran `npm run test:audio` and `npx playwright test --project=chromium`; both failed with socket-bind EPERM.
+- Kept the Phase 18 final verification box unchecked and appended the fresh result and sandbox rationale.
+- Changed only `docs/03-IMPLEMENT.md` for the task.
