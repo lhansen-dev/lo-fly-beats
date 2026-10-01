@@ -97,6 +97,10 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 16 | Phase 16 Verify steps 3 and 4 could not be run because the sandbox denies the local server bind (`listen EPERM ... ::1:4173`); the soak box and final verification box stay unchecked for the user to complete. | Playwright Chromium and the 5-minute soak require the blocked local server. |
 | 2026-09-30 | 16 | Change the Playwright `webServer` command, `url`, and `baseURL` to `127.0.0.1:4173` instead of `localhost:4173`. | Node resolved `localhost` to the blocked IPv6 loopback. |
 | 2026-09-30 | 16 | Audition page Start / Restart pauses a playing engine before `engine.reset(recipe)` so `engine.play()` can resume. | R9 defines `reset` for the paused state and `play()` only resumes from `paused`. |
+| 2026-10-01 | 17 | User closed the Phase 17 listening gate with a blanket approval and no concrete requests: "lgtm, do your best to continue without my feedback". Phase 18 therefore changes no code. | Approval was given in conversation while Phase 17's Listening notes were still empty, matching the Phase 8 precedent ("ah yeah it's good. continue"). Phase 17's seven checkboxes and its Listening notes line stay user-owned records; no agent listened to the audio. |
+| 2026-10-01 | 18 | Phase 18 verification: npm run check passed, npm run test:audio failed, and npx playwright test --project=chromium failed, which failed with: listen EPERM: operation not permitted ::1:63315; preview server listen EPERM: operation not permitted 127.0.0.1:4173. The final verification box stays unchecked. | Reporting the failure instead of checking the box, as Phase 16's Decision log row did for the same sandbox limitation when the local preview server could not be bound. |
+| 2026-10-01 | 18 | No code changed in Phase 18: MAPPING_VERSION stays at 2 and DEFAULT_SESSION_SEED stays at 1 in src/music/versions.ts, the three presets in src/presets/presets.ts keep their tempo and swing values, and R5, R7, R8, and R10 are unchanged, because the Phase 17 listening approval contained no concrete requests. | The Phase 17 gate closed with a blanket approval ("lgtm, do your best to continue without my feedback") that named no sound parameter, no preset change, no composition rule, no default seed, and no sample-based voice, so every conditional Phase 18 task resolved to no change and tests/data/compose-snapshot.test.ts needed no new snapshot. |
+| 2026-10-01 | 18 | Re-ran Phase 18 Verify steps 2 and 3 after the review: npm run test:audio and npx playwright test --project=chromium both still fail with listen EPERM: operation not permitted (vitest browser mode binds ::1 and the Playwright preview server binds 127.0.0.1:4173), so Phase 18's final verification box stays unchecked and both steps still need to be run outside the sandbox by the operator or CI before it can be ticked. | This sandbox denies every local socket bind, the same limitation recorded for Phase 16 on 2026-09-30; Verify step 1 npm run check passes and Phase 18's only diff is in docs/03-IMPLEMENT.md, so nothing in this phase can cause or fix the bind failure. Checklist rule 7 says to stop and report rather than guess. |
 
 ## Reference
 
@@ -1564,6 +1568,8 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 
 **User** · **Read:** R7, R8, R10
 
+**Gate status:** Approved to continue by the user on 2026-10-01 (see Decision log): "lgtm, do your best to continue without my feedback". The user gave no concrete listening requests, so Phase 18 changes no code. Proceed to Phase 18. The seven checkboxes below and the **Listening notes** line remain user-owned records of the individual manual checks; no agent listened to the audio.
+
 Agents: do not check these boxes. Stop and report that Phase 17 is waiting for the user.
 
 - [ ] Run `npm run build && npm run preview` and open http://localhost:4173/?debug=1 in desktop Chrome.
@@ -1582,12 +1588,12 @@ Agents: do not check these boxes. Stop and report that Phase 17 is waiting for t
 
 **Agent** · **Read:** Phase 17 listening notes, R5, R7, R8, R10
 
-- [ ] Implement every request in the Phase 17 listening notes. If the notes say "Approved as is," change no code and check the remaining boxes.
-- [ ] If composition output changed, increment `MAPPING_VERSION`, update the snapshot, and update R7 and R8 in this document so later phases use the new values.
-- [ ] If sound parameters changed, update the R10 tables in this document.
-- [ ] If the user named a default seed, update `DEFAULT_SESSION_SEED` and R5.
-- [ ] If the user asked for sample-based voices, stop and report, because choosing and licensing samples needs the user.
-- [ ] Add a Decision log row summarizing the changes.
+- [x] Implement every request in the Phase 17 listening notes. If the notes say "Approved as is," change no code and check the remaining boxes.
+- [x] If composition output changed, increment `MAPPING_VERSION`, update the snapshot, and update R7 and R8 in this document so later phases use the new values.
+- [x] If sound parameters changed, update the R10 tables in this document.
+- [x] If the user named a default seed, update `DEFAULT_SESSION_SEED` and R5.
+- [x] If the user asked for sample-based voices, stop and report, because choosing and licensing samples needs the user.
+- [x] Add a Decision log row summarizing the changes.
 
 **Verify**
 
