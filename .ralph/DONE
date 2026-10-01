@@ -1,0 +1,4 @@
+Removed two unused TypeScript imports
+- Dropped `vi` from `src/app/controller.test.ts`.
+- Removed the unused `PendingChange` type import from `src/app/controller.ts`.
+- Typecheck and production build passed.

@@ -1,5 +1,4 @@
 import type { EngineDiagnostics, EngineLike } from '../audio/engine'
-import type { PendingChange } from '../audio/sequencer'
 import { CircuitError } from '../connectome/types'
 import type { CircuitGraph } from '../connectome/types'
 import { getPreset } from '../presets/presets'

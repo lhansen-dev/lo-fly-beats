@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import type { EngineEventMap, EngineLike } from '../audio/engine'
 import { CircuitError } from '../connectome/types'
 import type { CircuitGraph } from '../connectome/types'
