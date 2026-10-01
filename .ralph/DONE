@@ -1,4 +1,0 @@
-Phase 18 verification recorded
-- `npm run check` passed; the audio and Chromium Playwright commands failed due to sandbox bind restrictions.
-- Added the result to the Decision log and left the final verification box unchecked.
-- Key file: `docs/03-IMPLEMENT.md`.
