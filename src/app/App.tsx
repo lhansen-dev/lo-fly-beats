@@ -58,8 +58,14 @@ export default function App() {
     const { getEngine } = await import('../audio/engine')
     const instance = getEngine()
     setEngine(instance)
-    if (instance.getDiagnostics().status === 'idle') await instance.start(graph, recipe(), DEFAULT_MIX)
-    else { instance.reset(recipe()); instance.play() }
+    const status = instance.getDiagnostics().status
+    if (status === 'idle') {
+      await instance.start(graph, recipe(), DEFAULT_MIX)
+      return
+    }
+    if (status === 'playing') instance.pause()
+    instance.reset(recipe())
+    instance.play()
   }
   async function togglePlayback() {
     if (!engine) return
@@ -75,7 +81,7 @@ export default function App() {
     <button data-testid="random-seed" type="button" onClick={() => setSeed(randomSessionSeed())}>Random seed</button>
     <label>Variation <input type="range" data-testid="variation" min="0" max="100" step="1" value={variation} onChange={e => setVariation(Number(e.target.value))} /><output>{variation}</output></label>
     <label>Tempo <input type="range" data-testid="tempo" min="60" max="100" step="1" value={tempo} onChange={e => setTempo(Number(e.target.value))} /><output>{tempo}</output></label>
-    <button data-testid="start-restart" type="button" disabled={!graph} onClick={() => { void startRestart() }}>Start / Restart</button>{' '}
+    <button data-testid="start-restart" type="button" disabled={!graph || engineStatus === 'starting'} onClick={() => { void startRestart() }}>Start / Restart</button>{' '}
     <button data-testid="play-toggle" type="button" disabled={!engine || engineStatus === 'starting'} onClick={() => { void togglePlayback() }}>{engineStatus === 'playing' ? 'Pause' : 'Play'}</button>
     <p>Engine: <span data-testid="engine-status">{engineStatus}</span></p>
     <p data-testid="position">Phrase {position.phrase} · Bar {position.bar} · Beat {position.beat}</p>
