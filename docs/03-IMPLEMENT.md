@@ -94,6 +94,9 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-09-30 | 14 | Use one named seeded stream per buffer and consume successive draws for stereo channels; place rain drips and crackle clicks at deterministic random sample positions. Smooth the final 1 ms of looped ambience toward its first sample after the prescribed equal-power overlap. | R5 pins each stream to `buffer|${name}|${sampleRate}`. The 44.1 kHz rain seam measured 0.172 after the required overlap and peak scaling; smoothing the final 1 ms brought it below the specified 0.1 threshold. The six 48 kHz buffers generated in 48.1 ms. |
 | 2026-09-30 | 15 | Ramp bass cutoff changes through a Tone `Multiply` node on the filter-envelope signal. | Tone's `FrequencyEnvelope.baseFrequency` setter changes immediately and has no automation API. Scaling its output preserves the configured envelope and applies the required 0.5 s ramp using the supplied audio context. |
 | 2026-09-30 | 15 | Pin `@vitest/browser-playwright` to 5.0.1 to match the repository's `vitest` 5.0.1. | The `@5` install range resolved 5.0.3, whose exact Vitest peer conflicts with 5.0.1. Using 5.0.1 keeps the peer graph aligned and `npm ls` clean. |
+| 2026-09-30 | 16 | Phase 16 Verify steps 3 and 4 could not be run because the sandbox denies the local server bind (`listen EPERM ... ::1:4173`); the soak box and final verification box stay unchecked for the user to complete. | Playwright Chromium and the 5-minute soak require the blocked local server. |
+| 2026-09-30 | 16 | Change the Playwright `webServer` command, `url`, and `baseURL` to `127.0.0.1:4173` instead of `localhost:4173`. | Node resolved `localhost` to the blocked IPv6 loopback. |
+| 2026-09-30 | 16 | Audition page Start / Restart pauses a playing engine before `engine.reset(recipe)` so `engine.play()` can resume. | R9 defines `reset` for the paused state and `play()` only resumes from `paused`. |
 
 ## Reference
 
@@ -1539,13 +1542,13 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 
 **Agent** · **Read:** R1, R9, R10, R12 (debug mode, test IDs)
 
-- [ ] Implement `PlaybackSequencer` in `src/audio/sequencer.ts` with the constructor, getters, `reset`, and `advance` from R9. `request` and `applyTempoNow` come in Phase 20.
-- [ ] Write `src/audio/sequencer.test.ts` with a fake `compose` function that records its calls and returns small scores. Test that 128 advances call `compose` once for phrase 0 and the 129th calls it for phrase 1; that each plan returns the events for its step and correct `bar` and `beat`; that `reset` returns to step 0 and phrase 0; and that no more than 2 scores are held.
-- [ ] Implement `src/audio/engine.ts` following R9 engine rules 1–6, without pending changes, mix controls, export, or interruption handling.
-- [ ] Replace the spike UI with a temporary audition page in `App.tsx`. It shows the circuit status and has a preset select, a seed number input with a **Random seed** button, variation and tempo sliders, a **Start / Restart** button that applies the settings with `engine.reset` and plays, a `play-toggle` button, `engine-status`, `position`, the current phrase's four chord symbols, and the latest eight trace steps as text.
-- [ ] Create `src/components/DiagnosticsPanel.tsx` and render it only with `?debug=1` (R12).
-- [ ] Delete `src/audio/spike.ts`, the spike UI, and `tests/browser/spike.spec.ts`.
-- [ ] Write `tests/browser/engine.spec.ts` (Chromium). Load `/?debug=1` and click Start / Restart; expect `engine-status` to read `playing` and `position` to change within 3 s. Pause; expect `position` to stay unchanged for 1.5 s. Play; expect it to advance again. Click `play-toggle` 20 times quickly, ending in the playing state, and expect diagnostics to show `repeatEvents` equal to 1. Pause, wait 2.5 s, and expect `keysActiveVoices` equal to 0.
+- [x] Implement `PlaybackSequencer` in `src/audio/sequencer.ts` with the constructor, getters, `reset`, and `advance` from R9. `request` and `applyTempoNow` come in Phase 20.
+- [x] Write `src/audio/sequencer.test.ts` with a fake `compose` function that records its calls and returns small scores. Test that 128 advances call `compose` once for phrase 0 and the 129th calls it for phrase 1; that each plan returns the events for its step and correct `bar` and `beat`; that `reset` returns to step 0 and phrase 0; and that no more than 2 scores are held.
+- [x] Implement `src/audio/engine.ts` following R9 engine rules 1–6, without pending changes, mix controls, export, or interruption handling.
+- [x] Replace the spike UI with a temporary audition page in `App.tsx`. It shows the circuit status and has a preset select, a seed number input with a **Random seed** button, variation and tempo sliders, a **Start / Restart** button that applies the settings with `engine.reset` and plays, a `play-toggle` button, `engine-status`, `position`, the current phrase's four chord symbols, and the latest eight trace steps as text.
+- [x] Create `src/components/DiagnosticsPanel.tsx` and render it only with `?debug=1` (R12).
+- [x] Delete `src/audio/spike.ts`, the spike UI, and `tests/browser/spike.spec.ts`.
+- [x] Write `tests/browser/engine.spec.ts` (Chromium). Load `/?debug=1` and click Start / Restart; expect `engine-status` to read `playing` and `position` to change within 3 s. Pause; expect `position` to stay unchanged for 1.5 s. Play; expect it to advance again. Click `play-toggle` 20 times quickly, ending in the playing state, and expect diagnostics to show `repeatEvents` equal to 1. Pause, wait 2.5 s, and expect `keysActiveVoices` to equal 0.
 - [ ] Write `tests/browser/soak.spec.ts`, skipped unless `SOAK=1` is set. It plays for 5 minutes in Chromium, reads diagnostics every 30 s, and asserts that `repeatEvents` is 1, `scoresHeld` is at most 2, `keysActiveVoices` is at most 8, and the status stays `playing`. Run it once and record the result in the Decision log.
 
 **Verify**

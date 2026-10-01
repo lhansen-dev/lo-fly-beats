@@ -1,117 +1,92 @@
-import { useEffect, useRef, useState } from 'react'
-import { renderSpikeWav, spikeNotes, startSpike, stopSpike, subscribeSpikeState } from '../audio/spike'
+import { useEffect, useState } from 'react'
 import { loadCircuit } from '../connectome/load'
 import { CircuitError } from '../connectome/types'
 import type { CircuitGraph } from '../connectome/types'
+import { PRESETS, DEFAULT_PRESET_ID } from '../presets/presets'
+import type { PresetId } from '../presets/types'
+import type { PhraseScore, SessionRecipe } from '../music/types'
+import { DEFAULT_SESSION_SEED } from '../music/versions'
+import { randomSessionSeed } from './seed'
+import { DEFAULT_MIX } from '../audio/rig'
+import type { EngineStatus } from '../audio/engine'
+import DiagnosticsPanel from '../components/DiagnosticsPanel'
 
 let circuitRequest: Promise<CircuitGraph> | undefined
 
 export default function App() {
   const [graph, setGraph] = useState<CircuitGraph | null>(null)
-  const [status, setStatus] = useState('Loading the fly-brain wiring…')
-  const [audioState, setAudioState] = useState('inactive')
-  const [playing, setPlaying] = useState(false)
-  const [operation, setOperation] = useState<'idle' | 'starting' | 'rendering'>('idle')
-  const [error, setError] = useState<string | null>(null)
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
-  const url = useRef<string | null>(null)
-  const busy = useRef(false)
-  const mounted = useRef(false)
+  const [circuitStatus, setCircuitStatus] = useState('Loading the fly-brain wiring…')
+  const [presetId, setPresetId] = useState<PresetId>(DEFAULT_PRESET_ID)
+  const [seed, setSeed] = useState(DEFAULT_SESSION_SEED)
+  const [variation, setVariation] = useState(0)
+  const [tempo, setTempo] = useState(PRESETS[DEFAULT_PRESET_ID].tempoBpm)
+  const [engineStatus, setEngineStatus] = useState<EngineStatus>('idle')
+  const [position, setPosition] = useState({ phrase: 1, bar: 1, beat: 1 })
+  const [score, setScore] = useState<PhraseScore | null>(null)
+  const [trace, setTrace] = useState<string[]>([])
+  const [engine, setEngine] = useState<Awaited<ReturnType<typeof import('../audio/engine').getEngine>> | null>(null)
+  const debugMode = new URLSearchParams(window.location.search).get('debug') === '1'
 
   useEffect(() => {
     let active = true
-    mounted.current = true
     circuitRequest ??= loadCircuit(import.meta.env.BASE_URL)
-    void circuitRequest.then(
-      loaded => {
-        if (!active) return
-        setGraph(loaded)
-        setStatus(`Circuit ready: ${loaded.neurons.size} neurons, ${loaded.manifest.counts.connections} connections`)
-      },
-      loadError => {
-        if (active) setStatus(`The fly-brain data couldn't be loaded: ${loadError instanceof CircuitError ? loadError.code : 'unknown'} — ${loadError instanceof Error ? loadError.message : String(loadError)}`)
-      },
-    )
-    const unsubscribe = subscribeSpikeState(setAudioState)
-    return () => {
-      active = false
-      mounted.current = false
-      unsubscribe()
-      stopSpike()
-      if (url.current) URL.revokeObjectURL(url.current)
-    }
+    void circuitRequest.then(g => { if (active) { setGraph(g); setCircuitStatus(`Circuit ready: ${g.neurons.size} neurons, ${g.manifest.counts.connections} connections`) } }, e => {
+      if (active) setCircuitStatus(`The fly-brain data couldn't be loaded: ${e instanceof CircuitError ? e.code : 'unknown'} — ${e instanceof Error ? e.message : String(e)}`)
+    })
+    return () => { active = false }
   }, [])
 
-  async function play() {
-    if (!graph || busy.current || playing) return
-    busy.current = true
-    setOperation('starting')
-    setError(null)
-    try {
-      await startSpike(graph)
-      if (mounted.current) setPlaying(true)
-      else stopSpike()
-    } catch (playError) {
-      if (mounted.current) setError(playError instanceof Error ? playError.message : String(playError))
-    } finally {
-      busy.current = false
-      if (mounted.current) setOperation('idle')
+  useEffect(() => {
+    if (!engine) return
+    const off = [
+      engine.on('status', setEngineStatus),
+      engine.on('phraseStarted', ({ score: next }) => { setScore(next); setTrace([]) }),
+      engine.on('position', p => {
+        setPosition({ phrase: p.phraseIndex + 1, bar: p.bar + 1, beat: p.beat + 1 })
+        if (score) {
+          const index = p.bar * 4 + p.beat
+          if (index < score.trace.length) setTrace(previous => [...previous, JSON.stringify(score.trace[index])].slice(-8))
+        }
+      }),
+    ]
+    return () => off.forEach(unsubscribe => unsubscribe())
+  }, [engine, score])
+
+  function recipe(): SessionRecipe { return { recipeVersion: 1, presetId, sessionSeed: seed, variation: variation / 100, tempoBpm: tempo } }
+  async function startRestart() {
+    if (!graph) return
+    const { getEngine } = await import('../audio/engine')
+    const instance = getEngine()
+    setEngine(instance)
+    const status = instance.getDiagnostics().status
+    if (status === 'idle') {
+      await instance.start(graph, recipe(), DEFAULT_MIX)
+      return
     }
+    if (status === 'playing') instance.pause()
+    instance.reset(recipe())
+    instance.play()
+  }
+  async function togglePlayback() {
+    if (!engine) return
+    if (engineStatus === 'playing') engine.pause()
+    else engine.play()
   }
 
-  function stop() {
-    stopSpike()
-    setPlaying(false)
-  }
-
-  async function render() {
-    if (!graph || busy.current) return
-    busy.current = true
-    stop()
-    setOperation('rendering')
-    setError(null)
-    if (url.current) URL.revokeObjectURL(url.current)
-    url.current = null
-    setDownloadUrl(null)
-    try {
-      const blob = await renderSpikeWav(graph)
-      if (!mounted.current) return
-      url.current = URL.createObjectURL(blob)
-      setDownloadUrl(url.current)
-    } catch (renderError) {
-      if (mounted.current) setError(renderError instanceof Error ? renderError.message : String(renderError))
-    } finally {
-      busy.current = false
-      if (mounted.current) setOperation('idle')
-    }
-  }
-
-  return (
-    <main>
-      <h1>Lo-fly beats</h1>
-      <p>Beats to relax / repeatedly fly into the same window to</p>
-      <p data-testid="circuit-status" role="status">{status}</p>
-      <section aria-labelledby="spike-title">
-        <h2 id="spike-title">Audio spike</h2>
-        <p>A short phrase following the strongest outgoing connections in the MBON circuit.</p>
-        {graph && (
-          <table aria-label="Spike traversal">
-            <thead><tr><th scope="col">Neuron ID</th><th scope="col">Type</th><th scope="col">MIDI note</th></tr></thead>
-            <tbody>{spikeNotes(graph).map((note, index) => (
-              <tr key={`${index}-${note.neuronId}`}><td>{note.neuronId}</td><td>{note.type ?? 'Unknown'}</td><td>{note.midi}</td></tr>
-            ))}</tbody>
-          </table>
-        )}
-        <p>
-          <button type="button" onClick={() => { void play() }} disabled={!graph || playing || operation !== 'idle'}>Play spike</button>{' '}
-          <button type="button" onClick={stop} disabled={!playing || operation !== 'idle'}>Stop spike</button>{' '}
-          <button type="button" onClick={() => { void render() }} disabled={!graph || operation !== 'idle'}>Render spike WAV</button>
-        </p>
-        <p>Audio context: <span data-testid="audio-state">{audioState}</span></p>
-        <p role="status">{operation === 'starting' ? 'Starting audio…' : operation === 'rendering' ? 'Rendering WAV…' : playing ? 'Playing spike' : 'Playback stopped'}</p>
-        {error && <p role="alert">{error}</p>}
-        {downloadUrl && <a data-testid="spike-download" href={downloadUrl} download="lofly-spike.wav">Download spike WAV</a>}
-      </section>
-    </main>
-  )
+  return <main>
+    <h1>Lo-fly beats</h1><p>Beats to relax / repeatedly fly into the same window to</p>
+    <p data-testid="circuit-status" role="status">{circuitStatus}</p>
+    <label>Preset <select data-testid="preset-select" value={presetId} onChange={e => { const id = e.target.value as PresetId; setPresetId(id); setTempo(PRESETS[id].tempoBpm) }}>{Object.entries(PRESETS).map(([id, preset]) => <option key={id} value={id}>{preset.name}</option>)}</select></label>
+    <label>Seed <input type="number" data-testid="seed-input" value={seed} onChange={e => setSeed(Number(e.target.value))} /></label>{' '}
+    <button data-testid="random-seed" type="button" onClick={() => setSeed(randomSessionSeed())}>Random seed</button>
+    <label>Variation <input type="range" data-testid="variation" min="0" max="100" step="1" value={variation} onChange={e => setVariation(Number(e.target.value))} /><output>{variation}</output></label>
+    <label>Tempo <input type="range" data-testid="tempo" min="60" max="100" step="1" value={tempo} onChange={e => setTempo(Number(e.target.value))} /><output>{tempo}</output></label>
+    <button data-testid="start-restart" type="button" disabled={!graph || engineStatus === 'starting'} onClick={() => { void startRestart() }}>Start / Restart</button>{' '}
+    <button data-testid="play-toggle" type="button" disabled={!engine || engineStatus === 'starting'} onClick={() => { void togglePlayback() }}>{engineStatus === 'playing' ? 'Pause' : 'Play'}</button>
+    <p>Engine: <span data-testid="engine-status">{engineStatus}</span></p>
+    <p data-testid="position">Phrase {position.phrase} · Bar {position.bar} · Beat {position.beat}</p>
+    <p data-testid="chords">{score?.chords.map(chord => chord.symbol).join(' · ') ?? ''}</p>
+    <pre data-testid="trace">{trace.join('\n')}</pre>
+    {debugMode && <DiagnosticsPanel getDiagnostics={() => engine?.getDiagnostics() ?? null} />}
+  </main>
 }
