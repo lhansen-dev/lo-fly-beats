@@ -7,6 +7,7 @@ import { getPreset } from '../presets/presets'
 import type { MixSettings, InstrumentRig } from './rig'
 import { createRig } from './rig'
 import { PlaybackSequencer } from './sequencer'
+import type { PendingChange } from './sequencer'
 import { eventDurationSeconds, eventOffsetSeconds } from './timing'
 
 export type EngineStatus = 'idle' | 'starting' | 'playing' | 'paused' | 'interrupted' | 'exporting'
@@ -22,16 +23,27 @@ export interface EngineDiagnostics {
   exportInProgress: boolean
 }
 
-type EngineEventMap = {
+export type EngineEventMap = {
   status: EngineStatus
   phraseStarted: { score: PhraseScore; recipe: SessionRecipe }
-  applied: { kinds: string[]; recipe: SessionRecipe }
+  applied: { kinds: PendingChange['kind'][]; recipe: SessionRecipe }
   position: { phraseIndex: number; bar: number; beat: number }
   step: { phraseIndex: number; stepInPhrase: number; bar: number; beat: number }
 }
+export interface EngineLike {
+  on<K extends keyof EngineEventMap>(name: K, handler: (payload: EngineEventMap[K]) => void): () => void
+  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void>
+  play(): void
+  pause(): void
+  reset(recipe: SessionRecipe): void
+  request(change: PendingChange): void
+  applyTempoNow(tempoBpm: number): void
+  getDiagnostics(): EngineDiagnostics
+}
+
 type EventHandler<K extends keyof EngineEventMap> = (payload: EngineEventMap[K]) => void
 
-class PlaybackEngine {
+class PlaybackEngine implements EngineLike {
   private status: EngineStatus = 'idle'
   private context: BaseContext | null = null
   private rig: InstrumentRig | null = null
@@ -90,11 +102,17 @@ class PlaybackEngine {
     const recipe = this.recipe
     if (!context || !sequencer || !rig || !recipe) return
     const plan = sequencer.advance()
-    const preset = getPreset(recipe.presetId)
+    if (plan.applied.length > 0) {
+      this.recipe = sequencer.active
+      this.emit('applied', { kinds: plan.applied, recipe: sequencer.active })
+    }
+    const activeRecipe = this.recipe
+    if (!activeRecipe) return
+    const preset = getPreset(activeRecipe.presetId)
     if (plan.tempoChanged) context.transport.bpm.setValueAtTime(plan.tempoBpm, time)
     if (plan.phraseStarted) {
       rig.applySound(preset.sound, time)
-      this.emit('phraseStarted', { score: plan.phraseStarted, recipe })
+      this.emit('phraseStarted', { score: plan.phraseStarted, recipe: activeRecipe })
     }
     for (const event of plan.events) rig.trigger(event, time + eventOffsetSeconds(event, plan.tempoBpm, preset.swing), eventDurationSeconds(event, plan.tempoBpm))
     if (document.hidden) return
@@ -128,6 +146,24 @@ class PlaybackEngine {
     this.context.transport.bpm.value = recipe.tempoBpm
   }
 
+  request(change: PendingChange): void {
+    if (!this.sequencer) return
+    const before = this.sequencer.active
+    this.sequencer.request(change)
+    if (this.sequencer.active !== before) {
+      this.recipe = this.sequencer.active
+      this.emit('applied', { kinds: [change.kind], recipe: this.recipe })
+    }
+  }
+
+  applyTempoNow(tempoBpm: number): void {
+    if (!this.sequencer || !this.context) return
+    this.sequencer.applyTempoNow(tempoBpm)
+    this.recipe = this.sequencer.active
+    this.context.transport.bpm.value = tempoBpm
+    this.emit('applied', { kinds: ['tempo'], recipe: this.recipe })
+  }
+
   getDiagnostics(): EngineDiagnostics {
     return {
       contextState: this.context?.state ?? 'closed',
@@ -143,4 +179,4 @@ class PlaybackEngine {
 }
 
 const engine = new PlaybackEngine()
-export function getEngine(): PlaybackEngine { return engine }
+export function getEngine(): EngineLike { return engine }
