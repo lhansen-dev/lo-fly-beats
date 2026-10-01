@@ -1,0 +1,4 @@
+Added debounced settings persistence for Phase 19.
+- Added latest-value save, immediate flush, cancellation, and once-only unavailable reporting.
+- Added fake-timer tests for debounce, custom delay, flush/cancel, and storage write failures.
+- Checked the five Phase 19 task boxes while leaving verification unchecked; targeted checks pass.

@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { isStorageAvailable, loadSettings, SETTINGS_KEY } from './persistence'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createSettingsSaver, isStorageAvailable, loadSettings, SETTINGS_KEY } from './persistence'
+import type { RestoredSettings } from './state'
 
 function memoryStorage(initial?: string) {
   const map = new Map<string, string>()
@@ -11,7 +12,7 @@ function memoryStorage(initial?: string) {
   }
 }
 
-const validSettings = {
+const validSettings: RestoredSettings = {
   mappingVersion: 2,
   presetVersion: 1,
   presetId: 'rainy-windowsill',
@@ -57,5 +58,57 @@ describe('settings persistence', () => {
     expect(loadSettings(() => null)).toBeNull()
     expect(isStorageAvailable(() => null)).toBe(false)
     expect(isStorageAvailable(() => memoryStorage())).toBe(true)
+  })
+})
+
+describe('settings saver', () => {
+  afterEach(() => vi.useRealTimers())
+
+  it('debounces writes and stores the latest settings', () => {
+    vi.useFakeTimers()
+    const storage = memoryStorage()
+    const saver = createSettingsSaver(() => storage)
+    saver.save(validSettings)
+    saver.save({ ...validSettings, tempoBpm: 80 })
+    expect(storage.map.size).toBe(0)
+    vi.advanceTimersByTime(500)
+    expect(storage.map.size).toBe(1)
+    expect(loadSettings(() => storage)).toEqual({ ...validSettings, tempoBpm: 80 })
+  })
+
+  it('uses a custom delay', () => {
+    vi.useFakeTimers()
+    const storage = memoryStorage()
+    createSettingsSaver(() => storage, 10).save(validSettings)
+    vi.advanceTimersByTime(9)
+    expect(storage.map.size).toBe(0)
+    vi.advanceTimersByTime(1)
+    expect(storage.map.size).toBe(1)
+  })
+
+  it('flushes immediately and cancels pending writes', () => {
+    vi.useFakeTimers()
+    const storage = memoryStorage()
+    const saver = createSettingsSaver(() => storage)
+    saver.save(validSettings)
+    saver.flush()
+    expect(loadSettings(() => storage)).toEqual(validSettings)
+    storage.map.clear()
+    saver.save(validSettings)
+    saver.cancel()
+    vi.advanceTimersByTime(500)
+    expect(storage.map.size).toBe(0)
+  })
+
+  it('reports throwing storage once without throwing from the timer', () => {
+    vi.useFakeTimers()
+    const onUnavailable = vi.fn()
+    const storage = { getItem: () => null, setItem: () => { throw new Error('blocked') } }
+    const saver = createSettingsSaver(() => storage, 10, onUnavailable)
+    expect(() => saver.save(validSettings)).not.toThrow()
+    expect(() => vi.advanceTimersByTime(10)).not.toThrow()
+    saver.save(validSettings)
+    vi.advanceTimersByTime(10)
+    expect(onUnavailable).toHaveBeenCalledTimes(1)
   })
 })

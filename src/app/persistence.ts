@@ -10,6 +10,66 @@ export interface SettingsStorage {
 
 export type StorageAccessor = () => SettingsStorage | null
 
+export interface SettingsSaver {
+  save(settings: RestoredSettings): void
+  flush(): void
+  cancel(): void
+}
+
+export function createSettingsSaver(getStorage: StorageAccessor, delayMs = 500, onUnavailable?: () => void): SettingsSaver {
+  let timer: ReturnType<typeof setTimeout> | null = null
+  let pending: RestoredSettings | null = null
+  let unavailableReported = false
+
+  function reportUnavailable() {
+    if (unavailableReported) return
+    unavailableReported = true
+    onUnavailable?.()
+  }
+
+  function writePending() {
+    if (pending === null) return
+    const settings = pending
+    pending = null
+    try {
+      const storage = getStorage()
+      if (storage === null) {
+        reportUnavailable()
+        return
+      }
+      storage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+    } catch {
+      reportUnavailable()
+    }
+  }
+
+  function clearTimer() {
+    if (timer !== null) {
+      clearTimeout(timer)
+      timer = null
+    }
+  }
+
+  return {
+    save(settings) {
+      pending = settings
+      clearTimer()
+      timer = setTimeout(() => {
+        timer = null
+        writePending()
+      }, delayMs)
+    },
+    flush() {
+      clearTimer()
+      writePending()
+    },
+    cancel() {
+      clearTimer()
+      pending = null
+    },
+  }
+}
+
 const layerSchema = z.strictObject({
   level: z.number().min(0).max(1),
   muted: z.boolean(),
