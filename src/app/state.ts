@@ -71,6 +71,12 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
   }
 }
 
+function withoutPending(pending: AppState['pending'], ...keys: Array<keyof AppState['pending']>): AppState['pending'] {
+  const next = { ...pending }
+  for (const key of keys) delete next[key]
+  return next
+}
+
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'circuitLoading':
@@ -83,6 +89,30 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, engineStatus: action.status }
     case 'audioNoticeChanged':
       return { ...state, audioNotice: action.notice }
+    case 'tempoRequested':
+      return action.immediate
+        ? { ...state, active: { ...state.active, tempoBpm: action.tempoBpm }, pending: withoutPending(state.pending, 'tempoBpm') }
+        : { ...state, pending: { ...state.pending, tempoBpm: action.tempoBpm } }
+    case 'variationRequested':
+      return action.immediate
+        ? { ...state, active: { ...state.active, variation: action.variation }, pending: withoutPending(state.pending, 'variation') }
+        : { ...state, pending: { ...state.pending, variation: action.variation } }
+    case 'newBeatRequested':
+      return action.immediate
+        ? { ...state, active: { ...state.active, sessionSeed: action.sessionSeed }, pending: withoutPending(state.pending, 'sessionSeed'), position: { phraseIndex: 0, bar: 0, beat: 0 }, activeScore: null }
+        : { ...state, pending: { ...state.pending, sessionSeed: action.sessionSeed } }
+    case 'presetRequested':
+      return action.immediate
+        ? { ...state, active: { ...state.active, presetId: action.presetId, tempoBpm: action.tempoBpm }, pending: withoutPending(state.pending, 'presetId', 'tempoBpm'), position: { phraseIndex: 0, bar: 0, beat: 0 }, activeScore: null }
+        : { ...state, pending: { ...state.pending, presetId: action.presetId, tempoBpm: action.tempoBpm } }
+    case 'changesApplied': {
+      const active = action.recipe
+      const pending = { ...state.pending }
+      for (const key of Object.keys(pending) as Array<keyof AppState['pending']>) {
+        if (pending[key] === active[key]) delete pending[key]
+      }
+      return { ...state, active, pending }
+    }
     case 'phraseStarted':
       return { ...state, activeScore: action.score, position: { phraseIndex: action.score.phraseIndex, bar: 0, beat: 0 } }
     case 'positionChanged':

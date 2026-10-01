@@ -60,3 +60,59 @@ describe('app state', () => {
     expect(result).not.toBe(state)
   })
 })
+
+describe('control requests', () => {
+  const scored = () => appReducer(initial(), { type: 'phraseStarted', score: { scoreVersion: 1, phraseIndex: 4 } as unknown as PhraseScore })
+
+  it('applies immediate and pending tempo requests', () => {
+    const state = appReducer(appReducer(initial(), { type: 'positionChanged', position: { phraseIndex: 2, bar: 1, beat: 3 } }), { type: 'tempoRequested', tempoBpm: 90, immediate: false })
+    expect(state.pending.tempoBpm).toBe(90)
+    const applied = appReducer(state, { type: 'tempoRequested', tempoBpm: 100, immediate: true })
+    expect(applied.active.tempoBpm).toBe(100)
+    expect(applied.pending).toEqual({})
+    expect(applied.position).toEqual(state.position)
+  })
+
+  it('applies immediate and pending variation requests', () => {
+    expect(appReducer(initial(), { type: 'variationRequested', variation: 0.4, immediate: false }).pending.variation).toBe(0.4)
+    expect(appReducer(initial(), { type: 'variationRequested', variation: 0.8, immediate: true }).active.variation).toBe(0.8)
+  })
+
+  it('resets score and position for an immediate new beat', () => {
+    const state = appReducer(scored(), { type: 'newBeatRequested', sessionSeed: 2, immediate: false })
+    const next = appReducer(state, { type: 'newBeatRequested', sessionSeed: 3, immediate: true })
+    expect(next.active.sessionSeed).toBe(3)
+    expect(next.position).toEqual({ phraseIndex: 0, bar: 0, beat: 0 })
+    expect(next.activeScore).toBeNull()
+    expect(next.pending).toEqual({})
+  })
+
+  it('keeps a pending new beat from changing position or score', () => {
+    const state = scored()
+    const next = appReducer(state, { type: 'newBeatRequested', sessionSeed: 5, immediate: false })
+    expect(next.pending.sessionSeed).toBe(5)
+    expect(next.position).toBe(state.position)
+    expect(next.activeScore).toBe(state.activeScore)
+  })
+
+  it('applies immediate and pending preset requests', () => {
+    const pending = appReducer(initial(), { type: 'presetRequested', presetId: 'overripe-2am', tempoBpm: 88, immediate: false })
+    expect(pending.pending).toEqual({ presetId: 'overripe-2am', tempoBpm: 88 })
+    const next = appReducer(scored(), { type: 'presetRequested', presetId: 'overripe-2am', tempoBpm: 88, immediate: true })
+    expect(next.active.presetId).toBe('overripe-2am')
+    expect(next.active.tempoBpm).toBe(88)
+    expect(next.position).toEqual({ phraseIndex: 0, bar: 0, beat: 0 })
+    expect(next.activeScore).toBeNull()
+  })
+
+  it('replaces repeated pending requests and reconciles applied changes', () => {
+    const first = appReducer(initial(), { type: 'tempoRequested', tempoBpm: 80, immediate: false })
+    const second = appReducer(first, { type: 'tempoRequested', tempoBpm: 90, immediate: false })
+    expect(second.pending.tempoBpm).toBe(90)
+    const withVariation = appReducer(second, { type: 'variationRequested', variation: 0.5, immediate: false })
+    const recipe = { ...withVariation.active, tempoBpm: 90 }
+    const applied = appReducer(withVariation, { type: 'changesApplied', recipe })
+    expect(applied.active).toBe(recipe)
+    expect(applied.pending).toEqual({ variation: 0.5 })
+  })
+})
