@@ -82,7 +82,7 @@ export class PlaybackSequencer {
       case 'tempo': this.pendingTempo = change.tempoBpm; break
       case 'variation': this.pendingVariation = change.variation; break
       case 'newBeat': this.pendingSeed = change.sessionSeed; break
-      case 'preset': this.pendingPreset = { presetId: change.presetId, tempoBpm: change.tempoBpm }; break
+      case 'preset': this.pendingTempo = null; this.pendingPreset = { presetId: change.presetId, tempoBpm: change.tempoBpm }; break
     }
   }
 
@@ -94,8 +94,36 @@ export class PlaybackSequencer {
 
   advance(): StepPlan {
     const globalStep = this.globalStep++
-    const rel = globalStep - this.recipeStartStep
-    const stepInPhrase = rel % PHRASE_STEPS
+    let rel = globalStep - this.recipeStartStep
+    let stepInPhrase = rel % PHRASE_STEPS
+    const applied: PendingChange['kind'][] = []
+    if (stepInPhrase === 0) {
+      if (this.pendingTempo !== null) {
+        if (this.recipe.tempoBpm !== this.pendingTempo) this.tempoNeedsApply = true
+        this.recipe = { ...this.recipe, tempoBpm: this.pendingTempo }
+        this.pendingTempo = null
+        applied.push('tempo')
+      }
+      if (this.pendingVariation !== null) {
+        this.recipe = { ...this.recipe, variation: this.pendingVariation }
+        this.pendingVariation = null
+        applied.push('variation')
+      }
+      if (this.pendingSeed !== null) {
+        this.recipe = { ...this.recipe, sessionSeed: this.pendingSeed }
+        this.pendingSeed = null
+        this.recipeStartStep = globalStep
+        rel = 0
+        stepInPhrase = 0
+        applied.push('newBeat')
+      }
+      if (this.pendingPreset !== null) {
+        if (this.recipe.tempoBpm !== this.pendingPreset.tempoBpm) this.tempoNeedsApply = true
+        this.recipe = { ...this.recipe, presetId: this.pendingPreset.presetId, tempoBpm: this.pendingPreset.tempoBpm }
+        this.pendingPreset = null
+        applied.push('preset')
+      }
+    }
     const phraseIndex = Math.floor(rel / PHRASE_STEPS)
     let phraseStarted: PhraseScore | null = null
     if (stepInPhrase === 0) {
@@ -105,7 +133,6 @@ export class PlaybackSequencer {
       for (const event of phraseStarted.events) indexed[event.step]?.push(event)
       this.eventsByStep = indexed
     }
-    const applied: PendingChange['kind'][] = []
     if (stepInPhrase % 16 === 0 && this.pendingTempo !== null) {
       this.recipe = { ...this.recipe, tempoBpm: this.pendingTempo }
       this.pendingTempo = null
