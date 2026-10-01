@@ -1585,12 +1585,12 @@ Agents: do not check these boxes. Stop and report that Phase 17 is waiting for t
 
 **Agent** · **Read:** Phase 17 listening notes, R5, R7, R8, R10
 
-- [ ] Implement every request in the Phase 17 listening notes. If the notes say "Approved as is," change no code and check the remaining boxes.
-- [ ] If composition output changed, increment `MAPPING_VERSION`, update the snapshot, and update R7 and R8 in this document so later phases use the new values.
-- [ ] If sound parameters changed, update the R10 tables in this document.
-- [ ] If the user named a default seed, update `DEFAULT_SESSION_SEED` and R5.
-- [ ] If the user asked for sample-based voices, stop and report, because choosing and licensing samples needs the user.
-- [ ] Add a Decision log row summarizing the changes.
+- [x] Implement every request in the Phase 17 listening notes. If the notes say "Approved as is," change no code and check the remaining boxes.
+- [x] If composition output changed, increment `MAPPING_VERSION`, update the snapshot, and update R7 and R8 in this document so later phases use the new values.
+- [x] If sound parameters changed, update the R10 tables in this document.
+- [x] If the user named a default seed, update `DEFAULT_SESSION_SEED` and R5.
+- [x] If the user asked for sample-based voices, stop and report, because choosing and licensing samples needs the user.
+- [x] Add a Decision log row summarizing the changes.
 
 **Verify**
 
