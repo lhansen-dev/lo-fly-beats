@@ -1,5 +1,5 @@
-You are working on: removing the last literal audition-era test id strings from the Phase 21
-player-control unit test so the card's acceptance grep over `src` and `tests` finds nothing.
+You are working on: fixing the unstable `useAppState` selector in the Phase 21 player controls
+(`src/components/PresetPicker.tsx`) and guarding it with a snapshot-stability unit test.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,14 +37,19 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Hints for this repository:
-- The Phase 21 UI is already built and committed; this is a tiny surgical
-  follow-up. Change only the file(s) your task names — do not touch components
-  under `src/components/*.tsx`, `src/app/App.tsx`, `tests/browser/*.spec.ts`,
-  or `docs/`.
-- Unit tests run with `npx vitest run --project unit <path>` (the `unit` project
-  covers `src/**/*.test.ts`). Never run `npm test`, `npm run check`, or
-  Playwright — Playwright cannot bind sockets in this sandbox.
-- When a task tells you a forbidden literal string must not appear in a source
-  file, break it up rather than deleting the assertion that uses it; the file
-  already does this once with `'start-' + 'restart'`.
+Repo hints for this card:
+- This is a Vite + React 19 + TypeScript app. Unit tests run with
+  `npx vitest run --project unit <file>` (node environment). Never run
+  `npm run check`, `npm test`, `npm run test:audio` or Playwright: the first two
+  run the whole suite and the last two cannot work here (this sandbox denies
+  local socket binds, and no browser is available).
+- Add no dependencies. `npm install` is not needed for any task here.
+- Files under `src/**` are typechecked by `tsconfig.app.json`: `strict`,
+  `verbatimModuleSyntax` (type-only imports must use `import type`),
+  `noUnusedLocals` (no unused imports), `erasableSyntaxOnly`, and no node types
+  (do not import `node:fs` and friends in a `src` test).
+- `.ts` test files cannot contain JSX. Build elements with `createElement`, the
+  same way the existing `src/components/controls.test.ts` does.
+- If a task gives you exact file content or an exact line to write, use it
+  verbatim rather than paraphrasing it.
+</content>
