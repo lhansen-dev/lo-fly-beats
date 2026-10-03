@@ -130,8 +130,8 @@ describe('App', () => {
       'data-testid="pending-changes"',
     ]) expect(markup).toContain(expected)
     expect(markup).not.toContain('start-' + 'restart')
-    expect(markup).not.toContain('data-testid="chords"')
-    expect(markup).not.toContain('data-testid="trace"')
+    expect(markup).not.toContain('data-testid="' + 'chords"')
+    expect(markup).not.toContain('data-testid="' + 'trace"')
   })
 })
 

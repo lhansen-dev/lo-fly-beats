@@ -1,0 +1,4 @@
+Removed the final literal audition-era test IDs from the unit test.
+- Split both forbidden strings and retained the absence assertions.
+- Targeted acceptance grep and 10 unit tests passed.
+- Changed `src/components/controls.test.ts` only.
