@@ -102,6 +102,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-01 | 18 | Phase 18 verification: npm run check passed, npm run test:audio failed, and npx playwright test --project=chromium failed, which failed with: listen EPERM: operation not permitted ::1:63315; preview server listen EPERM: operation not permitted 127.0.0.1:4173. The final verification box stays unchecked. | Reporting the failure instead of checking the box, as Phase 16's Decision log row did for the same sandbox limitation when the local preview server could not be bound. |
 | 2026-10-01 | 18 | No code changed in Phase 18: MAPPING_VERSION stays at 2 and DEFAULT_SESSION_SEED stays at 1 in src/music/versions.ts, the three presets in src/presets/presets.ts keep their tempo and swing values, and R5, R7, R8, and R10 are unchanged, because the Phase 17 listening approval contained no concrete requests. | The Phase 17 gate closed with a blanket approval ("lgtm, do your best to continue without my feedback") that named no sound parameter, no preset change, no composition rule, no default seed, and no sample-based voice, so every conditional Phase 18 task resolved to no change and tests/data/compose-snapshot.test.ts needed no new snapshot. |
 | 2026-10-01 | 18 | Re-ran Phase 18 Verify steps 2 and 3 after the review: npm run test:audio and npx playwright test --project=chromium both still fail with listen EPERM: operation not permitted (vitest browser mode binds ::1 and the Playwright preview server binds 127.0.0.1:4173), so Phase 18's final verification box stays unchecked and both steps still need to be run outside the sandbox by the operator or CI before it can be ticked. | This sandbox denies every local socket bind, the same limitation recorded for Phase 16 on 2026-09-30; Verify step 1 npm run check passes and Phase 18's only diff is in docs/03-IMPLEMENT.md, so nothing in this phase can cause or fix the bind failure. Checklist rule 7 says to stop and report rather than guess. |
+| 2026-10-03 | 21 | Replaced the audition page with `StartListening`, `TransportControls`, `TempoControl`, `VariationControl`, `NewBeatButton`, `PresetPicker`, `NowPlaying`, and `PendingChanges`. `circuit-status` stays in `App.tsx` until Phase 25 adds `CircuitStatus.tsx`; extra `now-playing`, `seed-hex`, and `scene-placeholder` test IDs were added alongside the R12 table. `npx playwright test --project=chromium` could not run because this sandbox denies local socket binds; the final verification box stays unchecked for the operator. | Same local socket-bind limitation recorded for Phases 16, 18, and 20. |
 
 ## Reference
 
@@ -1655,11 +1656,11 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Agent** · **Read:** R12, R14
 
-- [ ] Create these components in `src/components/`: `StartListening.tsx`, `TransportControls.tsx` (`play-toggle`, `engine-status`, and `position`, displayed 1-based as "Phrase 1 · Bar 1 · Beat 1"), `TempoControl.tsx`, `VariationControl.tsx`, `NewBeatButton.tsx`, `PresetPicker.tsx` (radio inputs in a `<fieldset>` with a `<legend>`), `NowPlaying.tsx` (track title, preset name, and seed as `seedHex`), and `PendingChanges.tsx`.
-- [ ] Use native controls with visible labels: `<label>`, `<input type="range">`, and `<output>` for sliders, and text buttons.
-- [ ] Replace the audition page in `App.tsx` with a header (title and tagline), a placeholder box where the scene will go, and the controls. Delete the audition code.
-- [ ] Disable Start listening until the circuit is ready. After the first start, show `play-toggle` in its place.
-- [ ] Write `tests/browser/controls.spec.ts` (Chromium):
+- [x] Create these components in `src/components/`: `StartListening.tsx`, `TransportControls.tsx` (`play-toggle`, `engine-status`, and `position`, displayed 1-based as "Phrase 1 · Bar 1 · Beat 1"), `TempoControl.tsx`, `VariationControl.tsx`, `NewBeatButton.tsx`, `PresetPicker.tsx` (radio inputs in a `<fieldset>` with a `<legend>`), `NowPlaying.tsx` (track title, preset name, and seed as `seedHex`), and `PendingChanges.tsx`.
+- [x] Use native controls with visible labels: `<label>`, `<input type="range">`, and `<output>` for sliders, and text buttons.
+- [x] Replace the audition page in `App.tsx` with a header (title and tagline), a placeholder box where the scene will go, and the controls. Delete the audition code.
+- [x] Disable Start listening until the circuit is ready. After the first start, show `play-toggle` in its place.
+- [x] Write `tests/browser/controls.spec.ts` (Chromium):
   - A first visit shows Start listening, and diagnostics report status `idle`.
   - Clicking Start listening leads to status `playing`.
   - Selecting a preset while paused applies it immediately: the position resets and Now playing shows the new preset.
