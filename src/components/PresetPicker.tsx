@@ -4,7 +4,8 @@ import { PRESETS } from '../presets/presets'
 
 export default function PresetPicker() {
   const controller = useController()
-  const { active, pending } = useAppState(state => ({ active: state.active, pending: state.pending }))
+  const active = useAppState(state => state.active)
+  const pending = useAppState(state => state.pending)
   const selected = pending.presetId ?? active.presetId
 
   return (
