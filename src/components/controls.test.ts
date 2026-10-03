@@ -14,6 +14,7 @@ import PresetPicker from './PresetPicker'
 import NewBeatButton from './NewBeatButton'
 import NowPlaying from './NowPlaying'
 import PendingChanges from './PendingChanges'
+import App from '../app/App'
 
 function setup() {
   const store = createAppStore(createInitialState(null))
@@ -107,6 +108,30 @@ describe('PendingChanges', () => {
     store.dispatch({ type: 'tempoRequested', tempoBpm: 80, immediate: false })
     markup = render(createElement(PendingChanges))
     expect(markup).toContain('80 BPM at the next bar')
+  })
+})
+
+describe('App', () => {
+  it('renders the permanent player page without audition controls', () => {
+    const { render } = setup()
+    const markup = render(createElement(App))
+    for (const expected of [
+      'Lo-fly beats',
+      'Beats to relax',
+      'data-testid="scene-placeholder"',
+      'data-testid="circuit-status"',
+      'data-testid="now-playing"',
+      'data-testid="start-listening"',
+      'data-testid="position"',
+      'data-testid="preset-rainy-windowsill"',
+      'data-testid="tempo"',
+      'data-testid="variation"',
+      'data-testid="new-beat"',
+      'data-testid="pending-changes"',
+    ]) expect(markup).toContain(expected)
+    expect(markup).not.toContain('start-' + 'restart')
+    expect(markup).not.toContain('data-testid="chords"')
+    expect(markup).not.toContain('data-testid="trace"')
   })
 })
 
