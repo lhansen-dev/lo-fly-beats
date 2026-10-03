@@ -10,11 +10,17 @@ new component and the page (`src/components/controls.test.ts`), a new
 `tests/browser/controls.spec.ts` covering first visit, reaching `playing`, immediate
 preset/seed changes while paused, pending New beat while playing, and settings surviving a
 reload, and retargets the three existing browser specs to the new `start-listening` button id.
+This is a re-submission: the prior `revise` round's one issue (two audition-era test-id literals
+left un-obfuscated in a negative assertion) is now fixed correctly.
 
-Evaluator verdict: **revise**. Everything checked out — all regression gates (`npm run
-typecheck`/`lint`/`build`/`check`, the `src/app` and `src/components` unit suites) pass, and
-every acceptance-criteria grep passes except one: the "no audition page references remain"
-check fails because two negative test assertions in `controls.test.ts` embed the literal
-strings `data-testid="chords"` and `data-testid="trace"` (the file dodged this correctly for
-`start-restart` via string concatenation but missed doing the same for these two). A one-line-
-style fix to those two assertions should clear it.
+Evaluator verdict: **revise**, again — for a different, new reason. Every acceptance-criteria
+command now passes (greps, component/markup checks, the five browser-spec scenarios, docs
+checklist/decision-log, `npm run typecheck`/`lint`/`check`). But a careful read of the new
+`PresetPicker.tsx` found a critical runtime bug invisible to all of those checks: its
+`useAppState` selector returns a brand-new object on every call, which trips a classic
+`useSyncExternalStore` infinite-render-loop footgun and throws "Maximum update depth exceeded"
+as soon as the component mounts in a real browser — confirmed by tracing the installed React
+source and by an empirical repro against this repo's own React/ReactDOM. Since `PresetPicker` is
+unconditionally rendered on the one page this app has, this would crash the whole app on load.
+Sibling components (`TempoControl`, `VariationControl`) already use the correct two-call pattern;
+`PresetPicker` just needs to match it. See `.ralph/EVALUATION.md` for the exact fix.

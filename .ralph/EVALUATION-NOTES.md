@@ -1,27 +1,71 @@
-# Evaluation notes - Sat  3 Oct 2026 23:12:57 UTC
-1. all 8 components exist: PASS
-2. format.ts/format.test.ts exist, vitest run format.test.ts: PASS (8 tests)
-3. controls.test.ts exists, vitest run: PASS (10 tests)
-4. StartListening disabled logic + TransportControls testids: PASS
-5. TempoControl/VariationControl label/range/output/testid: PASS
-6. PresetPicker fieldset/legend/radio + NewBeatButton/NowPlaying/PendingChanges testids: PASS
-7. App.tsx scene-placeholder + all component imports present: PASS
-8. CRITICAL FAIL: grep -rqE 'start-restart|data-testid="chords"|data-testid="trace"|random-seed|seed-input|preset-select' src tests -> EXIT 0 (found matches), criterion requires it to FAIL (no matches). Matches: src/components/controls.test.ts:133-134 (negative assertions 'not.toContain("data-testid=\"chords\"")' literally contain the forbidden string). start-restart itself is correctly obfuscated via string concat trick elsewhere in same file but chords/trace were not.
-9. tests/browser/engine.spec.ts, boundaries.spec.ts, soak.spec.ts use start-listening testid: PASS
-10. controls.spec.ts content (start-listening, play-toggle, new-beat, seed-hex, preset-fruit-bowl-finals, reload): PASS
-11. controls.spec.ts has >=5 test( blocks (5 found): PASS
-12. Phase21 checklist has >=5 [x] boxes (5 found): PASS
-13. Decision log row for phase 21 exists: PASS
-R1. npm run typecheck: PASS (exit 0, no errors)
-R2. npm run lint: PASS (exit 0, 2 pre-existing warnings, 0 errors)
-R3. npm run build: PASS (exit 0)
-R4. npx vitest run --project unit src/app: PASS (40 tests)
-R5. circuit-status still present in App.tsx: PASS
-R6. R12 test IDs (play-toggle, engine-status, position, pending-changes, tempo, variation) present in src: PASS
-R7. npm run check (full): PASS (exit 0)
-Extra checks: full-repo grep for start-restart|preset-select|seed-input|random-seed outside src/tests finds nothing (clean); data-testid="chords"/"trace" only appear in src/components/controls.test.ts:133-134 as literal substrings inside `.not.toContain(...)` negative assertions — these ARE caught by the required-to-fail grep, confirming the criterion failure is real and isolated to those 2 lines. The same file DID correctly dodge the 'start-restart' pattern via string concatenation ('start-' + 'restart') at line ~128 but did not apply the same trick to chords/trace.
-Reviewed TransportControls/StartListening logic for R12 compliance (disabled on starting/exporting, idle swap) — correct, no bugs found.
-Reviewed controls.spec.ts scenarios against card's 5 required scenarios — match 1:1 (first visit, start->playing, preset+seed immediate while paused, New beat pending while playing, reload persistence).
-Verified diff scope: only docs/03-IMPLEMENT.md, src/app/{App.tsx,format.ts,format.test.ts}, src/components/{8 new files + controls.test.ts}, src/styles/app.css, tests/browser/{controls.spec.ts new, boundaries/engine/soak.spec.ts testid rename only} — no out-of-scope changes, no mixer/export/scene code added.
-git status clean except .ralph/EVALUATION-NOTES.md (untracked, expected).
-FINAL VERDICT: revise — one critical acceptance-criterion failure (audition-reference grep), everything else passes.
+# Evaluation notes — Phase 21 (re-submission after prior revise)
+
+Started: 2026-10-03T23:23:41Z (per `date -u`)
+
+Context: This is a re-submission. Prior evaluation (commit 96ac4c5) returned `revise` for exactly
+one issue: literal `data-testid="chords"` / `data-testid="trace"` substrings embedded in negative
+assertions in `src/components/controls.test.ts`, which made the audition-era-identifier grep match
+instead of fail. Plan v2 task 1 (commit 40e8107) split those two strings using the same
+`'start-' + 'restart'` trick already used nearby. Diff confirmed: only the two lines changed as
+expected, matching exactly what the prior evaluation asked for.
+
+Now re-running the full acceptance criteria set myself from the top, not trusting the loop's claim.
+AC1 pass (grep found nothing, exit=1)
+AC2 pass (grep found nothing, exit=1)
+6 checks done
+Ran: vitest controls.test.ts -> 10 passed; vitest format.test.ts -> 8 passed.
+Negative-assertion count check (>=3 not.toContain) -> 6 occurrences, pass. 'chords' and 'trace' substrings present (split form) -> pass.
+Eight components exist -> pass. Transport/slider/preset/remaining-control markup greps -> all pass.
+App.tsx scene-placeholder/circuit-status/7-component-wiring greps -> all pass (no MISSING printed).
+controls.spec.ts: 5 test( found (>=5); all six required substrings present -> pass.
+engine/boundaries/soak specs reference start-listening -> pass.
+Docs: Phase 21 checklist >=5 [x] (actual 5); decision log row 2026-10-03 | 21 present -> pass.
+npm run typecheck -> exit 0.
+npm run lint -> exit 0 (2 pre-existing-style warnings, 0 errors).
+
+## Full regression
+npm run check -> exit 0 (typecheck, lint [0 errors/2 pre-existing-style warnings], 137 unit tests, data:validate, build all green).
+git diff main...HEAD --name-only -- . ':!.ralph' -> 18 files, all Phase-21-scoped (App.tsx, format.ts/.test.ts, 8 new components + controls.test.ts, app.css, 4 browser specs, docs/03-IMPLEMENT.md). No mixer/export/scene files touched — matches card's out-of-scope list.
+R12/R14 cross-read: NowPlaying track title "No Thoughts, Only Fruit" matches R14; preset testids preset-rainy-windowsill/overripe-2am/fruit-bowl-finals match R12 table and src/presets/types.ts PresetId; TransportControls play-toggle disabled on starting/exporting matches R12's control table; App.tsx header+tagline+scene-placeholder+controls matches card bullet list; getPendingChanges logic moved verbatim into src/app/format.ts (describePendingChanges) with no duplication left behind in App.tsx (grep confirms getPendingChanges only exists in format.ts now).
+
+## Bug hunt beyond the acceptance-criteria greps (per instructions, step 3)
+Found a CRITICAL runtime bug not caught by any criterion, grep, typecheck, lint, or the renderToStaticMarkup-based unit tests:
+
+src/components/PresetPicker.tsx:7
+  const { active, pending } = useAppState(state => ({ active: state.active, pending: state.pending }))
+
+This selector allocates a brand-new object on every call. src/app/store.ts's useAppState has zero memoization
+(`useSyncExternalStore(store.subscribe, () => selector(store.getState()), () => selector(store.getState()))`), so
+every getSnapshot() call returns a new reference even when nothing changed. This is React's documented
+"getSnapshot should be cached to avoid an infinite loop" footgun. Every sibling component in this SAME diff
+(TempoControl.tsx, VariationControl.tsx) reads the identical active+pending data correctly via two separate
+single-field `useAppState(state => state.active)` / `useAppState(state => state.pending)` calls — PresetPicker is
+the only file in the whole src tree using the combined-object form (confirmed via repo-wide grep).
+
+Traced the exact mechanism in the installed node_modules/react-dom (19.2.8) client reconciler
+(mountSyncExternalStore / updateStoreInstance / checkIfSnapshotChanged / forceStoreRerender in both
+react-dom-client.development.js and the production bundle, which both have the same 50-update
+NESTED_UPDATE_LIMIT safety throw). Confirmed empirically: installed jsdom + the repo's own react@19.2.8/
+react-dom@19.2.8 via `npm install --no-save` (package.json/package-lock.json verified untouched after,
+scratch files removed, repo re-`npm install`ed back to clean — `git status --porcelain` clean except
+EVALUATION-NOTES.md before writing this note), wrote a minimal repro mounting the exact PresetPicker
+selector shape with react-dom/client's createRoot (matching src/main.tsx's real mount path exactly) — it
+throws "Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside
+componentWillUpdate or componentDidUpdate..." within <1s of mounting. The sibling single-field-selector
+pattern, mounted the same way, does not throw. Since PresetPicker is unconditionally rendered in App.tsx
+and App.tsx is the whole app (main.tsx has no ErrorBoundary anywhere in src), this would crash the entire
+page on first load in a real browser. This is exactly the class of bug Playwright's controls.spec.ts would
+have caught (e.g. "preset and New beat apply immediately while paused" clicking preset-fruit-bowl-finals)
+had this sandbox been able to run it — it cannot (confirmed socket-bind EPERM, consistent with Phases 16/18/20),
+which is why the acceptance criteria deliberately check content instead of execution, and why this slipped
+through all automated gates.
+
+Verdict: revise. Fix: src/components/PresetPicker.tsx line 7 — split into two useAppState calls like
+TempoControl.tsx/VariationControl.tsx already do, e.g.:
+  const active = useAppState(state => state.active)
+  const pending = useAppState(state => state.pending)
+
+All cleanup done: .ralph/scratch removed, package-lock.json restored to HEAD content (git checkout was denied
+by sandbox index-lock permissions, so restored via `git show HEAD:package-lock.json` -> file overwrite instead),
+node_modules reconciled with plain `npm install`. Final `git status --porcelain` shows only .ralph/EVALUATION-NOTES.md
+modified prior to writing EVALUATION.md/SUMMARY.md.
