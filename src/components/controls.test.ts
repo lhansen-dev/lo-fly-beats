@@ -10,6 +10,8 @@ import type { CircuitManifest } from '../connectome/types'
 import TransportControls from './TransportControls'
 import TempoControl from './TempoControl'
 import VariationControl from './VariationControl'
+import PresetPicker from './PresetPicker'
+import NewBeatButton from './NewBeatButton'
 
 function setup() {
   const store = createAppStore(createInitialState(null))
@@ -46,6 +48,33 @@ describe('VariationControl', () => {
     store.dispatch({ type: 'variationRequested', variation: 0.5, immediate: true })
     markup = render(createElement(VariationControl))
     expect(markup).toContain('value="50"')
+  })
+})
+
+describe('PresetPicker', () => {
+  it('renders presets and selects the active or pending preset', () => {
+    const { store, render } = setup()
+    let markup = render(createElement(PresetPicker))
+    expect(markup).toContain('<fieldset')
+    expect(markup).toContain('<legend>Preset</legend>')
+    expect(markup).toContain('type="radio"')
+    expect(markup).toContain('data-testid="preset-rainy-windowsill"')
+    expect(markup).toContain('data-testid="preset-overripe-2am"')
+    expect(markup).toContain('data-testid="preset-fruit-bowl-finals"')
+    expect(markup).toMatch(/preset-rainy-windowsill[^>]*checked/)
+
+    store.dispatch({ type: 'presetRequested', presetId: 'fruit-bowl-finals', tempoBpm: 86, immediate: true })
+    markup = render(createElement(PresetPicker))
+    expect(markup).toMatch(/preset-fruit-bowl-finals[^>]*checked/)
+  })
+})
+
+describe('NewBeatButton', () => {
+  it('renders the new beat button', () => {
+    const { render } = setup()
+    const markup = render(createElement(NewBeatButton))
+    expect(markup).toContain('data-testid="new-beat"')
+    expect(markup).toContain('New beat')
   })
 })
 
