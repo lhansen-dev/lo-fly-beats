@@ -1,0 +1,4 @@
+Player-control selector stability guard added
+- Static-renders all controls with a mocked `useAppState` snapshot check.
+- Throws when repeated selector results are not `Object.is`-equal.
+- Records the test decision in `docs/03-IMPLEMENT.md`; focused Vitest check passed.
