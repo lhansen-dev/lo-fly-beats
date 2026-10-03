@@ -1,4 +1,0 @@
-Phase 21 controls spec and checklist closeout
-- Added five Chromium controls scenarios covering startup, playback, presets, pending changes, and reload persistence.
-- Marked the five Phase 21 tasks complete while leaving the final verification box unchecked.
-- Logged the sandbox socket-bind limitation and decision details; TypeScript and required grep check pass.
