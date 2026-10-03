@@ -8,12 +8,46 @@ import { createInitialState } from '../app/state'
 import { createAppStore } from '../app/store'
 import type { CircuitManifest } from '../connectome/types'
 import TransportControls from './TransportControls'
+import TempoControl from './TempoControl'
+import VariationControl from './VariationControl'
 
 function setup() {
   const store = createAppStore(createInitialState(null))
   const controller = new SessionController({ store, createEngine: async () => { throw new Error('unused') }, loadGraph: async () => { throw new Error('unused') }, saveSettings: () => {} })
   return { store, render: (node: ReactNode) => renderToStaticMarkup(createElement(ControllerProvider, { controller, children: node })) }
 }
+
+describe('TempoControl', () => {
+  it('renders the active tempo and pending tempo requests', () => {
+    const { store, render } = setup()
+    let markup = render(createElement(TempoControl))
+    expect(markup).toContain('data-testid="tempo"')
+    expect(markup).toContain('type="range"')
+    expect(markup).toContain('min="60"')
+    expect(markup).toContain('max="100"')
+    expect(markup).toContain('value="72"')
+    expect(markup).toContain('72 BPM')
+
+    store.dispatch({ type: 'tempoRequested', tempoBpm: 90, immediate: false })
+    markup = render(createElement(TempoControl))
+    expect(markup).toContain('value="90"')
+  })
+})
+
+describe('VariationControl', () => {
+  it('renders the active variation and pending variation requests', () => {
+    const { store, render } = setup()
+    let markup = render(createElement(VariationControl))
+    expect(markup).toContain('data-testid="variation"')
+    expect(markup).toContain('min="0"')
+    expect(markup).toContain('max="100"')
+    expect(markup).toContain('value="0"')
+
+    store.dispatch({ type: 'variationRequested', variation: 0.5, immediate: true })
+    markup = render(createElement(VariationControl))
+    expect(markup).toContain('value="50"')
+  })
+})
 
 describe('TransportControls', () => {
   it('renders the initial transport state', () => {
