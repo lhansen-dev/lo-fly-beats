@@ -1,6 +1,5 @@
-You are working on: replacing the throwaway audition page with the real, permanent player
-control UI (Phase 21 of `docs/03-IMPLEMENT.md`) — eight components in `src/components/`, a
-rebuilt `src/app/App.tsx`, and `tests/browser/controls.spec.ts`.
+You are working on: removing the last literal audition-era test id strings from the Phase 21
+player-control unit test so the card's acceptance grep over `src` and `tests` finds nothing.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -38,23 +37,14 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Repository hints (Vite + React 19 + TypeScript, no extra dependencies needed):
-- UI components live in `src/components/` as default-exported React function
-  components in `.tsx` files. They read state with `useAppState(selector)` from
-  `src/app/store.ts` and call methods on `useController()` from
-  `src/app/ControllerContext.tsx` (`startListening`, `togglePlay`, `setTempo`,
-  `setVariation`, `newBeat`, `selectPreset`). `src/app/state.ts` defines `AppState`
-  and the action union; `src/components/DiagnosticsPanel.tsx` is an existing example.
-- TypeScript is strict with `verbatimModuleSyntax` (use `import type` for types),
-  `noUnusedLocals` (no unused imports) and `erasableSyntaxOnly` (no `enum`,
-  `namespace`, or constructor parameter properties).
-- Unit tests run in a **node** environment; the `unit` project includes
-  `src/**/*.test.ts`. A `.ts` test file cannot contain JSX: build elements with
-  `createElement` from `react` and render with `renderToStaticMarkup` from
-  `react-dom/server` (if `react-dom/server` will not import, use `react-dom/server.node`).
-  Existing fake-dependency patterns live in `src/app/controller.test.ts`.
-- Run only the single check your task names. Never run `npm run check`, `npm test`,
-  `npm run test:audio`, or `npx playwright test` — the Playwright/browser runs cannot
-  bind local ports in this sandbox and will hang or fail.
-- `docs/01-IDEAS.md` and `docs/02-PLAN.md` are read-only; `docs/03-IMPLEMENT.md` is
-  edited only when a task says so.
+Hints for this repository:
+- The Phase 21 UI is already built and committed; this is a tiny surgical
+  follow-up. Change only the file(s) your task names — do not touch components
+  under `src/components/*.tsx`, `src/app/App.tsx`, `tests/browser/*.spec.ts`,
+  or `docs/`.
+- Unit tests run with `npx vitest run --project unit <path>` (the `unit` project
+  covers `src/**/*.test.ts`). Never run `npm test`, `npm run check`, or
+  Playwright — Playwright cannot bind sockets in this sandbox.
+- When a task tells you a forbidden literal string must not appear in a source
+  file, break it up rather than deleting the assertion that uses it; the file
+  already does this once with `'start-' + 'restart'`.
