@@ -12,6 +12,8 @@ import TempoControl from './TempoControl'
 import VariationControl from './VariationControl'
 import PresetPicker from './PresetPicker'
 import NewBeatButton from './NewBeatButton'
+import NowPlaying from './NowPlaying'
+import PendingChanges from './PendingChanges'
 
 function setup() {
   const store = createAppStore(createInitialState(null))
@@ -75,6 +77,36 @@ describe('NewBeatButton', () => {
     const markup = render(createElement(NewBeatButton))
     expect(markup).toContain('data-testid="new-beat"')
     expect(markup).toContain('New beat')
+  })
+})
+
+describe('NowPlaying', () => {
+  it('renders the active track, preset, and seed', () => {
+    const { store, render } = setup()
+    let markup = render(createElement(NowPlaying))
+    expect(markup).toContain('data-testid="now-playing"')
+    expect(markup).toContain('No Thoughts, Only Fruit')
+    expect(markup).toContain('Rainy Windowsill')
+    expect(markup).toContain('data-testid="seed-hex"')
+    expect(markup).toContain('00000001')
+
+    store.dispatch({ type: 'presetRequested', presetId: 'overripe-2am', tempoBpm: 64, immediate: true })
+    markup = render(createElement(NowPlaying))
+    expect(markup).toContain('Overripe at 2 AM')
+  })
+})
+
+describe('PendingChanges', () => {
+  it('renders pending changes', () => {
+    const { store, render } = setup()
+    let markup = render(createElement(PendingChanges))
+    expect(markup).toContain('data-testid="pending-changes"')
+    expect(markup).toContain('role="status"')
+    expect(markup).not.toContain('next bar')
+
+    store.dispatch({ type: 'tempoRequested', tempoBpm: 80, immediate: false })
+    markup = render(createElement(PendingChanges))
+    expect(markup).toContain('80 BPM at the next bar')
   })
 })
 
