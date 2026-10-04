@@ -1,0 +1,5 @@
+# Phase 33 credits browser test
+
+- Added `tests/browser/credits.spec.ts` to verify license/DOI links, exact attribution text, footer link, and absence of page errors.
+- Marked the six Phase 33 task boxes complete and recorded the implementation decision; left runtime verification unchecked for the operator.
+- TypeScript, oxlint, and Playwright test listing pass.
