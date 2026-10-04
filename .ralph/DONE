@@ -1,0 +1,4 @@
+Phase 24 export flow documentation and browser spec
+- Authored `tests/browser/export.spec.ts` for WAV download and repeated-export checks.
+- Marked the five Phase 24 implementation tasks complete while leaving verification unchecked.
+- Recorded URL lifecycle, diagnostics, and sandbox-limited verification for the operator.
