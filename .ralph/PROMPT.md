@@ -1,4 +1,4 @@
-You are working on: Phase 28 of `docs/03-IMPLEMENT.md` — drawing the SVG fruit-fly character (`src/scene/fly/Fly.tsx`) with every R13 fly class group, its transform origins in `src/scene/scene.css`, and the fly browser tests.
+You are working on: Phase 28 of `docs/03-IMPLEMENT.md` — drawing the fly character (`src/scene/fly/Fly.tsx`, `src/scene/scene.css`, scene tests) in the lo-fly-beats SVG scene, with no animation yet.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,14 +23,6 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Task-specific hints:
-- Scene art is inline SVG in a `viewBox="0 0 1600 900"`. Look at `src/scene/layers/Desk.tsx` and `src/scene/layers/desk.test.ts` for the drawing and test style before writing new code.
-- Scene markup must contain NO color literals (no `#abc`/`#aabbcc`, no `rgb(`/`rgba(`) and no `<text>` — colors come only from `var(--scene-...)` tokens defined in `src/styles/tokens.css`, applied via `style={{ fill: 'var(--scene-...)' }}` / `stroke`.
-- Never put a `transform` attribute on an element whose class starts with `fly` (later CSS animation would override it); use an unclassed inner `<g transform=...>` wrapper instead.
-- Do not add any animation, `@keyframes`, or transitions — that is Phase 31.
-- Playwright and vitest browser mode cannot run in this sandbox (local socket binds fail with `listen EPERM`). Never run `npx playwright test` or `npm run test:audio`; use the check named in your task.
-- Unit tests run with `npx vitest run --project unit <file>`.
-
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -43,3 +35,10 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
+
+Project hints:
+- Scene markup must contain no color literals: every fill/stroke is `style={{ fill: 'var(--scene-…)' }}`; color values live only in `src/styles/tokens.css`. No `<text>` except the existing "HW" heading in `Desk.tsx`. Avoid SVG gradients/ids (an id like `#face…` would trip the no-hex tests).
+- Tests under `src/**` are type-checked with `tsconfig.app.json` (no Node types): never import `node:fs` there — render with `renderToStaticMarkup(createElement(...))`. Tests that read files belong in `tests/unit/**` (Node types available; see `tests/unit/styles/app-css.test.ts`).
+- `vitest.config.ts` has `passWithNoTests: true`, so a vitest run that matches no file "passes" — make sure your test file exists and its tests actually ran.
+- Never run Playwright or `npm run test:browser` / `test:audio`: this sandbox denies local socket binds. Browser specs are checked with `npx tsc -b tsconfig.test.json` and `npx oxlint <file>`.
+- Do not add any animation (`@keyframes`, `animation`, `<animate>`); that is Phase 31. Do not check any Phase 29 box or Phase 28's "All verification steps pass." box.
