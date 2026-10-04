@@ -1,4 +1,4 @@
-You are working on: Phase 26 of `docs/03-IMPLEMENT.md` — the responsive layout shell, preset visual params, and UI design tokens for the Lo-fly beats React/Vite app.
+You are working on: Phase 26 of `docs/03-IMPLEMENT.md` — preset visual parameters, UI design tokens, the responsive layout shell with a placeholder scene frame, and its Playwright layout spec.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -36,9 +36,10 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Project hints:
-- Run vitest only as `npx vitest run --project unit <files>` (the `audio` project needs a browser). Note `passWithNoTests` is on, so make sure your new test file actually exists and runs.
-- This sandbox denies local socket binds: never run `npx playwright test` without `--list`, and never run `npm run test:audio`.
-- Unit tests that render React live in `src/**` as `.ts` files using `createElement` + `renderToStaticMarkup`; tests under `tests/` must not import `.tsx` files (no JSX in `tsconfig.test.json`). Tests that import `node:*` modules live under `tests/`.
-- Code rules: no `enum`/`namespace`/constructor parameter properties (`erasableSyntaxOnly`), no `Math.random` in `src/`, and `.tsx` component files should export only components (put helpers in `.ts` files).
-- Keep existing `data-testid` values stable; there must be exactly one `master-volume` in the App markup.
+Project hints (apply only when relevant to your task):
+- TypeScript forbids `enum`, `namespace`, and constructor parameter properties (`erasableSyntaxOnly`); unused locals/params are errors.
+- Unit tests are `.test.ts` files (no JSX): build elements with `createElement` from `react` and render with `renderToStaticMarkup` from `react-dom/server`. Tests that import `node:*` modules must live under `tests/`, not `src/`.
+- Run a single unit test file with `npx vitest run --project unit <path>`. The config sets `passWithNoTests`, so make sure the file you name actually exists.
+- Never use `Math.random` in `src/`. Do not change `MAPPING_VERSION` or any composition/sound values.
+- Playwright and Vitest browser mode cannot run here (the sandbox denies local socket binds); do not try them.
+- In `.tsx` files export only React components (oxlint `react/only-export-components`); put helpers in `.ts` files.
