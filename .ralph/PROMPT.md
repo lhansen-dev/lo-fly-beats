@@ -1,4 +1,4 @@
-You are working on: Phase 26 of `docs/03-IMPLEMENT.md` — preset visual parameters, UI design tokens, the responsive layout shell with a placeholder scene frame, and its Playwright layout spec.
+You are working on: Phase 26 of `docs/03-IMPLEMENT.md` — the responsive layout shell, visual design tokens, and placeholder scene frame for Lo-fly beats.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -36,10 +36,9 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Project hints (apply only when relevant to your task):
-- TypeScript forbids `enum`, `namespace`, and constructor parameter properties (`erasableSyntaxOnly`); unused locals/params are errors.
-- Unit tests are `.test.ts` files (no JSX): build elements with `createElement` from `react` and render with `renderToStaticMarkup` from `react-dom/server`. Tests that import `node:*` modules must live under `tests/`, not `src/`.
-- Run a single unit test file with `npx vitest run --project unit <path>`. The config sets `passWithNoTests`, so make sure the file you name actually exists.
-- Never use `Math.random` in `src/`. Do not change `MAPPING_VERSION` or any composition/sound values.
-- Playwright and Vitest browser mode cannot run here (the sandbox denies local socket binds); do not try them.
-- In `.tsx` files export only React components (oxlint `react/only-export-components`); put helpers in `.ts` files.
+Project hints:
+- Run unit tests as `npx vitest run --project unit <files>`. The Vitest config has `passWithNoTests: true`, so confirm the output actually lists your test file and its tests passing — "No test files found" means the path is wrong.
+- Unit tests run in a Node environment; component tests render with `createElement` + `renderToStaticMarkup` from `react-dom/server` inside `.test.ts` files (see `src/components/controls.test.ts`). React renders `style` objects as e.g. `style="aspect-ratio:16 / 9;--scene-wall:#3b4a5a"`.
+- Tests under `src/` must NOT import `node:fs`/`node:path` (the app tsconfig has no Node types). Tests that read CSS files live in `tests/unit/` (covered by `tsconfig.test.json`, which has Node types) and must not import `.tsx` files.
+- Code style: no semicolons, single quotes, 2-space indent, matching the surrounding files.
+- Do not run Playwright (`npx playwright test`): the sandbox cannot bind the preview server's socket. The operator runs browser tests.
