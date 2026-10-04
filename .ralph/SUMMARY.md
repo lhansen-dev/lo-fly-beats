@@ -1,0 +1,1 @@
+Adds stored engine/controller mix updates, ambience playback transitions, master/layer volume and mute controls, persistence coverage, and mixer audio/browser tests. Review requests fixes for a TypeScript build error and duplicate master-volume control, plus successful real Chromium/Web Audio verification; unit checks pass, but the required full checks do not.

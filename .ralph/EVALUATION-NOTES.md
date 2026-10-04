@@ -1,0 +1,24 @@
+- `cat .ralph/DONE; git diff main...HEAD -- . ':!.ralph'` inspected: loop claims targeted TypeScript only; diff includes engine/controller mix support, mixer UI/tests, and Phase 22 log; spotted two App master-volume mounts for follow-up.
+- `test -f src/audio/engine.test.ts && npx vitest run --project unit src/audio/engine.test.ts --passWithNoTests=false`: exit 0.
+- `grep -Fq "describe('controller mix settings'" src/app/controller.test.ts && npx vitest run --project unit src/app/controller.test.ts -t 'controller mix settings' --passWithNoTests=false`: exit 0.
+- `test -f src/components/MasterVolume.tsx && test -f src/components/master-volume.test.ts && npx vitest run --project unit src/components/master-volume.test.ts --passWithNoTests=false`: exit 0.
+- `test -f src/components/Mixer.tsx && test -f src/components/mixer-controls.test.ts && npx vitest run --project unit src/components/mixer-controls.test.ts --passWithNoTests=false`: exit 0.
+- `grep -Fq '| 22 |' docs/03-IMPLEMENT.md`: exit 0; Phase 22 row records percentage UI/ambience choices and explicitly does not claim runtime verification passed.
+- `npx vitest run --project unit src/app/controller.test.ts src/app/state.test.ts src/app/persistence.test.ts src/components/controls.test.ts src/components/selectors.test.ts --passWithNoTests=false`: exit 0.
+- `npm run check`: exit 2 during typecheck; script stopped before lint, unit tests, data validation, and production build.
+- `test -f tests/audio/mix.test.ts && npx vitest run --project audio tests/audio/mix.test.ts --passWithNoTests=false`: exit 1.
+- `npm run test:audio`: exit 1.
+- `npm run check` failure detail: TypeScript TS6133 at tests/audio/mix.test.ts(9,42): `time` is declared but its value is never read; exit 2 before lint/unit/data/build.
+- Audio scoped/full failures: both exit 1 at startup with `Error: listen EPERM: operation not permitted ::1:63315`; no browser/audio assertions executed.
+- `test -f tests/browser/mixer.spec.ts && npx playwright test --project=chromium tests/browser/mixer.spec.ts`: exit 1.
+- `npx playwright test --project=chromium`: exit 1.
+- Browser scoped/full failures: both exit 1 with `Error: Process from config.webServer was not able to start. Exit code: 2`; production preview command is `npm run build && npm run preview -- --host 127.0.0.1`, whose build fails at the new unused audio-test parameter. No browser assertions executed.
+- Supplemental `npm run lint`: exit 0 (not a substitute for the failed full check).
+- Supplemental `npm run test`: exit 0 (not a substitute for the failed full check).
+- Supplemental `npm run data:validate`: exit 0 (not a substitute for the failed full check).
+- Code/spec inspection (`R10`, `R12`, changed files, tsconfigs, existing rig tests): duplicate MasterVolume mounts at App.tsx:35 and TransportControls.tsx:14; no `.skip`/`.todo`/`.only` in new mixer suites (the controller name-filter skips only 8 unrelated existing tests).
+- Supplemental read-only SSR via stdin/in-memory TypeScript compilation of App: exit 1; emitted 2 master-volume instances and 0 engine creations (expected one control).
+- Supplemental `npm run build`: exit 2; confirms preview is blocked by tests/audio/mix.test.ts(9,42) TS6133 before Vite.
+- `git diff --check main...HEAD -- . ':!.ralph'`: exit 0; no whitespace errors in reviewed diff.
+- Final verdict/summary validation via Python: exit 0; revise verdict first line and findings JSON validated.
+- Final `git status --short; git diff --name-only`: only EVALUATION.md, EVALUATION-NOTES.md, and SUMMARY.md are newly written; no source/documentation/history edits.
