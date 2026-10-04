@@ -2,6 +2,7 @@ import { useController } from '../app/ControllerContext'
 import { formatPosition } from '../app/format'
 import { useAppState } from '../app/store'
 import StartListening from './StartListening'
+import MasterVolume from './MasterVolume'
 
 export default function TransportControls() {
   const controller = useController()
@@ -10,6 +11,7 @@ export default function TransportControls() {
 
   return <div>
     {engineStatus === 'idle' ? <StartListening /> : <button type="button" data-testid="play-toggle" disabled={engineStatus === 'starting' || engineStatus === 'exporting'} onClick={() => controller.togglePlay()}>{engineStatus === 'playing' ? 'Pause' : 'Play'}</button>}
+    <MasterVolume />
     <p>Engine: <span data-testid="engine-status">{engineStatus}</span></p>
     <p data-testid="position">{formatPosition(position)}</p>
   </div>
