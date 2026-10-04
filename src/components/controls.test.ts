@@ -128,6 +128,7 @@ describe('App', () => {
       'data-testid="variation"',
       'data-testid="new-beat"',
       'data-testid="pending-changes"',
+      'data-testid="export-button"',
     ]) expect(markup).toContain(expected)
     expect(markup).not.toContain('start-' + 'restart')
     expect(markup).not.toContain('data-testid="' + 'chords"')

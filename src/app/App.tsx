@@ -9,6 +9,7 @@ import VariationControl from '../components/VariationControl'
 import NewBeatButton from '../components/NewBeatButton'
 import PendingChanges from '../components/PendingChanges'
 import Mixer from '../components/Mixer'
+import ExportPanel from '../components/ExportPanel'
 
 export default function App() {
   const controller = useController()
@@ -36,6 +37,7 @@ export default function App() {
       <VariationControl />
       <NewBeatButton />
       <PendingChanges />
+      <ExportPanel />
     </section>
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} />}
   </main>

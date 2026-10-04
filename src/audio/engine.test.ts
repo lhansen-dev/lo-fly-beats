@@ -33,6 +33,35 @@ beforeEach(() => {
   mock.context.currentTime = 5
 })
 
+describe('export lock', () => {
+  it('locks playback during export and resumes paused playback afterward', async () => {
+    const engine = await freshEngine()
+    await engine.start(graph, recipe, mix(true))
+    engine.beginExport()
+    expect(engine.getDiagnostics()).toMatchObject({ status: 'exporting', exportInProgress: true })
+    expect(mock.transport.pause).toHaveBeenCalled()
+
+    mock.transport.start.mockClear()
+    mock.start.mockClear()
+    engine.play()
+    await engine.start(graph, recipe, mix(true))
+    expect(mock.transport.start).not.toHaveBeenCalled()
+    expect(mock.start).not.toHaveBeenCalled()
+    expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
+
+    engine.endExport()
+    expect(engine.getDiagnostics()).toMatchObject({ status: 'paused', exportInProgress: false })
+    engine.play()
+    expect(engine.getDiagnostics().status).toBe('playing')
+  })
+
+  it('does nothing when export begins before the engine starts', async () => {
+    const engine = await freshEngine()
+    engine.beginExport()
+    expect(engine.getDiagnostics().status).toBe('idle')
+  })
+})
+
 describe('live mix lifecycle', () => {
   it('routes mix to context time, and only transitions ambience during playback', async () => {
     const engine = await freshEngine()
