@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createCueSession, startCueDriver } from './sceneCueDriver'
-import type { CueSource, CueTargets } from './sceneCueDriver'
+import type { CueSource, CueTargets, CueTimers } from './sceneCueDriver'
 
 function setup() {
   let step: ((event: { phraseIndex: number; stepInPhrase: number; bar: number; beat: number }) => void) | undefined
@@ -27,6 +27,28 @@ describe('scene cue driver', () => {
     expect(vi.getTimerCount()).toBe(0)
     expect(animate.mock.results[0]?.value.cancel).toHaveBeenCalled()
     vi.useRealTimers()
+  })
+
+  it('keeps only current animation handles across many cues', () => {
+    const timerState: { pending: (() => void) | null } = { pending: null }
+    const timers: CueTimers = {
+      setTimeout: cb => { timerState.pending = cb; return 1 },
+      clearTimeout: () => { timerState.pending = null },
+    }
+    const { source, targets, animate, step, phrase } = setup()
+    const stop = startCueDriver({ state: { sessionSeed: 1, rng: { float: () => 0, int: () => 0, pick: items => items[0]! }, lastRubPhrase: null, lastPhraseIndex: null }, source, targets, timers })
+    for (let i = 0; i < 10_000; i++) step({ phraseIndex: 0, stepInPhrase: 0, bar: i, beat: i % 4 })
+    for (let i = 0; i < 1_000; i++) timerState.pending?.()
+    for (let i = 1; i <= 3_000; i++) phrase(i)
+    expect(animate).toHaveBeenCalledTimes(12_000)
+    const handles = animate.mock.results.map(result => result.value as { cancel: ReturnType<typeof vi.fn> })
+    const totalCancels = () => handles.reduce((sum, handle) => sum + handle.cancel.mock.calls.length, 0)
+    const before = totalCancels()
+    expect(before).toBe(12_000 - 3)
+    stop()
+    expect(totalCancels() - before).toBe(3)
+    expect(handles.every(handle => handle.cancel.mock.calls.length === 1)).toBe(true)
+    expect(timerState.pending).toBeNull()
   })
 
   it('keeps the rub cooldown across hide and show', () => {

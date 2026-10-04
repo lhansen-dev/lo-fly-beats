@@ -55,22 +55,26 @@ export function startCueDriver({ state, source, targets, timers }: {
   let stopped = false
   let timer: unknown
   let bobAnimation: { cancel(): void } | null = null
-  const animations: Array<{ cancel(): void }> = []
+  let blinkAnimation: { cancel(): void } | null = null
+  let rubAnimation: { cancel(): void } | null = null
   const offStep = source.onStep(event => {
     const { bob } = stepCue(state, event)
     if (!bob || !targets.head) return
     bobAnimation?.cancel()
     bobAnimation = targets.head.animate(BOB_KEYFRAMES[bob], { duration: 350, easing: 'ease-out' })
-    animations.push(bobAnimation)
   })
   const offPhrase = source.onPhraseStarted(({ phraseIndex }) => {
     if (phraseCue(state, phraseIndex).rub && targets.handsFront) {
-      animations.push(targets.handsFront.animate(RUB_KEYFRAMES, { duration: 2400 }))
+      rubAnimation?.cancel()
+      rubAnimation = targets.handsFront.animate(RUB_KEYFRAMES, { duration: 2400 })
     }
   })
   const blink = (): void => {
     if (stopped) return
-    if (targets.eyeShine) animations.push(targets.eyeShine.animate(BLINK_KEYFRAMES, { duration: 150 }))
+    if (targets.eyeShine) {
+      blinkAnimation?.cancel()
+      blinkAnimation = targets.eyeShine.animate(BLINK_KEYFRAMES, { duration: 150 })
+    }
     timer = timers.setTimeout(blink, nextBlinkDelayMs(state))
   }
   timer = timers.setTimeout(blink, nextBlinkDelayMs(state))
@@ -80,7 +84,12 @@ export function startCueDriver({ state, source, targets, timers }: {
     offStep()
     offPhrase()
     timers.clearTimeout(timer)
-    animations.forEach(animation => animation.cancel())
+    bobAnimation?.cancel()
+    blinkAnimation?.cancel()
+    rubAnimation?.cancel()
+    bobAnimation = null
+    blinkAnimation = null
+    rubAnimation = null
   }
 }
 

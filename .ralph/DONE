@@ -1,0 +1,4 @@
+Phase 31 scene cue animation retention is bounded
+- Replace the unbounded animation handle array with current bob, blink, and rub handles.
+- Add a 12,000-cue regression test verifying cancellation and timer cleanup.
+- Targeted Vitest and TypeScript build checks pass.
