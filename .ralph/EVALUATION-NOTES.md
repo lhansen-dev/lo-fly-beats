@@ -1,42 +1,20 @@
-- `cat .ralph/DONE; git status --short; git diff main...HEAD -- . ' :!.ralph'` — read claims and full diff; only expected implementation/docs/tests changes, clean worktree.
-- `grep -q 'playbackGeneration' src/audio/engine.ts — exit 0 (expected 0): PASS`
-- `grep -Eq "status === 'interrupted' \|\| context\.state !== 'running'" src/audio/engine.ts — exit 0 (expected 0): PASS`
-- `grep -q "vi.mock('./sequencer'" src/audio/engine.interruption.test.ts — exit 0 (expected 0): PASS`
-- `grep -q 'draw.schedule.mock.calls' src/audio/engine.interruption.test.ts — exit 0 (expected 0): PASS`
-- `grep -q 'scheduleRepeat.mock.calls' src/audio/engine.interruption.test.ts — exit 0 (expected 0): PASS`
-- `grep -q 'stepInPhrase' src/audio/engine.interruption.test.ts — exit 0 (expected 0): PASS`
-- `grep -q 'Audio was interrupted by the browser. Press Play to resume.' src/app/controller.ts — exit 0 (expected 0): PASS`
-- `grep -q 'debugInterrupt()' src/app/controller.ts — exit 0 (expected 0): PASS`
-- `grep -q 'simulateInterruption' src/app/controller.test.ts — exit 0 (expected 0): PASS`
-- `grep -q 'data-testid="audio-notice"' src/components/TransportControls.tsx — exit 0 (expected 0): PASS`
-- `grep -q 'data-testid="simulate-interruption"' src/components/DiagnosticsPanel.tsx — exit 0 (expected 0): PASS`
-- `grep -q 'simulateInterruption' src/app/App.tsx — exit 0 (expected 0): PASS`
-- `grep -q 'data-testid="circuit-retry"' src/components/CircuitStatus.tsx — exit 0 (expected 0): PASS`
-- `grep -q 'controller.loadCircuit()' src/components/CircuitStatus.tsx — exit 0 (expected 0): PASS`
-- `grep -q 'Loading the fly-brain wiring' src/components/CircuitStatus.tsx — exit 0 (expected 0): PASS`
-- `grep -q '<CircuitStatus' src/app/App.tsx — exit 0 (expected 0): PASS`
-- `grep -q 'circuit-status' src/app/App.tsx — exit 1 (expected 1): PASS`
-- `grep -q 'Settings won.t be remembered in this browser' src/components/StorageNote.tsx — exit 0 (expected 0): PASS`
-- `grep -q '<StorageNote' src/app/App.tsx — exit 0 (expected 0): PASS`
-- `test -f tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'status: 404' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'circuit-retry' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'checksum' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'addInitScript' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'storage-note' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'simulate-interruption' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'interruptedPosition' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'expect.poll' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q 'repeatEvents' tests/browser/failures.spec.ts — exit 0 (expected 0): PASS`
-- `grep -q -- '- \[x\] Create .src/components/CircuitStatus.tsx' docs/03-IMPLEMENT.md — exit 0 (expected 0): PASS`
-- `grep -q -- '- \[x\] Write .tests/browser/failures.spec.ts' docs/03-IMPLEMENT.md — exit 0 (expected 0): PASS`
-- `grep -q '^| 2026-10-0[0-9] | 25 |' docs/03-IMPLEMENT.md — exit 0 (expected 0): PASS`
-- `grep -q "circuitStatus !== 'ready'" src/components/StartListening.tsx — exit 0 (expected 0): PASS`
+- `cat .ralph/DONE; git status --short; git diff --stat main...HEAD -- . ':!.ralph'; date -u` — read claim, 12 changed files, preexisting deleted evaluation notes, clock 08:02 UTC.
+- `git diff main...HEAD -- . ':!.ralph'; cat package.json` — full implementation diff inspected.
+- `grep -Fq 'context.transport.pause(now)' src/audio/engine.ts` — exit 0.
+- `grep -Eq 'transport\.pause\)\.toHaveBeenCalledWith\(' src/audio/engine.interruption.test.ts` — exit 0.
+- `grep -Fq 'lookAhead' src/audio/engine.interruption.test.ts` — exit 0.
+- `grep -Fq 'pausedAt' src/audio/engine.interruption.test.ts` — exit 0.
+- `grep -Fq 'this.context.transport.pause()' src/audio/engine.ts` — exit 0.
+- `grep -Fq 'debugInterrupt' src/audio/engine.ts` — exit 0.
+- `test -f src/components/CircuitStatus.tsx` — exit 0.
+- `test -f tests/browser/failures.spec.ts` — exit 0.
+- `grep -rFq 'simulate-interruption' src` — exit 0.
 - `npx tsc -b` — exit 0.
 - `npx oxlint src tests` — exit 0.
-- `npm run build` — exit 0.
-- `node` in-memory engine + installed Tone Time/Clock timing reproduction — exit 1; interruption at currentTime 5 schedules transport pause at 5.1, failing immediate-pause assertion (Tone default lookAhead 0.1).
-- `read/sed/grep` inspection of R9, R12, R14, engine/controller/rig/sequencer, persistence/main, browser spec and installed Tone transport/clock/time code — UI and storage wiring match the card; found argumentless interruption pause uses Tone lookahead rather than immediate context time.
-- Runtime suites (`npm run check` / Vitest and `npx playwright test --project=chromium`) intentionally not run: acceptance criteria reserve them for the operator because local socket binds are denied.
-- `nl -ba src/audio/engine.ts; git status --short; date -u` — located immediate-pause bug at line 166; only permitted .ralph note output changed; well within deadline.
-- `python3` output validation — exit 0; revise verdict, valid findings JSON and summary present.
+- `npm run check` — exit 1 (see runner output).
+- `npx playwright test --project=chromium` — exit 1 (see runner output).
+- Source/reference inspection (`sed` R9/R12/R14, `cat` engine/controller/persistence/main/loader/rig/configs, `nl` interruption tests, `git log`, `git status`) — card features present; tests count initial Tone.start and one retry leaves deferred Tone.start unresolved; nonexistent bootstrap.ts probe only.
+- `npm run check` details — 184 passed, 4 failed: interruption tests lines 45/46 expected 1 call but got 2, line 49 expected 2 but got 3, line 48 timed out in 5000ms; typecheck/lint passed before unit failure.
+- `npx playwright test --project=chromium` details — blocked before tests by preview listen EPERM 127.0.0.1:4173, environment limitation.
+- `npx vitest run --project unit src/audio/engine.interruption.test.ts` — exit 1, reproduced the same four failures in isolation.
+- Final `git status --short; head -1 .ralph/EVALUATION.md` — only permitted .ralph outputs modified; verdict is revise; summary written, no source/doc/history changes.
