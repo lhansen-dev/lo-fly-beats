@@ -110,6 +110,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 
 | 2026-10-04 | 25 | Draw callbacks and transport steps are invalidated with a `playbackGeneration` counter on interruption; extra test IDs `audio-notice` and `storage-note` were added beside the R12 table. | `npx tsc -b` and `npx oxlint tests/browser/failures.spec.ts` pass. `npx vitest` and `npx playwright test --project=chromium` could not run because this sandbox denies local socket binds, so the final verification box stays unchecked for the operator. |
 | 2026-10-04 | 26 | Below 700 px, the bottom bar uses `position: fixed` because a sticky bar inside TransportControls would scroll away with its parent; `data-testid="scene-frame"` replaces `scene-placeholder`; the 1.5 s custom-property transition is deferred to Phase 31's lighting-transition task. | Evaluator verification: all Phase 26 acceptance commands and `npm run check` pass (199 Node unit tests), including token contrast, layout CSS, scene frame, preset, and regression checks. `npx playwright test --project=chromium` exits 1 before running tests because preview cannot bind `127.0.0.1:4173` (`listen EPERM`); browser layout assertions and screenshot attachments remain unverified for the operator, so the verification box stays unchecked. |
+| 2026-10-04 | 27 | Fixed non-preset `--scene-*` tokens (paper, ink, pencil, mug, lamp, rain, window frame, stripe, shadow, banana colors, fly silhouette) were added to `src/styles/tokens.css` because preset VisualParams cannot express them, so scene source files contain no color literals; the lamp is drawn in `src/scene/layers/Lighting.tsx` before the overlay; window pane geometry lives in `src/scene/layers/rainLayout.ts`; `SceneFrame` keeps the responsive wrapper and renders `Scene`; and `npx playwright test --project=chromium` (including `tests/browser/scene.spec.ts` screenshots) could not run because the sandbox denies local socket binds, so the verification box stays unchecked for the operator. |
 
 ## Reference
 
@@ -1789,12 +1790,12 @@ Exit criteria from the plan: the fly and banana scene reads clearly on desktop a
 
 **Agent** · **Read:** R13
 
-- [ ] Create the layer components from R13 (`Wall`, `Window`, `Rain`, `Lighting`, `Desk` with homework, pencil, and mug, and `Banana`) and compose them in `src/scene/Scene.tsx` in the R13 order. Add a simple placeholder silhouette `<g class="fly">` so the composition can be judged.
-- [ ] Use only SVG shapes, gradients, and clip paths: no external images, no bundled fonts, and no `<text>` except the "HW" heading.
-- [ ] Define rain streak and drop positions as fixed arrays in `src/scene/layers/rainLayout.ts`. Phase 31 adds animation timing.
-- [ ] Take every color from the scene custom properties so each preset looks coherent.
-- [ ] Replace the `SceneFrame` placeholder with `Scene`.
-- [ ] Write `tests/browser/scene.spec.ts`. The SVG has its title and description. The `.fly` group and the banana group exist. Selecting another preset while paused changes the wall's computed fill. For each preset, attach screenshots at 1280×720 and 390×844. The serialized scene markup is under 150 KB.
+- [x] Create the layer components from R13 (`Wall`, `Window`, `Rain`, `Lighting`, `Desk` with homework, pencil, and mug, and `Banana`) and compose them in `src/scene/Scene.tsx` in the R13 order. Add a simple placeholder silhouette `<g class="fly">` so the composition can be judged.
+- [x] Use only SVG shapes, gradients, and clip paths: no external images, no bundled fonts, and no `<text>` except the "HW" heading.
+- [x] Define rain streak and drop positions as fixed arrays in `src/scene/layers/rainLayout.ts`. Phase 31 adds animation timing.
+- [x] Take every color from the scene custom properties so each preset looks coherent.
+- [x] Replace the `SceneFrame` placeholder with `Scene`.
+- [x] Write `tests/browser/scene.spec.ts`. The SVG has its title and description. The `.fly` group and the banana group exist. Selecting another preset while paused changes the wall's computed fill. For each preset, attach screenshots at 1280×720 and 390×844. The serialized scene markup is under 150 KB.
 
 **Verify**
 

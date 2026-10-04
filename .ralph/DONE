@@ -1,0 +1,4 @@
+# Removed unused React import
+- Deleted unused `createElement` import from `src/scene/layers/Lighting.tsx`.
+- This unblocks TypeScript's unused-import check.
+- Verified TypeScript build and targeted lighting unit test pass.
