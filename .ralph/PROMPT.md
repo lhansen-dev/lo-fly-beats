@@ -1,4 +1,4 @@
-You are working on: Phase 24 of `docs/03-IMPLEMENT.md` — the WAV export flow (engine export lock, controller `exportPhrase`/`dismissExport`/diagnostics, `ExportPanel.tsx`, and the export browser spec).
+You are working on: Phase 24 of `docs/03-IMPLEMENT.md` — the WAV export flow (engine export mode, controller `exportPhrase`/`dismissExport`/diagnostics, `ExportPanel`, tests, and per-browser Decision-log records).
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -24,10 +24,11 @@ testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
 Task-specific hints:
-- The reference contracts are in `docs/03-IMPLEMENT.md` sections "R11. WAV export" and "R12. App state, controls, and failure behavior"; grep for them if you need detail. Inspect existing code before assuming its shape.
-- Code style: no semicolons, single quotes, 2-space indent (match the surrounding files). Never use `Math.random` in `src/`. Only `src/audio/` may import `tone`.
-- `npm run typecheck` (`tsc -b`) also typechecks test files under `src/` and `tests/`, so keep test fakes (e.g. `FakeEngine` in `src/app/controller.test.ts`) implementing the full `EngineLike` interface.
-- This sandbox refuses local socket binds (`listen EPERM`), so `npm run test:audio` and Playwright usually cannot run here. Never fabricate their results; record what actually happened.
+- The spec lives in `docs/03-IMPLEMENT.md`: R11 (`### R11. WAV export`) and R12 (`### R12. App state, controls, and failure behavior`). Grep for them only if the task text leaves something unclear.
+- `vitest.config.ts` sets `passWithNoTests: true`: a misspelled test path "passes" silently, so make sure the run output actually lists your test file and its tests.
+- `npx tsc -b` typechecks `src/**/*.test.ts` and `tests/**/*.ts` too; fix any type errors it reports in files you touched.
+- This sandbox cannot bind local sockets: Playwright's preview server and Vitest browser mode fail with `listen EPERM`. Never install browsers or work around it; record the real error where the task says to.
+- Code style: no semicolons, single quotes, 2-space indent, matching the surrounding files.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
