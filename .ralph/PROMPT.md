@@ -1,4 +1,4 @@
-You are working on: Phase 32 of `docs/03-IMPLEMENT.md` — the "How the beat is made" explanation panel (describe functions, bar-throttled recent choices, panel UI, browser spec, and docs bookkeeping).
+You are working on: Phase 32 follow-up — remove live-region literals from the explanation panel test and make Recent choices clear when the session is reset.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,11 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Hints:
+- Unit tests run with `npx vitest run --project unit <file>`.
+- Do not edit `docs/03-IMPLEMENT.md` checkboxes; the Phase 31/32 "All verification steps pass." boxes must stay unchecked.
+- Never write the literal strings `aria-live` or `role="status"` anywhere under `src/components/explanation/`.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,9 +40,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Project hints:
-- Run unit tests with `npx vitest run --project unit <files>`; never `npm test` or `npm run check`.
-- Never run `npx playwright test`, `npm run test:browser`, `npm run preview`, or `npm run test:audio`: this sandbox denies local socket binds (`listen EPERM`).
-- Code under `src/` is type-checked by `tsconfig.app.json` (JSX on, no node types: no `node:fs` in `src` tests). Code under `tests/` is type-checked by `tsconfig.test.json` (node types, NO JSX: never import a `.tsx` file from `tests/`).
-- Code style: no semicolons, single quotes, 2-space indent, as in the surrounding files. Component tests use `renderToStaticMarkup` (see `src/components/animation-toggle.test.ts`).
