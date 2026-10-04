@@ -1,4 +1,4 @@
-import type { EngineDiagnostics, EngineLike } from '../audio/engine'
+import type { EngineDiagnostics, EngineEventMap, EngineLike } from '../audio/engine'
 import { createExportSnapshot, renderPhrase } from '../audio/export'
 import type { ExportSnapshot } from '../audio/export'
 import { encodeWav16 } from '../audio/wav'
@@ -54,6 +54,8 @@ export class SessionController {
   private engine: EngineLike | null = null
   private startPromise: Promise<void> | null = null
   private unsubscribers: Array<() => void> = []
+  private readonly stepListeners = new Set<(event: EngineEventMap['step']) => void>()
+  private readonly phraseStartedListeners = new Set<(event: { phraseIndex: number }) => void>()
 
   constructor(options: SessionControllerOptions) {
     this.store = options.store
@@ -94,7 +96,13 @@ export class SessionController {
           if (status === 'interrupted') this.store.dispatch({ type: 'audioNoticeChanged', notice: AUDIO_INTERRUPTED_NOTICE })
           else if (status === 'playing') this.store.dispatch({ type: 'audioNoticeChanged', notice: null })
         }),
-        engine.on('phraseStarted', ({ score }) => this.store.dispatch({ type: 'phraseStarted', score })),
+        engine.on('step', event => {
+          for (const handler of Array.from(this.stepListeners)) handler(event)
+        }),
+        engine.on('phraseStarted', ({ score }) => {
+          this.store.dispatch({ type: 'phraseStarted', score })
+          for (const handler of Array.from(this.phraseStartedListeners)) handler({ phraseIndex: score.phraseIndex })
+        }),
         engine.on('applied', ({ recipe }) => {
           this.store.dispatch({ type: 'changesApplied', recipe })
           this.save()
@@ -111,6 +119,16 @@ export class SessionController {
     return operation
   }
 
+  onStep(handler: (event: EngineEventMap['step']) => void): () => void {
+    this.stepListeners.add(handler)
+    return () => this.stepListeners.delete(handler)
+  }
+
+  onPhraseStarted(handler: (event: { phraseIndex: number }) => void): () => void {
+    this.phraseStartedListeners.add(handler)
+    return () => this.phraseStartedListeners.delete(handler)
+  }
+
   simulateInterruption(): void {
     this.engine?.debugInterrupt()
   }
@@ -121,6 +139,11 @@ export class SessionController {
     if (status === 'starting' || status === 'exporting') return
     if (status === 'playing') this.engine.pause()
     else this.engine.play()
+  }
+
+  setAnimationEnabled(enabled: boolean): void {
+    this.store.dispatch({ type: 'animationToggled', enabled })
+    this.save()
   }
 
   setMix(partial: MixPatch): void {
