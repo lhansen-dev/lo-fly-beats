@@ -19,7 +19,7 @@ describe('detectOnsets', () => {
     expect(samples[3]).toBeGreaterThan(0.01)
     expect(Math.abs(samples[14])).toBeLessThanOrEqual(0.05)
     expect(samples[15]).toBeGreaterThan(0.05)
-    expect(detectOnsets(samples, sampleRate)).toEqual([15 / sampleRate])
+    expect(detectOnsets(samples, sampleRate)).toEqual([15 / 44100])
   })
 
   it('requires a latched quiet interval and does not disarm on intermediate levels', () => {
