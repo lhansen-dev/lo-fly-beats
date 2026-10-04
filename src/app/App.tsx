@@ -9,7 +9,6 @@ import VariationControl from '../components/VariationControl'
 import NewBeatButton from '../components/NewBeatButton'
 import PendingChanges from '../components/PendingChanges'
 import Mixer from '../components/Mixer'
-import MasterVolume from '../components/MasterVolume'
 
 export default function App() {
   const controller = useController()
@@ -32,7 +31,6 @@ export default function App() {
     <TransportControls />
     <section>
       <PresetPicker />
-      <MasterVolume />
       <Mixer />
       <TempoControl />
       <VariationControl />

@@ -1,0 +1,4 @@
+App renders one master-volume control
+- Removed the direct mount from `App.tsx`; `TransportControls` remains the sole mount.
+- Updated the App SSR test to require exactly one tagged input and verify it is a range.
+- Focused unit check passed. This is not browser-runtime verification.

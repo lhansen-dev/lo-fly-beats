@@ -34,12 +34,15 @@ describe('Mixer', () => {
     expect(markup).toContain('value="33"')
   })
 
-  it('mounts Mixer and MasterVolume in App', () => {
+  it('mounts Mixer and exactly one master-volume range in App', () => {
     const store = createAppStore(createInitialState(null))
     const controller = new SessionController({ store, createEngine: async () => { throw new Error('unused') }, loadGraph: async () => { throw new Error('unused') }, saveSettings: () => {} })
     const markup = renderToStaticMarkup(createElement(ControllerProvider, { controller, children: createElement(App) }))
     expect(markup).toContain('<legend>Mixer</legend>')
-    expect(markup).toContain('data-testid="master-volume"')
+    expect(markup.match(/data-testid="master-volume"/g)).toHaveLength(1)
+    const masterVolumeInput = markup.match(/<input\b[^>]*data-testid="master-volume"[^>]*>/)
+    expect(masterVolumeInput).not.toBeNull()
+    expect(masterVolumeInput?.[0]).toMatch(/\btype="range"/)
     expect(markup).toContain('data-testid="scene-placeholder"')
     expect(markup).toContain('data-testid="start-listening"')
   })
