@@ -1,4 +1,4 @@
-You are working on: Phase 24 of `docs/03-IMPLEMENT.md`, the WAV export flow (controller `exportPhrase`/`dismissExport`/`objectUrlsHeld`, `ExportPanel`, browser spec) for the lo-fly beats app.
+You are working on: Phase 24 of `docs/03-IMPLEMENT.md` — the WAV export flow (controller `exportPhrase`/`dismissExport`/diagnostics), the `ExportPanel` component, and the authored export browser spec.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,12 +37,7 @@ Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
 Task-specific hints:
-- This sandbox cannot open local sockets. ALWAYS run Vitest as `npx vitest run --project unit <files>`. A bare
-  `npx vitest run ...` also loads the browser-mode `audio` project and fails with `listen EPERM ::1`. Never run
-  `npm run test:audio`, `npm run test:browser`, or `npx playwright test`: they cannot work here, and the operator runs them.
-- If a check fails with `listen EPERM`, you ran the wrong command. Rerun it with `--project unit` instead of reporting a blocker.
-- `useAppState` selectors must return stable values (no new objects or arrays inside the selector);
-  `src/components/selectors.test.ts` enforces this.
-- Existing helpers: `createExportSnapshot`/`renderPhrase` in `src/audio/export.ts`, `encodeWav16` in `src/audio/wav.ts`,
-  `parseWavHeader` in `src/audio/wavInfo.ts`, `exportSeconds` in `src/audio/timing.ts`, `seedHex` in `src/music/streams.ts`,
-  and `getPreset` in `src/presets/presets.ts`. The engine's `beginExport()`/`endExport()` already exist in `src/audio/engine.ts`.
+- This sandbox denies local socket binds. Run Vitest ONLY as `npx vitest run --project unit <files>`. Never run bare `npx vitest run`, `npm run test:audio`, `npm run test:browser`, `npm run check`, or `npx playwright ...` — they either start a browser server (and fail with `listen EPERM`) or run the full suite.
+- The engine side (`beginExport`/`endExport` in `src/audio/engine.ts`, and the `FakeEngine` methods in `src/app/controller.test.ts`) is already done; do not rewrite it.
+- `useAppState` reads the global store created by `createAppStore` (`src/app/store.ts`); component tests must build their store with `createAppStore`, as `src/components/controls.test.ts` does.
+- Repo style: no semicolons, single quotes, 2-space indent, `import type` for type-only imports (`verbatimModuleSyntax` is on; unused locals/params fail typecheck).
