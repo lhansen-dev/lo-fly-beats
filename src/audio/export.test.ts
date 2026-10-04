@@ -106,12 +106,22 @@ describe('offline phrase rendering', () => {
       { ...score.events[0], layer: 'bass' as const, step: 1, microOffset: 0.05, durationSteps: 2 },
     ]
     const snapshot = createExportSnapshot({ ...score, phraseIndex: 9, events }, recipe, preset, mix)
+    const frames = Math.round((128 * 60 / 72 / 4 + 2) * 44100)
+    mocks.samples = [new Float32Array(frames).fill(0.2), new Float32Array(frames).fill(1.2)]
     const { renderPhrase } = await import('./export')
     const data = await renderPhrase(snapshot)
     expect(rig.startAmbience).toHaveBeenCalledWith(0)
     expect(rig.trigger.mock.calls).toEqual([[events[0], (1 + 0.12 + 0.1) * 60 / 72 / 4, 3 * 60 / 72 / 4], [events[1], (1 + 0.12 + 0.05) * 60 / 72 / 4, 2 * 60 / 72 / 4]])
-    expect(data.channels[0]).toEqual(new Float32Array([0.2, 0.4]))
-    expect(data.channels[1]).toEqual(new Float32Array([1.2, 1.4]))
+    expect(data.channels[0]).toHaveLength(frames)
+    expect(data.channels[1]).toHaveLength(frames)
+    const boundary = frames - Math.round(0.5 * 44100)
+    expect(data.channels[0][0]).toBeCloseTo(0.2, 6)
+    expect(data.channels[0][boundary - 1]).toBeCloseTo(0.2, 6)
+    expect(data.channels[1][0]).toBeCloseTo(1.2, 6)
+    expect(data.channels[1][boundary - 1]).toBeCloseTo(1.2, 6)
+    expect(data.channels[0].at(-1)).toBe(0)
+    expect(data.channels[1].at(-1)).toBe(0)
+    expect(data.channels[0]).not.toBe(mocks.samples[0])
     data.channels[0][0] = 99
     expect(mocks.contexts[0].buffer.getChannelData(0)[0]).toBeCloseTo(0.2)
     expect(rig.dispose).toHaveBeenCalledOnce()
