@@ -1,4 +1,4 @@
-You are working on: finishing Phase 28 of `docs/03-IMPLEMENT.md` — drawing the full SVG fly character (head, eye shine, headphones, transform origins, browser spec) in this React/Vite app.
+You are working on: making all six hoodie sleeves of the Phase 28 fly (`src/scene/fly/Fly.tsx`) visibly distinct from the torso and each other, with a regression unit test.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -24,9 +24,9 @@ testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
 Task-specific hints:
-- This sandbox denies every local socket bind. NEVER run `npx vitest`, `npm test`, `npm run check`, `npx playwright`, or `npm run test:browser` — they fail with `listen EPERM` and the operator has chosen to skip them. Verify only with the check command written in your task (`npx tsc -b`, `npx oxlint …`, `npm run build`, grep).
-- Scene source files must contain no colour literals (no `#hex`, no `rgb(`/`rgba(`); colours come from `--scene-*` custom properties in `src/styles/tokens.css`, applied with `style={{ fill: 'var(--…)' }}` or `style={{ stroke: 'var(--…)' }}`.
-- Use JSX attribute names (`className`, `strokeWidth`, `strokeLinecap`) in `.tsx` files.
+- Vitest cannot run in this sandbox (it fails to bind a local port with EPERM); the operator said to skip it. Do NOT run vitest or playwright; use the `npx tsc -b` / `npx oxlint` check named in the task.
+- Use only existing tokens from `src/styles/tokens.css` via `var(--scene-fly-...)`; never write literal colours.
+- Keep one JSX element per line in `Fly.tsx`; keep exactly six `data-sleeve="` attributes.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
