@@ -12,6 +12,8 @@ test('pending changes apply at the next bar and the next phrase', async ({ page 
   await expect(page.getByTestId('tempo')).toHaveValue('100')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
+  // Requests before the first composition apply immediately; this test needs a phrase.
+  await expect(page.getByTestId('export-button')).toBeEnabled()
 
   await page.getByTestId('variation').press('End')
   await expect(page.getByTestId('pending-changes')).toContainText('next phrase')

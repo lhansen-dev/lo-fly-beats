@@ -53,15 +53,17 @@ The musical mapping is authored and does not simulate neural activity. Scene ani
 
 ## Browser support
 
-Phase 38 confirms real browser/device support. Automated results are recorded in the [decision log](docs/03-IMPLEMENT.md#decision-log); this table is a placeholder until manual validation is recorded.
+The production build passes automated browser checks on macOS 26.5.1, arm64 MacBookPro18,2 (64 GiB RAM). These results identify the tested browser engines; real-device listening, background playback, independent audio-player checks, and VoiceOver validation remain pending at [phase 38](docs/03-IMPLEMENT.md#phase-38-human-gate--release-validation). The build is a release candidate pending that review.
 
-| Browser/device | Release validation |
-| --- | --- |
-| Desktop Chrome | Manual listening/background/export checks pending |
-| Desktop Firefox | Manual listening/background/export checks pending |
-| Desktop Safari | Real Safari checks pending; automated WebKit is supplementary |
-| iOS Safari | Playback, recovery, and export support pending |
-| Android Chrome | Playback, recovery, and export support pending |
+| Browser/engine | Tested version | Automated playback, controls, simulated recovery, WAV download | Manual release validation |
+| --- | --- | --- | --- |
+| Chromium | 153.0.8010.12 | Pass; accessibility, startup, 15-minute soak and five exports also pass | Desktop Chrome listening/background checks pending |
+| Firefox | 155.0 | Pass | Desktop listening/background checks pending |
+| WebKit | 26.6 | Pass | Actual desktop Safari validation pending |
+| iOS Safari | Untested | Not established | Playback, app switching/locking, and export support pending |
+| Android Chrome | Untested | Not established | Playback, app switching/locking, and export support pending |
+
+Mobile background playback and export are unverified. Automated WebKit results supplement actual Safari testing; they do not establish iOS support. The user’s manual matrix will replace these pending entries after release review.
 
 ## Data
 

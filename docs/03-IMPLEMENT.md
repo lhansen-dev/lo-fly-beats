@@ -123,6 +123,9 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 35 | Completed the required 15-minute Chromium soak followed by five exports on macOS 26.5.1, arm64 MacBookPro18,2, 64 GiB RAM. Prepared independent Phase 36 tools and Phase 37 documentation while this timed check ran; verification and commits remain ordered. | `SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=chromium --output=/tmp/lofly-soak-results` passes in 15.4 minutes: one repeat event, one score, at most eight keys voices, at most one retained URL, and no page errors. Logged JS heap before exports: 33,100,000 bytes; after: 33,100,000 bytes (informational browser measurement). This also satisfies Phase 16’s five-minute minimum. |
 | 2026-10-04 | 36 | Added level-9 gzip budget enforcement, browser-clock startup timing, and a managed `/nested/lofly/` preview fixture. | Build/budget pass: circuit 6,377 bytes (6.23 KiB); total 205,568 bytes (200.75 KiB), below 200 KiB / 4 MiB limits. An injected incompressible probe correctly exits 1 for overflow and was removed. Chromium startup: playing 148.9 ms, first position 1,074.2 ms on MacBookPro18,2/macOS 26.5.1; startup, subpath, and accessibility specs pass (5 tests). Reference-phone and audible-start confirmation remain Phase 38. |
 | 2026-10-04 | 37 | Wrote setup, command, architecture, audio, data regeneration, testing, deployment, structure, and credit documentation, including the pipeline’s MBON-specific metadata/verifier limits. | `npm run check` passes (264 tests). All documented npm script names match `npm run`; browser installation, uv locked sync, download/extract/verify, schema inspection, and three Python regressions pass. Regeneration leaves both JSON files and reports byte-identical; all 936 weights and 97 annotations match upstream. README keeps manual browser-support validation pending for Phase 38. |
+| 2026-10-04 | 38 | The user explicitly requested final-build preparation while leaving human release validation pending: "Prepare the final build too". Hosting selection remains deferred. | This authorizes continuing with Phase 39’s automated preparation instead of stopping at the gate. No manual listening, actual Safari/mobile, VoiceOver, independent-player, or device-matrix results were supplied; human-gate boxes remain unchecked. |
+| 2026-10-04 | 39 | Prepared a static release candidate and documented the actual automated browser versions, with manual/mobile support still pending. Used `npm ci` and Vite’s built-in output cleanup after the command runner rejected `rm -rf` as "rm -f style commands are not permitted. Use a safer approach". | Stale probe files placed in `node_modules/` and `dist/` were both removed by the install/build. Clean-install `test:all` passes (264 unit, 13 audio, 128 browser tests); test TypeScript compilation and gzip budgets pass (6,377-byte circuit / 205,568-byte total). Preview smoke loads, plays, changes to Fruit Bowl Finals, resumes, and downloads a valid 24.326-second stereo 44.1 kHz 16-bit WAV (4,291,076 bytes), with one schedule, one URL, and no page errors. No deployment or push. Phase 38 notes/matrix and resulting final release fixes remain pending. |
+| 2026-10-04 | 39 | Stabilized the boundary and New beat browser checks by waiting for the first composed score before requesting a pending phrase change. | The first clean run failed in WebKit: `Expected substring: "next phrase"; Received string: ""` at `boundaries.spec.ts:17`. R9 permits requests before first composition to apply immediately. The corrected tests assert export availability (a composed score) first; all existing pending-text and boundary time limits remain intact. The full rerun passes in Chromium, Firefox, and WebKit. |
 
 ## Reference
 
@@ -2021,6 +2024,8 @@ Exit criteria from the plan: the acceptance checks pass on the documented browse
 
 **User** · **Read:** [02-PLAN.md section 7](./02-PLAN.md#7-validation-and-acceptance), `tests/README.md`
 
+**Gate status:** Manual validation remains pending. On 2026-10-04 the user explicitly selected "Prepare the final build too" while leaving these manual checks pending. Phase 39's automated preparation may therefore proceed; this is not approval of the manual gate, and its boxes and matrix remain user-owned.
+
 Agents: do not check these boxes. Stop and report that Phase 38 is waiting for the user.
 
 - [ ] Fill in the browser and device matrix below with the versions and devices you actually tested.
@@ -2061,12 +2066,14 @@ Agents: do not check these boxes. Stop and report that Phase 38 is waiting for t
 
 **Agent** · **Read:** Phase 38 matrix and release notes, `README.md`
 
+**Preparation status:** The user authorized preparing the final build before the manual gate. Automated verification and the production preview pass. The two tasks dependent on manual release notes and the actual device matrix remain open until Phase 38 is recorded; README reports automated evidence and pending support accurately.
+
 - [ ] Fix every issue in the Phase 38 release notes. If they say "Ready to release," change no code.
 - [ ] Replace the README's browser support placeholder with the Phase 38 matrix, stating unsupported behavior accurately (for example, mobile export or mobile background playback, if unsupported).
-- [ ] If Phase 38 chose a host that needs configuration files, add them and document them in the README. Otherwise add nothing host-specific.
-- [ ] From a clean install (`rm -rf node_modules dist && npm ci`), run `npm run test:all` and `npm run budget`.
-- [ ] Build, serve with `npm run preview`, and smoke-test loading, playing, changing presets, and exporting.
-- [ ] Add a Decision log row summarizing the release state. Do not deploy or push; publishing is the user's step.
+- [x] If Phase 38 chose a host that needs configuration files, add them and document them in the README. Otherwise add nothing host-specific.
+- [x] From a clean install (`rm -rf node_modules dist && npm ci`), run `npm run test:all` and `npm run budget`.
+- [x] Build, serve with `npm run preview`, and smoke-test loading, playing, changing presets, and exporting.
+- [x] Add a Decision log row summarizing the release state. Do not deploy or push; publishing is the user's step.
 
 **Verify**
 
@@ -2074,4 +2081,4 @@ Agents: do not check these boxes. Stop and report that Phase 38 is waiting for t
 2. `npm run budget` passes.
 3. The preview smoke test succeeds.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
