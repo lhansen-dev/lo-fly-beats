@@ -1,0 +1,4 @@
+# phase 30 — scene-art review recorded
+- Phase 29 approval and notes recorded; authorized human-gate boxes checked.
+- Phase 30 recorded as no-op with documentation updates only.
+- Targeted Chromium spec could not start due to listen EPERM on 127.0.0.1:4173; verification remains unchecked.

@@ -112,6 +112,8 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 26 | Below 700 px, the bottom bar uses `position: fixed` because a sticky bar inside TransportControls would scroll away with its parent; `data-testid="scene-frame"` replaces `scene-placeholder`; the 1.5 s custom-property transition is deferred to Phase 31's lighting-transition task. | Evaluator verification: all Phase 26 acceptance commands and `npm run check` pass (199 Node unit tests), including token contrast, layout CSS, scene frame, preset, and regression checks. `npx playwright test --project=chromium` exits 1 before running tests because preview cannot bind `127.0.0.1:4173` (`listen EPERM`); browser layout assertions and screenshot attachments remain unverified for the operator, so the verification box stays unchecked. |
 | 2026-10-04 | 27 | Fixed non-preset `--scene-*` tokens (paper, ink, pencil, mug, lamp, rain, window frame, stripe, shadow, banana colors, fly silhouette) were added to `src/styles/tokens.css` because preset VisualParams cannot express them, so scene source files contain no color literals; the lamp is drawn in `src/scene/layers/Lighting.tsx` before the overlay; window pane geometry lives in `src/scene/layers/rainLayout.ts`; `SceneFrame` keeps the responsive wrapper and renders `Scene`. | Evaluator verification: all Phase 27 acceptance commands pass, including `npx tsc -b`, `npm run check` (207 unit tests), 11 scene unit tests, and targeted oxlint. `npx playwright test --project=chromium` exits 1 before tests because preview cannot bind `127.0.0.1:4173` (`listen EPERM`); browser assertions and preset screenshots remain unverified for the operator, so the verification box stays unchecked. |
 | 2026-10-04 | 28 | The fly head carries its ~4° studying tilt on an inner `<g transform="rotate(-4 1045 462)">` so Phase 31 CSS transforms on `.fly-head` don't overwrite it; `.fly-head` uses `transform-box: view-box` with origin `1045px 462px` (neck) because its bbox includes the headphone cable, while other fly groups use `fill-box`. Eye shine and headphones are nested inside the head group so they move with it. The placeholder silhouette and its `--scene-fly-silhouette` token were removed. | Evaluator verification: all Phase 28 revision acceptance commands pass. The over-escaped regexes in `src/scene/fly/fly.test.ts` were fixed; `npx vitest run --project unit src/scene/fly/fly.test.ts` passes (3 tests). `npm run check` passes (211 unit tests); `npm run build`, `npx tsc -b`, and targeted oxlint pass. `npx playwright test --project=chromium` fails before tests with `listen EPERM` on `127.0.0.1:4173`; browser assertions and preset close-ups remain unverified, so the Phase 28 verification box stays unchecked for the operator and Phase 29 is waiting for the user. |
+| 2026-10-04 | 29 | The operator reviewed the scene art and approved it without requests ("lgtm"; "I reviewed it, I give you permission to fill the checkboxes for me."), so the agent checked the four Phase 29 boxes and wrote "Approved as is." under **Scene notes** on the operator's behalf. | The checklist says agents never check human-gate boxes; the operator explicitly granted that permission in the Phase 30 card's scoping thread. |
+| 2026-10-04 | 30 | No code changed in Phase 30: the Phase 29 scene notes say "Approved as is.", so the scene layers, the fly, src/scene/scene.css, src/styles/tokens.css, and R13 (layout areas, classes, and colors) are unchanged. | Verification: npx playwright test tests/browser/scene.spec.ts --project=chromium failed before tests: preview server listen EPERM: operation not permitted 127.0.0.1:4173. Phase 30 is blocked on Chromium verification: the final verification box stays unchecked until the operator or CI runs npx playwright test --project=chromium on a runner that allows local socket binds; npm run check is left to the evaluator. |
 
 ## Reference
 
@@ -1828,22 +1830,23 @@ Exit criteria from the plan: the fly and banana scene reads clearly on desktop a
 
 Agents: do not check these boxes. Stop and report that Phase 29 is waiting for the user.
 
-- [ ] Run `npx playwright test tests/browser/scene.spec.ts tests/browser/layout.spec.ts --project=chromium`, then `npx playwright show-report` to view the attached screenshots.
-- [ ] Run `npm run build && npm run preview` and look at the scene at desktop width and in a narrow, phone-sized window.
-- [ ] Confirm that the fly reads as a fruit fly studying in oversized headphones and a six-sleeved hoodie, that the banana looks overripe, that the rain reads, that the three presets' lighting is distinct, and that the controls remain readable.
-- [ ] Write concrete requests under **Scene notes**, or write "Approved as is."
+- [x] Run `npx playwright test tests/browser/scene.spec.ts tests/browser/layout.spec.ts --project=chromium`, then `npx playwright show-report` to view the attached screenshots.
+- [x] Run `npm run build && npm run preview` and look at the scene at desktop width and in a narrow, phone-sized window.
+- [x] Confirm that the fly reads as a fruit fly studying in oversized headphones and a six-sleeved hoodie, that the banana looks overripe, that the rain reads, that the three presets' lighting is distinct, and that the controls remain readable.
+- [x] Write concrete requests under **Scene notes**, or write "Approved as is."
 
 **Scene notes**
 
-- *(The user writes notes here.)*
+- Approved as is.
+- (Operator approval given in the Phase 30 card on 2026-10-04: "lgtm" and "I reviewed it, I give you permission to fill the checkboxes for me." Recorded by the agent with that permission.)
 
 ## Phase 30: Apply the scene art review
 
 **Agent** · **Read:** Phase 29 scene notes, R13
 
-- [ ] Implement every request in the Phase 29 scene notes. If they say "Approved as is," change nothing and check the remaining boxes.
-- [ ] If layout areas, classes, or colors changed, update R13 in this document.
-- [ ] Add a Decision log row summarizing the changes.
+- [x] Implement every request in the Phase 29 scene notes. If they say "Approved as is," change nothing and check the remaining boxes.
+- [x] If layout areas, classes, or colors changed, update R13 in this document.
+- [x] Add a Decision log row summarizing the changes.
 
 **Verify**
 
