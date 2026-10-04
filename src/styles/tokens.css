@@ -35,4 +35,20 @@
   --scene-light-color: #9fc3e6;
   --scene-light-opacity: 0.18;
   --scene-shadow-opacity: 0.35;
+  --scene-stripe: rgba(255, 255, 255, 0.05);
+  --scene-window-frame: #d8d0c0;
+  --scene-rain: rgba(225, 238, 250, 0.65);
+  --scene-lamp: #2f3237;
+  --scene-lamp-shade: #c9b27c;
+  --scene-paper: #efe8d8;
+  --scene-ink: #4a4f5c;
+  --scene-pencil: #e2b33c;
+  --scene-pencil-tip: #2b2b2b;
+  --scene-mug: #c8553d;
+  --scene-shadow: #000000;
+  --scene-banana: #f2cf3a;
+  --scene-banana-shade: #d4a72c;
+  --scene-banana-spot: #6b4a1f;
+  --scene-banana-stem: #3d2b14;
+  --scene-fly-silhouette: #1d1d22;
 }
