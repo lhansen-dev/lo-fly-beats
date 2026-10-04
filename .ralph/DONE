@@ -1,5 +1,0 @@
-Phase 23 export fade and deterministic rendering coverage
-- Applies a sample-indexed 0.5 s linear fade to copied PCM channels only.
-- Adds mocked deterministic fade, ownership, and repeatability checks.
-- Authors real Tone tests for stereo integrity, onset timing, ambience, repeatability, and final RMS.
-- Targeted Node test passed; browser/loopback audio verification awaits operator.
