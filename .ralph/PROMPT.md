@@ -1,4 +1,4 @@
-You are working on: Phase 33 of `docs/03-IMPLEMENT.md` for Lo-fly beats — credits section, R14 copy, seeded status jokes, and the `ASSETS.md` asset manifest.
+You are working on: Phase 33 of docs/03-IMPLEMENT.md — credits, on-brand copy, seeded status jokes, and the ASSETS.md asset manifest for the Lo-fly beats app.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,8 +37,7 @@ Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
 Project hints:
-- Never use `Math.random` anywhere in `src/`; seeded randomness comes from `src/music/streams.ts` (`jokesRng`).
-- Unit tests are `.test.ts` files (no JSX): render with `createElement` + `renderToStaticMarkup` from `react-dom/server`. Tests that import `node:*` modules must live under `tests/`, not `src/`.
-- Do not run Playwright or `npm run test:audio` / `npm run test:browser`: this sandbox denies local socket binds (`listen EPERM`). Browser specs are verified by `npx tsc -p tsconfig.test.json` and `npx oxlint <file>` only.
-- The template forbids `enum`, `namespace`, and constructor parameter properties (`erasableSyntaxOnly`).
-- Do not edit `docs/01-IDEAS.md` or `docs/02-PLAN.md`.
+- Code style: TypeScript + React 19, no semicolons, single quotes, 2-space indent (match nearby files). `erasableSyntaxOnly` is on: no `enum`, `namespace`, or constructor parameter properties. `Math.random` is forbidden in `src/`; use the seeded streams in `src/music/streams.ts`.
+- Unit tests run in Node via `npx vitest run --project unit <file>`. Tests under `src/` must not import `node:*` modules or JSON files; component tests use `renderToStaticMarkup` from 'react-dom/server' inside `ControllerProvider` (see `src/components/controls.test.ts` for the `setup()` pattern).
+- `renderToStaticMarkup` inserts `<!-- -->` between adjacent JSX text and `{expression}` nodes; build sentences that tests match exactly as a single template string.
+- Playwright cannot run in this sandbox (the preview server cannot bind a socket); do not try to run `npx playwright test`.
