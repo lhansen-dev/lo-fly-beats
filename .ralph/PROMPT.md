@@ -1,4 +1,4 @@
-You are working on: Phase 24 of `docs/03-IMPLEMENT.md` — the WAV export flow (engine export mode, controller `exportPhrase`/`dismissExport`/diagnostics, `ExportPanel`, tests, and per-browser Decision-log records).
+You are working on: Phase 24 of `docs/03-IMPLEMENT.md` — the WAV export flow (engine export lock, controller `exportPhrase`/`dismissExport`/`getDiagnostics` with a dispose-safe export generation guard, `ExportPanel`, and the Playwright export spec).
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,13 +23,6 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Task-specific hints:
-- The spec lives in `docs/03-IMPLEMENT.md`: R11 (`### R11. WAV export`) and R12 (`### R12. App state, controls, and failure behavior`). Grep for them only if the task text leaves something unclear.
-- `vitest.config.ts` sets `passWithNoTests: true`: a misspelled test path "passes" silently, so make sure the run output actually lists your test file and its tests.
-- `npx tsc -b` typechecks `src/**/*.test.ts` and `tests/**/*.ts` too; fix any type errors it reports in files you touched.
-- This sandbox cannot bind local sockets: Playwright's preview server and Vitest browser mode fail with `listen EPERM`. Never install browsers or work around it; record the real error where the task says to.
-- Code style: no semicolons, single quotes, 2-space indent, matching the surrounding files.
-
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -42,3 +35,9 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
+
+Task-specific hints:
+- Code style: no semicolons, single quotes, 2-space indent; the TS config has `erasableSyntaxOnly`, so declare class fields explicitly (no constructor parameter properties, no `enum`). `Math.random` is forbidden in `src/`. Only files in `src/audio/` may import `tone`.
+- Unit tests run in Node with Vitest (`npx vitest run <file>`); Vitest does not type-check, so keep types consistent (e.g. any fake implementing `EngineLike` must implement every interface method).
+- This sandbox denies local socket binds: `npm run test:audio` and `npx playwright test` fail with `listen EPERM`. That is expected — never edit `playwright.config.ts` or `vitest.config.ts` to work around it.
+- Do not edit `docs/01-IDEAS.md` or `docs/02-PLAN.md`.
