@@ -3,6 +3,8 @@ import { fnv1a32 } from './rng'
 import type { ChordSlot, WalkStep } from './types'
 import type { ChordDef, ChordQualityId, PresetDefinition } from '../presets/types'
 
+export const CHORD_SLOT_BARS = [0, 2, 4, 6] as const
+
 export const CHORD_QUALITIES: Record<ChordQualityId, { intervals: readonly number[]; third: number; seventh: number }> = {
   m9: { intervals: [3, 7, 10, 14], third: 3, seventh: 10 },
   m7add11: { intervals: [3, 7, 10, 17], third: 3, seventh: 10 },
@@ -76,7 +78,7 @@ export function applyRingRule(rawIndices: number[]): { index: number; stepped: b
 }
 
 export function chooseChordSlots(graph: CircuitGraph, walk: readonly WalkStep[], preset: Pick<PresetDefinition, 'chordRing' | 'keysRange'>): ChordSlot[] {
-  const beats = [0, 8, 16, 24]
+  const beats = CHORD_SLOT_BARS.map(bar => bar * 4)
   const steps = beats.map(beat => {
     const step = walk[beat]
     if (!step || step.kind === 'rest') throw new Error(`Walk has no neuron at chord slot beat ${beat}`)

@@ -235,6 +235,10 @@ export class SessionController {
     this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'idle', fileName: null, url: null, message: null } })
   }
 
+  getGraph(): CircuitGraph | null {
+    return this.graph
+  }
+
   getDiagnostics(): ControllerDiagnostics | null {
     return this.engine ? { ...this.engine.getDiagnostics(), objectUrlsHeld: this.heldUrls.size } : null
   }

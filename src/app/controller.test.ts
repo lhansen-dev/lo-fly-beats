@@ -197,6 +197,13 @@ describe('controller mix settings', () => {
 })
 
 describe('SessionController', () => {
+  it('exposes the loaded graph', async () => {
+    const { controller } = setup()
+    expect(controller.getGraph()).toBeNull()
+    await controller.loadCircuit()
+    expect(controller.getGraph()).toBe(graph)
+  })
+
   it('loads a circuit successfully', async () => {
     const { controller, store } = setup()
     await controller.loadCircuit()

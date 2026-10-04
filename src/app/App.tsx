@@ -17,6 +17,7 @@ import PendingChanges from '../components/PendingChanges'
 import Mixer from '../components/Mixer'
 import AnimationToggle from '../components/AnimationToggle'
 import ExportPanel from '../components/ExportPanel'
+import ExplanationPanel from '../components/explanation/ExplanationPanel'
 
 export default function App() {
   const controller = useController()
@@ -47,6 +48,7 @@ export default function App() {
         </section>
       </div>
     </div>
+    <ExplanationPanel />
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
   </main>
 }
