@@ -1,4 +1,4 @@
-You are working on: Phase 25 of Lo-fly beats — circuit-load errors with Retry, audio-interruption handling and notice, the debug "Simulate interruption" button, the storage-unavailable note, and the failures Playwright spec.
+You are working on: Phase 25 of docs/03-IMPLEMENT.md — circuit-load errors with Retry, audio-interruption handling (stale-callback invalidation, saved-step resume), the storage-unavailable note, and the Chromium failure spec.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -24,10 +24,10 @@ testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
 Task-specific hints:
-- This sandbox denies local socket binds. If `npx vitest run ...` fails to start with `listen EPERM`, that is expected and accepted by the operator: run the fallback named in your task (`npx tsc -b`, which must exit 0) instead and treat that as the check. Never try to run Playwright, `npm run check`, `npm test`, or `npm run test:browser`.
-- Unit tests for components use `renderToStaticMarkup`, which escapes `'` as `&#x27;`; assert apostrophe-free substrings.
-- In JSX, put text containing an apostrophe inside a JS string expression (`{"..."}`) so the linter does not complain.
-- Read the files named in your task before editing them; reuse the existing helpers (`setup()`, `FakeEngine`) instead of inventing new ones.
+- This sandbox denies local socket binds, so `npx vitest` and `npx playwright` cannot start (`listen EPERM`). Do NOT run them; the operator has accepted this. Your checks are `npx tsc -b` and `npx oxlint <paths>` as named in the task.
+- `tsc -b` typechecks `src/**` (including `*.test.ts`) and `tests/**` with `noUnusedLocals`/`noUnusedParameters`; prefix intentionally unused parameters with `_`.
+- Put user-facing copy containing apostrophes in JS string expressions (`{"…won't…"}`), not raw JSX text.
+- Read only the files named in your task, plus whatever they import that you need.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
