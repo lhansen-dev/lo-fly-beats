@@ -1,4 +1,4 @@
-You are working on: Phase 23 — implement immutable export snapshots and isolated offline phrase-to-PCM rendering, without UI.
+You are working on: fixing the Phase 23 offline-export tests (mock PCM sizing, recursive snapshot isolation checks, spec-conformant onset detector) without changing `src/audio/export.ts`.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,11 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Hints:
+- Do NOT edit `src/audio/export.ts`; the production fade (final 0.5 s, last sample 0) is correct — fix tests instead.
+- TypeScript 6 requires `--ignoreConfig` when passing files to `tsc` on the command line (otherwise TS5112).
+- `npm run test:audio` (browser/Chromium) cannot run in this sandbox; never try it.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,5 +40,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Phase-specific hints: this sandbox has no browser or usable browser-server loopback. Author the required real-Tone tests, but execute only the assigned Node check; do not install browsers, substitute fake signals in Chromium tests, or claim real-audio verification passed. Keep Tone/rig imports lazy in the snapshot module and mock them completely in Node tests. Do not change composition versions, presets, rig sound design, or timing formulas to weaken the specified assertions. There is no UI/export-flow work in this phase. The final summary should distinguish authored browser tests from operator-pending runtime verification.
