@@ -1,4 +1,4 @@
-You are working on: Phase 28 of `docs/03-IMPLEMENT.md` — drawing the fly character (`src/scene/fly/Fly.tsx`, `src/scene/scene.css`, scene tests) in the lo-fly-beats SVG scene, with no animation yet.
+You are working on: Phase 28 of docs/03-IMPLEMENT.md — draw the R13 fly character (`src/scene/fly/Fly.tsx`, transform origins in `src/scene/scene.css`, tests) in place of the placeholder silhouette, with no animation.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -36,9 +36,8 @@ them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
-Project hints:
-- Scene markup must contain no color literals: every fill/stroke is `style={{ fill: 'var(--scene-…)' }}`; color values live only in `src/styles/tokens.css`. No `<text>` except the existing "HW" heading in `Desk.tsx`. Avoid SVG gradients/ids (an id like `#face…` would trip the no-hex tests).
-- Tests under `src/**` are type-checked with `tsconfig.app.json` (no Node types): never import `node:fs` there — render with `renderToStaticMarkup(createElement(...))`. Tests that read files belong in `tests/unit/**` (Node types available; see `tests/unit/styles/app-css.test.ts`).
-- `vitest.config.ts` has `passWithNoTests: true`, so a vitest run that matches no file "passes" — make sure your test file exists and its tests actually ran.
-- Never run Playwright or `npm run test:browser` / `test:audio`: this sandbox denies local socket binds. Browser specs are checked with `npx tsc -b tsconfig.test.json` and `npx oxlint <file>`.
-- Do not add any animation (`@keyframes`, `animation`, `<animate>`); that is Phase 31. Do not check any Phase 29 box or Phase 28's "All verification steps pass." box.
+Task-specific hints:
+- This sandbox has no browser and cannot bind local ports. Never run `playwright`, `npm run test:browser`, `npm run test:audio`, or `npm run check`.
+- Scene markup must contain no hex or rgba colour literals. Every colour is a `--scene-*` custom property defined in `src/styles/tokens.css` and used as `style={{ fill: 'var(--…)' }}` or `style={{ stroke: 'var(--…)' }}` (see `src/scene/layers/Desk.tsx`).
+- Test files beside components under `src/` must not import `node:*` modules. Tests that read files with `node:fs` live under `tests/unit/`.
+- `vitest` uses `passWithNoTests: true`. After running a check, make sure the output reports the expected test files as run and passed.
