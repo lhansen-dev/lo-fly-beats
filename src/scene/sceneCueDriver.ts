@@ -35,8 +35,8 @@ export function findCueTargets(root: ParentNode): CueTargets {
 }
 
 export const BOB_KEYFRAMES: Record<'strong' | 'soft', Keyframe[]> = {
-  strong: [{ transform: 'translateY(0)' }, { transform: 'translateY(8px)' }, { transform: 'translateY(0)' }],
-  soft: [{ transform: 'translateY(0)' }, { transform: 'translateY(4px)' }, { transform: 'translateY(0)' }],
+  strong: [{ transform: 'translateY(0) rotate(0deg)', offset: 0 }, { transform: 'translateY(3px) rotate(-1.4deg)', offset: 0.38 }, { transform: 'translateY(0) rotate(0deg)', offset: 1 }],
+  soft: [{ transform: 'translateY(0) rotate(0deg)', offset: 0 }, { transform: 'translateY(1.5px) rotate(-0.6deg)', offset: 0.38 }, { transform: 'translateY(0) rotate(0deg)', offset: 1 }],
 }
 export const BLINK_KEYFRAMES: Keyframe[] = [
   { transform: 'scaleY(1)' }, { transform: 'scaleY(0.1)' }, { transform: 'scaleY(1)' },
@@ -61,7 +61,7 @@ export function startCueDriver({ state, source, targets, timers }: {
     const { bob } = stepCue(state, event)
     if (!bob || !targets.head) return
     bobAnimation?.cancel()
-    bobAnimation = targets.head.animate(BOB_KEYFRAMES[bob], { duration: 350, easing: 'ease-out' })
+    bobAnimation = targets.head.animate(BOB_KEYFRAMES[bob], { duration: 520, easing: 'cubic-bezier(0.33, 0, 0.2, 1)' })
   })
   const offPhrase = source.onPhraseStarted(({ phraseIndex }) => {
     if (phraseCue(state, phraseIndex).rub && targets.handsFront) {

@@ -1,6 +1,11 @@
 export default function Fly() {
   return (
     <g className="fly">
+      <defs>
+        <radialGradient id="fly-eye-depth" cx="35%" cy="25%" r="80%"><stop style={{ stopColor: 'var(--scene-fly-eye)' }} /><stop offset="1" style={{ stopColor: 'var(--scene-fly-eye-facet)' }} /></radialGradient>
+        <linearGradient id="fly-head-depth" x1="0" x2="1" y1="0" y2="1"><stop style={{ stopColor: 'var(--scene-warm)' }} stopOpacity="0.28" /><stop offset="0.5" style={{ stopColor: 'var(--scene-fly-head)' }} stopOpacity="0" /><stop offset="1" style={{ stopColor: 'var(--scene-fly-dark)' }} stopOpacity="0.35" /></linearGradient>
+        <linearGradient id="fly-hoodie-depth" x1="0" x2="1"><stop style={{ stopColor: 'var(--scene-fly-hoodie-shade)' }} stopOpacity="0.6" /><stop offset="0.45" style={{ stopColor: 'var(--scene-fly-hoodie)' }} stopOpacity="0" /><stop offset="1" style={{ stopColor: 'var(--scene-fly-dark)' }} stopOpacity="0.22" /></linearGradient>
+      </defs>
       <g className="fly-wings">
         <ellipse cx="1165" cy="480" rx="72" ry="26" transform="rotate(-35 1165 480)" style={{ fill: 'var(--scene-fly-wing)' }} />
         <ellipse cx="1180" cy="520" rx="64" ry="22" transform="rotate(-15 1180 520)" style={{ fill: 'var(--scene-fly-wing)' }} />
@@ -11,6 +16,9 @@ export default function Fly() {
       <g className="fly-body">
         <path d="M 1000 510 C 990 475 1020 455 1055 460 C 1090 465 1110 492 1105 525 Z" style={{ fill: 'var(--scene-fly-hoodie-shade)' }} />
         <path data-part="torso" d="M 975 690 C 960 600 975 500 1040 480 C 1110 470 1140 560 1135 690 Z" style={{ fill: 'var(--scene-fly-hoodie)' }} />
+        <path d="M 975 690 C 960 600 975 500 1040 480 C 1110 470 1140 560 1135 690 Z" fill="url(#fly-hoodie-depth)" />
+        <path d="M 997 537 Q 1020 507 1039 506 M 1074 513 Q 1099 530 1105 551 M 1005 679 Q 1032 643 1082 662 L 1094 686" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} fill="none" strokeWidth="3" opacity="0.5" />
+        <path d="M 994 688 Q 1050 700 1121 688" style={{ stroke: 'var(--scene-fly-dark)' }} fill="none" strokeWidth="4" opacity="0.18" />
         <line x1="1028" y1="500" x2="1022" y2="565" style={{ stroke: 'var(--scene-fly-drawstring)' }} />
         <line x1="1062" y1="500" x2="1068" y2="565" style={{ stroke: 'var(--scene-fly-drawstring)' }} />
         <circle cx="1022" cy="565" r="3" style={{ fill: 'var(--scene-fly-drawstring)' }} />
@@ -39,8 +47,14 @@ export default function Fly() {
           <path d="M 1060 322 Q 1070 300 1088 284" fill="none" strokeWidth="5" style={{ stroke: 'var(--scene-fly-dark)' }} />
           <path d="M 1088 284 L 1098 277 M 1088 284 L 1096 292 M 1088 284 L 1087 271" fill="none" strokeWidth="2" style={{ stroke: 'var(--scene-fly-dark)' }} />
           <circle cx="1040" cy="392" r="70" style={{ fill: 'var(--scene-fly-head)' }} />
-          <ellipse cx="1000" cy="375" rx="34" ry="38" style={{ fill: 'var(--scene-fly-eye)' }} />
-          <ellipse cx="1068" cy="370" rx="28" ry="34" style={{ fill: 'var(--scene-fly-eye)' }} />
+          <circle cx="1040" cy="392" r="70" fill="url(#fly-head-depth)" />
+          <path d="M 1047 421 Q 1067 430 1085 416" fill="none" style={{ stroke: 'var(--scene-fly-dark)' }} strokeWidth="2" strokeLinecap="round" opacity="0.35" />
+          <ellipse cx="1000" cy="375" rx="34" ry="38" fill="url(#fly-eye-depth)" />
+          <ellipse cx="1068" cy="370" rx="28" ry="34" fill="url(#fly-eye-depth)" />
+          <g style={{ fill: 'var(--scene-fly-eye-facet)' }} opacity="0.55">
+            {Array.from({ length: 16 }, (_, i) => <circle key={`left-${i}`} cx={981 + i % 4 * 11} cy={358 + Math.floor(i / 4) * 11} r="2.6" />)}
+            {Array.from({ length: 12 }, (_, i) => <circle key={`right-${i}`} cx={1055 + i % 3 * 11} cy={353 + Math.floor(i / 3) * 10} r="2.3" />)}
+          </g>
           <circle cx="1012" cy="380" r="5" style={{ fill: 'var(--scene-fly-eye-facet)' }} />
           <circle cx="1060" cy="376" r="4" style={{ fill: 'var(--scene-fly-eye-facet)' }} />
           <path d="M 1030 440 Q 1024 456 1016 464" fill="none" strokeWidth="7" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
@@ -49,11 +63,13 @@ export default function Fly() {
             <path d="M 1056 354 Q 1062 343 1074 343" fill="none" strokeWidth="6" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-eye-shine)' }} />
           </g>
           <g className="fly-headphones">
-            <path d="M 966 396 C 960 300 1120 290 1112 366" fill="none" strokeWidth="16" style={{ stroke: 'var(--scene-fly-headphones)' }} />
+            <path d="M 966 396 C 960 300 1120 290 1112 366" fill="none" strokeWidth="18" style={{ stroke: 'var(--scene-fly-headphones)' }} />
             <ellipse cx="966" cy="420" rx="14" ry="26" style={{ fill: 'var(--scene-fly-headphones)' }} />
             <ellipse cx="1112" cy="400" rx="22" ry="36" style={{ fill: 'var(--scene-fly-headphones)' }} />
             <ellipse cx="966" cy="420" rx="7" ry="17" style={{ fill: 'var(--scene-fly-headphones-pad)' }} />
             <ellipse cx="1112" cy="400" rx="12" ry="25" style={{ fill: 'var(--scene-fly-headphones-pad)' }} />
+            <path d="M 975 347 C 999 304 1075 304 1102 342" fill="none" style={{ stroke: 'var(--scene-paper)' }} strokeWidth="3" opacity="0.16" />
+            <ellipse cx="1113" cy="398" rx="7" ry="18" fill="none" style={{ stroke: 'var(--scene-light-color)' }} strokeWidth="2" opacity="0.7" />
             <path d="M 1124 430 C 1150 500 1120 580 1175 640 S 1215 690 1235 705" fill="none" strokeWidth="4" style={{ stroke: 'var(--scene-fly-cable)' }} />
           </g>
         </g>

@@ -6,6 +6,7 @@ import Lighting from './layers/Lighting'
 import Desk from './layers/Desk'
 import Banana from './layers/Banana'
 import Fly from './fly/Fly'
+import RoomDetails from './layers/RoomDetails'
 import './scene.css'
 import { sceneClassName } from './animationMode'
 
@@ -19,8 +20,11 @@ export default function Scene({ preserveAspectRatio = 'xMidYMid slice', sessionS
       <Window><Rain sessionSeed={sessionSeed} /></Window>
       <Lighting />
       <Desk />
+      <RoomDetails />
       <Fly />
       <Banana />
+      <defs><radialGradient id="scene-vignette"><stop offset="0.45" style={{ stopColor: 'var(--scene-shadow)' }} stopOpacity="0" /><stop offset="1" style={{ stopColor: 'var(--scene-shadow)' }} stopOpacity="0.4" /></radialGradient></defs>
+      <rect width="1600" height="900" fill="url(#scene-vignette)" pointerEvents="none" />
       </g>
     </svg>
   )

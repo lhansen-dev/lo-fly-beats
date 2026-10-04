@@ -5,7 +5,7 @@ export default function AnimationToggle() {
   const controller = useController()
   const checked = useAnimationEnabled()
 
-  return <label>
+  return <label className="animation-toggle">
     <input type="checkbox" data-testid="animation-toggle" checked={checked} onChange={event => controller.setAnimationEnabled(event.target.checked)} />
     Animate scene
   </label>

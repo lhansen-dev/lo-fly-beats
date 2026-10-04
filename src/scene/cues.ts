@@ -47,7 +47,7 @@ export function nextBlinkDelayMs(state: CueState): number {
 export function rainTimings(sessionSeed: number, count: number): Array<{ delayMs: number; durationMs: number }> {
   const rng = animationRng(sessionSeed)
   return Array.from({ length: count }, () => {
-    const durationMs = 900 + Math.round(rng.float() * 900)
+    const durationMs = 3200 + Math.round(rng.float() * 2600)
     const delayMs = Math.round(rng.float() * 2000)
     return { delayMs, durationMs }
   })

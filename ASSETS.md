@@ -8,3 +8,5 @@
 | Fonts | System fonts only; no font files. | System fonts. | None |
 
 Update this file whenever an asset is added.
+
+The listening room also includes original vector books, plants, a clock, and a turntable in `src/scene/layers/RoomDetails.tsx`. Interface icons in `src/components/Icon.tsx` and the network visualization in `src/components/scanner/` are original inline SVG. The scanner uses the credited MaleCNS connectivity data above with a deterministic schematic layout; it contains no anatomical imagery. All typography continues to use system fonts.

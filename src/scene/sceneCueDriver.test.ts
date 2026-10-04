@@ -21,7 +21,7 @@ describe('scene cue driver', () => {
     const stop = startCueDriver({ state: { sessionSeed: 1, rng: { float: () => 0, int: () => 0, pick: items => items[0]! }, lastRubPhrase: null, lastPhraseIndex: null }, source, targets, timers: { setTimeout, clearTimeout } })
     step({ phraseIndex: 0, stepInPhrase: 4, bar: 0, beat: 0 })
     phrase(0)
-    expect(animate).toHaveBeenCalledWith(expect.any(Array), { duration: 350, easing: 'ease-out' })
+    expect(animate).toHaveBeenCalledWith(expect.any(Array), { duration: 520, easing: 'cubic-bezier(0.33, 0, 0.2, 1)' })
     expect(vi.getTimerCount()).toBe(1)
     stop()
     expect(vi.getTimerCount()).toBe(0)

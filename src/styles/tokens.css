@@ -12,10 +12,10 @@
  * preset uiAccent on --ui-surface: #9fc3e6 ≈8.5:1, #ffb35c ≈8.8:1, #e8a33d ≈7.2:1
  */
 :root {
-  --ui-bg: #14171c;
-  --ui-surface: #1f242c;
-  --ui-text: #f2f4f7;
-  --ui-muted: #b4bcc8;
+  --ui-bg: #161e1b;
+  --ui-surface: #202923;
+  --ui-text: #f0f0e4;
+  --ui-muted: #b9c3b4;
   --ui-border: #7c8696;
   --focus: #ffd166;
   --ui-accent: #9fc3e6;
@@ -25,7 +25,8 @@
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
-  --radius: 0.75rem;
+  --radius: 0.875rem;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --scene-wall: #3b4a5a;
   --scene-window-sky: #6f8ba3;
@@ -36,7 +37,7 @@
   --scene-light-opacity: 0.18;
   --scene-shadow-opacity: 0.35;
   --scene-stripe: rgba(255, 255, 255, 0.05);
-  --scene-window-frame: #d8d0c0;
+  --scene-window-frame: #26312f;
   --scene-rain: rgba(225, 238, 250, 0.65);
   --scene-lamp: #2f3237;
   --scene-lamp-shade: #c9b27c;
@@ -50,17 +51,27 @@
   --scene-banana-shade: #d4a72c;
   --scene-banana-spot: #6b4a1f;
   --scene-banana-stem: #3d2b14;
-  --scene-fly-hoodie: #7a8c6e;
-  --scene-fly-hoodie-shade: #5f6f55;
+  --scene-fly-hoodie: #9ca979;
+  --scene-fly-hoodie-shade: #677d56;
   --scene-fly-drawstring: #efe8d8;
   --scene-fly-dark: #2a211b;
-  --scene-fly-head: #8a6a4a;
-  --scene-fly-eye: #b3261e;
-  --scene-fly-eye-facet: #7d1a14;
+  --scene-fly-head: #b89b70;
+  --scene-fly-eye: #cd7155;
+  --scene-fly-eye-facet: #9b4a3e;
   --scene-fly-eye-shine: #fff6e8;
   --scene-fly-headphones: #2f3640;
   --scene-fly-headphones-pad: #4a5361;
   --scene-fly-cable: #1f242b;
   --scene-fly-wing: rgba(220, 235, 245, 0.45);
   --scene-fly-wing-vein: rgba(90, 100, 110, 0.6);
+  --scene-night: #162c35;
+  --scene-city: #1e3840;
+  --scene-city-near: #163038;
+  --scene-city-light: #ddb77a;
+  --scene-warm: #f7cd8c;
+  --scene-leaf: #657c5c;
+  --scene-leaf-light: #a5b77c;
+  --scene-pot: #b27354;
+  --scene-book: #476261;
+  --scene-book-light: #b1b291;
 }

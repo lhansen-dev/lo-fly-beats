@@ -23,6 +23,8 @@ import ExplanationPanel from '../components/explanation/ExplanationPanel'
 import Credits from '../components/Credits'
 import PlaybackStatus from '../components/PlaybackStatus'
 import { useKeyboardShortcuts } from './useKeyboardShortcuts'
+import Icon from '../components/Icon'
+import CircuitScanner from '../components/scanner/CircuitScanner'
 
 export default function App() {
   const controller = useController()
@@ -32,34 +34,33 @@ export default function App() {
 
   return <main className="app" data-preset={presetId} style={visualCssVars(getPreset(presetId).visual) as CSSProperties}>
     <header className="app-header">
-      <h1>{APP_TITLE}</h1>
-      <p>{TAGLINE}</p>
+      <div className="brand"><span className="brand-mark"><Icon name="fly" /></span><span>LO-FLY<span className="brand-divider"> / </span><span className="brand-caption">CONNECTOME RADIO</span></span></div>
+      <span className="header-note"><span className="status-dot" /> A small experiment in slowing down</span>
     </header>
+    <div className="intro">
+      <div><p className="eyebrow">A listening room, wired a little differently.</p><h1>{APP_TITLE}<span className="title-period">.</span></h1><p className="tagline">{TAGLINE}</p></div>
+      <p className="intro-note">Real fly-brain connections.<br />Soft keys. Slow drums. Zero rush.</p>
+    </div>
     <PlaybackStatus />
     <div className="app-layout">
-      <SceneFrame />
-      <div className="app-controls">
-        <CircuitStatus />
-        <StorageNote />
-        <NowPlaying />
-        <StatusJoke />
-        <TransportControls />
-        <section className="controls-panel">
-      <p>With focus on the scene or page: Space or K plays or pauses; N makes a new beat.</p>
-      <PresetPicker />
-      <Mixer />
-      <AnimationToggle />
-      <TempoControl />
-      <VariationControl />
-      <NewBeatButton />
-      <PendingChanges />
-          <ExportPanel />
-        </section>
-      </div>
+      <section className="listening-panel" aria-label="Listening room">
+        <div className="scene-wrapper"><SceneFrame /><div className="scene-label" aria-hidden="true"><span className="status-dot" /> THE LISTENING ROOM</div><span className="scene-caption" aria-hidden="true">a very small study session</span></div>
+        <div className="player-content"><NowPlaying /><TransportControls /><StatusJoke /></div>
+        <div className="room-footer"><AnimationToggle /><span className="keyboard-hint"><kbd>Space</kbd> play / pause <span>·</span> <kbd>N</kbd> new beat</span></div>
+      </section>
+      <section className="app-controls controls-panel" aria-labelledby="session-title">
+        <div className="panel-heading"><div><p className="eyebrow">MAKE YOURSELF AT HOME</p><h2 id="session-title">Shape your session</h2></div><span className="panel-number">01</span></div>
+        <PresetPicker />
+        <div className="parameter-controls"><TempoControl /><VariationControl /></div>
+        <Mixer />
+        <div className="session-actions"><NewBeatButton /><ExportPanel /></div>
+        <PendingChanges /><StorageNote />
+      </section>
     </div>
-    <ExplanationPanel />
-    <Credits />
-    <footer className="app-footer"><p data-testid="about-line">{ABOUT_LINE}</p><a href="#credits">Credits</a></footer>
+    <CircuitScanner />
+    <div className="circuit-load"><CircuitStatus /></div>
+    <div className="about-section"><ExplanationPanel /><Credits /></div>
+    <footer className="app-footer"><p data-testid="about-line">{ABOUT_LINE}</p><a href="#credits">Credits</a><span>Made for the slow moments.</span></footer>
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
   </main>
 }

@@ -43,6 +43,8 @@ The app loads 97 real mushroom body output neurons (MBONs) and 936 directed conn
 
 The musical mapping is authored and does not simulate neural activity. Scene animation and jokes cannot change the score. See the [plan](docs/02-PLAN.md), [implementation contracts and decisions](docs/03-IMPLEMENT.md), and in-app **How the beat is made** panel.
 
+The live MaleCNS scanner displays every neuron and directed connection in the verified circuit. It follows the score's current beat, highlighting the selected neuron, incoming edge, and the last eight traversal steps. The inspector shows the original body ID, synapse count, selection probability, and exact musical uses. Select an elapsed beat in the eight-bar timeline to inspect it; **Follow live beat** returns to playback. Inspection resets when a new phrase begins. The scanner pauses with playback and respects reduced motion, the animation switch, and tab visibility. Its layout groups neurons by soma side; these are schematic positions, not anatomical coordinates or measured neural activity.
+
 ## Audio behavior
 
 - **Start listening** requires a user action. Reloads restore active settings but start at phrase 1 with playback idle.

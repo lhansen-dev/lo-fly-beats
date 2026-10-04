@@ -29,7 +29,7 @@ describe('application copy', () => {
   it('renders centralized copy and footer in App', () => {
     const markup = render(createElement(App))
     for (const expected of [
-      '<h1>Lo-fly beats</h1>',
+      '<h1>Lo-fly beats<span class="title-period">.</span></h1>',
       'Beats to relax / repeatedly fly into the same window to',
       '<footer',
       'data-testid="about-line"',
@@ -41,6 +41,6 @@ describe('application copy', () => {
   })
 
   it('renders the track title in NowPlaying', () => {
-    expect(render(createElement(NowPlaying))).toContain('Now playing: No Thoughts, Only Fruit')
+    expect(render(createElement(NowPlaying))).toContain('<h2>No Thoughts, Only Fruit</h2>')
   })
 })

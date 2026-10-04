@@ -1,0 +1,100 @@
+.circuit-scanner { --scan-accent: #8ee2cb; margin-top: 26px; border: 1px solid #506962; border-radius: 14px; background: #172321; overflow: hidden; }
+.scanner-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 28px 22px; }
+.scanner-heading .eyebrow { color: #a7d9c8; display: flex; align-items: center; gap: 8px; }
+.scanner-heading .icon { width: 15px; height: 15px; }
+.scanner-heading h2 { font: 29px Georgia, serif; letter-spacing: -.8px; margin-top: 7px; }
+.scanner-heading h2 > span { color: var(--scan-accent); }
+.scanner-heading p:last-child { font-size: 11px; color: #b3c6bd; margin-top: 8px; }
+.scanner-badge { display: flex; align-items: center; gap: 7px; font: 8px var(--font-mono); letter-spacing: 1px; border: 1px solid #709a8b; border-radius: 5px; color: #b5e5d2; padding: 8px 10px; white-space: nowrap; }
+.scanner-badge .status-dot { background: var(--scan-accent); }
+.scanner-layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); border-top: 1px solid #3d554a; border-bottom: 1px solid #3d554a; }
+.scan-stage { min-width: 0; position: relative; background-color: #101d1b; background-image: linear-gradient(#8ee2cb08 1px, transparent 1px), linear-gradient(90deg, #8ee2cb08 1px, transparent 1px); background-size: 30px 30px; }
+.scan-stage-meta { position: absolute; top: 15px; left: 18px; right: 18px; display: flex; justify-content: space-between; gap: 10px; font: 7px var(--font-mono); letter-spacing: 1px; color: #a5c5b8; }
+.network-scan { display: block; width: 100%; height: auto; }
+.scan-guides { stroke: #8ee2cb; stroke-opacity: .12; stroke-width: .6; stroke-dasharray: 3 7; }
+.scan-connections { stroke: #83c4b2; stroke-opacity: .13; fill: none; }
+.scan-trail { stroke: #a5e3cc; stroke-opacity: .5; stroke-width: 1.5; fill: none; }
+.scan-active-edge { stroke: var(--scan-accent); stroke-width: 2.3; fill: none; }
+.scan-node { fill: #588f80; stroke: #a8ddcc; stroke-width: .8; }
+.scan-node--visited { fill: #c1ead7; stroke: #d9f6e8; }
+.scan-node--current { fill: #e5fff2; stroke: var(--scan-accent); stroke-width: 2; }
+.scan-target { fill: none; stroke: var(--scan-accent); stroke-width: 1; }
+.scan-target text { fill: #e0ffee; stroke: none; font: 11px var(--font-mono); paint-order: stroke; stroke: #132420; stroke-width: 4px; }
+.scan-pulse { stroke-opacity: .45; }
+.scan-side-label { fill: #a7cbbd; font: 8px var(--font-mono); letter-spacing: 2px; }
+.scan-sweep { display: none; fill: none; stroke: var(--scan-accent); stroke-opacity: .15; }
+.scanner--animated .scan-sweep { display: block; animation: scan-sweep 8s linear infinite; }
+.scanner--animated .scan-pulse { animation: scan-pulse 850ms ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes scan-sweep { from { transform: translateY(0); } to { transform: translateY(360px); } }
+@keyframes scan-pulse { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+.scan-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 22px; padding: 10px 12px 14px; font: 8px var(--font-mono); color: #bdd5c9; }
+.scan-legend > span { display: flex; align-items: center; gap: 7px; }
+.scan-legend i { width: 5px; height: 5px; border-radius: 50%; }
+.legend-current { background: #d9ffe9; box-shadow: 0 0 6px #8ee2cb; }
+.legend-trail { background: #90cbb6; }
+.legend-network { background: #799d8f; }
+.scan-inspector { min-width: 0; padding: 24px 26px; border-left: 1px solid #3d554a; display: flex; flex-direction: column; }
+.inspector-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.inspector-heading .eyebrow { font-size: 8px; letter-spacing: 1.1px; }
+.beat-counter { font: 9px var(--font-mono); color: #d3e9d9; }
+.scan-inspector h3 { font-size: 25px; letter-spacing: -.6px; margin-top: 17px; color: #d1f2df; }
+.neuron-id { font: 8px var(--font-mono); color: #b5cebf; letter-spacing: .9px; margin-top: 5px; }
+.connection-detail { border-block: 1px solid #47634f; margin-top: 20px; padding: 14px 0; }
+.detail-label { font: 8px var(--font-mono); letter-spacing: 1px; color: #b1cebb; }
+.connection-detail > p { margin-top: 8px; color: #ddedde; font-size: 11px; }
+.connection-arrow { color: var(--scan-accent); margin: 0 4px; }
+.connection-stats { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 9px; color: #b7cdbb; }
+.connection-stats strong { font: 13px var(--font-mono); color: #d5f2df; }
+.musical-choices { padding: 14px 0; }
+.musical-choices ul { list-style: none; padding: 0; margin: 8px 0 0; display: flex; gap: 5px; flex-wrap: wrap; }
+.musical-choices li { font: 9px var(--font-mono); background: #2a4032; border: 1px solid #6d8d70; color: #d4e9cd; padding: 5px 7px; border-radius: 4px; overflow-wrap: anywhere; }
+.musical-choices p, .inspector-idle { font-size: 11px; line-height: 1.9; color: #b8d1be; }
+.inspector-idle { margin: 22px 0; max-width: 290px; }
+.scan-dataset-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: auto; padding-top: 18px; }
+.scan-dataset-stats > span { display: grid; gap: 3px; color: #b6ceba; font-size: 8px; }
+.scan-dataset-stats strong { color: #d9efdc; font: 19px var(--font-mono); }
+.scan-placeholder { min-height: 340px; display: grid; place-content: center; justify-items: center; gap: 15px; text-align: center; padding: 40px; color: #b8d5c2; }
+.scan-placeholder .icon { width: 34px; height: 34px; }
+.phrase-trace { padding: 18px 28px 16px; }
+.trace-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+button.follow-button { background: transparent; min-height: 30px; padding: 5px 8px; border-color: #719b82; color: #c3e1c6; font: 9px var(--font-mono); }
+button.follow-button:disabled { border-color: transparent; color: #a9c7ac; }
+.trace-bars { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; margin-top: 13px; }
+.trace-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.trace-bar-label { grid-column: 1 / -1; font: 7px var(--font-mono); color: #b9d3bd; padding-bottom: 2px; }
+button.trace-beat { min-height: 26px; padding: 3px; background: #1e3327; border: 1px solid #52705a; border-radius: 3px; }
+.trace-beat > span { width: 3px; height: 3px; border-radius: 50%; background: #81a489; }
+button.trace-beat--visited { background: #325039; border-color: #81a480; }
+button.trace-beat--visited > span { background: #c5e3bd; }
+button.trace-beat--selected { background: #c5dfb5; border-color: #d7efc9; }
+button.trace-beat--selected > span { background: #233c27; }
+.trace-beat--rest > span { border-radius: 0; width: 7px; height: 1px; }
+.scan-disclaimer { border-top: 1px solid #3d554a; padding: 12px 28px; color: #b4c7b5; font-size: 9px; line-height: 1.8; }
+@media (max-width: 1000px) {
+  .scanner-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  .scan-inspector { padding: 20px; }
+  .scan-stage-meta { font-size: 6px; }
+  .network-scan { height: 100%; max-height: 380px; object-fit: contain; }
+  .scan-legend { position: absolute; bottom: 0; inset-inline: 0; gap: 15px; font-size: 7px; }
+  .scan-stage { min-height: 360px; }
+}
+@media (max-width: 699px) {
+  .circuit-scanner { margin-top: 20px; border-radius: 11px; }
+  .scanner-heading { padding: 20px 16px; display: block; }
+  .scanner-heading h2 { font-size: 25px; }
+  .scanner-heading p:last-child { font-size: 10px; }
+  .scanner-badge { display: inline-flex; margin-top: 15px; }
+  .scanner-layout { grid-template-columns: minmax(0, 1fr); }
+  .scan-stage { min-height: 240px; }
+  .network-scan { height: auto; min-height: 220px; }
+  .scan-stage-meta { font-size: 6px; top: 12px; left: 12px; right: 12px; }
+  .scan-legend { position: static; gap: 12px; padding-bottom: 12px; font-size: 6px; }
+  .scan-inspector { border-left: 0; border-top: 1px solid #3d554a; padding: 20px 16px; }
+  .scan-inspector h3 { font-size: 24px; }
+  .scan-dataset-stats { padding-top: 15px; }
+  .phrase-trace { padding: 14px 16px; }
+  .trace-bars { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; }
+  .trace-heading .detail-label { font-size: 7px; }
+  button.follow-button { font-size: 8px; }
+  .scan-disclaimer { padding: 12px 16px; font-size: 8px; }
+}

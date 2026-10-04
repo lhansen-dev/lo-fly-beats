@@ -16,7 +16,8 @@ describe('MasterVolume', () => {
     const render = (node: ReactNode) => renderToStaticMarkup(createElement(ControllerProvider, { controller, children: node }))
 
     let markup = render(createElement(MasterVolume))
-    expect(markup).toContain('<label>Master volume')
+    expect(markup).toContain('<label class="master-volume">')
+    expect(markup).toContain('<span class="sr-only">Master volume</span>')
     expect(markup).toContain('data-testid="master-volume"')
     expect(markup).toContain('type="range"')
     expect(markup).toContain('min="0"')

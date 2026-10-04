@@ -61,7 +61,7 @@ test('changing preset while paused changes the wall fill', async ({ page }) => {
 })
 
 test.describe('fly close-ups', () => {
-  test.use({ deviceScaleFactor: 2 })
+  test.use({ deviceScaleFactor: 2, reducedMotion: 'reduce' })
 
   for (const preset of presets) {
     test(`fly close-up ${preset}`, async ({ page }, testInfo) => {
@@ -71,7 +71,7 @@ test.describe('fly close-ups', () => {
       await page.getByTestId(`preset-${preset}`).check()
       await expect(page.locator('main.app')).toHaveAttribute('data-preset', preset)
       const svg = page.getByTestId('scene-frame').locator('svg.scene')
-      const body = await svg.locator('.fly').screenshot()
+      const body = await svg.locator('.fly').screenshot({ animations: 'disabled' })
       await testInfo.attach(`fly-closeup-${preset}`, { body, contentType: 'image/png' })
     })
   }
@@ -87,7 +87,7 @@ for (const preset of presets) {
       await expect(page.locator('main.app')).toHaveAttribute('data-preset', preset)
       await page.setViewportSize({ width, height })
       await testInfo.attach(`scene-${preset}-${width}x${height}`, {
-        body: await page.getByTestId('scene-frame').screenshot(),
+        body: await page.getByTestId('scene-frame').screenshot({ animations: 'disabled' }),
         contentType: 'image/png',
       })
     })
