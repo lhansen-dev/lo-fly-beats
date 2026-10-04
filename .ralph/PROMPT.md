@@ -1,4 +1,4 @@
-You are working on: Phase 25 of `docs/03-IMPLEMENT.md` — circuit-load error/Retry UI, immediate audio-interruption handling with clean resume, a debug "Simulate interruption" control, the storage-unavailable note, and a Chromium failures spec.
+You are working on: Phase 25 of Lo-fly beats — circuit-load error UI with Retry, race-safe audio-interruption handling in the engine, the storage-unavailable note, and the failure browser spec.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,14 +23,6 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Task-specific hints:
-- Read the files named in your task before editing; earlier iterations may already have changed them (e.g. `src/audio/engine.ts`, `src/audio/engine.test.ts`, `src/components/status-messages.test.ts`). Extend what is there instead of rewriting it.
-- Unit tests run in Node (`vitest --project unit`, `environment: 'node'`): there is no `document`/`window`; use `vi.stubGlobal` where engine code touches `document`, and `renderToStaticMarkup` for components (React escapes `'` as `&#x27;` in markup).
-- `src/audio/engine.test.ts` mocks `tone` with a hoisted `mock` object (`mock.context`, `mock.transport`, `mock.rig`, `mock.start`); add any new mocked members there and clear them in `beforeEach`.
-- Never change the existing ramped `pause()` method in `src/audio/engine.ts`.
-- `src/` test files are typechecked by `tsconfig.app.json` (strict, `noUnusedLocals`, `noUnusedParameters`); `tests/` files by `tsconfig.test.json`.
-- Playwright and `vitest --project audio` cannot run here (local socket binds are denied); never try to run them.
-
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -43,3 +35,9 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
+
+Project hints:
+- TypeScript + React 19 + Tone 15 + Vitest 5 (Node environment, no DOM). Component tests render with `renderToStaticMarkup` from `react-dom/server`; static markup escapes `'` as `&#x27;`.
+- `npx tsc -b` typechecks `src/` (including `src/**/*.test.ts`) and `tests/`. If you change an interface, update every implementer (e.g. `FakeEngine` in `src/app/controller.test.ts`).
+- Vitest has `passWithNoTests: true`: make sure the test file you create actually exists and contains tests.
+- Never run Playwright (`npx playwright test`) or `npm run test:audio` / `npm run check`: the sandbox denies local socket binds.
