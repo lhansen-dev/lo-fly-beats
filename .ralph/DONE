@@ -1,0 +1,4 @@
+Phase 26 layout spec and checklist recorded
+- Added viewport, overflow, scene ratio, preset, screenshot, and sticky-control browser checks in `tests/browser/layout.spec.ts`.
+- Checked off Phase 26 tasks while preserving the unchecked verification box.
+- Documented fixed mobile bar rationale and deferred transition; typecheck, Oxlint, and log check pass. Playwright remains for operator due to sandbox limits.

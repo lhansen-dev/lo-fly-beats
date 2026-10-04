@@ -109,6 +109,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 24 | The controller injects `renderPhrase`/`createObjectUrl`/`revokeObjectUrl` for tests, revokes the previous URL at the start of each export and on Done, and reports `objectUrlsHeld` in diagnostics. | Evaluator verification: `npm run check` passes (174 Node unit tests), and targeted controller, panel/controls, and engine/state/WAV unit checks pass. `npm run test:audio` and `npm run test:browser` (Chromium, Firefox, WebKit) were not run — Firefox and WebKit results: not run, sandbox — because the sandbox denies local socket binds and the operator dropped browser checks from this card's verification; `tests/browser/export.spec.ts` is authored and typechecked only, and Verify steps 2–3 remain for the operator. |
 
 | 2026-10-04 | 25 | Draw callbacks and transport steps are invalidated with a `playbackGeneration` counter on interruption; extra test IDs `audio-notice` and `storage-note` were added beside the R12 table. | `npx tsc -b` and `npx oxlint tests/browser/failures.spec.ts` pass. `npx vitest` and `npx playwright test --project=chromium` could not run because this sandbox denies local socket binds, so the final verification box stays unchecked for the operator. |
+| 2026-10-04 | 26 | Below 700 px, the bottom bar uses `position: fixed` because a sticky bar inside TransportControls would scroll away with its parent; `data-testid="scene-frame"` replaces `scene-placeholder`; the 1.5 s custom-property transition is deferred to Phase 31's lighting-transition task. | Token contrast and layout rules are checked by `tests/unit/styles/*.test.ts`. Playwright could not run in the sandbox, so the verification box stays unchecked for the operator. |
 
 ## Reference
 
@@ -1768,14 +1769,14 @@ Exit criteria from the plan: the fly and banana scene reads clearly on desktop a
 
 **Agent** · **Read:** R12, R13 (visual parameters, responsive crop), R14
 
-- [ ] Add `VisualParams` (R13) to `src/presets/types.ts` and each preset's values from the R13 table.
-- [ ] Create `src/styles/tokens.css` with UI tokens (`--ui-bg`, `--ui-surface`, `--ui-text`, `--ui-muted`, `--ui-border`, `--focus`, a spacing scale, a radius, and the system font stack). Body text must reach a 4.5:1 contrast ratio; large text and control borders must reach 3:1. List the checked color pairs and their ratios in a comment.
-- [ ] Set `data-preset` and the active preset's visual values as CSS custom properties (`--scene-wall`, `--scene-window-sky`, and so on) on the app root.
-- [ ] Lay out the page in `src/styles/app.css`. At 960 px and wider, use two columns (scene 2fr, controls 1fr). From 700 to 959 px, put the scene on top with the controls in two columns below. Below 700 px, stack everything and add a sticky bottom bar containing `play-toggle` and `master-volume`. The page must not scroll horizontally at 320 px.
-- [ ] Create `src/app/useMediaQuery.ts` and `src/scene/SceneFrame.tsx`. The frame applies the R13 aspect ratios and `preserveAspectRatio` values and holds a placeholder SVG (`viewBox="0 0 1600 900"`) of colored rectangles using the scene tokens.
-- [ ] Give all interactive elements a `:focus-visible` outline of 3 px `var(--focus)` with a 2 px offset.
-- [ ] Under `prefers-reduced-motion: reduce`, set UI transitions to 0 s.
-- [ ] Write `tests/browser/layout.spec.ts` at 1280×800, 800×900, and 390×844. No horizontal scrolling occurs (`scrollWidth <= clientWidth`). At 390×844, after starting playback and scrolling halfway down, `play-toggle` and `master-volume` are inside the viewport. Attach a full-page screenshot for each size with `testInfo.attach`.
+- [x] Add `VisualParams` (R13) to `src/presets/types.ts` and each preset's values from the R13 table.
+- [x] Create `src/styles/tokens.css` with UI tokens (`--ui-bg`, `--ui-surface`, `--ui-text`, `--ui-muted`, `--ui-border`, `--focus`, a spacing scale, a radius, and the system font stack). Body text must reach a 4.5:1 contrast ratio; large text and control borders must reach 3:1. List the checked color pairs and their ratios in a comment.
+- [x] Set `data-preset` and the active preset's visual values as CSS custom properties (`--scene-wall`, `--scene-window-sky`, and so on) on the app root.
+- [x] Lay out the page in `src/styles/app.css`. At 960 px and wider, use two columns (scene 2fr, controls 1fr). From 700 to 959 px, put the scene on top with the controls in two columns below. Below 700 px, stack everything and add a sticky bottom bar containing `play-toggle` and `master-volume`. The page must not scroll horizontally at 320 px.
+- [x] Create `src/app/useMediaQuery.ts` and `src/scene/SceneFrame.tsx`. The frame applies the R13 aspect ratios and `preserveAspectRatio` values and holds a placeholder SVG (`viewBox="0 0 1600 900"`) of colored rectangles using the scene tokens.
+- [x] Give all interactive elements a `:focus-visible` outline of 3 px `var(--focus)` with a 2 px offset.
+- [x] Under `prefers-reduced-motion: reduce`, set UI transitions to 0 s.
+- [x] Write `tests/browser/layout.spec.ts` at 1280×800, 800×900, and 390×844. No horizontal scrolling occurs (`scrollWidth <= clientWidth`). At 390×844, after starting playback and scrolling halfway down, `play-toggle` and `master-volume` are inside the viewport. Attach a full-page screenshot for each size with `testInfo.attach`.
 
 **Verify**
 
