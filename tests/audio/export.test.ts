@@ -9,6 +9,7 @@ import { PRESETS } from '../../src/presets/presets'
 import type { PhraseScore, SessionRecipe } from '../../src/music/types'
 import { DEFAULT_MIX, type MixSettings } from '../../src/audio/rig'
 import { composePhrase } from '../../src/music/compose'
+import { detectOnsets } from './onsets'
 
 const preset = PRESETS['rainy-windowsill']
 const recipe = (tempoBpm: number): SessionRecipe => ({ recipeVersion: 1, presetId: preset.id, sessionSeed: 1, variation: 0.5, tempoBpm })
@@ -47,17 +48,16 @@ describe('offline phrase rendering', () => {
 
   it('places kick and swung hat onsets within 5 ms', async () => {
     const kicksData = await checkedRender(makeSnapshot(kicks, 72, undefined, 0.5))
-    for (const [step, expected] of kicks.map((event, index) => [event.step, [0, 3.333333, 6.666667, 10][index]])) {
-      const start = Math.round(step * 60 / 72 / 4 * 44100)
-      let onset = start
-      while (onset < kicksData.channels[0].length && Math.abs(kicksData.channels[0][onset]) <= 0.05) onset++
-      expect(Math.abs(onset / 44100 - expected)).toBeLessThan(0.005)
+    const kickOnsets = detectOnsets(kicksData.channels[0], 44100)
+    expect(kickOnsets).toHaveLength(4)
+    for (let i = 0; i < kickOnsets.length; i++) {
+      expect(Math.abs(kickOnsets[i] - [0, 10 / 3, 20 / 3, 10][i])).toBeLessThan(0.005)
     }
     const hat = { layer: 'drums' as const, step: 1, microOffset: 0, durationSteps: 1, midi: null, drum: 'hat' as const, velocity: 1, traceBeat: null }
     const hatData = await checkedRender(makeSnapshot([hat], 72, undefined, 0.56))
-    let onset = 0
-    while (onset < hatData.channels[0].length && Math.abs(hatData.channels[0][onset]) <= 0.05) onset++
-    expect(Math.abs(onset / 44100 - 0.233333)).toBeLessThan(0.005)
+    const hatOnsets = detectOnsets(hatData.channels[0], 44100)
+    expect(hatOnsets).toHaveLength(1)
+    expect(Math.abs(hatOnsets[0] - 0.233333)).toBeLessThan(0.005)
   }, 60000)
 
   it('renders audible ambience for an empty score', async () => {

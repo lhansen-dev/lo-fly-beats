@@ -1,0 +1,4 @@
+Implemented latched whole-buffer onset detection for audio export tests.
+- Added threshold/quiet-duration detector and unit regressions.
+- Replaced threshold-search loops with whole-buffer kick and hat onset assertions.
+- Unit tests and test TypeScript check pass.
