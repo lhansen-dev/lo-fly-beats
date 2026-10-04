@@ -1,6 +1,10 @@
+import { useMemo } from 'react'
+import { DEFAULT_SESSION_SEED } from '../../music/versions'
+import { rainTimings } from '../cues'
 import { RAIN_DROPS, RAIN_STREAKS } from './rainLayout'
 
-export default function Rain() {
+export default function Rain({ sessionSeed = DEFAULT_SESSION_SEED }: { sessionSeed?: number }) {
+  const timings = useMemo(() => rainTimings(sessionSeed, RAIN_STREAKS.length), [sessionSeed])
   return (
     <g className="rain" clipPath="url(#scene-window-clip)">
       {RAIN_STREAKS.map((streak, index) => (
@@ -13,7 +17,11 @@ export default function Rain() {
           y2={streak.y + streak.length}
           strokeWidth={2}
           strokeLinecap="round"
-          style={{ stroke: 'var(--scene-rain)' }}
+          style={{
+            stroke: 'var(--scene-rain)',
+            animationDelay: `${timings[index].delayMs}ms`,
+            animationDuration: `${timings[index].durationMs}ms`,
+          }}
         />
       ))}
       {RAIN_DROPS.map((drop, index) => (

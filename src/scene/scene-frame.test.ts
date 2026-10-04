@@ -14,6 +14,8 @@ describe('SceneFrame', () => {
     const markup = renderToStaticMarkup(createElement(SceneFrame, { wide: true }))
     for (const expected of [
       'data-testid="scene-frame"',
+      'class="scene"',
+      'animation-delay:',
       'viewBox="0 0 1600 900"',
       'preserveAspectRatio="xMidYMid slice"',
       'aspect-ratio:16 / 9',

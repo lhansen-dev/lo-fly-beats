@@ -219,6 +219,33 @@ describe('SessionController', () => {
     expect(engine.calls[0].arg).toEqual([graph, store.getState().active, store.getState().mix])
   })
 
+  it('forwards playback cues to listeners subscribed before engine startup', async () => {
+    const { controller, engine } = setup()
+    const steps: unknown[] = []
+    const phrases: unknown[] = []
+    const offStep = controller.onStep(event => steps.push(event))
+    const offPhrase = controller.onPhraseStarted(event => phrases.push(event))
+    await controller.loadCircuit()
+    await controller.startListening()
+    const step = { phraseIndex: 3, stepInPhrase: 2, bar: 1, beat: 2 }
+    engine.emit('step', step)
+    engine.emit('phraseStarted', { score: { phraseIndex: 3 } as PhraseScore, recipe: createInitialState(null).active })
+    expect(steps).toEqual([step])
+    expect(phrases).toEqual([{ phraseIndex: 3 }])
+    offStep()
+    offPhrase()
+    engine.emit('step', step)
+    expect(steps).toHaveLength(1)
+  })
+
+  it('sets animation enabled in state and persists it', () => {
+    const { controller, store, saves } = setup()
+    controller.setAnimationEnabled(false)
+    expect(store.getState().ui.animationEnabled).toBe(false)
+    expect(saves).toHaveLength(1)
+    expect(saves[0]).toMatchObject({ animationEnabled: false })
+  })
+
   it('routes engine events into state and saves applied settings', async () => {
     const { controller, store, engine, saves } = setup()
     await controller.loadCircuit()

@@ -15,6 +15,7 @@ import StorageNote from '../components/StorageNote'
 import NewBeatButton from '../components/NewBeatButton'
 import PendingChanges from '../components/PendingChanges'
 import Mixer from '../components/Mixer'
+import AnimationToggle from '../components/AnimationToggle'
 import ExportPanel from '../components/ExportPanel'
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
         <section className="controls-panel">
       <PresetPicker />
       <Mixer />
+      <AnimationToggle />
       <TempoControl />
       <VariationControl />
       <NewBeatButton />
