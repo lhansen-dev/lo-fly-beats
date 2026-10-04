@@ -50,5 +50,17 @@
   --scene-banana-shade: #d4a72c;
   --scene-banana-spot: #6b4a1f;
   --scene-banana-stem: #3d2b14;
-  --scene-fly-silhouette: #1d1d22;
+  --scene-fly-hoodie: #7a8c6e;
+  --scene-fly-hoodie-shade: #5f6f55;
+  --scene-fly-drawstring: #efe8d8;
+  --scene-fly-dark: #2a211b;
+  --scene-fly-head: #8a6a4a;
+  --scene-fly-eye: #b3261e;
+  --scene-fly-eye-facet: #7d1a14;
+  --scene-fly-eye-shine: #fff6e8;
+  --scene-fly-headphones: #2f3640;
+  --scene-fly-headphones-pad: #4a5361;
+  --scene-fly-cable: #1f242b;
+  --scene-fly-wing: rgba(220, 235, 245, 0.45);
+  --scene-fly-wing-vein: rgba(90, 100, 110, 0.6);
 }

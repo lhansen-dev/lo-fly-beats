@@ -4,6 +4,8 @@ import Rain from './layers/Rain'
 import Lighting from './layers/Lighting'
 import Desk from './layers/Desk'
 import Banana from './layers/Banana'
+import Fly from './fly/Fly'
+import './scene.css'
 
 export default function Scene({ preserveAspectRatio = 'xMidYMid slice' }: { preserveAspectRatio?: string }) {
   return (
@@ -14,15 +16,7 @@ export default function Scene({ preserveAspectRatio = 'xMidYMid slice' }: { pres
       <Window><Rain /></Window>
       <Lighting />
       <Desk />
-      {/* Phase 28 replaces this silhouette with src/scene/fly/Fly.tsx. */}
-      <g className="fly">
-        <ellipse cx="1040" cy="560" rx="92" ry="145" style={{ fill: 'var(--scene-fly-silhouette)' }} />
-        <circle cx="1020" cy="360" r="82" style={{ fill: 'var(--scene-fly-silhouette)' }} />
-        <circle cx="990" cy="345" r="24" style={{ fill: 'var(--scene-fly-silhouette)' }} />
-        <circle cx="1050" cy="345" r="24" style={{ fill: 'var(--scene-fly-silhouette)' }} />
-        <line x1="995" y1="285" x2="970" y2="250" strokeWidth="8" style={{ stroke: 'var(--scene-fly-silhouette)' }} />
-        <line x1="1045" y1="285" x2="1070" y2="250" strokeWidth="8" style={{ stroke: 'var(--scene-fly-silhouette)' }} />
-      </g>
+      <Fly />
       <Banana />
     </svg>
   )
