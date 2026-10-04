@@ -5,7 +5,7 @@ import { composePhrase } from '../music/compose'
 import type { PhraseScore, SessionRecipe } from '../music/types'
 import { getPreset } from '../presets/presets'
 import type { MixSettings, InstrumentRig } from './rig'
-import { createRig } from './rig'
+import { createRig, DEFAULT_MIX } from './rig'
 import { PlaybackSequencer } from './sequencer'
 import type { PendingChange } from './sequencer'
 import { eventDurationSeconds, eventOffsetSeconds } from './timing'
@@ -33,6 +33,7 @@ export type EngineEventMap = {
 export interface EngineLike {
   on<K extends keyof EngineEventMap>(name: K, handler: (payload: EngineEventMap[K]) => void): () => void
   start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void>
+  setMix(mix: MixSettings): void
   play(): void
   pause(): void
   reset(recipe: SessionRecipe): void
@@ -49,7 +50,7 @@ class PlaybackEngine implements EngineLike {
   private rig: InstrumentRig | null = null
   private sequencer: PlaybackSequencer | null = null
   private recipe: SessionRecipe | null = null
-  private mix: MixSettings | null = null
+  private mix: MixSettings = { ...DEFAULT_MIX, layers: { ...DEFAULT_MIX.layers } }
   private repeatEvents = 0
   private startPromise: Promise<void> | null = null
   private handlers = new Map<keyof EngineEventMap, Set<(payload: never) => void>>()
@@ -74,19 +75,20 @@ class PlaybackEngine implements EngineLike {
   start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void> {
     if (this.status === 'playing' || this.status === 'paused') return Promise.resolve()
     if (this.startPromise) return this.startPromise
+    this.mix = mix
     this.setStatus('starting')
     this.startPromise = (async () => {
       await Tone.start()
       const context = Tone.getContext()
       this.context = context
       this.recipe = recipe
-      this.mix = mix
       const preset = getPreset(recipe.presetId)
-      this.rig = createRig(context, preset.sound, mix)
+      this.rig = createRig(context, preset.sound, this.mix)
+      this.rig.setMix(this.mix, context.currentTime)
       this.sequencer = new PlaybackSequencer((r, i) => composePhrase(graph, r, i), recipe)
       context.transport.bpm.value = recipe.tempoBpm
       context.transport.swing = 0
-      if (mix.ambienceOn) this.rig.startAmbience(context.currentTime)
+      if (this.mix.ambienceOn) this.rig.startAmbience(context.currentTime)
       context.transport.scheduleRepeat(time => this.onStep(time), '16n', 0)
       this.repeatEvents = 1
       context.transport.start()
@@ -122,9 +124,22 @@ class PlaybackEngine implements EngineLike {
     }, time)
   }
 
-  pause(): void {
-    if (this.status !== 'playing' || !this.context || !this.rig || !this.mix) return
+  setMix(mix: MixSettings): void {
+    const previousAmbienceOn = this.mix.ambienceOn
+    this.mix = mix
+    if (!this.context || !this.rig) return
     const now = this.context.currentTime
+    this.rig.setMix(mix, now)
+    if (this.status === 'playing' && previousAmbienceOn !== mix.ambienceOn) {
+      if (mix.ambienceOn) this.rig.startAmbience(now)
+      else this.rig.stopAmbience(now)
+    }
+  }
+
+  pause(): void {
+    if (this.status !== 'playing' || !this.context || !this.rig) return
+    const now = this.context.currentTime
+    this.rig.stopAmbience(now)
     this.rig.rampMasterGain(0, 0.08, now)
     this.context.transport.pause()
     this.rig.releaseAll(now + 0.09)
@@ -133,7 +148,10 @@ class PlaybackEngine implements EngineLike {
   }
 
   play(): void {
-    if (this.status !== 'paused' || !this.context) return
+    if (this.status !== 'paused' || !this.context || !this.rig) return
+    const now = this.context.currentTime
+    this.rig.setMix(this.mix, now)
+    if (this.mix.ambienceOn) this.rig.startAmbience(now)
     this.context.transport.start()
     this.setStatus('playing')
   }

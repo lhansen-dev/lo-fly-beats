@@ -27,6 +27,7 @@ class FakeEngine implements EngineLike {
   async start(graph: CircuitGraph, recipe: Parameters<EngineLike['start']>[1], mix: Parameters<EngineLike['start']>[2]): Promise<void> {
     this.calls.push({ method: 'start', arg: [graph, recipe, mix] })
   }
+  setMix(mix: Parameters<EngineLike['setMix']>[0]): void { this.calls.push({ method: 'setMix', arg: mix }) }
   play(): void { this.calls.push({ method: 'play', arg: undefined }) }
   pause(): void { this.calls.push({ method: 'pause', arg: undefined }) }
   reset(recipe: Parameters<EngineLike['reset']>[0]): void { this.calls.push({ method: 'reset', arg: recipe }) }
