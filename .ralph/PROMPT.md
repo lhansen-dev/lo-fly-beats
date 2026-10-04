@@ -1,4 +1,4 @@
-You are working on: Phase 28 of docs/03-IMPLEMENT.md — draw the R13 fly character (`src/scene/fly/Fly.tsx`, transform origins in `src/scene/scene.css`, tests) in place of the placeholder silhouette, with no animation.
+You are working on: finishing Phase 28 of `docs/03-IMPLEMENT.md` — drawing the full SVG fly character (head, eye shine, headphones, transform origins, browser spec) in this React/Vite app.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,11 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Task-specific hints:
+- This sandbox denies every local socket bind. NEVER run `npx vitest`, `npm test`, `npm run check`, `npx playwright`, or `npm run test:browser` — they fail with `listen EPERM` and the operator has chosen to skip them. Verify only with the check command written in your task (`npx tsc -b`, `npx oxlint …`, `npm run build`, grep).
+- Scene source files must contain no colour literals (no `#hex`, no `rgb(`/`rgba(`); colours come from `--scene-*` custom properties in `src/styles/tokens.css`, applied with `style={{ fill: 'var(--…)' }}` or `style={{ stroke: 'var(--…)' }}`.
+- Use JSX attribute names (`className`, `strokeWidth`, `strokeLinecap`) in `.tsx` files.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,9 +40,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Task-specific hints:
-- This sandbox has no browser and cannot bind local ports. Never run `playwright`, `npm run test:browser`, `npm run test:audio`, or `npm run check`.
-- Scene markup must contain no hex or rgba colour literals. Every colour is a `--scene-*` custom property defined in `src/styles/tokens.css` and used as `style={{ fill: 'var(--…)' }}` or `style={{ stroke: 'var(--…)' }}` (see `src/scene/layers/Desk.tsx`).
-- Test files beside components under `src/` must not import `node:*` modules. Tests that read files with `node:fs` live under `tests/unit/`.
-- `vitest` uses `passWithNoTests: true`. After running a check, make sure the output reports the expected test files as run and passed.
