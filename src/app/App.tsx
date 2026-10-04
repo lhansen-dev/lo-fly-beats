@@ -21,9 +21,12 @@ import AnimationToggle from '../components/AnimationToggle'
 import ExportPanel from '../components/ExportPanel'
 import ExplanationPanel from '../components/explanation/ExplanationPanel'
 import Credits from '../components/Credits'
+import PlaybackStatus from '../components/PlaybackStatus'
+import { useKeyboardShortcuts } from './useKeyboardShortcuts'
 
 export default function App() {
   const controller = useController()
+  useKeyboardShortcuts()
   const presetId = useAppState(state => state.active.presetId)
   const debugMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1'
 
@@ -32,6 +35,7 @@ export default function App() {
       <h1>{APP_TITLE}</h1>
       <p>{TAGLINE}</p>
     </header>
+    <PlaybackStatus />
     <div className="app-layout">
       <SceneFrame />
       <div className="app-controls">
@@ -41,6 +45,7 @@ export default function App() {
         <StatusJoke />
         <TransportControls />
         <section className="controls-panel">
+      <p>With focus on the scene or page: Space or K plays or pauses; N makes a new beat.</p>
       <PresetPicker />
       <Mixer />
       <AnimationToggle />

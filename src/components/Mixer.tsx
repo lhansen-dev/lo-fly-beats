@@ -17,8 +17,8 @@ export default function Mixer() {
       const percentage = Math.round(mix.layers[key].level * 100)
       return <div key={key}>
         <label htmlFor={`layer-${key}-level`}>{label} level</label>{' '}
-        <input id={`layer-${key}-level`} data-testid={`layer-${key}-level`} type="range" min="0" max="100" step="1" value={percentage} onChange={event => controller.setMix({ layers: { [key]: { level: Number(event.target.value) / 100 } } })} />{' '}
-        <output htmlFor={`layer-${key}-level`}>{percentage}%</output>{' '}
+        <input id={`layer-${key}-level`} data-testid={`layer-${key}-level`} type="range" min="0" max="100" step="1" value={percentage} aria-valuetext={`${label} level ${percentage} percent`} onChange={event => controller.setMix({ layers: { [key]: { level: Number(event.target.value) / 100 } } })} />{' '}
+        <output htmlFor={`layer-${key}-level`} role="none">{percentage}%</output>{' '}
         <label htmlFor={`layer-${key}-mute`}>{label} mute</label>{' '}
         <input id={`layer-${key}-mute`} data-testid={`layer-${key}-mute`} type="checkbox" checked={mix.layers[key].muted} onChange={event => controller.setMix({ layers: { [key]: { muted: event.target.checked } } })} />
       </div>

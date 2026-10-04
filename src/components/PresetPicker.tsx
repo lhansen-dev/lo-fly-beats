@@ -12,8 +12,9 @@ export default function PresetPicker() {
     <fieldset>
       <legend>Preset</legend>
       {Object.values(PRESETS).map(preset => (
-        <label key={preset.id}><input type="radio" name="preset" data-testid={`preset-${preset.id}`} value={preset.id} checked={selected === preset.id} onChange={() => controller.selectPreset(preset.id)} /> {preset.name}</label>
+        <label key={preset.id}><input type="radio" name="preset" data-testid={`preset-${preset.id}`} value={preset.id} checked={selected === preset.id} aria-describedby="preset-pending" onChange={() => controller.selectPreset(preset.id)} /> {preset.name}</label>
       ))}
+      <p id="preset-pending">{pending.presetId ? `${PRESETS[pending.presetId].name} at the next phrase` : ''}</p>
     </fieldset>
   )
 }

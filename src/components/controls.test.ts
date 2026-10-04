@@ -102,7 +102,7 @@ describe('PendingChanges', () => {
     const { store, render } = setup()
     let markup = render(createElement(PendingChanges))
     expect(markup).toContain('data-testid="pending-changes"')
-    expect(markup).toContain('role="status"')
+    expect(markup).not.toContain('role="status"')
     expect(markup).not.toContain('next bar')
 
     store.dispatch({ type: 'tempoRequested', tempoBpm: 80, immediate: false })

@@ -12,7 +12,7 @@ export default function CircuitStatus() {
       : `The fly-brain data couldn't be loaded: ${circuit.error!.code} — ${circuit.error!.message}`
 
   return <>
-    <p data-testid="circuit-status" role="status">{text}</p>
+    <p data-testid="circuit-status">{text}</p>
     {circuit.status === 'error' && <button type="button" data-testid="circuit-retry" onClick={() => { void controller.loadCircuit() }}>Retry</button>}
   </>
 }

@@ -21,7 +21,7 @@ describe('ExportPanel', () => {
     let markup = render(createElement(ExportPanel))
     expect(markup).toContain('About 29 seconds: 8 bars at 72 BPM plus a 2-second tail. Pending changes are not included.')
     expect(markup).toMatch(/data-testid="export-button"[^>]*disabled/)
-    expect(markup).toContain('role="status"')
+    expect(markup).not.toContain('role="status"')
     expect(markup).toContain('data-testid="export-status"')
     expect(markup).not.toContain('export-download')
 

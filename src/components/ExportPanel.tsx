@@ -12,7 +12,7 @@ export default function ExportPanel() {
   return <div data-testid="export-panel">
     <p>About {Math.round(exportSeconds(active.tempoBpm))} seconds: 8 bars at {active.tempoBpm} BPM plus a 2-second tail. Pending changes are not included.</p>
     <button type="button" data-testid="export-button" disabled={activeScore === null || busy} onClick={() => { void controller.exportPhrase() }}>Export WAV</button>
-    <div role="status">
+    <div>
       <span data-testid="export-status">{exportState.status}</span>
       {exportState.message && <p>{exportState.message}</p>}
     </div>

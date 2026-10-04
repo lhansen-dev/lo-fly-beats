@@ -19,15 +19,17 @@ describe('Mixer', () => {
     for (const [id, initial] of ids.map((id, i) => [id, [80, 70, 60][i]] as const)) {
       expect(markup).toContain(`id="layer-${id}-level"`)
       expect(markup).toContain(`id="layer-${id}-mute"`)
-      expect(markup).toContain(`type="range" min="0" max="100" step="1" value="${initial}"`)
+      const input = markup.match(new RegExp(`<input[^>]*id="layer-${id}-level"[^>]*>`))?.[0]
+      expect(input).toContain('type="range" min="0" max="100" step="1"')
+      expect(input).toContain(`value="${initial}"`)
       expect(markup).toContain(`type="checkbox"`)
-      expect(markup).toContain(`<output for="layer-${id}-level">${initial}%</output>`)
+      expect(markup).toContain(`<output for="layer-${id}-level" role="none">${initial}%</output>`)
     }
     expect(markup).toContain('id="ambience-toggle"')
     expect(markup).toContain('checked=""')
     controller.setMix({ layers: { drums: { level: 0.33, muted: true } }, ambienceOn: false })
     markup = render(createElement(Mixer))
-    expect(markup).toContain('<output for="layer-drums-level">33%</output>')
+    expect(markup).toContain('<output for="layer-drums-level" role="none">33%</output>')
     expect(markup).toContain('id="layer-drums-mute" data-testid="layer-drums-mute" type="checkbox" checked=""')
     expect(markup).toContain('id="ambience-toggle" data-testid="ambience-toggle" type="checkbox"')
     expect(markup).not.toContain('id="ambience-toggle" data-testid="ambience-toggle" type="checkbox" checked=""')

@@ -8,6 +8,6 @@ export default function VariationControl() {
   const variation = Math.round((pending.variation ?? active.variation) * 100)
 
   return (
-    <label>Variation <input type="range" data-testid="variation" min="0" max="100" step="1" value={variation} onChange={event => controller.setVariation(Number(event.target.value) / 100)} /><output>{variation}</output></label>
+    <label>Variation <input type="range" data-testid="variation" min="0" max="100" step="1" value={variation} aria-valuetext={`Variation ${variation} percent`} aria-describedby="variation-pending" onChange={event => controller.setVariation(Number(event.target.value) / 100)} /><output role="none">{variation}</output><span id="variation-pending">{pending.variation !== undefined ? ` Variation ${variation} at the next phrase` : ''}</span></label>
   )
 }

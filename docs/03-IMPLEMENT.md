@@ -118,6 +118,8 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 32 | `SessionController.getGraph()` was added so the panel can name edge source neurons; `HUMANIZE_MAX_OFFSETS`, `HUMANIZE_VELOCITY_SPREAD` (`src/music/patterns.ts`) and `CHORD_SLOT_BARS` (`src/music/harmony.ts`) were exported so `describeMappingRules` reads the code's constants, with no output change; untyped neurons are labelled "Untyped neuron (id)"; Recent choices samples via `subscribeBarSamples` (`src/components/explanation/recentChoices.ts`) at most once per bar while open and skips samples whose score phrase differs from the position; it emits one empty sample when the active score is cleared, including on subscription after a reset. | Evaluator verification: all Phase 32 revision acceptance commands pass, including reset regressions, description/panel tests, test TypeScript and browser-spec lint checks, and `npm run check` (248 unit tests). `npx playwright test --project=chromium` fails before tests in this sandbox (preview server `listen EPERM` on 127.0.0.1:4173), so browser behavior remains unverified and the final verification box stays unchecked for the operator. |
 | 2026-10-04 | 33 | R14 copy lives in `src/app/copy.ts`; the footer holds the about line and a Credits link; `Credits.tsx` is an always-visible `<section id="credits">` after the explanation panel with the manifest attribution in `data-testid="credits-attribution"`; `selectJoke` (`src/app/jokes.ts`) allows a joke only when `phraseIndex % 3 === 2`, uses the jokes stream for a 50% chance and the joke choice, and reads the seed and phrase index from the active `PhraseScore`; no extra jokes were added. | Evaluator verification: all Phase 33 acceptance commands pass, including `npm run check` (260 unit tests, data validation, typecheck, lint, and build), copy/credits/jokes/component tests, controls/explanation regressions, and Chromium credits test listing (1 test). `npx playwright test --project=chromium` fails before tests with preview server `listen EPERM: operation not permitted 127.0.0.1:4173`; the final verification box stays unchecked for the operator. |
 
+| 2026-10-04 | 34 | Added scoped Space/K/N shortcuts, one polite playback/export status, readable range values and pending descriptions, and decorative SVG hiding. Range outputs use `role="none"` so their implicit status roles do not announce value changes. Installed exact `@axe-core/playwright` 4.13.0. | `npm run check` passes (260 tests); all three Chromium accessibility tests pass, including four axe states and keyboard focus. Full Chromium execution revealed a pre-existing synchronous `applied` event race in controller requests during startup; Phase 35 will fix it with regression coverage before the full verification box is checked. Local socket binds work in this workspace, removing the harness limitation. |
+
 ## Reference
 
 ### R1. Stack, layout, and code rules
@@ -1927,12 +1929,12 @@ Agents: do not check these boxes. Stop and report that Phase 29 is waiting for t
 
 **Agent** · **Read:** R12 (test IDs), R13, R14
 
-- [ ] Run `npm install --save-dev --save-exact @axe-core/playwright@4`.
-- [ ] Create `src/app/useKeyboardShortcuts.ts`. Space or K toggles playback, and N triggers New beat, but only when focus is on the document body or the scene, never in an input, select, textarea, button, or link. List the shortcuts in the controls area.
-- [ ] Add one `role="status"` region with `aria-live="polite"` that announces engine status changes ("Playing", "Paused", the interruption notice) and export status. It never announces beats, positions, trace updates, or jokes.
-- [ ] Give every control an accessible name. Give range inputs `aria-valuetext` such as "72 BPM" or "Variation 35 percent". Connect pending-change text to its control with `aria-describedby`.
-- [ ] Mark decorative elements inside the scene SVG `aria-hidden="true"`, keeping the root's `role="img"` title and description.
-- [ ] Write `tests/browser/a11y.spec.ts` (Chromium):
+- [x] Run `npm install --save-dev --save-exact @axe-core/playwright@4`.
+- [x] Create `src/app/useKeyboardShortcuts.ts`. Space or K toggles playback, and N triggers New beat, but only when focus is on the document body or the scene, never in an input, select, textarea, button, or link. List the shortcuts in the controls area.
+- [x] Add one `role="status"` region with `aria-live="polite"` that announces engine status changes ("Playing", "Paused", the interruption notice) and export status. It never announces beats, positions, trace updates, or jokes.
+- [x] Give every control an accessible name. Give range inputs `aria-valuetext` such as "72 BPM" or "Variation 35 percent". Connect pending-change text to its control with `aria-describedby`.
+- [x] Mark decorative elements inside the scene SVG `aria-hidden="true"`, keeping the root's `role="img"` title and description.
+- [x] Write `tests/browser/a11y.spec.ts` (Chromium):
   - axe with tags `wcag2a`, `wcag2aa`, and `wcag21aa` reports no serious or critical violations on first load, while playing, with the explanation and credits open, and at 390×844.
   - Using only the keyboard, Tab from the top of the page reaches Start listening and Enter activates it. Tabbing through every control in DOM order shows a visible outline (computed `outline-style` other than `none`) on each focused element.
   - Pressing Space with focus on the body toggles playback, and the status region reads "Paused" and then "Playing".
