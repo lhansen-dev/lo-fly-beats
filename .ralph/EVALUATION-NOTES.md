@@ -1,0 +1,15 @@
+- Read `.ralph/DONE`: claims unused Lighting import removal and targeted verification.
+- `git diff main...HEAD -- . ':!.ralph'`: inspected full Phase 27 scene, tokens, tests and docs changes; working tree initially clean.
+- `grep -q createElement src/scene/layers/Lighting.tsx`: exit 1.
+- `npx tsc -b`: exit 0.
+- `npm run check`: exit 0.
+- `npx vitest run --project unit src/scene`: exit 0.
+- `npx oxlint src/scene tests/browser/scene.spec.ts`: exit 0.
+- `test -f tests/browser/scene.spec.ts`: exit 0.
+- `test -f src/scene/layers/rainLayout.ts`: exit 0.
+- `grep -q className="fly" src/scene/Scene.tsx`: exit 0.
+- `grep -qE ^\| 2026-[0-9]{2}-[0-9]{2} \| 27 \| docs/03-IMPLEMENT.md`: exit 0.
+- `npx playwright test --project=chromium`: exit 1.
+- Read R13 and reviewed scene layers, crop/CSS integration, tokens, tests, README and commit diff: requested static composition and browser coverage implemented; no source defect identified.
+- `npx playwright test --project=chromium` detail: exit 1 before tests; preview bind denied (`listen EPERM: operation not permitted 127.0.0.1:4173`), so screenshots/browser assertions require operator verification.
+- Final writable-path check (`git status --short`, `git diff --stat`): only permitted .ralph outputs and docs/03-IMPLEMENT.md changed; Phase 27 log grep after doc update exits 0.

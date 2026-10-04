@@ -1,0 +1,1 @@
+Replaces the scene placeholder with token-colored SVG wall, window/rain, lamp/lighting, desk with homework/pencil/mug, banana, and a temporary fly silhouette. Adds fixed rain geometry and unit/browser coverage; all acceptance checks pass, but Chromium screenshots still need verification outside the socket-restricted sandbox.
