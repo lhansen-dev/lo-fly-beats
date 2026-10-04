@@ -1,4 +1,4 @@
-You are working on: Phase 33 of docs/03-IMPLEMENT.md — credits, on-brand copy, seeded status jokes, and the ASSETS.md asset manifest for the Lo-fly beats app.
+You are working on: Phase 33 of Lo-fly beats — credits section, R14 copy, status jokes, ASSETS.md, and the credits browser test.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,13 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Task-specific hints:
+- Read the files named in your task before editing them; earlier iterations may already have changed them (e.g. `src/app/App.tsx`).
+- Component unit tests live under `src/` as `*.test.ts` (no JSX in tests): render with `renderToStaticMarkup(createElement(Component))` from `react-dom/server`, and create the store with `createAppStore(createInitialState(null))` (`src/app/store.ts`, `src/app/state.ts`). `src/components/controls.test.ts` shows the `ControllerProvider` + `SessionController` setup needed to render `App`.
+- The vitest config has `passWithNoTests: true`, so make sure your test file actually exists and its tests are reported as run.
+- `npx playwright test` without `--list` cannot run here (the sandbox denies local socket binds); never try to run browser tests beyond `--list`.
+- Copy strings exactly as written in the task, including the Unicode ellipsis `…`.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,9 +42,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Project hints:
-- Code style: TypeScript + React 19, no semicolons, single quotes, 2-space indent (match nearby files). `erasableSyntaxOnly` is on: no `enum`, `namespace`, or constructor parameter properties. `Math.random` is forbidden in `src/`; use the seeded streams in `src/music/streams.ts`.
-- Unit tests run in Node via `npx vitest run --project unit <file>`. Tests under `src/` must not import `node:*` modules or JSON files; component tests use `renderToStaticMarkup` from 'react-dom/server' inside `ControllerProvider` (see `src/components/controls.test.ts` for the `setup()` pattern).
-- `renderToStaticMarkup` inserts `<!-- -->` between adjacent JSX text and `{expression}` nodes; build sentences that tests match exactly as a single template string.
-- Playwright cannot run in this sandbox (the preview server cannot bind a socket); do not try to run `npx playwright test`.
