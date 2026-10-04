@@ -1,4 +1,4 @@
-You are working on: Phase 31 of docs/03-IMPLEMENT.md — animate the Lo-fly beats scene (head bob, blink, hand rub, rain, lighting, animation toggle, still/paused states) from playback cues, keeping the cue state (animation RNG + hand-rub cooldown) alive across hide/show and toggle off/on.
+You are working on: Phase 31 follow-up — make the scene cue driver (`src/scene/sceneCueDriver.ts`) keep only bounded current animation handles instead of leaking every historical Animation.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,11 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Hints:
+- Do not change exported names/signatures in `src/scene/sceneCueDriver.ts`; `src/scene/useSceneCues.ts` depends on them.
+- Keep every existing test in `src/scene/sceneCueDriver.test.ts` unchanged; only add the new one.
+- `.ralph/DONE` from a previous attempt may already exist; overwrite it only when LAST_TASK=true and your check passed.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,11 +40,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Project hints:
-- Unit tests run in Node (no jsdom): `npx vitest run --project unit <files>`. Vitest has `passWithNoTests: true`, so make sure the output says your test file actually ran.
-- Tests that import `node:*` modules live under `tests/`; other unit tests sit beside their module in `src/` as `*.test.ts`.
-- Never use `Math.random` in `src/`. Seeded randomness comes from `src/music/streams.ts` (`animationRng(seed)` is the animation stream).
-- TypeScript uses `erasableSyntaxOnly`: no `enum`, no `namespace`, no constructor parameter properties. Match the surrounding file's style (most `src/app` and `src/scene` files omit semicolons).
-- Playwright and Vitest browser mode cannot run here (the sandbox denies local socket binds). Don't try to run `npx playwright test` or `npm run test:audio`.
-- Never edit `docs/01-IDEAS.md` or `docs/02-PLAN.md`.
