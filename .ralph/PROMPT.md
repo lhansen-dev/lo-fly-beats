@@ -1,4 +1,4 @@
-You are working on: fixing the Phase 23 offline-export tests (mock PCM sizing, recursive snapshot isolation checks, spec-conformant onset detector) without changing `src/audio/export.ts`.
+You are working on: Phase 23 revision — fix the fade-aware export ownership test, strengthen snapshot isolation tests, and add a latched whole-buffer onset detector used by the real-audio export test.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,10 +23,14 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Hints:
-- Do NOT edit `src/audio/export.ts`; the production fade (final 0.5 s, last sample 0) is correct — fix tests instead.
-- TypeScript 6 requires `--ignoreConfig` when passing files to `tsc` on the command line (otherwise TS5112).
-- `npm run test:audio` (browser/Chromium) cannot run in this sandbox; never try it.
+Task-specific hints:
+- Production code `src/audio/export.ts` is already correct; this revision changes tests only. Never weaken
+  production behavior (e.g. the final 0.5 s fade) to make a test pass.
+- The `audio` Vitest project (`tests/audio/**/*.test.ts`) needs Chromium and a loopback socket, which this
+  sandbox does not allow — never run `npm run test:audio`; type-check browser tests with
+  `npx tsc -p tsconfig.test.json` instead.
+- Run unit tests with `npx vitest run --project unit <file> --passWithNoTests=false`.
+- With TypeScript 6, never pass explicit file names to `tsc` (TS5112); use `-p <tsconfig>`.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
