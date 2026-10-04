@@ -6,7 +6,7 @@ import type { NoteEvent } from '../../src/music/types'
 
 const sound = PRESETS['rainy-windowsill'].sound
 
-function note(layer: NoteEvent['layer'], time: number): NoteEvent {
+function note(layer: NoteEvent['layer']): NoteEvent {
   return {
     layer,
     step: 0,
@@ -51,9 +51,9 @@ describe('mixer offline rendering', () => {
     const silentMix: MixSettings = { ...DEFAULT_MIX, masterVolume: 0, ambienceOn: true }
     const renderMix = (mix: MixSettings) => render(3, mix, rig => {
       rig.startAmbience(0)
-      rig.trigger(note('drums', 0), 0.1, 0.2)
-      rig.trigger(note('bass', 0), 0.2, 0.3)
-      rig.trigger(note('keys', 0), 0.3, 0.3)
+      rig.trigger(note('drums'), 0.1, 0.2)
+      rig.trigger(note('bass'), 0.2, 0.3)
+      rig.trigger(note('keys'), 0.3, 0.3)
     })
     const silent = await renderMix(silentMix)
     for (const channel of silent) {
@@ -77,7 +77,7 @@ describe('mixer offline rendering', () => {
       ambienceOn: false,
     }
     const hits = (rig: ReturnType<typeof createRig>) => {
-      for (const time of [0.05, 0.25, 0.45, 0.65, 0.85, 1.05]) rig.trigger(note('drums', time), time, 0)
+      for (const time of [0.05, 0.25, 0.45, 0.65, 0.85, 1.05]) rig.trigger(note('drums'), time, 0)
     }
     const changed = await render(1.3, isolated, rig => {
       hits(rig)

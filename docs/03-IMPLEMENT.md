@@ -1683,7 +1683,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 - [x] Add `setMix(mix)` to the engine. It calls `rig.setMix(mix, context.currentTime)` and starts or stops ambience when `ambienceOn` changes during playback. `start()` applies the stored mix, and `pause()` restores the master gain to `mix.masterVolume`.
 - [x] Add `setMix(partial)` to the controller. It merges the change, dispatches `mixChanged`, and calls the engine only after the first start.
 - [x] Create `src/components/MasterVolume.tsx` (`master-volume`) beside the transport controls, and `src/components/Mixer.tsx` with a level slider and mute checkbox per layer plus the ambience checkbox, grouped in a `<fieldset>` with `<legend>Mixer</legend>`.
-- [x] Write `tests/audio/mix.test.ts`. An offline render with master volume 0 is silent. Changing the drums level from 0.8 to 0 at 0.5 s makes RMS after 0.6 s less than 5% of RMS before 0.5 s, and no sample-to-sample jump between 0.49 s and 0.56 s.
+- [x] Write `tests/audio/mix.test.ts`. An offline render with master volume 0 is silent. Changing the drums level from 0.8 to 0 at 0.5 s makes RMS after 0.6 s less than 5% of RMS before 0.5 s, and no sample-to-sample jump between 0.49 s and 0.56 s exceeds 0.5.
 - [x] Write `tests/browser/mixer.spec.ts` (Chromium). Toggling every mute and the ambience checkbox while playing keeps the status `playing` and `repeatEvents` at 1. Mixer settings persist across a reload.
 
 **Verify**
