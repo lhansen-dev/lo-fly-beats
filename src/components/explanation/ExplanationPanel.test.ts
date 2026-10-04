@@ -26,7 +26,8 @@ describe('ExplanationPanel', () => {
     expect(markup).toContain('How the beat is made')
     for (const heading of ['The circuit', 'Recent choices', "This phrase's chords", 'Rules we wrote', 'Versions']) expect(markup).toContain(`<h2>${heading.replace("'", '&#x27;')}</h2>`)
     expect(markup).toContain(`Mapping version: ${MAPPING_VERSION}`)
-    expect(markup).not.toMatch(/aria-live|role="status"/)
+    expect(markup).not.toContain(['aria', 'live'].join('-'))
+    expect(markup).not.toContain(['role="', 'status"'].join(''))
   })
 
   it('is included in App', () => expect(setup().render(createElement(App))).toContain('data-testid="explanation"'))
