@@ -1,0 +1,1 @@
+Phase 33 adds manifest-backed credits and attribution links, centralized on-brand copy and an about footer, deterministic infrequent status jokes, and a root asset manifest with unit/browser coverage. All acceptance checks pass; full Chromium execution still requires an operator runner that permits local socket binds.

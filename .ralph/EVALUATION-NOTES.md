@@ -1,0 +1,35 @@
+- `read .ralph/DONE`: read claims (browser credits test, checklist, TypeScript/lint/list).
+- `git diff main...HEAD -- . ':!.ralph'`: inspected complete change; includes credits, copy, jokes, assets, tests and Phase 33 checklist/log.
+- `test -f src/app/copy.test.ts && npx vitest run --project unit src/app/copy.test.ts`: exit 0.
+- `grep -qF 'Music shaped by real fly-brain wiring. The connections come from a real fruit fly; the scale, rhythm, instruments, and probability rules are authored choices.' src/app/copy.ts`: exit 0.
+- `grep -q '<footer' src/app/App.tsx && grep -q 'href="#credits"' src/app/App.tsx`: exit 0.
+- `test -f src/components/credits.test.ts && npx vitest run --project unit src/components/credits.test.ts`: exit 0.
+- `grep -q 'id="credits"' src/components/Credits.tsx && grep -q 'credits-attribution' src/components/Credits.tsx && grep -q 'license.attribution' src/components/Credits.tsx`: exit 0.
+- `grep -q 'does not simulate neural activity' src/components/Credits.tsx && grep -q 'MAPPING_VERSION' src/components/Credits.tsx`: exit 0.
+- `grep -q '<Credits' src/app/App.tsx`: exit 0.
+- `test -f src/components/Credits.tsx && ! grep -Eq 'aria-live|role=' src/components/Credits.tsx`: exit 0.
+- `test -f src/app/jokes.test.ts && npx vitest run --project unit src/app/jokes.test.ts`: exit 0.
+- `grep -qF 'All systems operational. Banana unavailable.' src/app/jokes.ts && grep -qF 'Homework progress: still on question one.' src/app/jokes.ts && grep -qF 'Banana status: structurally concerning.' src/app/jokes.ts && grep -qF 'Six sleeves. Zero pockets.' src/app/jokes.ts && grep -qF 'Studying the window. For science.' src/app/jokes.ts && grep -qF 'Now reviewing: the same window, again.' src/app/jokes.ts`: exit 0.
+- `grep -q 'jokesRng' src/app/jokes.ts`: exit 0.
+- `test -f src/components/status-joke.test.ts && npx vitest run --project unit src/components/status-joke.test.ts`: exit 0.
+- `test -f src/components/StatusJoke.tsx && ! grep -Eq 'aria-|role=' src/components/StatusJoke.tsx`: exit 0.
+- `grep -q '<StatusJoke' src/app/App.tsx`: exit 0.
+- `test -f ASSETS.md && grep -q 'src/scene/fly/Fly.tsx' ASSETS.md && grep -q 'src/audio/buffers.ts' ASSETS.md && grep -q 'CC BY 4.0' ASSETS.md && grep -q 'https://doi.org/10.1101/2025.10.09.680999' ASSETS.md && grep -q 'public/data/circuits/mbon-v1/manifest.json' ASSETS.md && grep -qi 'system fonts' ASSETS.md`: exit 0.
+- `test -f ASSETS.md && tail -n 1 ASSETS.md | grep -qx 'Update this file whenever an asset is added.'`: exit 0.
+- `grep -qF 'expect(await attribution.textContent()).toBe(manifest.license.attribution)' tests/browser/credits.spec.ts`: exit 0.
+- `grep -qF "getByTestId('credits-attribution')" tests/browser/credits.spec.ts && grep -qF 'https://doi.org/10.1101/2025.10.09.680999' tests/browser/credits.spec.ts && grep -qF 'manifest.license.url' tests/browser/credits.spec.ts`: exit 0.
+- `test -f tests/browser/credits.spec.ts && ! grep -qF 'toContainText(manifest.license.attribution' tests/browser/credits.spec.ts`: exit 0.
+- `npx playwright test --list --project=chromium tests/browser/credits.spec.ts`: exit 0.
+- `grep -qF -- '- [x] Create `src/components/Credits.tsx`' docs/03-IMPLEMENT.md`: exit 0.
+- `grep -qF -- '- [x] Write `tests/browser/credits.spec.ts`' docs/03-IMPLEMENT.md`: exit 0.
+- `grep -Eq '^\| 20[0-9]{2}-[0-9]{2}-[0-9]{2} \| 33 \|' docs/03-IMPLEMENT.md`: exit 0.
+- `npx vitest run --project unit src/components/controls.test.ts src/components/explanation/ExplanationPanel.test.ts`: exit 0.
+- `grep -q '<title>Lo-fly beats</title>' index.html`: exit 0.
+- `awk '/^## Phase 33/,/^## Phase 34/' docs/03-IMPLEMENT.md | grep -qF -- '- [ ] All verification steps pass.'`: exit 0.
+- `npm run check`: exit 0.
+- `npx playwright test --project=chromium`: exit 1; see evaluator output for runtime result.
+- Read R3 attribution, R4 manifest, R14 copy/credits and inspected the committed manifest: all required credits/copy are represented.
+- Read jokes stream, store/reducer and controller phrase-boundary integration: deterministic isolated joke selection and active-score updates are connected; no substantive code defect found.
+- Full Chromium runtime fails before tests with `listen EPERM: operation not permitted 127.0.0.1:4173`; this is the documented operator-only verification, not a change failure.
+- Reviewed README and Phase 33 documentation: only the decision-log verification note needs the evaluator results; retain unchecked operator verification box.
+- `git diff --check`: exit 0 after approved decision-log update.
