@@ -1,4 +1,4 @@
-You are working on: Phase 32 follow-up — remove live-region literals from the explanation panel test and make Recent choices clear when the session is reset.
+You are working on: fixing the Phase 32 "How the beat is made" panel — remove live-region literals from its test and clear Recent choices when the session resets.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,11 +23,6 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Hints:
-- Unit tests run with `npx vitest run --project unit <file>`.
-- Do not edit `docs/03-IMPLEMENT.md` checkboxes; the Phase 31/32 "All verification steps pass." boxes must stay unchecked.
-- Never write the literal strings `aria-live` or `role="status"` anywhere under `src/components/explanation/`.
-
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -40,3 +35,8 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
+
+Hints:
+- Unit tests run under Node with Vitest: `npx vitest run --project unit <file>`. There is no DOM test environment and no browser in this sandbox — do not run Playwright.
+- Never tick any `All verification steps pass.` checkbox in `docs/03-IMPLEMENT.md`; that is the operator's job.
+- Reducer actions that clear `activeScore` live in `src/app/state.ts` (`newBeatRequested` / `presetRequested` with `immediate: true`).
