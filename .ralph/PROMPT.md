@@ -1,4 +1,4 @@
-You are working on: making the Phase 25 audio-interruption transport pause immediate (`transport.pause(now)`) and strengthening its tests in `src/audio/engine.interruption.test.ts`.
+You are working on: fixing the Phase 25 audio-interruption unit tests in `src/audio/engine.interruption.test.ts` so they count only resume `Tone.start()` calls and no longer time out.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,10 +23,10 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Hints:
-- Vitest cannot run in this sandbox (it fails with `listen EPERM`); do not try to run it. Use the
-  `npx tsc -b` + grep check named in the task instead — `tsc -b` type-checks the test files under `src`.
-- Do not change the intentional `pause()` method in `src/audio/engine.ts`; only `handleContextStateChange()`.
+Hints: this is a test-only fix — do not change `src/audio/engine.ts`. The test
+file is dense (many statements per line); edit with exact text matches. Use
+`mockClear()` (keeps the default implementation), not `mockReset()`. Never
+raise test timeouts to make tests pass. Mention "phase 25" in your summary.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
