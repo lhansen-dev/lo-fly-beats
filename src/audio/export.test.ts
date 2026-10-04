@@ -39,16 +39,60 @@ function setupRig() {
 
 afterEach(() => { mocks.contexts.length = 0; mocks.rigs.length = 0; mocks.createRig.mockReset(); mocks.samples = null })
 
+function expectDetachedFrozen(copy: unknown, original: unknown, path = 'root'): void {
+  if (copy !== null && typeof copy === 'object') {
+    expect(Object.isFrozen(copy), `${path} should be frozen`).toBe(true)
+    expect(copy, `${path} should be detached`).not.toBe(original)
+    expect(Object.isFrozen(original), `${path} original should remain unfrozen`).toBe(false)
+    for (const key of Object.keys(copy)) {
+      expectDetachedFrozen((copy as Record<string, unknown>)[key], (original as Record<string, unknown>)[key], `${path}.${key}`)
+    }
+  }
+}
+
 describe('export snapshot', () => {
   it('preserves values in an isolated, recursively frozen copy', () => {
-    const sourcePreset = structuredClone(preset)
-    const snapshot = createExportSnapshot(score, recipe, sourcePreset, mix)
-    expect(snapshot).toEqual({ score, recipe, preset: sourcePreset, mix })
-    expect(snapshot.score).not.toBe(score)
-    expect(snapshot.score.events).not.toBe(score.events)
-    expect(snapshot.score.events[0]).not.toBe(score.events[0])
-    expect(Object.isFrozen(snapshot)).toBe(true)
-    expect(Object.isFrozen(snapshot.preset.sound)).toBe(true)
+    const s = structuredClone(score)
+    const r = structuredClone(recipe)
+    const p = structuredClone(preset)
+    const m = structuredClone(mix)
+    const snapshot = createExportSnapshot(s, r, p, m)
+    expect(snapshot).toEqual({ score: s, recipe: r, preset: p, mix: m })
+    expectDetachedFrozen(snapshot.score, s, 'score')
+    expectDetachedFrozen(snapshot.recipe, r, 'recipe')
+    expectDetachedFrozen(snapshot.preset, p, 'preset')
+    expectDetachedFrozen(snapshot.mix, m, 'mix')
+  })
+
+  it('keeps original inputs unfrozen and independently mutable', () => {
+    const s = structuredClone(score)
+    const r = structuredClone(recipe)
+    const p = structuredClone(preset)
+    const m = structuredClone(mix)
+    const snapshot = createExportSnapshot(s, r, p, m)
+    const expected = structuredClone({ score: s, recipe: r, preset: p, mix: m })
+
+    s.events[0].velocity = 0.01
+    s.events.push({ ...s.events[0], step: 5 })
+    s.chords[0].voicing.push(70)
+    s.trace[0].uses.push('mutated')
+    r.tempoBpm = 99
+    p.sound.reverbSend = 0.99
+    p.chordRing[0].symbol = 'X'
+    m.layers.drums.level = 0.01
+    m.ambienceOn = false
+
+    expect(s.events).toHaveLength(2)
+    expect(s.events[0].velocity).toBe(0.01)
+    expect(s.chords[0].voicing).toContain(70)
+    expect(s.trace[0].uses).toContain('mutated')
+    expect(r.tempoBpm).toBe(99)
+    expect(p.sound.reverbSend).toBe(0.99)
+    expect(p.chordRing[0].symbol).toBe('X')
+    expect(m.layers.drums.level).toBe(0.01)
+    expect(m.ambienceOn).toBe(false)
+    expect(snapshot).toEqual(expected)
+    expect(() => { (snapshot.recipe as { tempoBpm: number }).tempoBpm = 1 }).toThrow()
   })
 })
 
