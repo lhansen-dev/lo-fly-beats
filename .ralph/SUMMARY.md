@@ -1,0 +1,1 @@
+Adds the “How the beat is made” panel with circuit metadata, bar-sampled traversal explanations, phrase chords, authored mapping rules and version information, plus unit and browser coverage. Node verification passes; revision is needed for a failing acceptance grep and stale choices after paused session resets, while Chromium execution remains sandbox-blocked.

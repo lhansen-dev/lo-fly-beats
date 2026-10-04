@@ -1,0 +1,27 @@
+- `cat .ralph/DONE; git status --short; git diff main...HEAD --stat -- . ':!.ralph'; date -u` passed; DONE claims documentation completion; working tree clean, 15 changed files.
+- `git diff main...HEAD -- . ':!.ralph'` inspected full diff; panel, descriptions, sampler, tests, constant extraction and documentation changes.
+- `test -f tests/unit/explanation/describe.test.ts && npx vitest run --project unit tests/unit/explanation/describe.test.ts` — exit 0.
+- `grep -q 'export function describeTraceStep' src/components/explanation/describe.ts && grep -q 'export function describeMappingRules' src/components/explanation/describe.ts` — exit 0.
+- `grep -q 'Real connection' src/components/explanation/describe.ts && grep -q 'Authored rule' src/components/explanation/describe.ts` — exit 0.
+- `grep -q 'HUMANIZE_MAX_OFFSETS' src/music/compose.ts && grep -q 'CHORD_SLOT_BARS' src/music/harmony.ts` — exit 0.
+- `test -f tests/unit/explanation/recentChoices.test.ts && npx vitest run --project unit tests/unit/explanation/recentChoices.test.ts` — exit 0.
+- `grep -q 'getGraph' src/app/controller.ts` — exit 0.
+- `test -f src/components/explanation/ExplanationPanel.test.ts && npx vitest run --project unit src/components/explanation/ExplanationPanel.test.ts` — exit 0.
+- `grep -q 'data-testid="explanation"' src/components/explanation/ExplanationPanel.tsx && grep -q 'How the beat is made' src/components/explanation/ExplanationPanel.tsx` — exit 0.
+- `grep -q 'Recent choices' src/components/explanation/ExplanationPanel.tsx && grep -q 'Rules we wrote' src/components/explanation/ExplanationPanel.tsx && grep -q 'Versions' src/components/explanation/ExplanationPanel.tsx && grep -q 'The circuit' src/components/explanation/ExplanationPanel.tsx` — exit 0.
+- `grep -q '<ExplanationPanel' src/app/App.tsx` — exit 0.
+- `test -f src/components/explanation/ExplanationPanel.tsx && ! grep -rqE 'aria-live|role="status"' src/components/explanation/` — exit 1.
+- `grep -q 'Real connection' tests/browser/explanation.spec.ts && grep -q 'public/data/circuits/mbon-v1/circuit.json' tests/browser/explanation.spec.ts && grep -qE '8_?000' tests/browser/explanation.spec.ts` — exit 0.
+- `test -f tests/browser/explanation.spec.ts && npx tsc -p tsconfig.test.json && npx oxlint tests/browser/explanation.spec.ts` — exit 0.
+- `test "$(awk '/^## Phase 32/{p=1} /^## Phase 33/{p=0} p' docs/03-IMPLEMENT.md | grep -c '^- \[x\]')" -eq 4` — exit 0.
+- `grep -qE '^\| 2026-10-04 \| 32 \|' docs/03-IMPLEMENT.md` — exit 0.
+- `test -f src/components/explanation/ExplanationPanel.tsx && npm run check` — exit 0.
+- `npx vitest run --project unit tests/unit/music/compose.test.ts src/music/harmony.test.ts src/app/controller.test.ts src/components/animation-toggle.test.ts` — exit 0.
+- `awk '/^## Phase 32/{p=1} /^## Phase 33/{p=0} p' docs/03-IMPLEMENT.md | grep -q '^- \[ \] All verification steps pass\.'` — exit 0.
+- `awk '/^## Phase 31/{p=1} /^## Phase 32/{p=0} p' docs/03-IMPLEMENT.md | grep -q '^- \[ \] All verification steps pass\.'` — exit 0.
+- `npx playwright test --project=chromium` — exit 1 (see evaluator output for browser details).
+- `grep -rnE 'aria-live|role="status"' src/components/explanation/` confirms failed acceptance check matches ExplanationPanel.test.ts:29 (test regex, not live-region markup).
+- Read R6, R7, R12 and R14 plus controller/store/state/sequencer integration; inspecting reset handling and sampling edge cases.
+- In-memory execution of recentChoices.ts via TypeScript transpile reproduces stale rows after reset: activeScore=null, position=0 leaves sampleCount=1 and retainedBeats=[12,11,10,9,8,7,6,5].
+- `npx playwright test --project=chromium` blocked before tests: preview server listen EPERM on 127.0.0.1:4173; browser behavior unverified.
+- Final `git status --short; head -1 .ralph/EVALUATION.md; cat .ralph/SUMMARY.md; date -u` confirms VERDICT: revise and summary written; no changes outside permitted .ralph outputs.
