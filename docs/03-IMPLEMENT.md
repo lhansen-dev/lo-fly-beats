@@ -122,6 +122,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 35 | Corrected the offline onset expectations to include the shared limiter’s fixed 6 ms look-ahead while preserving the 5 ms scheduling tolerance and every existing assertion. | Previously unrun audio verification failed with onset error `0.0063718820861678` seconds. Tone 15.1.22 uses a DynamicsCompressorNode for its limiter; the [Web Audio processing algorithm](https://www.w3.org/TR/webaudio-1.0/#DynamicsCompressorNode-processing) specifies the 0.006-second pre-delay. Both kick and swung-hat checks now pass, without changing audio or mapping versions. |
 | 2026-10-04 | 35 | Completed the required 15-minute Chromium soak followed by five exports on macOS 26.5.1, arm64 MacBookPro18,2, 64 GiB RAM. Prepared independent Phase 36 tools and Phase 37 documentation while this timed check ran; verification and commits remain ordered. | `SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=chromium --output=/tmp/lofly-soak-results` passes in 15.4 minutes: one repeat event, one score, at most eight keys voices, at most one retained URL, and no page errors. Logged JS heap before exports: 33,100,000 bytes; after: 33,100,000 bytes (informational browser measurement). This also satisfies Phase 16’s five-minute minimum. |
 | 2026-10-04 | 36 | Added level-9 gzip budget enforcement, browser-clock startup timing, and a managed `/nested/lofly/` preview fixture. | Build/budget pass: circuit 6,377 bytes (6.23 KiB); total 205,568 bytes (200.75 KiB), below 200 KiB / 4 MiB limits. An injected incompressible probe correctly exits 1 for overflow and was removed. Chromium startup: playing 148.9 ms, first position 1,074.2 ms on MacBookPro18,2/macOS 26.5.1; startup, subpath, and accessibility specs pass (5 tests). Reference-phone and audible-start confirmation remain Phase 38. |
+| 2026-10-04 | 37 | Wrote setup, command, architecture, audio, data regeneration, testing, deployment, structure, and credit documentation, including the pipeline’s MBON-specific metadata/verifier limits. | `npm run check` passes (264 tests). All documented npm script names match `npm run`; browser installation, uv locked sync, download/extract/verify, schema inspection, and three Python regressions pass. Regeneration leaves both JSON files and reports byte-identical; all 936 weights and 97 annotations match upstream. README keeps manual browser-support validation pending for Phase 38. |
 
 ## Reference
 
@@ -1994,7 +1995,7 @@ Exit criteria from the plan: the acceptance checks pass on the documented browse
 
 **Agent** · **Read:** R1–R4, R11, R12, `ASSETS.md`, `scripts/data/reports/mbon-v1-extraction.md`
 
-- [ ] Rewrite `README.md` with these sections:
+- [x] Rewrite `README.md` with these sections:
   - **What it is:** one paragraph and the tagline.
   - **Quick start:** Node 22, `npm ci`, and `npm run dev`.
   - **Commands:** the R2 table.
@@ -2006,15 +2007,15 @@ Exit criteria from the plan: the acceptance checks pass on the documented browse
   - **Testing:** unit, audio, and browser tests, soak runs, budgets, and `npx playwright install chromium firefox webkit`.
   - **Deployment:** serve the static `dist/` directory from any static host, with no backend or secrets. `base: './'` supports subdirectories, and the data is served from the same origin.
   - **Project structure** and **Credits**, linking `ASSETS.md`.
-- [ ] Write `scripts/data/README.md` covering the config fields, each script and its outputs, the expected results from R3, how to select a different circuit (edit the config, rerun the pipeline, and update the tests' expected values and R3), and troubleshooting (for a checksum mismatch, delete the cached file and download again).
-- [ ] Confirm that every command either README mentions appears in `npm run` output or runs as written.
+- [x] Write `scripts/data/README.md` covering the config fields, each script and its outputs, the expected results from R3, how to select a different circuit (edit the config, rerun the pipeline, and update the tests' expected values and R3), and troubleshooting (for a checksum mismatch, delete the cached file and download again).
+- [x] Confirm that every command either README mentions appears in `npm run` output or runs as written.
 
 **Verify**
 
 1. `npm run check` passes.
 2. Every README command is listed by `npm run` or was run successfully.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 38: Human gate — release validation
 
