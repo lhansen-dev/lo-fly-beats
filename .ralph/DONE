@@ -1,0 +1,4 @@
+Recent choices now clear on session reset
+- Emit an empty sample once when no active score is present, including on initial subscription.
+- Added tests for clearing while open and subscribing after reset.
+- Targeted unit tests passed.

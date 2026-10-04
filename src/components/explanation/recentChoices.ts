@@ -12,10 +12,18 @@ export function selectRecentSteps(
 }
 
 export function subscribeBarSamples(store: Store<AppState, AppAction>, onSample: (steps: TraceStep[]) => void): () => void {
-  let lastScore: PhraseScore | null = null
+  let lastScore: PhraseScore | null | undefined = undefined
   let lastBar: number | null = null
   const sample = () => {
     const state = store.getState()
+    if (state.activeScore === null) {
+      if (lastScore !== null) {
+        lastScore = null
+        lastBar = null
+        onSample([])
+      }
+      return
+    }
     const steps = selectRecentSteps(state.activeScore, state.position)
     if (steps === null) return
     if (state.activeScore !== lastScore || state.position.bar !== lastBar) {

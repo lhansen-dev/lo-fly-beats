@@ -11,7 +11,8 @@ describe('recent choices sampler', () => {
     const score = composePhrase(fixtureGraph(), { recipeVersion: 1, presetId: 'rainy-windowsill', sessionSeed: 1, variation: 0.5, tempoBpm: 72 }, 0)
     const samples: Array<Array<{ beat: number }>> = []
     const unsubscribe = subscribeBarSamples(store, steps => samples.push(steps))
-    expect(samples).toEqual([])
+    expect(samples).toEqual([[]])
+    samples.length = 0
     store.dispatch({ type: 'phraseStarted', score })
     expect(samples).toHaveLength(1)
     expect(samples[0]).toHaveLength(1)
@@ -28,5 +29,39 @@ describe('recent choices sampler', () => {
     unsubscribe()
     store.dispatch({ type: 'positionChanged', position: { phraseIndex: 0, bar: 4, beat: 0 } })
     expect(samples).toHaveLength(3)
+  })
+
+  it('clears recent choices when the session resets while open', () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const score = composePhrase(fixtureGraph(), { recipeVersion: 1, presetId: 'rainy-windowsill', sessionSeed: 1, variation: 0.5, tempoBpm: 72 }, 0)
+    const samples: Array<Array<{ beat: number }>> = []
+    subscribeBarSamples(store, steps => samples.push(steps))
+    store.dispatch({ type: 'phraseStarted', score })
+    store.dispatch({ type: 'positionChanged', position: { phraseIndex: 0, bar: 3, beat: 0 } })
+    store.dispatch({ type: 'newBeatRequested', sessionSeed: 2, immediate: true })
+    expect(store.getState().activeScore).toBeNull()
+    expect(samples[samples.length - 1]).toEqual([])
+    const sampleCount = samples.length
+    store.dispatch({ type: 'positionChanged', position: { phraseIndex: 0, bar: 1, beat: 0 } })
+    store.dispatch({ type: 'presetRequested', presetId: 'rainy-windowsill', tempoBpm: 72, immediate: true })
+    expect(samples).toHaveLength(sampleCount)
+    const nextScore = composePhrase(fixtureGraph(), { recipeVersion: 1, presetId: 'rainy-windowsill', sessionSeed: 2, variation: 0.5, tempoBpm: 72 }, 0)
+    store.dispatch({ type: 'phraseStarted', score: nextScore })
+    expect(samples[samples.length - 1]).toHaveLength(1)
+    expect(samples[samples.length - 1][0].beat).toBe(0)
+  })
+
+  it('emits an empty list when subscribing after a reset', () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const score = composePhrase(fixtureGraph(), { recipeVersion: 1, presetId: 'rainy-windowsill', sessionSeed: 1, variation: 0.5, tempoBpm: 72 }, 0)
+    const initialSamples: Array<Array<{ beat: number }>> = []
+    const unsubscribe = subscribeBarSamples(store, steps => initialSamples.push(steps))
+    store.dispatch({ type: 'phraseStarted', score })
+    store.dispatch({ type: 'positionChanged', position: { phraseIndex: 0, bar: 2, beat: 0 } })
+    unsubscribe()
+    store.dispatch({ type: 'newBeatRequested', sessionSeed: 2, immediate: true })
+    const samples: Array<Array<{ beat: number }>> = []
+    subscribeBarSamples(store, steps => samples.push(steps))
+    expect(samples).toEqual([[]])
   })
 })
