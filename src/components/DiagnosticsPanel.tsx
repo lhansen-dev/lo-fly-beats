@@ -3,6 +3,7 @@ import type { EngineDiagnostics } from '../audio/engine'
 
 type DiagnosticsPanelProps = {
   getDiagnostics: () => EngineDiagnostics | null
+  onSimulateInterruption: () => void
 }
 
 const idleDiagnostics = {
@@ -12,7 +13,7 @@ const idleDiagnostics = {
   keysActiveVoices: 0,
 }
 
-export default function DiagnosticsPanel({ getDiagnostics }: DiagnosticsPanelProps) {
+export default function DiagnosticsPanel({ getDiagnostics, onSimulateInterruption }: DiagnosticsPanelProps) {
   const [diagnostics, setDiagnostics] = useState<EngineDiagnostics | null>(() => getDiagnostics())
 
   useEffect(() => {
@@ -20,5 +21,8 @@ export default function DiagnosticsPanel({ getDiagnostics }: DiagnosticsPanelPro
     return () => window.clearInterval(interval)
   }, [getDiagnostics])
 
-  return <pre data-testid="diagnostics">{JSON.stringify(diagnostics ?? idleDiagnostics, null, 2)}</pre>
+  return <>
+    <pre data-testid="diagnostics">{JSON.stringify(diagnostics ?? idleDiagnostics, null, 2)}</pre>
+    <button type="button" data-testid="simulate-interruption" onClick={onSimulateInterruption}>Simulate interruption</button>
+  </>
 }

@@ -136,6 +136,27 @@ describe('controller export', () => {
   })
 })
 
+describe('controller interruption', () => {
+  it('surfaces interruption notice and clears it when playing resumes', async () => {
+    const { controller, store, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    engine.emit('status', 'interrupted')
+    expect(store.getState().audioNotice).toBe('Audio was interrupted by the browser. Press Play to resume.')
+    expect(store.getState().engineStatus).toBe('interrupted')
+    engine.emit('status', 'playing')
+    expect(store.getState().audioNotice).toBeNull()
+  })
+
+  it('exposes the engine interruption debug hook', async () => {
+    const { controller, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    controller.simulateInterruption()
+    expect(engine.calls).toContainEqual({ method: 'debugInterrupt', arg: undefined })
+  })
+})
+
 describe('controller mix settings', () => {
   it('merges sequential nested patches immutably and saves the current complete mix', async () => {
     const { controller, store, engine, saves } = setup()

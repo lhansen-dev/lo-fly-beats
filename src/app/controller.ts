@@ -13,6 +13,8 @@ import { randomSessionSeed } from './seed'
 import type { AppAction, AppState, RestoredSettings } from './state'
 import type { MixSettings } from '../audio/rig'
 
+export const AUDIO_INTERRUPTED_NOTICE = 'Audio was interrupted by the browser. Press Play to resume.'
+
 export type MixPatch = {
   masterVolume?: number
   ambienceOn?: boolean
@@ -87,7 +89,11 @@ export class SessionController {
       const engine = await this.createEngine()
       this.engine = engine
       this.unsubscribers = [
-        engine.on('status', status => this.store.dispatch({ type: 'engineStatusChanged', status })),
+        engine.on('status', status => {
+          this.store.dispatch({ type: 'engineStatusChanged', status })
+          if (status === 'interrupted') this.store.dispatch({ type: 'audioNoticeChanged', notice: AUDIO_INTERRUPTED_NOTICE })
+          else if (status === 'playing') this.store.dispatch({ type: 'audioNoticeChanged', notice: null })
+        }),
         engine.on('phraseStarted', ({ score }) => this.store.dispatch({ type: 'phraseStarted', score })),
         engine.on('applied', ({ recipe }) => {
           this.store.dispatch({ type: 'changesApplied', recipe })
@@ -103,6 +109,10 @@ export class SessionController {
       if (this.startPromise === operation) this.startPromise = null
     }).catch(() => undefined)
     return operation
+  }
+
+  simulateInterruption(): void {
+    this.engine?.debugInterrupt()
   }
 
   togglePlay(): void {

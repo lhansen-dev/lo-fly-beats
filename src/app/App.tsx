@@ -39,6 +39,6 @@ export default function App() {
       <PendingChanges />
       <ExportPanel />
     </section>
-    {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} />}
+    {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
   </main>
 }
