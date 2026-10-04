@@ -1,4 +1,4 @@
-You are working on: Phase 25 of lo-fly-beats — circuit-load error UI with Retry, audio-interruption notice and Simulate interruption debug button, storage-unavailable note, and the Chromium failures spec.
+You are working on: Phase 25 of Lo-fly beats — circuit-load errors with Retry, audio-interruption handling and notice, the debug "Simulate interruption" button, the storage-unavailable note, and the failures Playwright spec.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,12 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Task-specific hints:
+- This sandbox denies local socket binds. If `npx vitest run ...` fails to start with `listen EPERM`, that is expected and accepted by the operator: run the fallback named in your task (`npx tsc -b`, which must exit 0) instead and treat that as the check. Never try to run Playwright, `npm run check`, `npm test`, or `npm run test:browser`.
+- Unit tests for components use `renderToStaticMarkup`, which escapes `'` as `&#x27;`; assert apostrophe-free substrings.
+- In JSX, put text containing an apostrophe inside a JS string expression (`{"..."}`) so the linter does not complain.
+- Read the files named in your task before editing them; reuse the existing helpers (`setup()`, `FakeEngine`) instead of inventing new ones.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,20 +41,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Task-specific hints:
-- ALWAYS run Vitest as `npx vitest run --project unit <files>`. Without
-  `--project unit`, Vitest also boots the `audio` browser project, which tries
-  to bind `::1:63315` and fails with `listen EPERM` in this sandbox. If a
-  `--project unit` command still fails with `listen EPERM` (a sandbox socket
-  denial, not a test failure), the operator has said not to worry about
-  Vitest: run `npx tsc -b` instead, and if that passes treat the check as
-  passed and say so in `.ralph/ITERATION_DONE`. Do not stop the loop over it.
-- Never run Playwright, `npm run test:browser`, `npm run test:audio`, or
-  `npm run dev`/`preview`: the sandbox denies local server sockets. The
-  operator runs the browser suite.
-- `renderToStaticMarkup` escapes `'` as `&#x27;`; do not assert on text that
-  contains apostrophes in unit tests.
-- Design references, if needed: `docs/03-IMPLEMENT.md` sections R12
-  ("Failure behavior", "Debug mode", "Test IDs") and R14 (copy). Do not edit
-  docs unless your task says so.
