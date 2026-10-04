@@ -1,0 +1,38 @@
+/*
+ * Contrast ratios (WCAG 2.x)
+ * Body text and links require 4.5:1; large text and control borders require 3:1.
+ * --ui-text on --ui-bg ≈16.3:1
+ * --ui-text on --ui-surface ≈14.1:1
+ * --ui-muted on --ui-bg ≈9.4:1
+ * --ui-muted on --ui-surface ≈8.1:1
+ * --ui-border on --ui-bg ≈4.9:1
+ * --ui-border on --ui-surface ≈4.2:1
+ * --focus on --ui-bg ≈12.5:1
+ * --focus on --ui-surface ≈10.8:1
+ * preset uiAccent on --ui-surface: #9fc3e6 ≈8.5:1, #ffb35c ≈8.8:1, #e8a33d ≈7.2:1
+ */
+:root {
+  --ui-bg: #14171c;
+  --ui-surface: #1f242c;
+  --ui-text: #f2f4f7;
+  --ui-muted: #b4bcc8;
+  --ui-border: #7c8696;
+  --focus: #ffd166;
+  --ui-accent: #9fc3e6;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --radius: 0.75rem;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --scene-wall: #3b4a5a;
+  --scene-window-sky: #6f8ba3;
+  --scene-glass-tint: rgba(180, 205, 230, 0.25);
+  --scene-desk: #6b4f3a;
+  --scene-desk-edge: #4f3a2b;
+  --scene-light-color: #9fc3e6;
+  --scene-light-opacity: 0.18;
+  --scene-shadow-opacity: 0.35;
+}

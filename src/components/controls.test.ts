@@ -118,7 +118,10 @@ describe('App', () => {
     for (const expected of [
       'Lo-fly beats',
       'Beats to relax',
-      'data-testid="scene-placeholder"',
+      'data-testid="scene-frame"',
+      'data-preset="rainy-windowsill"',
+      '--scene-wall:#3b4a5a',
+      'class="transport-bar"',
       'data-testid="circuit-status"',
       'data-testid="now-playing"',
       'data-testid="start-listening"',

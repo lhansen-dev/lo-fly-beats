@@ -43,7 +43,7 @@ describe('Mixer', () => {
     const masterVolumeInput = markup.match(/<input\b[^>]*data-testid="master-volume"[^>]*>/)
     expect(masterVolumeInput).not.toBeNull()
     expect(masterVolumeInput?.[0]).toMatch(/\btype="range"/)
-    expect(markup).toContain('data-testid="scene-placeholder"')
+    expect(markup).toContain('data-testid="scene-frame"')
     expect(markup).toContain('data-testid="start-listening"')
   })
 })

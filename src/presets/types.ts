@@ -21,6 +21,18 @@ export interface SoundParams {
   crackleLevel: number
 }
 
+export interface VisualParams {
+  wall: string
+  windowSky: string
+  glassTint: string
+  desk: string
+  deskEdge: string
+  lightColor: string
+  lightOpacity: number
+  shadowOpacity: number
+  uiAccent: string
+}
+
 export interface PresetDefinition {
   id: PresetId
   version: number
@@ -34,4 +46,5 @@ export interface PresetDefinition {
   fillChance: number
   drums: { main: DrumHits; turn: DrumHits; fill: DrumHits }
   sound: SoundParams
+  visual: VisualParams
 }
