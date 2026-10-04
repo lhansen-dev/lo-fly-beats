@@ -1,4 +1,4 @@
-You are working on: making all six hoodie sleeves of the Phase 28 fly (`src/scene/fly/Fly.tsx`) visibly distinct from the torso and each other, with a regression unit test.
+You are working on: fixing the over-escaped regexes in the Phase 28 fly unit test (`src/scene/fly/fly.test.ts`) so it passes, and recording the corrected result in the Phase 28 Decision log row of `docs/03-IMPLEMENT.md`.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,10 +23,11 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Task-specific hints:
-- Vitest cannot run in this sandbox (it fails to bind a local port with EPERM); the operator said to skip it. Do NOT run vitest or playwright; use the `npx tsc -b` / `npx oxlint` check named in the task.
-- Use only existing tokens from `src/styles/tokens.css` via `var(--scene-fly-...)`; never write literal colours.
-- Keep one JSX element per line in `Fly.tsx`; keep exactly six `data-sleeve="` attributes.
+Hints:
+- In a JS regex LITERAL (`/.../`) a word boundary is `\b`, a literal paren is `\(` / `\)`, a digit is `\d` — one backslash. Inside a template string passed to `new RegExp(...)` you need two backslashes (`\\b`). Never four.
+- `renderToStaticMarkup` turns `strokeWidth="30"` into `stroke-width="30"` and `style={{ fill: 'var(--x)' }}` into `style="fill:var(--x)"`.
+- Do not edit `src/scene/fly/Fly.tsx`, do not weaken or skip assertions, and do not tick any checkbox in `docs/03-IMPLEMENT.md`.
+- `npx playwright test` cannot run in this sandbox (socket bind EPERM) — do not try it.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
