@@ -7,7 +7,7 @@ import { compositionPhraseIndex, compositionStreams } from './streams'
 import { walkPhrase } from './traversal'
 import type { ChordSlot, NoteEvent, PhraseScore, SessionRecipe, TraceStep } from './types'
 import { MAPPING_VERSION, SCORE_VERSION } from './versions'
-import { KEYS_PATTERNS, STRONG_BASS_CELLS, WEAK_BASS_CELLS, type BassCell, type BassDegree, type KeysPattern } from './patterns'
+import { HUMANIZE_MAX_OFFSETS, HUMANIZE_VELOCITY_SPREAD, KEYS_PATTERNS, STRONG_BASS_CELLS, WEAK_BASS_CELLS, type BassCell, type BassDegree, type KeysPattern } from './patterns'
 
 function neuronId(step: TraceStep): string | null {
   return step.kind === 'rest' ? null : step.neuronId
@@ -65,14 +65,13 @@ function pushDrums(events: NoteEvent[], pattern: ReturnType<typeof getPreset>['d
 }
 
 function humanize(events: NoteEvent[], rng: ReturnType<typeof compositionStreams>['humanize']): void {
-  const maxOffsets = { kick: 0, snare: 0.04, hat: 0.06, bass: 0.03, keys: 0.08 } as const
   const round4 = (value: number) => Math.round(value * 10000) / 10000
   for (const event of events) {
     const a = rng.float()
     const b = rng.float()
     const voice = event.layer === 'drums' ? event.drum! : event.layer
-    event.velocity = clamp(round4(event.velocity * (1 + (a * 2 - 1) * 0.06)), 0.05, 1)
-    event.microOffset = round4(b * maxOffsets[voice])
+    event.velocity = clamp(round4(event.velocity * (1 + (a * 2 - 1) * HUMANIZE_VELOCITY_SPREAD)), 0.05, 1)
+    event.microOffset = round4(b * HUMANIZE_MAX_OFFSETS[voice])
   }
 }
 

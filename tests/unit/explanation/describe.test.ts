@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
+import { getPreset } from '../../../src/presets/presets'
+import { KEYS_PATTERNS, STRONG_BASS_CELLS, WEAK_BASS_CELLS } from '../../../src/music/patterns'
 import { composePhrase } from '../../../src/music/compose'
 import type { TraceStep } from '../../../src/music/types'
 import { fixtureGraph } from '../helpers/fixtureGraph'
-import { describeTraceStep, formatChance } from '../../../src/components/explanation/describe'
+import { describeMappingRules, describeTraceStep, formatChance } from '../../../src/components/explanation/describe'
 
 const graph = fixtureGraph()
 
@@ -26,6 +28,19 @@ describe('explanation descriptions', () => {
     const rest = describeTraceStep(step({ kind: 'rest', neuronId: null }), graph)
     expect(rest.label).toBe('Authored rule')
     expect(rest.detail).toContain('no outgoing connections')
+  })
+
+  it('describes mapping rules from the preset and mapping constants', () => {
+    const sentences = describeMappingRules(getPreset('rainy-windowsill'))
+    const text = sentences.join(' ')
+    expect(sentences).toHaveLength(8)
+    expect(text).toContain('Dm9 → Bbmaj9 → Gm9 → C9 → Fmaj9 → Am7(11)')
+    for (const id of [...STRONG_BASS_CELLS, ...WEAK_BASS_CELLS, ...KEYS_PATTERNS].map(item => item.id)) expect(text).toContain(id)
+    expect(text).toContain('35%')
+    expect(text).toContain('bars 1, 3, 5, and 7')
+    expect(text).toContain('6%')
+    const alternate = describeMappingRules(getPreset('overripe-2am'))
+    expect(alternate[1]).not.toBe(sentences[1])
   })
 
   it('formats chance without decimals', () => {
