@@ -1,0 +1,27 @@
+- `cat .ralph/DONE`: claims approved-as-is documentation-only change; targeted Chromium blocked by listen EPERM, verification left unchecked.
+- `git diff main...HEAD -- . ':!.ralph'`: only docs/03-IMPLEMENT.md changed, adding Phase 29 approval, Phase 30 no-change log and task checks.
+- `git status --short`: clean before evaluation (only Git ignore access warnings).
+- `git log --oneline main..HEAD`: one implementation commit naming phase 30, plus planner bookkeeping commits.
+- `date -u`: 2026-10-04 19:09:42 UTC; within budget.
+- `sed -n '/^## Phase 29:/,/^\*\*Scene notes\*\*/p' docs/03-IMPLEMENT.md | grep -c '^- \[x\]'`: exit 0, stdout '4'; PASS (expected exit 0, stdout '4').
+- `sed -n '/^## Phase 29:/,/^\*\*Scene notes\*\*/p' docs/03-IMPLEMENT.md | grep -q '^- \[ \]'`: exit 1, stdout ''; PASS (expected exit 1, stdout '').
+- `sed -n '/^\*\*Scene notes\*\*/,/^## Phase 30:/p' docs/03-IMPLEMENT.md | grep -q '^- Approved as is\.$'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `sed -n '/^\*\*Scene notes\*\*/,/^## Phase 30:/p' docs/03-IMPLEMENT.md | grep -q 'The user writes notes here'`: exit 1, stdout ''; PASS (expected exit 1, stdout '').
+- `sed -n '/^## Phase 30:/,/^\*\*Verify\*\*/p' docs/03-IMPLEMENT.md | grep -c '^- \[x\]'`: exit 0, stdout '3'; PASS (expected exit 0, stdout '3').
+- `awk '/^## Decision log/,/^## Reference/' docs/03-IMPLEMENT.md | grep -E '^\| [0-9-]+ \| 29 \|' | grep -q 'permission'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `awk '/^## Decision log/,/^## Reference/' docs/03-IMPLEMENT.md | grep -E '^\| [0-9-]+ \| 30 \|' | grep -q 'Approved as is'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `awk '/^## Decision log/,/^## Reference/' docs/03-IMPLEMENT.md | grep -E '^\| [0-9-]+ \| 30 \|' | grep -q 'R13'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `awk '/^## Decision log/,/^## Reference/' docs/03-IMPLEMENT.md | grep -E '^\| [0-9-]+ \| 30 \|' | grep -q 'npx playwright test --project=chromium'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `awk '/^## Decision log/,/^## Reference/' docs/03-IMPLEMENT.md | grep -E '^\| [0-9-]+ \| 30 \|' | grep -q 'blocked on Chromium verification'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `sed -n '/^## Phase 31:/,/^## Phase 32:/p' docs/03-IMPLEMENT.md | grep -q '^- \[x\]'`: exit 1, stdout ''; PASS (expected exit 1, stdout '').
+- `grep -q '^### R13. Scene' docs/03-IMPLEMENT.md`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `sed -n '/^## Phase 30:/,/^## Phase 31:/p' docs/03-IMPLEMENT.md | grep -q '^- \[ \] All verification steps pass\.$'`: exit 0, stdout ''; PASS (expected exit 0, stdout '').
+- `npm run check > /tmp/phase30-evaluator-check.log 2>&1`: shell redirection exited 1 (Operation not permitted); npm did not execute and no log was created; reran directly.
+- `npm run check` (rerun without /tmp redirection): exit 0; prior attempt did not execute because /tmp log creation was denied.
+- `npx playwright test --project=chromium`: exit 1; preview fails before tests with listen EPERM on 127.0.0.1:4173, confirming documented socket-capable-runner blocker.
+- `sed` inspection of checklist rules, R13, and Phases 29–31: approval/permission recorded, no scene/R13 or animation changes; no out-of-scope changes found.
+- `git diff --check main...HEAD -- . ':!.ralph'`: exit 0, no whitespace errors.
+- `git status --short` after verification: only permitted .ralph/EVALUATION-NOTES.md untracked; no tracked test-generated changes.
+- Final `git diff --check`: exit 0; evaluator doc edit only reconciles verified npm check and full Chromium failure.
+- Final Phase 30 blocked-verification Decision log grep: exit 0; required pending marker preserved.
+- Final `git status --short`: only docs/03-IMPLEMENT.md and permitted evaluator outputs changed.

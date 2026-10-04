@@ -1,0 +1,1 @@
+Recorded the operator’s approved-as-is scene review and permission to complete Phase 29’s human-gate checklist; marked Phase 30’s no-change tasks complete and added Decision log entries. Scene code, R13, and animation work are unchanged; npm run check passes, while full Chromium verification remains blocked by sandbox socket permissions and explicitly pending.
