@@ -1,4 +1,4 @@
-You are working on: Phase 31 of `docs/03-IMPLEMENT.md` — animating the Lo-fly beats SVG scene (head bob, blink, hand rub, rain, lighting transition, animation toggle, still/paused states) from playback cues.
+You are working on: Phase 31 of docs/03-IMPLEMENT.md — animate the Lo-fly beats scene (head bob, blink, hand rub, rain, lighting, animation toggle, still/paused states) from playback cues, keeping the cue state (animation RNG + hand-rub cooldown) alive across hide/show and toggle off/on.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,8 +37,9 @@ Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
 Project hints:
-- Run unit tests as `npx vitest run --project unit <file>`; tests run in Node (no jsdom). React components are tested with `renderToStaticMarkup`.
-- `Math.random` is forbidden in `src/`; animation randomness uses `animationRng(sessionSeed)` from `src/music/streams.ts`.
-- Code style: no semicolons, single quotes, 2-space indent (match neighbouring files). No `enum`, `namespace`, or constructor parameter properties (`erasableSyntaxOnly`).
-- Never run Playwright (`npx playwright test`) or `npm run test:audio`: this sandbox denies local socket binds.
-- Scene source files and `src/scene/scene.css` must contain no hex/`rgb(` color literals; use `var(--scene-*)` tokens or keywords like `transparent`.
+- Unit tests run in Node (no jsdom): `npx vitest run --project unit <files>`. Vitest has `passWithNoTests: true`, so make sure the output says your test file actually ran.
+- Tests that import `node:*` modules live under `tests/`; other unit tests sit beside their module in `src/` as `*.test.ts`.
+- Never use `Math.random` in `src/`. Seeded randomness comes from `src/music/streams.ts` (`animationRng(seed)` is the animation stream).
+- TypeScript uses `erasableSyntaxOnly`: no `enum`, no `namespace`, no constructor parameter properties. Match the surrounding file's style (most `src/app` and `src/scene` files omit semicolons).
+- Playwright and Vitest browser mode cannot run here (the sandbox denies local socket binds). Don't try to run `npx playwright test` or `npm run test:audio`.
+- Never edit `docs/01-IDEAS.md` or `docs/02-PLAN.md`.
