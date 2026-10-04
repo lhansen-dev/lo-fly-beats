@@ -1,0 +1,4 @@
+Immediate audio interruption pause
+- Interruption now pauses transport at currentTime while intentional pause remains unchanged.
+- Strengthened tests with lookahead-aware pause tracking and saved-step resume coverage.
+- TypeScript build and required grep checks passed.

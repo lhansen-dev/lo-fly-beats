@@ -163,7 +163,7 @@ class PlaybackEngine implements EngineLike {
     const rig = this.rig
     if (!context || !rig || this.status !== 'playing' || context.state === 'running') return
     const now = context.currentTime
-    context.transport.pause()
+    context.transport.pause(now)
     rig.stopAmbience(now)
     rig.releaseAll(now)
     this.playbackGeneration += 1

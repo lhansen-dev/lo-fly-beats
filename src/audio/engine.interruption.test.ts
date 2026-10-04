@@ -3,8 +3,8 @@ import type { MixSettings } from './rig'
 
 const mock = vi.hoisted(() => {
   const handlers: Array<() => void> = []
-  const transport = { bpm: { value: 0, setValueAtTime: vi.fn() }, swing: 0, state: 'stopped', scheduleRepeat: vi.fn(), start: vi.fn(() => { transport.state = 'started' }), pause: vi.fn(() => { transport.state = 'paused' }), stop: vi.fn() }
-  const context = { currentTime: 5, state: 'running' as string, on: vi.fn((name: string, handler: () => void) => { if (name === 'statechange') handlers.push(handler); return context }), rawContext: { suspend: vi.fn(() => Promise.resolve()) }, sampleRate: 44100, transport, draw: { schedule: vi.fn() } }
+  const transport = { bpm: { value: 0, setValueAtTime: vi.fn() }, swing: 0, state: 'stopped', pausedAt: null as number | null, scheduleRepeat: vi.fn(), start: vi.fn(() => { transport.state = 'started' }), pause: vi.fn((time?: number) => { transport.pausedAt = time ?? context.currentTime + context.lookAhead; transport.state = 'paused' }), stop: vi.fn() }
+  const context = { currentTime: 5, lookAhead: 0.1, state: 'running' as string, on: vi.fn((name: string, handler: () => void) => { if (name === 'statechange') handlers.push(handler); return context }), rawContext: { suspend: vi.fn(() => Promise.resolve()) }, sampleRate: 44100, transport, draw: { schedule: vi.fn() } }
   const rig = { trigger: vi.fn(), applySound: vi.fn(), setMix: vi.fn(), startAmbience: vi.fn(), stopAmbience: vi.fn(), releaseAll: vi.fn(), rampMasterGain: vi.fn(), keysActiveVoices: 0, dispose: vi.fn() }
   return { handlers, context, transport, rig, start: vi.fn(() => Promise.resolve()), createRig: vi.fn(() => rig) }
 })
@@ -32,7 +32,7 @@ function interrupt() { mock.context.state = 'suspended'; mock.handlers.forEach(h
 beforeEach(() => {
   vi.stubGlobal('document', { hidden: false })
   mock.context.draw.schedule.mockClear()
-  mock.handlers.length = 0; mock.context.state = 'running'; mock.context.currentTime = 5
+  mock.handlers.length = 0; mock.context.state = 'running'; mock.context.currentTime = 5; mock.context.lookAhead = 0.1; mock.transport.pausedAt = null
   mock.start.mockReset().mockImplementation(() => Promise.resolve())
   mock.transport.scheduleRepeat.mockClear(); mock.transport.start.mockClear(); mock.transport.pause.mockClear()
   for (const fn of [mock.rig.setMix, mock.rig.startAmbience, mock.rig.stopAmbience, mock.rig.releaseAll, mock.rig.rampMasterGain]) fn.mockClear()
@@ -40,7 +40,7 @@ beforeEach(() => {
 async function playing() { const engine = await freshEngine(); await engine.start(graph, recipe, mix(true)); mock.transport.start.mockClear(); mock.transport.pause.mockClear(); mock.transport.scheduleRepeat.mockClear(); for (const fn of [mock.rig.setMix, mock.rig.startAmbience, mock.rig.stopAmbience, mock.rig.releaseAll, mock.rig.rampMasterGain]) fn.mockClear(); return engine }
 
 describe('audio interruption', () => {
-  it('interrupts active playback without ramping gain', async () => { const e = await playing(); interrupt(); expect(e.getDiagnostics().status).toBe('interrupted'); expect(mock.transport.pause).toHaveBeenCalled(); expect(mock.rig.releaseAll).toHaveBeenCalledWith(5); expect(mock.rig.stopAmbience).toHaveBeenCalledWith(5); expect(mock.rig.rampMasterGain).not.toHaveBeenCalled() })
+  it('interrupts active playback without ramping gain', async () => { const e = await playing(); interrupt(); expect(e.getDiagnostics().status).toBe('interrupted'); expect(mock.transport.pause).toHaveBeenCalledWith(5); expect(mock.transport.pausedAt).toBe(5); expect(mock.rig.releaseAll).toHaveBeenCalledWith(5); expect(mock.rig.stopAmbience).toHaveBeenCalledWith(5); expect(mock.rig.rampMasterGain).not.toHaveBeenCalled() })
   it('does not treat an intentional pause as an interruption', async () => { const e = await playing(); e.pause(); interrupt(); expect(e.getDiagnostics().status).toBe('paused') })
   it('resumes interrupted playback without scheduling another repeat', async () => { const e = await playing(); interrupt(); mock.context.state = 'running'; await e.play(); expect(mock.start).toHaveBeenCalledTimes(1); expect(mock.transport.start).toHaveBeenCalled(); expect(e.getDiagnostics()).toMatchObject({ status: 'playing', repeatEvents: 1 }); expect(mock.transport.scheduleRepeat).not.toHaveBeenCalled() })
   it('shares a pending resume operation', async () => { const e = await playing(); interrupt(); let resolve!: () => void; mock.start.mockImplementation(() => new Promise<void>(r => { resolve = r })); mock.context.state = 'running'; const a = e.play()!; const b = e.play()!; expect(a).toBe(b); expect(mock.start).toHaveBeenCalledTimes(1); resolve(); await a })
@@ -65,6 +65,18 @@ describe('audio interruption', () => {
     const events: unknown[] = []; engine.on('step', event => events.push(event)); engine.on('position', event => events.push(event))
     interrupt(); mock.context.draw.schedule.mockClear(); tick(6)
     expect(mock.context.draw.schedule).not.toHaveBeenCalled(); expect(events).toHaveLength(0)
+  })
+  it('pauses at currentTime, not currentTime + lookAhead, and resumes from the saved step', async () => {
+    mock.context.currentTime = 7.25
+    const engine = await freshEngine(); await engine.start(graph, recipe, mix(true))
+    const tick = mock.transport.scheduleRepeat.mock.calls[0][0] as (time: number) => void
+    const steps: Array<{ stepInPhrase: number }> = []; engine.on('step', event => steps.push(event))
+    for (let n = 0; n < 3; n++) { tick(n); (mock.context.draw.schedule.mock.calls.at(-1)![0] as () => void)() }
+    interrupt()
+    expect(mock.transport.pause).toHaveBeenLastCalledWith(7.25); expect(mock.transport.pausedAt).toBe(7.25); expect(engine.getDiagnostics().status).toBe('interrupted')
+    tick(4); mock.context.state = 'running'; await engine.play()
+    tick(5); (mock.context.draw.schedule.mock.calls.at(-1)![0] as () => void)()
+    expect(steps.at(-1)?.stepInPhrase).toBe(3); expect(engine.getDiagnostics().status).toBe('playing')
   })
   it('resumes from the saved step', async () => {
     const engine = await freshEngine(); await engine.start(graph, recipe, mix(true))
