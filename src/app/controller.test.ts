@@ -31,6 +31,7 @@ class FakeEngine implements EngineLike {
   }
   setMix(mix: Parameters<EngineLike['setMix']>[0]): void { this.calls.push({ method: 'setMix', arg: mix }) }
   play(): void { this.calls.push({ method: 'play', arg: undefined }) }
+  debugInterrupt(): void { this.calls.push({ method: 'debugInterrupt', arg: undefined }) }
   pause(): void { this.calls.push({ method: 'pause', arg: undefined }) }
   beginExport(): void { this.calls.push({ method: 'beginExport', arg: undefined }); this.emit('status', 'exporting') }
   endExport(): void { this.calls.push({ method: 'endExport', arg: undefined }); this.emit('status', 'paused') }
