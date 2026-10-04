@@ -1,4 +1,4 @@
-You are working on: Phase 32 of docs/03-IMPLEMENT.md — the "How the beat is made" explanation panel (describe helpers, ExplanationPanel, unit tests, Chromium spec).
+You are working on: Phase 32 of `docs/03-IMPLEMENT.md` — the "How the beat is made" explanation panel (trace/rule descriptions, throttled Recent choices, panel in App, unit tests, Chromium spec).
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,8 +37,8 @@ Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
 Project hints:
-- Code style: no semicolons, single quotes, 2-space indent (match neighbouring files). `Math.random` is banned in `src/`. `src/music/` and `src/connectome/` never import React or Tone. No `enum`/`namespace`/constructor parameter properties (`erasableSyntaxOnly`).
-- Tests that import `node:*` modules (including `tests/unit/helpers/fixtureGraph.ts`) must live under `tests/`, not `src/`.
-- Unit tests run with `npx vitest run --project unit <file>`; vitest has `passWithNoTests`, so make sure your test file path is correct.
-- Never run `npx playwright test` or `npm run test:browser` — this sandbox denies local socket binds; Playwright specs are only typechecked (`npx tsc -b`) and linted (`npx oxlint <file>`).
-- Do not change composed music output and do not bump `MAPPING_VERSION`.
+- TypeScript rules (tsconfig `erasableSyntaxOnly`): no `enum`, `namespace`, or constructor parameter properties. Never use `Math.random` in `src/`. `src/music/` must not import React.
+- Unit tests run in Node with `npx vitest run --project unit <files>`; the unit glob only picks up `*.test.ts` (not `.tsx`), so tests render React with `createElement` + `renderToStaticMarkup` from `react-dom/server`. Tests that import `node:*` (including `tests/unit/helpers/fixtureGraph.ts`) must live under `tests/unit/`.
+- Vitest has `passWithNoTests: true`: if your check reports "No test files found", your test file path is wrong — that is a failure, not a pass.
+- Playwright cannot run in this sandbox (local socket binds fail with `EPERM`); never run `npx playwright test` — typecheck with `npx tsc -b` instead.
+- Useful references: `src/music/types.ts` (TraceStep, PhraseScore), `src/connectome/types.ts` (CircuitGraph), `src/app/state.ts` (AppState, actions), `src/app/store.ts` (useAppState), `src/app/controller.ts`, `src/components/selectors.test.ts` (stable-selector test pattern).
