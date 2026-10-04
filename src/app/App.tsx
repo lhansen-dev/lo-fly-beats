@@ -19,6 +19,7 @@ import Mixer from '../components/Mixer'
 import AnimationToggle from '../components/AnimationToggle'
 import ExportPanel from '../components/ExportPanel'
 import ExplanationPanel from '../components/explanation/ExplanationPanel'
+import Credits from '../components/Credits'
 
 export default function App() {
   const controller = useController()
@@ -50,6 +51,7 @@ export default function App() {
       </div>
     </div>
     <ExplanationPanel />
+    <Credits />
     <footer className="app-footer"><p data-testid="about-line">{ABOUT_LINE}</p><a href="#credits">Credits</a></footer>
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
   </main>
