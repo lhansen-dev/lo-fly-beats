@@ -19,20 +19,20 @@ describe('Fly', () => {
   })
 
   it('draws every sleeve distinct from the torso with its own dark outline', () => {
-    const torsoTag = markup.match(/<path\\b[^>]*data-part="torso"[^>]*>/)?.[0]
+    const torsoTag = markup.match(/<path\b[^>]*data-part="torso"[^>]*>/)?.[0]
     expect(torsoTag).toBeDefined()
-    const torsoFillToken = torsoTag!.match(/var\\((--[a-z-]+)\\)/)?.[1]
+    const torsoFillToken = torsoTag!.match(/var\((--[a-z-]+)\)/)?.[1]
     expect(torsoFillToken).toBeDefined()
 
     for (const name of ['front-left', 'front-right', 'middle-left', 'middle-right', 'back-left', 'back-right']) {
-      const sleeveTag = markup.match(new RegExp(`<path\\\\b[^>]*data-sleeve="${name}"[^>]*>`))?.[0]
-      const outlineTag = markup.match(new RegExp(`<path\\\\b[^>]*data-sleeve-outline="${name}"[^>]*>`))?.[0]
+      const sleeveTag = markup.match(new RegExp(`<path\\b[^>]*data-sleeve="${name}"[^>]*>`))?.[0]
+      const outlineTag = markup.match(new RegExp(`<path\\b[^>]*data-sleeve-outline="${name}"[^>]*>`))?.[0]
       expect(sleeveTag).toBeDefined()
       expect(outlineTag).toBeDefined()
-      expect(sleeveTag!.match(/var\\((--[a-z-]+)\\)/)?.[1]).not.toBe(torsoFillToken)
+      expect(sleeveTag!.match(/var\((--[a-z-]+)\)/)?.[1]).not.toBe(torsoFillToken)
       expect(outlineTag).toContain('var(--scene-fly-dark)')
       expect(outlineTag!.match(/ d="([^"]+)"/)?.[1]).toBe(sleeveTag!.match(/ d="([^"]+)"/)?.[1])
-      expect(Number(outlineTag!.match(/stroke-width="(\\d+)"/)?.[1])).toBeGreaterThan(Number(sleeveTag!.match(/stroke-width="(\\d+)"/)?.[1]))
+      expect(Number(outlineTag!.match(/stroke-width="(\d+)"/)?.[1])).toBeGreaterThan(Number(sleeveTag!.match(/stroke-width="(\d+)"/)?.[1]))
       expect(markup.indexOf(outlineTag!)).toBeLessThan(markup.indexOf(sleeveTag!))
     }
   })

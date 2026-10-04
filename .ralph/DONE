@@ -1,0 +1,4 @@
+Fixed Phase 28 fly regex verification
+- Corrected the regex literals and template-string RegExp patterns in `src/scene/fly/fly.test.ts` without changing assertions.
+- Updated the Decision log verification evidence in `docs/03-IMPLEMENT.md`; Phase 28 remains unchecked due to Playwright listen EPERM.
+- Targeted Vitest passed with 3 tests.
