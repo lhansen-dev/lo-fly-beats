@@ -1,0 +1,43 @@
+- Read .ralph/DONE; inspected git status and git diff main...HEAD -- . ' :!.ralph ' (29 changed files); completed.
+- `test -f src/scene/cues.test.ts && npx vitest run --project unit src/scene/cues.test.ts` — exit 0 (expected 0).
+- `[ "$(grep -Ec 'export function (createCueState|stepCue|phraseCue|nextBlinkDelayMs|rainTimings)\(' src/scene/cues.ts)" -eq 5 ]` — exit 0 (expected 0).
+- `grep -q 'animationRng' src/scene/cues.ts` — exit 0 (expected 0).
+- `test -f tests/data/animation-isolation.test.ts && npx vitest run --project unit tests/data/animation-isolation.test.ts` — exit 0 (expected 0).
+- `grep -q 'onStep(' src/app/controller.ts && grep -q 'onPhraseStarted(' src/app/controller.ts && grep -q 'setAnimationEnabled(' src/app/controller.ts` — exit 0 (expected 0).
+- `grep -q 'setAnimationEnabled' src/app/controller.test.ts && grep -q 'onStep' src/app/controller.test.ts && npx vitest run --project unit src/app/controller.test.ts` — exit 0 (expected 0).
+- `test -f src/scene/sceneCueDriver.test.ts && npx vitest run --project unit src/scene/sceneCueDriver.test.ts` — exit 0 (expected 0).
+- `grep -q 'keeps the rub cooldown across hide and show' src/scene/sceneCueDriver.test.ts` — exit 0 (expected 0).
+- `grep -q 'keeps the rub cooldown across disable and enable' src/scene/sceneCueDriver.test.ts` — exit 0 (expected 0).
+- `grep -q 'starts fresh cue state for a new session seed' src/scene/sceneCueDriver.test.ts` — exit 0 (expected 0).
+- `grep -q 'export function createCueSession' src/scene/sceneCueDriver.ts && grep -q '\.animate(' src/scene/sceneCueDriver.ts` — exit 0 (expected 0).
+- `test -f src/scene/sceneCueDriver.ts && ! grep -q 'filter' src/scene/sceneCueDriver.ts` — exit 0 (expected 0).
+- `test -f src/scene/useSceneCues.ts && grep -q 'createCueSession' src/scene/useSceneCues.ts && grep -q 'useRef' src/scene/useSceneCues.ts` — exit 0 (expected 0).
+- `test -f src/scene/useSceneCues.ts && ! grep -q 'useState' src/scene/useSceneCues.ts` — exit 0 (expected 0).
+- `grep -q 'useSceneCues' src/scene/SceneFrame.tsx && grep -q 'useDocumentHidden' src/scene/SceneFrame.tsx` — exit 0 (expected 0).
+- `grep -q 'useOptionalController' src/app/ControllerContext.tsx` — exit 0 (expected 0).
+- `test -f src/scene/animationMode.test.ts && npx vitest run --project unit src/scene/animationMode.test.ts` — exit 0 (expected 0).
+- `grep -q 'scene--still' src/scene/scene.test.ts && npx vitest run --project unit src/scene/scene.test.ts src/scene/scene-frame.test.ts` — exit 0 (expected 0).
+- `grep -q 'rainTimings' src/scene/layers/Rain.tsx && grep -q 'animation-duration' src/scene/layers/rain.test.ts && npx vitest run --project unit src/scene/layers/rain.test.ts` — exit 0 (expected 0).
+- `grep -q '@keyframes rain-fall' src/scene/scene.css && grep -q 'scene--still' src/scene/scene.css && grep -q 'scene--paused' src/scene/scene.css && grep -q 'animation-play-state: paused' src/scene/scene.css` — exit 0 (expected 0).
+- `test -f tests/unit/scene/scene-motion-css.test.ts && npx vitest run --project unit tests/unit/scene/scene-motion-css.test.ts` — exit 0 (expected 0).
+- `grep -q '@property --scene-wall' src/styles/app.css && grep -q -- '--scene-light-opacity 1.5s' src/styles/app.css` — exit 0 (expected 0).
+- `test -f tests/unit/styles/lighting-transition.test.ts && npx vitest run --project unit tests/unit/styles/lighting-transition.test.ts tests/unit/styles/app-css.test.ts` — exit 0 (expected 0).
+- `grep -q 'data-testid="animation-toggle"' src/components/AnimationToggle.tsx && grep -q 'Animate scene' src/components/AnimationToggle.tsx && grep -q 'AnimationToggle' src/app/App.tsx` — exit 0 (expected 0).
+- `test -f src/components/animation-toggle.test.ts && npx vitest run --project unit src/components/animation-toggle.test.ts` — exit 0 (expected 0).
+- `test -f tests/browser/animation.spec.ts && grep -q "reducedMotion: 'reduce'" tests/browser/animation.spec.ts && grep -q 'visibilitychange' tests/browser/animation.spec.ts && grep -q 'scene--paused' tests/browser/animation.spec.ts && grep -q 'fly-head' tests/browser/animation.spec.ts && grep -q 'animation-toggle' tests/browser/animation.spec.ts` — exit 0 (expected 0).
+- `test -f tests/browser/animation.spec.ts && npx oxlint tests/browser/animation.spec.ts` — exit 0 (expected 0).
+- `grep -Eq '^\| 2026-10-04 \| 31 \|' docs/03-IMPLEMENT.md` — exit 0 (expected 0).
+- `grep -q '^- \[x\] Create `src/scene/cues.ts`' docs/03-IMPLEMENT.md && grep -q '^- \[x\] Write `tests/browser/animation.spec.ts`' docs/03-IMPLEMENT.md` — exit 0 (expected 0).
+- `grep -rqE 'Math\.random' src/scene` — exit 1 (expected 1).
+- `npx tsc -b` — exit 0 (expected 0).
+- `npx tsc -p tsconfig.test.json` — exit 0 (expected 0).
+- `npx oxlint` — exit 0 (expected 0).
+- `npx vitest run --project unit src/scene/fly/fly.test.ts src/scene/layers tests/unit/scene/fly-tokens.test.ts src/components/controls.test.ts src/app/state.test.ts src/app/persistence.test.ts src/app/store.test.ts src/app/visualVars.test.ts tests/unit/styles/tokens.test.ts` — exit 0 (expected 0).
+- `npx vitest run --project unit src/music tests/unit/music tests/data/compose-snapshot.test.ts` — exit 0 (expected 0).
+- `npm run check` — exit 0.
+- `npx playwright test --project=chromium` — exit 1.
+- Inspected App, visualCssVars, store, scene CSS and browser config; initial guessed requirements/EyeShine paths do not exist (located correct paths next).
+- Chromium verification failed before tests with listen EPERM on 127.0.0.1:4173; npm run check passed (236 tests, build, validation, lint without errors).
+- Read R5 animation streams, R9 engine events, R12, and R13; inspected controller cleanup and scene target structure.
+- In-memory transpilation/reproduction of startCueDriver with 10,000 bobs: 9,999 cancellation calls before stop, then stop cancels all 10,000 historical Animation objects; confirms unbounded retained animation handles.
+- Final output check: EVALUATION.md verdict revise and findings JSON written; SUMMARY.md written; no source/docs changes made.
