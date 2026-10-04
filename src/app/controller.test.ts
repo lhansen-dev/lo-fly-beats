@@ -31,6 +31,7 @@ class FakeEngine implements EngineLike {
   }
   setMix(mix: Parameters<EngineLike['setMix']>[0]): void { this.calls.push({ method: 'setMix', arg: mix }) }
   play(): void { this.calls.push({ method: 'play', arg: undefined }) }
+  debugInterrupt(): void { this.calls.push({ method: 'debugInterrupt', arg: undefined }) }
   pause(): void { this.calls.push({ method: 'pause', arg: undefined }) }
   beginExport(): void { this.calls.push({ method: 'beginExport', arg: undefined }); this.emit('status', 'exporting') }
   endExport(): void { this.calls.push({ method: 'endExport', arg: undefined }); this.emit('status', 'paused') }
@@ -132,6 +133,27 @@ describe('controller export', () => {
     await subject.controller.startListening()
     await subject.controller.exportPhrase()
     expect(subject.engine.calls.some(call => call.method === 'beginExport')).toBe(false)
+  })
+})
+
+describe('controller interruption', () => {
+  it('surfaces interruption notice and clears it when playing resumes', async () => {
+    const { controller, store, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    engine.emit('status', 'interrupted')
+    expect(store.getState().audioNotice).toBe('Audio was interrupted by the browser. Press Play to resume.')
+    expect(store.getState().engineStatus).toBe('interrupted')
+    engine.emit('status', 'playing')
+    expect(store.getState().audioNotice).toBeNull()
+  })
+
+  it('exposes the engine interruption debug hook', async () => {
+    const { controller, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    controller.simulateInterruption()
+    expect(engine.calls).toContainEqual({ method: 'debugInterrupt', arg: undefined })
   })
 })
 

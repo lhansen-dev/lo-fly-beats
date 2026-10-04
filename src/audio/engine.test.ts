@@ -5,7 +5,7 @@ const mock = vi.hoisted(() => {
   const calls: Array<{ method: string; args: unknown[] }> = []
   let resolveStart: (() => void) | undefined
   const transport = { bpm: { value: 0, setValueAtTime: vi.fn() }, swing: 0, state: 'stopped', scheduleRepeat: vi.fn(), start: vi.fn(() => { transport.state = 'started' }), pause: vi.fn(() => { transport.state = 'paused' }), stop: vi.fn() }
-  const context = { currentTime: 5, state: 'running', sampleRate: 44100, transport, draw: { schedule: vi.fn() } }
+  const context = { currentTime: 5, state: 'running' as string, on: vi.fn(() => mock.context), rawContext: { suspend: vi.fn(() => Promise.resolve()) }, sampleRate: 44100, transport, draw: { schedule: vi.fn() } }
   const rig = { trigger: vi.fn(), applySound: vi.fn(), setMix: vi.fn((...args: unknown[]) => calls.push({ method: 'setMix', args })), startAmbience: vi.fn((...args: unknown[]) => calls.push({ method: 'startAmbience', args })), stopAmbience: vi.fn((...args: unknown[]) => calls.push({ method: 'stopAmbience', args })), releaseAll: vi.fn((...args: unknown[]) => calls.push({ method: 'releaseAll', args })), rampMasterGain: vi.fn((...args: unknown[]) => calls.push({ method: 'rampMasterGain', args })), keysActiveVoices: 0, dispose: vi.fn() }
   return { calls, context, transport, rig, resolveStart, start: vi.fn(() => Promise.resolve()), createRig: vi.fn(() => rig) }
 })
@@ -31,6 +31,7 @@ beforeEach(() => {
   mock.transport.start.mockClear()
   mock.transport.pause.mockClear()
   mock.context.currentTime = 5
+  mock.context.state = 'running'
 })
 
 describe('export lock', () => {

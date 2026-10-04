@@ -34,7 +34,8 @@ export interface EngineLike {
   on<K extends keyof EngineEventMap>(name: K, handler: (payload: EngineEventMap[K]) => void): () => void
   start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void>
   setMix(mix: MixSettings): void
-  play(): void
+  play(): void | Promise<void>
+  debugInterrupt(): void
   pause(): void
   beginExport(): void
   endExport(): void
@@ -56,6 +57,9 @@ class PlaybackEngine implements EngineLike {
   private repeatEvents = 0
   private startPromise: Promise<void> | null = null
   private exportInProgress = false
+  private resumePromise: Promise<void> | null = null
+  private resumeGeneration = 0
+  private playbackGeneration = 0
   private handlers = new Map<keyof EngineEventMap, Set<(payload: never) => void>>()
 
   on<K extends keyof EngineEventMap>(name: K, handler: EventHandler<K>): () => void {
@@ -84,6 +88,7 @@ class PlaybackEngine implements EngineLike {
       await Tone.start()
       const context = Tone.getContext()
       this.context = context
+      context.on('statechange', () => this.handleContextStateChange())
       this.recipe = recipe
       const preset = getPreset(recipe.presetId)
       this.rig = createRig(context, preset.sound, this.mix)
@@ -106,6 +111,7 @@ class PlaybackEngine implements EngineLike {
     const rig = this.rig
     const recipe = this.recipe
     if (!context || !sequencer || !rig || !recipe) return
+    if (this.status === 'interrupted' || context.state !== 'running') return
     const plan = sequencer.advance()
     if (plan.applied.length > 0) {
       this.recipe = sequencer.active
@@ -121,7 +127,9 @@ class PlaybackEngine implements EngineLike {
     }
     for (const event of plan.events) rig.trigger(event, time + eventOffsetSeconds(event, plan.tempoBpm, preset.swing), eventDurationSeconds(event, plan.tempoBpm))
     if (document.hidden) return
+    const generation = this.playbackGeneration
     context.draw.schedule(() => {
+      if (generation !== this.playbackGeneration || this.status !== 'playing') return
       this.emit('step', { phraseIndex: plan.phraseIndex, stepInPhrase: plan.stepInPhrase, bar: plan.bar, beat: plan.beat })
       if (plan.stepInPhrase % 4 === 0) this.emit('position', { phraseIndex: plan.phraseIndex, bar: plan.bar, beat: plan.beat })
     }, time)
@@ -150,16 +158,52 @@ class PlaybackEngine implements EngineLike {
     this.setStatus('paused')
   }
 
-  play(): void {
-    if (this.status !== 'paused' || !this.context || !this.rig) return
-    const now = this.context.currentTime
-    this.rig.setMix(this.mix, now)
-    if (this.mix.ambienceOn) this.rig.startAmbience(now)
-    this.context.transport.start()
+  private handleContextStateChange(): void {
+    const context = this.context
+    const rig = this.rig
+    if (!context || !rig || this.status !== 'playing' || context.state === 'running') return
+    const now = context.currentTime
+    context.transport.pause(now)
+    rig.stopAmbience(now)
+    rig.releaseAll(now)
+    this.playbackGeneration += 1
+    this.setStatus('interrupted')
+  }
+
+  private resumeTransport(): void {
+    const now = this.context!.currentTime
+    this.rig!.setMix(this.mix, now)
+    if (this.mix.ambienceOn) this.rig!.startAmbience(now)
+    this.context!.transport.start()
     this.setStatus('playing')
   }
 
+  private resumeAfterStart(): Promise<void> {
+    if (this.resumePromise) return this.resumePromise
+    const generation = this.resumeGeneration
+    const fromStatus = this.status
+    const operation = (async () => {
+      try { await Tone.start() } catch { return }
+      if (generation !== this.resumeGeneration || this.status !== fromStatus || this.context?.state !== 'running') return
+      this.resumeTransport()
+    })()
+    this.resumePromise = operation
+    void operation.then(() => { if (this.resumePromise === operation) this.resumePromise = null })
+    return operation
+  }
+
+  play(): void | Promise<void> {
+    if (!this.context || !this.rig) return
+    if (this.status === 'interrupted' || (this.status === 'paused' && this.context.state !== 'running')) return this.resumeAfterStart()
+    if (this.status === 'paused') this.resumeTransport()
+  }
+
+  debugInterrupt(): void {
+    if (this.context) void (this.context.rawContext as unknown as { suspend(): Promise<void> }).suspend().catch(() => undefined)
+  }
+
   beginExport(): void {
+    this.resumeGeneration += 1
     if (this.status !== 'playing' && this.status !== 'paused' && this.status !== 'interrupted') return
     if (this.status === 'playing') this.pause()
     this.exportInProgress = true
