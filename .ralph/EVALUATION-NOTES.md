@@ -1,20 +1,19 @@
-- `cat .ralph/DONE; git status --short; git diff --stat main...HEAD -- . ':!.ralph'; date -u` — read claim, 12 changed files, preexisting deleted evaluation notes, clock 08:02 UTC.
-- `git diff main...HEAD -- . ':!.ralph'; cat package.json` — full implementation diff inspected.
-- `grep -Fq 'context.transport.pause(now)' src/audio/engine.ts` — exit 0.
-- `grep -Eq 'transport\.pause\)\.toHaveBeenCalledWith\(' src/audio/engine.interruption.test.ts` — exit 0.
-- `grep -Fq 'lookAhead' src/audio/engine.interruption.test.ts` — exit 0.
-- `grep -Fq 'pausedAt' src/audio/engine.interruption.test.ts` — exit 0.
-- `grep -Fq 'this.context.transport.pause()' src/audio/engine.ts` — exit 0.
-- `grep -Fq 'debugInterrupt' src/audio/engine.ts` — exit 0.
-- `test -f src/components/CircuitStatus.tsx` — exit 0.
-- `test -f tests/browser/failures.spec.ts` — exit 0.
-- `grep -rFq 'simulate-interruption' src` — exit 0.
-- `npx tsc -b` — exit 0.
-- `npx oxlint src tests` — exit 0.
-- `npm run check` — exit 1 (see runner output).
-- `npx playwright test --project=chromium` — exit 1 (see runner output).
-- Source/reference inspection (`sed` R9/R12/R14, `cat` engine/controller/persistence/main/loader/rig/configs, `nl` interruption tests, `git log`, `git status`) — card features present; tests count initial Tone.start and one retry leaves deferred Tone.start unresolved; nonexistent bootstrap.ts probe only.
-- `npm run check` details — 184 passed, 4 failed: interruption tests lines 45/46 expected 1 call but got 2, line 49 expected 2 but got 3, line 48 timed out in 5000ms; typecheck/lint passed before unit failure.
-- `npx playwright test --project=chromium` details — blocked before tests by preview listen EPERM 127.0.0.1:4173, environment limitation.
-- `npx vitest run --project unit src/audio/engine.interruption.test.ts` — exit 1, reproduced the same four failures in isolation.
-- Final `git status --short; head -1 .ralph/EVALUATION.md` — only permitted .ralph outputs modified; verdict is revise; summary written, no source/doc/history changes.
+Initial inspection: read .ralph/DONE; git status shows only pre-existing deleted .ralph/EVALUATION-NOTES.md; diff stat shows Phase 25 changes.
+Initial four check wrappers did not execute their commands: redirecting logs to /tmp was denied (Operation not permitted); rerun directly below.
+grep -Fq 'mock.start.mockImplementationOnce(() => new Promise' src/audio/engine.interruption.test.ts: exit 0
+grep -Fq 'context.transport.pause(now)' src/audio/engine.ts: exit 0
+grep -Fq 'expect(a).toBe(b)' src/audio/engine.interruption.test.ts: exit 0
+grep -Fq 'pausedAt).toBe(7.25)' src/audio/engine.interruption.test.ts: exit 0
+grep -Fq 'debugInterrupt' src/audio/engine.ts: exit 0
+test -f src/components/CircuitStatus.tsx && test -f tests/browser/failures.spec.ts: exit 0
+grep -rFq 'simulate-interruption' src: exit 0
+Actual run: npx vitest run --project unit src/audio/engine.interruption.test.ts: exit 0.
+Actual run: npx tsc -b: exit 0.
+Actual run: npx oxlint src tests: exit 0.
+Actual run: npx vitest run --project unit src/audio/engine.test.ts src/app/controller.test.ts: exit 0.
+git diff main...HEAD -- . :!.ralph: inspected full diff.
+npm run check: exit 0.
+npx playwright test --project=chromium: exit 1 before any tests ran; preview server listen EPERM: operation not permitted 127.0.0.1:4173.
+Tone PolySynth future-event probe: exit 0; releaseAll(5) leaves a deferred attack at 5.12 queued, and advancing context executes it.
+Exact probe quoted in EVALUATION.md: exit 0; confirmed pending attacks: 1 after releaseAll and attack at 5.12 after resume.
+Review: read R9/R12/R14, engine/controller/rig/persistence and full change; deferred PolySynth events are not cancelled by interruption; verdict revise written with regression request.
