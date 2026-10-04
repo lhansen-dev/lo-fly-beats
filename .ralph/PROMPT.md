@@ -1,4 +1,4 @@
-You are working on: Phase 22 — mixer levels, master volume, mutes, ambience, persistence, and focused tests.
+You are working on: Fix Phase 22 mixer review findings: strict audio-test typing, one master-volume control, and the documented sample-jump limit.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -35,3 +35,5 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
+
+Phase 22 hint: this is a feedback-only repair, not a reimplementation. Keep existing mixer runtime assertions and TypeScript strictness intact. The sandbox has no browser; actual audio/Chromium verification needs an operator-supplied runner permitting local socket binds. A scoped compile or SSR pass is not a runtime pass. Leave the Phase 22 final verification checkbox unchecked, and describe any remaining runtime verification honestly in your completion summary. Do not provision a browser, alter test configuration to bypass infrastructure, or widen the assigned task into engine/controller/export/scene work.
