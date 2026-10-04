@@ -164,15 +164,15 @@ export class SessionController {
 
   setTempo(tempoBpm: number): void {
     const playing = this.store.getState().engineStatus === 'playing'
+    this.store.dispatch({ type: 'tempoRequested', tempoBpm, immediate: !playing })
     if (playing) this.engine!.request({ kind: 'tempo', tempoBpm })
     else this.engine?.applyTempoNow(tempoBpm)
-    this.store.dispatch({ type: 'tempoRequested', tempoBpm, immediate: !playing })
     this.save()
   }
 
   setVariation(variation: number): void {
-    if (this.engine) this.engine.request({ kind: 'variation', variation })
     this.store.dispatch({ type: 'variationRequested', variation, immediate: this.engine === null })
+    if (this.engine) this.engine.request({ kind: 'variation', variation })
     this.save()
   }
 
@@ -180,8 +180,8 @@ export class SessionController {
     const sessionSeed = this.randomSeed()
     const playing = this.store.getState().engineStatus === 'playing'
     if (playing) {
-      this.engine!.request({ kind: 'newBeat', sessionSeed })
       this.store.dispatch({ type: 'newBeatRequested', sessionSeed, immediate: false })
+      this.engine!.request({ kind: 'newBeat', sessionSeed })
     } else {
       this.store.dispatch({ type: 'newBeatRequested', sessionSeed, immediate: true })
       if (this.engine) this.engine.reset(this.store.getState().active)
@@ -193,8 +193,8 @@ export class SessionController {
     const tempoBpm = getPreset(presetId).tempoBpm
     const playing = this.store.getState().engineStatus === 'playing'
     if (playing) {
-      this.engine!.request({ kind: 'preset', presetId, tempoBpm })
       this.store.dispatch({ type: 'presetRequested', presetId, tempoBpm, immediate: false })
+      this.engine!.request({ kind: 'preset', presetId, tempoBpm })
     } else {
       this.store.dispatch({ type: 'presetRequested', presetId, tempoBpm, immediate: true })
       if (this.engine) this.engine.reset(this.store.getState().active)

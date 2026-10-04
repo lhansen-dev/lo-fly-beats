@@ -22,6 +22,11 @@ test('WCAG audit on first load, playing, expanded explanation and credits, and m
   await audit()
   await page.setViewportSize({ width: 390, height: 844 })
   await audit()
+  await page.getByTestId('preset-fruit-bowl-finals').check()
+  await expect(page.getByTestId('tempo')).toHaveAttribute('aria-valuetext', '86 BPM')
+  await expect(page.locator('#tempo-pending')).toHaveText('86 BPM at the next phrase')
+  await expect(page.getByTestId('tempo')).toHaveAttribute('aria-describedby', 'tempo-pending')
+  await expect(page.getByTestId('variation')).toHaveAttribute('aria-valuetext', 'Variation 0 percent')
 })
 
 test('keyboard reaches every control with visible focus and starts audio', async ({ page }) => {

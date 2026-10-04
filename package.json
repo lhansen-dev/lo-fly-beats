@@ -19,7 +19,8 @@
     "data:extract": "uv run --project scripts/data python scripts/data/extract_circuit.py",
     "data:verify": "uv run --project scripts/data python scripts/data/verify_circuit.py",
     "data:validate": "vitest run --project unit tests/data",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:all": "npm run check && npm run test:audio && npm run test:browser"
   },
   "dependencies": {
     "react": "^19.2.8",

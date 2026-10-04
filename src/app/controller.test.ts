@@ -51,6 +51,32 @@ function setup(loadGraph = async () => graph) {
   return { store, engine, saves, controller }
 }
 
+describe('synchronous startup changes', () => {
+  it.each(['tempo', 'variation', 'newBeat', 'preset'] as const)('clears pending %s when the engine applies it synchronously', async kind => {
+    const { controller, store, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    engine.emit('status', 'playing')
+    engine.request = change => {
+      const active = store.getState().active
+      const recipe = change.kind === 'tempo' ? { ...active, tempoBpm: change.tempoBpm }
+        : change.kind === 'variation' ? { ...active, variation: change.variation }
+        : change.kind === 'newBeat' ? { ...active, sessionSeed: change.sessionSeed }
+        : { ...active, presetId: change.presetId, tempoBpm: change.tempoBpm }
+      engine.emit('applied', { kinds: [change.kind], recipe })
+    }
+    if (kind === 'tempo') controller.setTempo(90)
+    else if (kind === 'variation') controller.setVariation(1)
+    else if (kind === 'newBeat') controller.newBeat()
+    else controller.selectPreset('fruit-bowl-finals')
+    expect(store.getState().pending).toEqual({})
+    expect(store.getState().active).toMatchObject(kind === 'tempo' ? { tempoBpm: 90 }
+      : kind === 'variation' ? { variation: 1 }
+      : kind === 'preset' ? { presetId: 'fruit-bowl-finals', tempoBpm: 86 }
+      : { sessionSeed: expect.any(Number) })
+  })
+})
+
 describe('controller export', () => {
   const wav: WavData = { sampleRate: 44100, channels: [new Float32Array(4), new Float32Array(4)] }
 

@@ -117,8 +117,10 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 31 | The controller exposes `onStep`/`onPhraseStarted` and adds `setAnimationEnabled`. `src/scene/sceneCueDriver.ts` `createCueSession` keeps one `CueState` (animation RNG plus rub cooldown) per session seed across hide/show and animation off/on; a new seed starts fresh. `phraseCue` draws only when a rub is eligible and preserves the cooldown gap across phrase-number restarts. Only rain streaks animate within the rain layer. The cue driver retains only the current bob, blink, and rub animation handles, cancelling replacements and all current handles on stop; a 12,000-cue regression verifies bounded retention and timer cleanup. Nine `@property` registrations drive the 1.5 s lighting transition. Extra helpers: `animationMode.ts`, `useAnimationEnabled.ts`, `useDocumentHidden.ts`, and `AnimationToggle.tsx`. | Evaluator verification: all bounded-handle and regression acceptance commands pass, including `npm run check` (237 unit tests), both TypeScript checks, and oxlint. `npx playwright test --project=chromium` fails before tests in this sandbox (preview server `listen EPERM` on `127.0.0.1:4173`), so browser behavior remains unverified; the verification box stays unchecked for the operator. |
 | 2026-10-04 | 32 | `SessionController.getGraph()` was added so the panel can name edge source neurons; `HUMANIZE_MAX_OFFSETS`, `HUMANIZE_VELOCITY_SPREAD` (`src/music/patterns.ts`) and `CHORD_SLOT_BARS` (`src/music/harmony.ts`) were exported so `describeMappingRules` reads the code's constants, with no output change; untyped neurons are labelled "Untyped neuron (id)"; Recent choices samples via `subscribeBarSamples` (`src/components/explanation/recentChoices.ts`) at most once per bar while open and skips samples whose score phrase differs from the position; it emits one empty sample when the active score is cleared, including on subscription after a reset. | Evaluator verification: all Phase 32 revision acceptance commands pass, including reset regressions, description/panel tests, test TypeScript and browser-spec lint checks, and `npm run check` (248 unit tests). `npx playwright test --project=chromium` fails before tests in this sandbox (preview server `listen EPERM` on 127.0.0.1:4173), so browser behavior remains unverified and the final verification box stays unchecked for the operator. |
 | 2026-10-04 | 33 | R14 copy lives in `src/app/copy.ts`; the footer holds the about line and a Credits link; `Credits.tsx` is an always-visible `<section id="credits">` after the explanation panel with the manifest attribution in `data-testid="credits-attribution"`; `selectJoke` (`src/app/jokes.ts`) allows a joke only when `phraseIndex % 3 === 2`, uses the jokes stream for a 50% chance and the joke choice, and reads the seed and phrase index from the active `PhraseScore`; no extra jokes were added. | Evaluator verification: all Phase 33 acceptance commands pass, including `npm run check` (260 unit tests, data validation, typecheck, lint, and build), copy/credits/jokes/component tests, controls/explanation regressions, and Chromium credits test listing (1 test). `npx playwright test --project=chromium` fails before tests with preview server `listen EPERM: operation not permitted 127.0.0.1:4173`; the final verification box stays unchecked for the operator. |
-
 | 2026-10-04 | 34 | Added scoped Space/K/N shortcuts, one polite playback/export status, readable range values and pending descriptions, and decorative SVG hiding. Range outputs use `role="none"` so their implicit status roles do not announce value changes. Installed exact `@axe-core/playwright` 4.13.0. | `npm run check` passes (260 tests); all three Chromium accessibility tests pass, including four axe states and keyboard focus. Full Chromium execution revealed a pre-existing synchronous `applied` event race in controller requests during startup; Phase 35 will fix it with regression coverage before the full verification box is checked. Local socket binds work in this workspace, removing the harness limitation. |
+| 2026-10-04 | 35 | Added the ten-area acceptance map, lifecycle checks, configurable soak plus five exports, and `test:all`. Fixed startup requests by dispatching pending state before an engine request can emit `applied` synchronously; added four regressions. Pending preset tempo is also described as applying at the next phrase. | `npm run test:all` passes: 264 unit tests, 13 Chromium audio tests, and 128 browser tests (19 deliberate Chromium-only/opt-in skips). Chromium 153.0.8010.12, Firefox 155.0, and WebKit 26.6 all pass; no remaining browser failure text. Earlier socket-blocked agent verification boxes through Phase 34 are now backed by these checks. |
+| 2026-10-04 | 35 | Corrected the offline onset expectations to include the shared limiter’s fixed 6 ms look-ahead while preserving the 5 ms scheduling tolerance and every existing assertion. | Previously unrun audio verification failed with onset error `0.0063718820861678` seconds. Tone 15.1.22 uses a DynamicsCompressorNode for its limiter; the [Web Audio processing algorithm](https://www.w3.org/TR/webaudio-1.0/#DynamicsCompressorNode-processing) specifies the 0.006-second pre-delay. Both kick and swung-hat checks now pass, without changing audio or mapping versions. |
+| 2026-10-04 | 35 | Completed the required 15-minute Chromium soak followed by five exports on macOS 26.5.1, arm64 MacBookPro18,2, 64 GiB RAM. Prepared independent Phase 36 tools and Phase 37 documentation while this timed check ran; verification and commits remain ordered. | `SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=chromium --output=/tmp/lofly-soak-results` passes in 15.4 minutes: one repeat event, one score, at most eight keys voices, at most one retained URL, and no page errors. Logged JS heap before exports: 33,100,000 bytes; after: 33,100,000 bytes (informational browser measurement). This also satisfies Phase 16’s five-minute minimum. |
 
 ## Reference
 
@@ -196,6 +198,7 @@ Create each script in the phase shown. Use these names exactly.
 | `data:validate` | `vitest run --project unit tests/data` | 5 |
 | `test:browser` | `playwright test` | 7 |
 | `test:audio` | `vitest run --project audio` | 15 |
+| `test:all` | `npm run check && npm run test:audio && npm run test:browser` | 35 |
 | `budget` | `node scripts/measure-budgets.mjs` | 36 |
 
 Install the test browsers once per machine with `npx playwright install chromium firefox webkit`. Playwright and Vitest browser mode share them.
@@ -1571,7 +1574,7 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 - [x] Create `src/components/DiagnosticsPanel.tsx` and render it only with `?debug=1` (R12).
 - [x] Delete `src/audio/spike.ts`, the spike UI, and `tests/browser/spike.spec.ts`.
 - [x] Write `tests/browser/engine.spec.ts` (Chromium). Load `/?debug=1` and click Start / Restart; expect `engine-status` to read `playing` and `position` to change within 3 s. Pause; expect `position` to stay unchanged for 1.5 s. Play; expect it to advance again. Click `play-toggle` 20 times quickly, ending in the playing state, and expect diagnostics to show `repeatEvents` equal to 1. Pause, wait 2.5 s, and expect `keysActiveVoices` to equal 0.
-- [ ] Write `tests/browser/soak.spec.ts`, skipped unless `SOAK=1` is set. It plays for 5 minutes in Chromium, reads diagnostics every 30 s, and asserts that `repeatEvents` is 1, `scoresHeld` is at most 2, `keysActiveVoices` is at most 8, and the status stays `playing`. Run it once and record the result in the Decision log.
+- [x] Write `tests/browser/soak.spec.ts`, skipped unless `SOAK=1` is set. It plays for 5 minutes in Chromium, reads diagnostics every 30 s, and asserts that `repeatEvents` is 1, `scoresHeld` is at most 2, `keysActiveVoices` is at most 8, and the status stays `playing`. Run it once and record the result in the Decision log.
 
 **Verify**
 
@@ -1580,7 +1583,7 @@ Build the graph-driven layers. Phase 13 adds drums, embellishment notes, and hum
 3. `npx playwright test --project=chromium` passes.
 4. `SOAK=1 npx playwright test tests/browser/soak.spec.ts --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 17: Human gate — listening review
 
@@ -1619,7 +1622,7 @@ Agents: do not check these boxes. Stop and report that Phase 17 is waiting for t
 2. `npm run test:audio` passes.
 3. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Milestone 3: Complete the player and export
 
@@ -1639,7 +1642,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 1. `npm run check` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 20: Apply pending changes at musical boundaries
 
@@ -1666,7 +1669,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 21: Build the player controls
 
@@ -1688,7 +1691,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 22: Build the mixer
 
@@ -1706,7 +1709,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 2. `npm run test:audio` passes.
 3. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 23: Render a phrase offline
 
@@ -1715,8 +1718,8 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 - [x] Create `src/audio/export.ts` with `createExportSnapshot(score, recipe, preset, mix)` and `renderPhrase(snapshot)` as specified in R11.
 - [x] Write `tests/audio/export.test.ts` (allow up to 60 s per test):
   1. At 60, 72, and 100 BPM, the rendered frame count is within 1 of `Math.round(exportSeconds(bpm) * 44100)`.
-  2. A synthetic score with only kicks at steps 0, 16, 32, and 48 (velocity 1, no micro-offset), rendered at 72 BPM with ambience off, has onsets within 5 ms of 0, 3.333, 6.667, and 10.0 s. Detect an onset as the first sample above 0.05 after at least 50 ms below 0.01.
-  3. A score with a single hat at step 1 and swing 0.56, at 72 BPM, has its onset within 5 ms of 0.2333 s.
+  2. A synthetic score with only kicks at steps 0, 16, 32, and 48 (velocity 1, no micro-offset), rendered at 72 BPM with ambience off, has onsets within 5 ms of score times 0, 3.333, 6.667, and 10.0 s plus the shared limiter’s fixed 6 ms look-ahead (see the Phase 35 decision). Detect an onset as the first sample above 0.05 after at least 50 ms below 0.01.
+  3. A score with a single hat at step 1 and swing 0.56, at 72 BPM, has its onset within 5 ms of score time 0.2333 s plus the shared limiter’s fixed 6 ms look-ahead.
   4. The final 10 ms of every render have RMS below 0.001.
   5. Rendering the same snapshot twice gives a maximum absolute sample difference below 1e-4.
   6. `Tone.getContext()` returns the same object before and after `renderPhrase`.
@@ -1724,9 +1727,9 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 **Verify**
 
 1. [x] `npm run check` passes (167 unit tests; evaluator re-run on 2026-10-04).
-2. [ ] `npm run test:audio` passes. Evaluator re-run on 2026-10-04 stops before assertions with `listen EPERM: operation not permitted ::1:63315`; run on a Chromium/loopback-capable operator or CI runner.
+2. [x] `npm run test:audio` passes (13 tests on Chromium in this loopback-capable workspace, 2026-10-04).
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 24: Build the export flow
 
@@ -1747,7 +1750,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 2. `npm run test:audio` passes.
 3. `npm run test:browser` passes in Chromium. Firefox and WebKit results are recorded in the Decision log.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 25: Handle loading, errors, and interruptions
 
@@ -1768,7 +1771,7 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Milestone 4: Build the scene and explanation
 
@@ -1792,7 +1795,7 @@ Exit criteria from the plan: the fly and banana scene reads clearly on desktop a
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 27: Draw the room, window, desk, and banana
 
@@ -1810,7 +1813,7 @@ Exit criteria from the plan: the fly and banana scene reads clearly on desktop a
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 28: Draw the fly
 
@@ -1827,7 +1830,7 @@ Exit criteria from the plan: the fly and banana scene reads clearly on desktop a
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 29: Human gate — scene art review
 
@@ -1858,7 +1861,7 @@ Agents: do not check these boxes. Stop and report that Phase 29 is waiting for t
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 31: Animate the scene from musical cues
 
@@ -1882,7 +1885,7 @@ Agents: do not check these boxes. Stop and report that Phase 29 is waiting for t
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 32: Build the "How the beat is made" panel
 
@@ -1905,7 +1908,7 @@ Agents: do not check these boxes. Stop and report that Phase 29 is waiting for t
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 33: Add credits, copy, and the asset manifest
 
@@ -1923,7 +1926,7 @@ Agents: do not check these boxes. Stop and report that Phase 29 is waiting for t
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 34: Complete keyboard and accessibility support
 
@@ -1944,7 +1947,7 @@ Agents: do not check these boxes. Stop and report that Phase 29 is waiting for t
 1. `npm run check` passes.
 2. `npx playwright test --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Milestone 5: Validate and prepare release
 
@@ -1954,21 +1957,21 @@ Exit criteria from the plan: the acceptance checks pass on the documented browse
 
 **Agent** · **Read:** [02-PLAN.md section 7](./02-PLAN.md#7-validation-and-acceptance), R12
 
-- [ ] Create `tests/README.md` with a table that maps each row of the plan's validation table (data integrity, graph contribution, repeatability, musical constraints, audio lifecycle, export, failure recovery, accessibility, listening quality, and sustained use) to the automated tests covering it and to the Phase 38 manual checks.
-- [ ] Add tests for any gaps the mapping reveals. At minimum, write `tests/browser/lifecycle.spec.ts` (Chromium):
+- [x] Create `tests/README.md` with a table that maps each row of the plan's validation table (data integrity, graph contribution, repeatability, musical constraints, audio lifecycle, export, failure recovery, accessibility, listening quality, and sustained use) to the automated tests covering it and to the Phase 38 manual checks.
+- [x] Add tests for any gaps the mapping reveals. At minimum, write `tests/browser/lifecycle.spec.ts` (Chromium):
   - Without a click, no audio starts: diagnostics stay `idle` for 3 s after load.
   - Ten preset selections within 2 s while playing leave `repeatEvents` at 1 and the status `playing`.
   - After an export, a preset change, and Play, there is still one engine, and `keysActiveVoices` is at most 8 after 3 s.
-- [ ] Extend `tests/browser/soak.spec.ts` to read `SOAK_MINUTES` (default 5). After the soak, run five exports in a row and assert `objectUrlsHeld` is at most 1. Log `performance.memory.usedJSHeapSize` before and after the exports without asserting on it.
-- [ ] Add the script `test:all` = `npm run check && npm run test:audio && npm run test:browser`, and add it to R2 in this document.
-- [ ] Run `SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=chromium` once, and record the result and the logged memory values in the Decision log.
+- [x] Extend `tests/browser/soak.spec.ts` to read `SOAK_MINUTES` (default 5). After the soak, run five exports in a row and assert `objectUrlsHeld` is at most 1. Log `performance.memory.usedJSHeapSize` before and after the exports without asserting on it.
+- [x] Add the script `test:all` = `npm run check && npm run test:audio && npm run test:browser`, and add it to R2 in this document.
+- [x] Run `SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=chromium` once, and record the result and the logged memory values in the Decision log.
 
 **Verify**
 
 1. `npm run test:all` passes in Chromium. Firefox and WebKit failures are recorded in the Decision log with their error text.
 2. The 15-minute soak run passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 36: Check performance budgets and the production preview
 

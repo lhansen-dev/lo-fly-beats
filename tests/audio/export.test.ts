@@ -46,18 +46,22 @@ describe('offline phrase rendering', () => {
     expect(Math.abs(data.channels[0].length - Math.round(exportSeconds(bpm) * 44100))).toBeLessThanOrEqual(1)
   }, 60000)
 
-  it('places kick and swung hat onsets within 5 ms', async () => {
+  it('places kick and swung hat onsets within 5 ms of the score plus limiter latency', async () => {
+    // The shared live/export rig ends in Tone.Limiter's DynamicsCompressorNode.
+    // Its fixed 6 ms look-ahead is specified by the Web Audio processing algorithm:
+    // https://www.w3.org/TR/webaudio-1.0/#DynamicsCompressorNode-processing
+    const limiterLatency = 0.006
     const kicksData = await checkedRender(makeSnapshot(kicks, 72, undefined, 0.5))
     const kickOnsets = detectOnsets(kicksData.channels[0], 44100)
     expect(kickOnsets).toHaveLength(4)
     for (let i = 0; i < kickOnsets.length; i++) {
-      expect(Math.abs(kickOnsets[i] - [0, 10 / 3, 20 / 3, 10][i])).toBeLessThan(0.005)
+      expect(Math.abs(kickOnsets[i] - ([0, 10 / 3, 20 / 3, 10][i] + limiterLatency))).toBeLessThan(0.005)
     }
     const hat = { layer: 'drums' as const, step: 1, microOffset: 0, durationSteps: 1, midi: null, drum: 'hat' as const, velocity: 1, traceBeat: null }
     const hatData = await checkedRender(makeSnapshot([hat], 72, undefined, 0.56))
     const hatOnsets = detectOnsets(hatData.channels[0], 44100)
     expect(hatOnsets).toHaveLength(1)
-    expect(Math.abs(hatOnsets[0] - 0.233333)).toBeLessThan(0.005)
+    expect(Math.abs(hatOnsets[0] - (0.233333 + limiterLatency))).toBeLessThan(0.005)
   }, 60000)
 
   it('renders audible ambience for an empty score', async () => {
