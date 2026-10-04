@@ -1,4 +1,4 @@
-You are working on: Phase 27 of docs/03-IMPLEMENT.md — drawing the static inline-SVG room scene (wall, window, rain, lamp/lighting, desk with homework/pencil/mug, banana, placeholder fly) for the Lo-fly beats React app.
+You are working on: unblocking Phase 27 (static room scene) by removing the unused `createElement` import that breaks `npx tsc -b`.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,6 +23,10 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
+Hints: the project uses React's automatic JSX runtime, so `.tsx` components
+never need to import `createElement` or `React`. Do not run Playwright — the
+sandbox cannot bind sockets or launch a browser; that is the operator's job.
+
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
 commits for you, and the worktree must stay on the branch it was given.
@@ -35,9 +39,3 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
-
-Project hints:
-- Unit tests must be `*.test.ts` (not `.tsx`) — the vitest `unit` project only includes `src/**/*.test.ts`. Render components with `createElement` from 'react' and `renderToStaticMarkup` from 'react-dom/server'; `src/scene/scene-frame.test.ts` is the style reference. Run one file with `npx vitest run --project unit <path>`.
-- TypeScript is strict with `noUnusedLocals`, `noUnusedParameters`, and `erasableSyntaxOnly` (no `enum`/`namespace`). In JSX use `className`, `clipPath`, `strokeWidth`, `stopColor`, etc.; React renders them as `class`, `clip-path`, `stroke-width`, `stop-color`.
-- Scene colors: always `style={{ fill: 'var(--scene-…)' }}` (or `stroke`, `stopColor`, `opacity`). Never write hex or `rgb(`/`rgba(` literals in scene `.tsx` files. SVG ids must start with `scene-`.
-- `Math.random` is banned in `src/`. Playwright and vitest browser mode cannot run in this sandbox (local socket binds are denied) — never try to run `npx playwright test`.
