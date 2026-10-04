@@ -1,0 +1,4 @@
+Phase 25 audio interruption test fix
+- Clear startup `mock.start` call before resume assertions.
+- Use one-shot deferred implementation so retry uses default resolution.
+- Targeted unit test passed: 12 tests.
