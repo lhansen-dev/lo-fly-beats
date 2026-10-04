@@ -10,17 +10,23 @@ export default function Fly() {
       </g>
       <g className="fly-body">
         <path d="M 1000 510 C 990 475 1020 455 1055 460 C 1090 465 1110 492 1105 525 Z" style={{ fill: 'var(--scene-fly-hoodie-shade)' }} />
-        <path d="M 975 690 C 960 600 975 500 1040 480 C 1110 470 1140 560 1135 690 Z" style={{ fill: 'var(--scene-fly-hoodie)' }} />
+        <path data-part="torso" d="M 975 690 C 960 600 975 500 1040 480 C 1110 470 1140 560 1135 690 Z" style={{ fill: 'var(--scene-fly-hoodie)' }} />
         <line x1="1028" y1="500" x2="1022" y2="565" style={{ stroke: 'var(--scene-fly-drawstring)' }} />
         <line x1="1062" y1="500" x2="1068" y2="565" style={{ stroke: 'var(--scene-fly-drawstring)' }} />
         <circle cx="1022" cy="565" r="3" style={{ fill: 'var(--scene-fly-drawstring)' }} />
         <circle cx="1068" cy="565" r="3" style={{ fill: 'var(--scene-fly-drawstring)' }} />
-        <path data-sleeve="front-left" d="M 1000 560 Q 960 640 975 703" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie)' }} />
-        <path data-sleeve="front-right" d="M 1080 560 Q 1050 650 998 697" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie)' }} />
-        <path data-sleeve="middle-left" d="M 985 600 Q 900 640 880 690" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie)' }} />
-        <path data-sleeve="middle-right" d="M 1120 610 Q 1170 660 1160 700" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie)' }} />
-        <path data-sleeve="back-left" d="M 1010 610 Q 1050 640 1090 625" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie)' }} />
-        <path data-sleeve="back-right" d="M 1110 600 Q 1070 655 1030 650" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie)' }} />
+        <path data-sleeve-outline="front-left" d="M 1000 560 Q 960 640 975 703" fill="none" strokeWidth="30" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
+        <path data-sleeve="front-left" d="M 1000 560 Q 960 640 975 703" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} />
+        <path data-sleeve-outline="front-right" d="M 1080 560 Q 1050 650 998 697" fill="none" strokeWidth="30" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
+        <path data-sleeve="front-right" d="M 1080 560 Q 1050 650 998 697" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} />
+        <path data-sleeve-outline="middle-left" d="M 985 600 Q 900 640 880 690" fill="none" strokeWidth="30" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
+        <path data-sleeve="middle-left" d="M 985 600 Q 900 640 880 690" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} />
+        <path data-sleeve-outline="middle-right" d="M 1120 610 Q 1170 660 1160 700" fill="none" strokeWidth="30" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
+        <path data-sleeve="middle-right" d="M 1120 610 Q 1170 660 1160 700" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} />
+        <path data-sleeve-outline="back-left" d="M 1010 610 Q 1050 640 1090 625" fill="none" strokeWidth="30" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
+        <path data-sleeve="back-left" d="M 1010 610 Q 1050 640 1090 625" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} />
+        <path data-sleeve-outline="back-right" d="M 1110 600 Q 1070 655 1030 650" fill="none" strokeWidth="30" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-dark)' }} />
+        <path data-sleeve="back-right" d="M 1110 600 Q 1070 655 1030 650" fill="none" strokeWidth="24" strokeLinecap="round" style={{ stroke: 'var(--scene-fly-hoodie-shade)' }} />
         <circle cx="880" cy="690" r="9" style={{ fill: 'var(--scene-fly-dark)' }} />
         <circle cx="1160" cy="700" r="9" style={{ fill: 'var(--scene-fly-dark)' }} />
         <circle cx="1090" cy="625" r="9" style={{ fill: 'var(--scene-fly-dark)' }} />

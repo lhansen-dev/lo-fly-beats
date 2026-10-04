@@ -1,0 +1,4 @@
+# Fly hoodie sleeves are visually distinct
+- Added dark outlines and hoodie-shade strokes to all six sleeves in `src/scene/fly/Fly.tsx`.
+- Marked the torso and added regression assertions in `src/scene/fly/fly.test.ts`.
+- Verified with `npx tsc -b && npx oxlint src/scene/fly`.
