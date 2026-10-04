@@ -1,4 +1,4 @@
-// Animation timing (delays/durations) is added in Phase 31 from the animation RNG stream.
+// Animation timing comes from rainTimings in src/scene/cues.ts.
 export interface WindowPane {
   x: number;
   y: number;

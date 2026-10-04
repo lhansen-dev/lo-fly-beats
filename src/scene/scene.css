@@ -1,3 +1,19 @@
+@keyframes rain-fall {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 1;
+  }
+}
+
+.rain-streak {
+  animation: rain-fall linear infinite;
+  transform-box: fill-box;
+}
+
 .fly-head {
   transform-box: view-box;
   transform-origin: 1045px 462px;
