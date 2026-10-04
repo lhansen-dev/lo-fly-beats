@@ -121,6 +121,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 35 | Added the ten-area acceptance map, lifecycle checks, configurable soak plus five exports, and `test:all`. Fixed startup requests by dispatching pending state before an engine request can emit `applied` synchronously; added four regressions. Pending preset tempo is also described as applying at the next phrase. | `npm run test:all` passes: 264 unit tests, 13 Chromium audio tests, and 128 browser tests (19 deliberate Chromium-only/opt-in skips). Chromium 153.0.8010.12, Firefox 155.0, and WebKit 26.6 all pass; no remaining browser failure text. Earlier socket-blocked agent verification boxes through Phase 34 are now backed by these checks. |
 | 2026-10-04 | 35 | Corrected the offline onset expectations to include the shared limiter’s fixed 6 ms look-ahead while preserving the 5 ms scheduling tolerance and every existing assertion. | Previously unrun audio verification failed with onset error `0.0063718820861678` seconds. Tone 15.1.22 uses a DynamicsCompressorNode for its limiter; the [Web Audio processing algorithm](https://www.w3.org/TR/webaudio-1.0/#DynamicsCompressorNode-processing) specifies the 0.006-second pre-delay. Both kick and swung-hat checks now pass, without changing audio or mapping versions. |
 | 2026-10-04 | 35 | Completed the required 15-minute Chromium soak followed by five exports on macOS 26.5.1, arm64 MacBookPro18,2, 64 GiB RAM. Prepared independent Phase 36 tools and Phase 37 documentation while this timed check ran; verification and commits remain ordered. | `SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=chromium --output=/tmp/lofly-soak-results` passes in 15.4 minutes: one repeat event, one score, at most eight keys voices, at most one retained URL, and no page errors. Logged JS heap before exports: 33,100,000 bytes; after: 33,100,000 bytes (informational browser measurement). This also satisfies Phase 16’s five-minute minimum. |
+| 2026-10-04 | 36 | Added level-9 gzip budget enforcement, browser-clock startup timing, and a managed `/nested/lofly/` preview fixture. | Build/budget pass: circuit 6,377 bytes (6.23 KiB); total 205,568 bytes (200.75 KiB), below 200 KiB / 4 MiB limits. An injected incompressible probe correctly exits 1 for overflow and was removed. Chromium startup: playing 148.9 ms, first position 1,074.2 ms on MacBookPro18,2/macOS 26.5.1; startup, subpath, and accessibility specs pass (5 tests). Reference-phone and audible-start confirmation remain Phase 38. |
 
 ## Reference
 
@@ -1977,17 +1978,17 @@ Exit criteria from the plan: the acceptance checks pass on the documented browse
 
 **Agent** · **Read:** R2, [02-PLAN.md section 7](./02-PLAN.md#7-validation-and-acceptance) (performance budgets)
 
-- [ ] Write `scripts/measure-budgets.mjs`. After a build, it gzips (level 9, with `node:zlib`) `dist/data/circuits/mbon-v1/circuit.json` and every file in `dist/` except source maps. It prints a table and exits with status 1 if the circuit exceeds 200 KiB or the total exceeds 4 MiB. Add the `budget` script.
-- [ ] Write `tests/browser/startup.spec.ts` (Chromium). After the circuit is ready, measure the time from clicking Start listening to status `playing` and to the first `position` change. Assert that both are under 2,000 ms, and log the values.
-- [ ] Write `scripts/serve-subpath.mjs`, which serves `dist/` under `/nested/lofly/` on port 4174 with `node:http` and correct content types for HTML, JavaScript, CSS, JSON, and SVG. Write `tests/browser/subpath.spec.ts`, which starts that server in `beforeAll` (the Playwright web server has already built `dist/`), opens `http://localhost:4174/nested/lofly/`, waits for the circuit to be ready, starts listening, and expects `playing`. Stop the server in `afterAll`.
-- [ ] Record the gzipped circuit size, total gzipped size, and startup timings in the Decision log.
+- [x] Write `scripts/measure-budgets.mjs`. After a build, it gzips (level 9, with `node:zlib`) `dist/data/circuits/mbon-v1/circuit.json` and every file in `dist/` except source maps. It prints a table and exits with status 1 if the circuit exceeds 200 KiB or the total exceeds 4 MiB. Add the `budget` script.
+- [x] Write `tests/browser/startup.spec.ts` (Chromium). After the circuit is ready, measure the time from clicking Start listening to status `playing` and to the first `position` change. Assert that both are under 2,000 ms, and log the values.
+- [x] Write `scripts/serve-subpath.mjs`, which serves `dist/` under `/nested/lofly/` on port 4174 with `node:http` and correct content types for HTML, JavaScript, CSS, JSON, and SVG. Write `tests/browser/subpath.spec.ts`, which starts that server in `beforeAll` (the Playwright web server has already built `dist/`), opens `http://localhost:4174/nested/lofly/`, waits for the circuit to be ready, starts listening, and expects `playing`. Stop the server in `afterAll`.
+- [x] Record the gzipped circuit size, total gzipped size, and startup timings in the Decision log.
 
 **Verify**
 
 1. `npm run build && npm run budget` passes.
 2. `npx playwright test tests/browser/startup.spec.ts tests/browser/subpath.spec.ts --project=chromium` passes.
 
-- [ ] All verification steps pass.
+- [x] All verification steps pass.
 
 ## Phase 37: Write the README and data regeneration guide
 
