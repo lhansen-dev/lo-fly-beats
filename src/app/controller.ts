@@ -1,4 +1,9 @@
 import type { EngineDiagnostics, EngineLike } from '../audio/engine'
+import { createExportSnapshot, renderPhrase } from '../audio/export'
+import type { ExportSnapshot } from '../audio/export'
+import { encodeWav16 } from '../audio/wav'
+import type { WavData } from '../audio/wav'
+import { seedHex } from '../music/streams'
 import { CircuitError } from '../connectome/types'
 import type { CircuitGraph } from '../connectome/types'
 import { getPreset } from '../presets/presets'
@@ -19,12 +24,17 @@ export type MixPatch = {
 }
 import type { Store } from './store'
 
+export type ControllerDiagnostics = EngineDiagnostics & { objectUrlsHeld: number }
+
 export interface SessionControllerOptions {
   store: Store<AppState, AppAction>
   createEngine: () => Promise<EngineLike>
   loadGraph: () => Promise<CircuitGraph>
   saveSettings: (settings: RestoredSettings) => void
   randomSeed?: () => number
+  renderPhrase?: (snapshot: ExportSnapshot) => Promise<WavData>
+  createObjectUrl?: (blob: Blob) => string
+  revokeObjectUrl?: (url: string) => void
 }
 
 export class SessionController {
@@ -33,6 +43,11 @@ export class SessionController {
   private readonly loadGraph: () => Promise<CircuitGraph>
   private readonly saveSettings: (settings: RestoredSettings) => void
   private readonly randomSeed: () => number
+  private readonly renderPhrase: (snapshot: ExportSnapshot) => Promise<WavData>
+  private readonly createObjectUrl: (blob: Blob) => string
+  private readonly revokeObjectUrl: (url: string) => void
+  private readonly heldUrls = new Set<string>()
+  private exporting = false
   private graph: CircuitGraph | null = null
   private engine: EngineLike | null = null
   private startPromise: Promise<void> | null = null
@@ -44,6 +59,9 @@ export class SessionController {
     this.loadGraph = options.loadGraph
     this.saveSettings = options.saveSettings
     this.randomSeed = options.randomSeed ?? randomSessionSeed
+    this.renderPhrase = options.renderPhrase ?? renderPhrase
+    this.createObjectUrl = options.createObjectUrl ?? (blob => URL.createObjectURL(blob))
+    this.revokeObjectUrl = options.revokeObjectUrl ?? (url => URL.revokeObjectURL(url))
   }
 
   async loadCircuit(): Promise<void> {
@@ -151,8 +169,41 @@ export class SessionController {
     this.save()
   }
 
-  getDiagnostics(): EngineDiagnostics | null {
-    return this.engine?.getDiagnostics() ?? null
+  async exportPhrase(): Promise<void> {
+    const engine = this.engine
+    const state = this.store.getState()
+    if (!engine || !state.activeScore || this.exporting) return
+    this.exporting = true
+    try {
+      for (const url of this.heldUrls) this.revokeObjectUrl(url)
+      this.heldUrls.clear()
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'preparing', fileName: null, url: null, message: null } })
+      engine.beginExport()
+      const snapshot = createExportSnapshot(state.activeScore, state.active, getPreset(state.active.presetId), state.mix)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'rendering' } })
+      const data = await this.renderPhrase(snapshot)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'encoding' } })
+      const buffer = encodeWav16(data)
+      const url = this.createObjectUrl(new Blob([buffer], { type: 'audio/wav' }))
+      this.heldUrls.add(url)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'ready', fileName: `lofly-${snapshot.recipe.presetId}-seed-${seedHex(snapshot.recipe.sessionSeed)}.wav`, url, message: null } })
+    } catch (error) {
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'error', message: error instanceof Error ? error.message : String(error), url: null, fileName: null } })
+    } finally {
+      engine.endExport()
+      this.exporting = false
+    }
+  }
+
+  dismissExport(): void {
+    if (this.exporting) return
+    for (const url of this.heldUrls) this.revokeObjectUrl(url)
+    this.heldUrls.clear()
+    this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'idle', fileName: null, url: null, message: null } })
+  }
+
+  getDiagnostics(): ControllerDiagnostics | null {
+    return this.engine ? { ...this.engine.getDiagnostics(), objectUrlsHeld: this.heldUrls.size } : null
   }
 
   dispose(): void {

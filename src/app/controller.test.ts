@@ -1,4 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import type { ExportSnapshot } from '../audio/export'
+import type { WavData } from '../audio/wav'
 import type { EngineEventMap, EngineLike } from '../audio/engine'
 import { CircuitError } from '../connectome/types'
 import type { CircuitGraph } from '../connectome/types'
@@ -30,6 +32,8 @@ class FakeEngine implements EngineLike {
   setMix(mix: Parameters<EngineLike['setMix']>[0]): void { this.calls.push({ method: 'setMix', arg: mix }) }
   play(): void { this.calls.push({ method: 'play', arg: undefined }) }
   pause(): void { this.calls.push({ method: 'pause', arg: undefined }) }
+  beginExport(): void { this.calls.push({ method: 'beginExport', arg: undefined }); this.emit('status', 'exporting') }
+  endExport(): void { this.calls.push({ method: 'endExport', arg: undefined }); this.emit('status', 'paused') }
   reset(recipe: Parameters<EngineLike['reset']>[0]): void { this.calls.push({ method: 'reset', arg: recipe }) }
   request(change: Parameters<EngineLike['request']>[0]): void { this.calls.push({ method: 'request', arg: change }) }
   applyTempoNow(tempoBpm: number): void { this.calls.push({ method: 'applyTempoNow', arg: tempoBpm }) }
@@ -45,6 +49,91 @@ function setup(loadGraph = async () => graph) {
   const controller = new SessionController({ store, loadGraph, createEngine: async () => engine, saveSettings: settings => saves.push(settings) })
   return { store, engine, saves, controller }
 }
+
+describe('controller export', () => {
+  const wav: WavData = { sampleRate: 44100, channels: [new Float32Array(4), new Float32Array(4)] }
+
+  function exportSetup(render: (snapshot: ExportSnapshot) => Promise<WavData> = async () => wav) {
+    const store = createStore(appReducer, createInitialState(null))
+    const engine = new FakeEngine()
+    const renderPhrase = vi.fn(render)
+    const revokeObjectUrl = vi.fn()
+    let sequence = 0
+    const controller = new SessionController({ store, loadGraph: async () => graph, createEngine: async () => engine, saveSettings: () => undefined, renderPhrase, createObjectUrl: () => `blob:${++sequence}`, revokeObjectUrl })
+    return { store, engine, controller, renderPhrase, revokeObjectUrl }
+  }
+
+  async function withScore(setupResult: ReturnType<typeof exportSetup>) {
+    const { controller, store, engine } = setupResult
+    await controller.loadCircuit()
+    await controller.startListening()
+    store.dispatch({ type: 'engineStatusChanged', status: 'playing' })
+    const score = { scoreVersion: 1, phraseIndex: 0, events: [] } as unknown as PhraseScore
+    engine.emit('phraseStarted', { score, recipe: store.getState().active })
+    return score
+  }
+
+  it('renders the active phrase snapshot, reports progress, and holds the WAV URL', async () => {
+    const subject = exportSetup()
+    const score = await withScore(subject)
+    subject.controller.setTempo(90)
+    subject.controller.setVariation(0.9)
+    const statuses: string[] = []
+    subject.store.subscribe(() => {
+      const status = subject.store.getState().exportState.status
+      if (statuses.at(-1) !== status) statuses.push(status)
+    })
+    await subject.controller.exportPhrase()
+    expect(subject.renderPhrase.mock.calls[0][0]).toMatchObject({ score, recipe: { tempoBpm: 72, variation: 0 } })
+    expect(statuses).toEqual(['preparing', 'rendering', 'encoding', 'ready'])
+    expect(subject.store.getState().exportState).toMatchObject({ status: 'ready', fileName: 'lofly-rainy-windowsill-seed-00000001.wav', url: 'blob:1' })
+    expect(subject.engine.calls.map(call => call.method)).toContain('beginExport')
+    expect(subject.store.getState().engineStatus).toBe('paused')
+    expect(subject.renderPhrase).toHaveBeenCalledTimes(1)
+    expect(subject.engine.calls.at(-1)?.method).toBe('endExport')
+    expect(subject.store.getState().engineStatus).toBe('paused')
+    expect(subject.controller.getDiagnostics()?.objectUrlsHeld).toBe(1)
+  })
+
+  it('guards concurrent exports and revokes held URLs on replacement and dismissal', async () => {
+    let resolve!: (value: WavData) => void
+    const subject = exportSetup(() => new Promise(res => { resolve = res }))
+    await withScore(subject)
+    const first = subject.controller.exportPhrase()
+    const second = subject.controller.exportPhrase()
+    expect(subject.renderPhrase).toHaveBeenCalledTimes(1)
+    resolve(wav)
+    await Promise.all([first, second])
+    subject.renderPhrase.mockImplementation(async () => wav)
+    await subject.controller.exportPhrase()
+    expect(subject.revokeObjectUrl).toHaveBeenCalledWith('blob:1')
+    expect(subject.controller.getDiagnostics()?.objectUrlsHeld).toBe(1)
+    subject.controller.dismissExport()
+    expect(subject.revokeObjectUrl).toHaveBeenCalledWith('blob:2')
+    expect(subject.controller.getDiagnostics()?.objectUrlsHeld).toBe(0)
+    expect(subject.store.getState().exportState.status).toBe('idle')
+  })
+
+  it('reports render errors and permits retry', async () => {
+    const render = vi.fn().mockRejectedValueOnce(new Error('render failed')).mockResolvedValue(wav)
+    const subject = exportSetup(render)
+    await withScore(subject)
+    await subject.controller.exportPhrase()
+    expect(subject.store.getState().exportState).toMatchObject({ status: 'error', message: 'render failed' })
+    expect(subject.store.getState().engineStatus).toBe('paused')
+    expect(subject.engine.calls.at(-1)?.method).toBe('endExport')
+    await subject.controller.exportPhrase()
+    expect(render).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not start export without an active score', async () => {
+    const subject = exportSetup()
+    await subject.controller.loadCircuit()
+    await subject.controller.startListening()
+    await subject.controller.exportPhrase()
+    expect(subject.engine.calls.some(call => call.method === 'beginExport')).toBe(false)
+  })
+})
 
 describe('controller mix settings', () => {
   it('merges sequential nested patches immutably and saves the current complete mix', async () => {

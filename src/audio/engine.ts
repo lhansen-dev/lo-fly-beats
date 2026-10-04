@@ -36,6 +36,8 @@ export interface EngineLike {
   setMix(mix: MixSettings): void
   play(): void
   pause(): void
+  beginExport(): void
+  endExport(): void
   reset(recipe: SessionRecipe): void
   request(change: PendingChange): void
   applyTempoNow(tempoBpm: number): void
@@ -53,6 +55,7 @@ class PlaybackEngine implements EngineLike {
   private mix: MixSettings = { ...DEFAULT_MIX, layers: { ...DEFAULT_MIX.layers } }
   private repeatEvents = 0
   private startPromise: Promise<void> | null = null
+  private exportInProgress = false
   private handlers = new Map<keyof EngineEventMap, Set<(payload: never) => void>>()
 
   on<K extends keyof EngineEventMap>(name: K, handler: EventHandler<K>): () => void {
@@ -73,7 +76,7 @@ class PlaybackEngine implements EngineLike {
   }
 
   start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void> {
-    if (this.status === 'playing' || this.status === 'paused') return Promise.resolve()
+    if (this.status === 'exporting' || this.status === 'playing' || this.status === 'paused') return Promise.resolve()
     if (this.startPromise) return this.startPromise
     this.mix = mix
     this.setStatus('starting')
@@ -156,6 +159,19 @@ class PlaybackEngine implements EngineLike {
     this.setStatus('playing')
   }
 
+  beginExport(): void {
+    if (this.status !== 'playing' && this.status !== 'paused' && this.status !== 'interrupted') return
+    if (this.status === 'playing') this.pause()
+    this.exportInProgress = true
+    this.setStatus('exporting')
+  }
+
+  endExport(): void {
+    if (!this.exportInProgress) return
+    this.exportInProgress = false
+    this.setStatus('paused')
+  }
+
   reset(recipe: SessionRecipe): void {
     if (!this.context || !this.sequencer) return
     this.context.transport.stop()
@@ -191,7 +207,7 @@ class PlaybackEngine implements EngineLike {
       repeatEvents: this.repeatEvents,
       scoresHeld: this.sequencer?.scoresHeld ?? 0,
       keysActiveVoices: this.rig?.keysActiveVoices ?? 0,
-      exportInProgress: false,
+      exportInProgress: this.exportInProgress,
     }
   }
 }
