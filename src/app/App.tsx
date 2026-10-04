@@ -7,6 +7,7 @@ import SceneFrame from '../scene/SceneFrame'
 import { visualCssVars } from './visualVars'
 import DiagnosticsPanel from '../components/DiagnosticsPanel'
 import NowPlaying from '../components/NowPlaying'
+import StatusJoke from '../components/StatusJoke'
 import TransportControls from '../components/TransportControls'
 import PresetPicker from '../components/PresetPicker'
 import TempoControl from '../components/TempoControl'
@@ -37,6 +38,7 @@ export default function App() {
         <CircuitStatus />
         <StorageNote />
         <NowPlaying />
+        <StatusJoke />
         <TransportControls />
         <section className="controls-panel">
       <PresetPicker />
