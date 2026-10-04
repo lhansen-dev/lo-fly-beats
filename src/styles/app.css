@@ -1,3 +1,57 @@
+@property --scene-wall {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #3b4a5a;
+}
+
+@property --scene-window-sky {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6f8ba3;
+}
+
+@property --scene-glass-tint {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(180, 205, 230, 0.25);
+}
+
+@property --scene-desk {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6b4f3a;
+}
+
+@property --scene-desk-edge {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #4f3a2b;
+}
+
+@property --scene-light-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #9fc3e6;
+}
+
+@property --ui-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #9fc3e6;
+}
+
+@property --scene-light-opacity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.18;
+}
+
+@property --scene-shadow-opacity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.35;
+}
+
 *,
 *::before,
 *::after {
@@ -15,6 +69,7 @@ body {
   padding: var(--space-4);
   max-width: 1440px;
   margin: 0 auto;
+  transition: --scene-wall 1.5s ease, --scene-window-sky 1.5s ease, --scene-glass-tint 1.5s ease, --scene-desk 1.5s ease, --scene-desk-edge 1.5s ease, --scene-light-color 1.5s ease, --scene-light-opacity 1.5s ease, --scene-shadow-opacity 1.5s ease, --ui-accent 1.5s ease;
 }
 
 .app-layout {
