@@ -1,4 +1,4 @@
-You are working on: Phase 25 of docs/03-IMPLEMENT.md — circuit-load errors with Retry, audio-interruption handling (stale-callback invalidation, saved-step resume), the storage-unavailable note, and the Chromium failure spec.
+You are working on: making the Phase 25 audio-interruption transport pause immediate (`transport.pause(now)`) and strengthening its tests in `src/audio/engine.interruption.test.ts`.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -23,11 +23,10 @@ covering what changed, why, and key files) and stop. Whole-card acceptance
 testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
-Task-specific hints:
-- This sandbox denies local socket binds, so `npx vitest` and `npx playwright` cannot start (`listen EPERM`). Do NOT run them; the operator has accepted this. Your checks are `npx tsc -b` and `npx oxlint <paths>` as named in the task.
-- `tsc -b` typechecks `src/**` (including `*.test.ts`) and `tests/**` with `noUnusedLocals`/`noUnusedParameters`; prefix intentionally unused parameters with `_`.
-- Put user-facing copy containing apostrophes in JS string expressions (`{"…won't…"}`), not raw JSX text.
-- Read only the files named in your task, plus whatever they import that you need.
+Hints:
+- Vitest cannot run in this sandbox (it fails with `listen EPERM`); do not try to run it. Use the
+  `npx tsc -b` + grep check named in the task instead — `tsc -b` type-checks the test files under `src`.
+- Do not change the intentional `pause()` method in `src/audio/engine.ts`; only `handleContextStateChange()`.
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
