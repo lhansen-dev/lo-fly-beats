@@ -1,0 +1,1 @@
+Adds circuit-load retry/error UI, a storage-unavailable note, and interruption notices plus a diagnostics simulation button. Engine guards and failure tests cover frozen playback and resume, but interruption pausing still needs an explicit current-time argument to avoid Tone's lookahead delay; all static acceptance checks, typechecking, lint, and build passed.
