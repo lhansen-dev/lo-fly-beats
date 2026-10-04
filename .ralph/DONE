@@ -1,3 +1,0 @@
-Repaired playback cue acceptance coverage
-- Added checks that hand-rub cooldown survives hide/show and disable/enable.
-- Added new-session-seed state coverage; targeted scene cue tests pass.
