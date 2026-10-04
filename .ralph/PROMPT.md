@@ -1,4 +1,4 @@
-You are working on: Phase 31 follow-up — make the scene cue driver (`src/scene/sceneCueDriver.ts`) keep only bounded current animation handles instead of leaking every historical Animation.
+You are working on: bounding the Phase 31 scene cue driver's retained Animation handles (src/scene/sceneCueDriver.ts) with a type-safe regression test.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -24,9 +24,9 @@ testing is the evaluator's job, not yours. Never write `.ralph/DONE` if the
 task-specific check failed or when LAST_TASK=false.
 
 Hints:
-- Do not change exported names/signatures in `src/scene/sceneCueDriver.ts`; `src/scene/useSceneCues.ts` depends on them.
-- Keep every existing test in `src/scene/sceneCueDriver.test.ts` unchanged; only add the new one.
-- `.ralph/DONE` from a previous attempt may already exist; overwrite it only when LAST_TASK=true and your check passed.
+- `src/**` test files are type-checked by `npx tsc -b` (tsconfig.app.json, strict, noUnusedLocals/Parameters). Vitest passing is not enough — fix any tsc error in the files you touched.
+- Keep every existing test in `src/scene/sceneCueDriver.test.ts`; only add the new one.
+- The header line of `.ralph/DONE` should mention "phase 31".
 
 Rules: never run `git add`, `git commit`, `git checkout`, `git switch`,
 `git push`, or any other git command that changes state. The orchestrator
