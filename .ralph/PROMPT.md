@@ -1,4 +1,4 @@
-You are working on: Phase 32 of `docs/03-IMPLEMENT.md` — the "How the beat is made" explanation panel (trace/rule descriptions, throttled Recent choices, panel in App, unit tests, Chromium spec).
+You are working on: Phase 32 of `docs/03-IMPLEMENT.md` — the "How the beat is made" explanation panel (describe functions, bar-throttled recent choices, panel UI, browser spec, and docs bookkeeping).
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,8 +37,7 @@ Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
 Project hints:
-- TypeScript rules (tsconfig `erasableSyntaxOnly`): no `enum`, `namespace`, or constructor parameter properties. Never use `Math.random` in `src/`. `src/music/` must not import React.
-- Unit tests run in Node with `npx vitest run --project unit <files>`; the unit glob only picks up `*.test.ts` (not `.tsx`), so tests render React with `createElement` + `renderToStaticMarkup` from `react-dom/server`. Tests that import `node:*` (including `tests/unit/helpers/fixtureGraph.ts`) must live under `tests/unit/`.
-- Vitest has `passWithNoTests: true`: if your check reports "No test files found", your test file path is wrong — that is a failure, not a pass.
-- Playwright cannot run in this sandbox (local socket binds fail with `EPERM`); never run `npx playwright test` — typecheck with `npx tsc -b` instead.
-- Useful references: `src/music/types.ts` (TraceStep, PhraseScore), `src/connectome/types.ts` (CircuitGraph), `src/app/state.ts` (AppState, actions), `src/app/store.ts` (useAppState), `src/app/controller.ts`, `src/components/selectors.test.ts` (stable-selector test pattern).
+- Run unit tests with `npx vitest run --project unit <files>`; never `npm test` or `npm run check`.
+- Never run `npx playwright test`, `npm run test:browser`, `npm run preview`, or `npm run test:audio`: this sandbox denies local socket binds (`listen EPERM`).
+- Code under `src/` is type-checked by `tsconfig.app.json` (JSX on, no node types: no `node:fs` in `src` tests). Code under `tests/` is type-checked by `tsconfig.test.json` (node types, NO JSX: never import a `.tsx` file from `tests/`).
+- Code style: no semicolons, single quotes, 2-space indent, as in the surrounding files. Component tests use `renderToStaticMarkup` (see `src/components/animation-toggle.test.ts`).
