@@ -1,4 +1,4 @@
-You are working on: Phase 24 of `docs/03-IMPLEMENT.md` — the WAV export flow (engine export lock, controller `exportPhrase`/`dismissExport`/`getDiagnostics` with a dispose-safe export generation guard, `ExportPanel`, and the Playwright export spec).
+You are working on: Phase 24 of `docs/03-IMPLEMENT.md`, the WAV export flow (controller `exportPhrase`/`dismissExport`/`objectUrlsHeld`, `ExportPanel`, browser spec) for the lo-fly beats app.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
@@ -37,7 +37,12 @@ Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
 
 Task-specific hints:
-- Code style: no semicolons, single quotes, 2-space indent; the TS config has `erasableSyntaxOnly`, so declare class fields explicitly (no constructor parameter properties, no `enum`). `Math.random` is forbidden in `src/`. Only files in `src/audio/` may import `tone`.
-- Unit tests run in Node with Vitest (`npx vitest run <file>`); Vitest does not type-check, so keep types consistent (e.g. any fake implementing `EngineLike` must implement every interface method).
-- This sandbox denies local socket binds: `npm run test:audio` and `npx playwright test` fail with `listen EPERM`. That is expected — never edit `playwright.config.ts` or `vitest.config.ts` to work around it.
-- Do not edit `docs/01-IDEAS.md` or `docs/02-PLAN.md`.
+- This sandbox cannot open local sockets. ALWAYS run Vitest as `npx vitest run --project unit <files>`. A bare
+  `npx vitest run ...` also loads the browser-mode `audio` project and fails with `listen EPERM ::1`. Never run
+  `npm run test:audio`, `npm run test:browser`, or `npx playwright test`: they cannot work here, and the operator runs them.
+- If a check fails with `listen EPERM`, you ran the wrong command. Rerun it with `--project unit` instead of reporting a blocker.
+- `useAppState` selectors must return stable values (no new objects or arrays inside the selector);
+  `src/components/selectors.test.ts` enforces this.
+- Existing helpers: `createExportSnapshot`/`renderPhrase` in `src/audio/export.ts`, `encodeWav16` in `src/audio/wav.ts`,
+  `parseWavHeader` in `src/audio/wavInfo.ts`, `exportSeconds` in `src/audio/timing.ts`, `seedHex` in `src/music/streams.ts`,
+  and `getPreset` in `src/presets/presets.ts`. The engine's `beginExport()`/`endExport()` already exist in `src/audio/engine.ts`.
