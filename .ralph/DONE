@@ -1,0 +1,4 @@
+Recorded Phase 31 in the implementation checklist.
+- Checked all nine completed task boxes; left final verification unchecked.
+- Added decision-log details for cue session state, animation behavior, helpers, and sandbox-limited browser verification.
+- `docs/03-IMPLEMENT.md` is the only edited docs file; targeted whitespace check passed.
