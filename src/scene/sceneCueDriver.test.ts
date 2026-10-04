@@ -29,7 +29,34 @@ describe('scene cue driver', () => {
     vi.useRealTimers()
   })
 
-  it('retains cue state while disabled and replaces it only for a new seed', () => {
+  it('keeps the rub cooldown across hide and show', () => {
+    const session = createCueSession({ timers: { setTimeout: () => 1, clearTimeout: () => {} } })
+    const args = setup()
+    const input = { sessionSeed: 9, enabled: true, hidden: false, source: args.source, targets: args.targets }
+    session.update(input)
+    args.phrase(3)
+    expect(args.animate).toHaveBeenCalledTimes(1)
+    session.update({ ...input, hidden: true })
+    session.update(input)
+    args.phrase(4)
+    expect(args.animate).toHaveBeenCalledTimes(1)
+    session.stop()
+  })
+
+  it('keeps the rub cooldown across disable and enable', () => {
+    const session = createCueSession({ timers: { setTimeout: () => 1, clearTimeout: () => {} } })
+    const args = setup()
+    const input = { sessionSeed: 9, enabled: true, hidden: false, source: args.source, targets: args.targets }
+    session.update(input)
+    args.phrase(3)
+    session.update({ ...input, enabled: false })
+    session.update(input)
+    args.phrase(4)
+    expect(args.animate).toHaveBeenCalledTimes(1)
+    session.stop()
+  })
+
+  it('starts fresh cue state for a new session seed', () => {
     const session = createCueSession({ timers: { setTimeout: () => 1, clearTimeout: () => {} } })
     const args = setup()
     const input = { sessionSeed: 9, enabled: true, hidden: false, source: args.source, targets: args.targets }

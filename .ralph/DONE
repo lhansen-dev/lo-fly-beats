@@ -1,4 +1,3 @@
-Recorded Phase 31 in the implementation checklist.
-- Checked all nine completed task boxes; left final verification unchecked.
-- Added decision-log details for cue session state, animation behavior, helpers, and sandbox-limited browser verification.
-- `docs/03-IMPLEMENT.md` is the only edited docs file; targeted whitespace check passed.
+Repaired playback cue acceptance coverage
+- Added checks that hand-rub cooldown survives hide/show and disable/enable.
+- Added new-session-seed state coverage; targeted scene cue tests pass.
