@@ -1,0 +1,5 @@
+Phase 28 checklist and decision log recorded
+- Checked the five completed fly tasks; retained the unchecked verification box for the operator.
+- Added implementation decisions on head tilt/origin, nested eye shine/headphones, and silhouette token removal.
+- Recorded passing build/typecheck/lint and blocked browser/unit runtime checks.
+- Updated `docs/03-IMPLEMENT.md`.
