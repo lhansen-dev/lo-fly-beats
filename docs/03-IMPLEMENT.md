@@ -105,6 +105,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-01 | 18 | Re-ran Phase 18 Verify steps 2 and 3 after the review: npm run test:audio and npx playwright test --project=chromium both still fail with listen EPERM: operation not permitted (vitest browser mode binds ::1 and the Playwright preview server binds 127.0.0.1:4173), so Phase 18's final verification box stays unchecked and both steps still need to be run outside the sandbox by the operator or CI before it can be ticked. | This sandbox denies every local socket bind, the same limitation recorded for Phase 16 on 2026-09-30; Verify step 1 npm run check passes and Phase 18's only diff is in docs/03-IMPLEMENT.md, so nothing in this phase can cause or fix the bind failure. Checklist rule 7 says to stop and report rather than guess. |
 | 2026-10-03 | 21 | Replaced the audition page with `StartListening`, `TransportControls`, `TempoControl`, `VariationControl`, `NewBeatButton`, `PresetPicker`, `NowPlaying`, and `PendingChanges`. `circuit-status` stays in `App.tsx` until Phase 25 adds `CircuitStatus.tsx`; extra `now-playing`, `seed-hex`, and `scene-placeholder` test IDs were added alongside the R12 table. `npx playwright test --project=chromium` could not run because this sandbox denies local socket binds; the final verification box stays unchecked for the operator. | Same local socket-bind limitation recorded for Phases 16, 18, and 20. |
 | 2026-10-04 | 22 | Mixer sliders use percentage UI values; `TransportControls` mounts the only `MasterVolume`. Ambience players start during playback when `ambienceOn` is true and stop when disabled or paused. Real audio and Chromium verification remain operator-owned. | Scoped strict audio-test compilation, `npm run build`, `npm run check`, and all mixer correction/regression checks pass. `npm run test:audio` and `npx playwright test --project=chromium` fail before assertions with socket-bind `EPERM` on `::1:63315` and `127.0.0.1:4173`, respectively; the Phase 22 final verification box stays unchecked until both runtime suites pass on an allowed runner. |
+| 2026-10-04 | 23 | Fade copied export PCM linearly over its final 0.5 seconds; add deterministic mocked fade tests and real Tone render coverage. | Browser/loopback audio verification is unavailable in this sandbox. Node-based targeted mocked tests are the development check; the authored real-audio tests, including onset, ambience, repeatability, and final RMS, remain for operator verification. |
 
 ## Reference
 
@@ -1698,8 +1699,8 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Agent** · **Read:** R9 (timing adapter), R10, R11
 
-- [ ] Create `src/audio/export.ts` with `createExportSnapshot(score, recipe, preset, mix)` and `renderPhrase(snapshot)` as specified in R11.
-- [ ] Write `tests/audio/export.test.ts` (allow up to 60 s per test):
+- [x] Create `src/audio/export.ts` with `createExportSnapshot(score, recipe, preset, mix)` and `renderPhrase(snapshot)` as specified in R11.
+- [x] Write `tests/audio/export.test.ts` (allow up to 60 s per test):
   1. At 60, 72, and 100 BPM, the rendered frame count is within 1 of `Math.round(exportSeconds(bpm) * 44100)`.
   2. A synthetic score with only kicks at steps 0, 16, 32, and 48 (velocity 1, no micro-offset), rendered at 72 BPM with ambience off, has onsets within 5 ms of 0, 3.333, 6.667, and 10.0 s. Detect an onset as the first sample above 0.05 after at least 50 ms below 0.01.
   3. A score with a single hat at step 1 and swing 0.56, at 72 BPM, has its onset within 5 ms of 0.2333 s.
@@ -1709,8 +1710,8 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Verify**
 
-1. `npm run check` passes.
-2. `npm run test:audio` passes.
+1. [x] `npm run check` passes (167 unit tests; evaluator re-run on 2026-10-04).
+2. [ ] `npm run test:audio` passes. Evaluator re-run on 2026-10-04 stops before assertions with `listen EPERM: operation not permitted ::1:63315`; run on a Chromium/loopback-capable operator or CI runner.
 
 - [ ] All verification steps pass.
 
