@@ -1,30 +1,21 @@
-
-- Initial snapshot-check wrapper failed before executing Vitest because `/tmp/phase23-snapshot.log` could not be created (`Operation not permitted`); reran directly below.
-
-- `npx vitest run --project unit src/audio/export.test.ts --passWithNoTests=false -t export snapshot`: exit 0.
-
-- `npx vitest run --project unit src/audio/export.test.ts --passWithNoTests=false -t 'offline phrase rendering'`: exit 1, line 113 expects final sample 0.4 but fade makes it 0; 4 passed, 1 failed.
-
-- `npx vitest run --project unit src/audio/export.test.ts --passWithNoTests=false -t export fade and repeatability`: exit 0.
-
-- `npx tsc --noEmit --target es2023 --lib ES2023,DOM --module esnext --moduleResolution bundler --types node,vite/client --skipLibCheck --strict --verbatimModuleSyntax --erasableSyntaxOnly --noUnusedLocals --noUnusedParameters --resolveJsonModule src/audio/export.ts src/audio/export.test.ts tests/audio/export.test.ts`: exit 1, TS5112 (installed TypeScript 6 requires `--ignoreConfig` for explicit files).
-
-- Phase 23 completion `grep -Fq` checks for export implementation and browser test authoring: exit 0.
-
-- `npx vitest run --project unit src/audio/timing.test.ts src/audio/buffers.test.ts src/audio/wav.test.ts --passWithNoTests=false`: exit 0.
-
-- `npm run typecheck`: exit 0.
-
-- `npm run lint`: exit 0.
-
-- `npm run build`: exit 0.
-
-- `npm run check`: exit 1, same export.test.ts:113 assertion; 161 passed, 1 failed; short-circuits before data:validate/build (standalone build passed).
-
-- `npm run test:audio`: exit 1 before assertions, `listen EPERM: operation not permitted ::1:63315`; real Chromium signal checks remain unverified.
-
-- Diagnostic scoped TypeScript check with `--ignoreConfig` (otherwise identical acceptance flags): exit 0.
-
-- Read `.ralph/DONE`, inspected `git diff main...HEAD -- . ':!.ralph'`, R9/R10/R11 and rig; no unrelated source changes. `PLAN.md` missing (root and recursive search).
-
-- Final code/test review: kick detector does not use mandated quiet-period detection; snapshot test omits original-mutability and full recursive isolation checks. Wrote revise verdict and summary; final status contains only permitted `.ralph/` outputs.
+- Read .ralph/DONE: claims sine threshold expectation repaired.
+- git diff main...HEAD -- . ' :!.ralph': inspected full diff; export implementation, unit/audio tests and Phase 23 documentation added.
+- npx vitest run --project unit src/audio/export.test.ts --passWithNoTests=false: exit 0.
+- grep -q "keeps original inputs unfrozen and independently mutable" src/audio/export.test.ts: exit 0.
+- test -f tests/audio/onsets.ts && grep -q "export function detectOnsets" tests/audio/onsets.ts: exit 0.
+- grep -q "armed" tests/audio/onsets.ts: exit 0.
+- npx vitest run --project unit tests/unit/audio/onsets.test.ts --passWithNoTests=false: exit 0.
+- grep -q "15 / 44100" tests/unit/audio/onsets.test.ts: exit 0.
+- grep -q "detectOnsets" tests/audio/export.test.ts: exit 0.
+- grep -q "toHaveLength(4)" tests/audio/export.test.ts: exit 0.
+- npx tsc -p tsconfig.test.json: exit 0.
+- npm run typecheck: exit 0.
+- npm run lint: exit 0.
+- npx vitest run --project unit src/audio/timing.test.ts src/audio/buffers.test.ts src/audio/wav.test.ts --passWithNoTests=false: exit 0.
+- npm run check: exit 0.
+- npm run test:audio: exit 1 (see output for browser runtime availability).
+- Supplemental Playwright Chromium launch probe: exit 1.
+- Manual review of R9 timing adapter, R10 rig, R11 snapshot/rendering contract, export implementation and tests: implementation matches scope; no unrelated source changes or concrete defects found.
+- npm run test:audio startup detail: exit 1, listen EPERM: operation not permitted ::1:63315; no audio assertions ran.
+- All 12 Phase 23 revision acceptance commands: exit 0; npm run check also passed (167 unit tests).
+- Final git diff/status: only permitted .ralph verdict/notes/summary and Phase 23 documentation status edits; source unchanged.

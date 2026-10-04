@@ -1710,8 +1710,8 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Verify**
 
-1. `npm run check` passes.
-2. `npm run test:audio` passes.
+1. [x] `npm run check` passes (167 unit tests; evaluator re-run on 2026-10-04).
+2. [ ] `npm run test:audio` passes. Evaluator re-run on 2026-10-04 stops before assertions with `listen EPERM: operation not permitted ::1:63315`; run on a Chromium/loopback-capable operator or CI runner.
 
 - [ ] All verification steps pass.
 
