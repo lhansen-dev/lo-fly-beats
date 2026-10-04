@@ -1,0 +1,20 @@
+- `cat .ralph/DONE; git status --short; git diff --stat main...HEAD -- . ':!.ralph'; date -u` — completed; working tree initially clean, ten changed files.
+- `git diff main...HEAD -- . ':!.ralph'` — inspected full change.
+- `grep -q 'exportPhrase' src/app/controller.ts && grep -q 'dismissExport' src/app/controller.ts && grep -q 'objectUrlsHeld' src/app/controller.ts` — exit 0.
+- `grep -q 'encodeWav16' src/app/controller.ts && grep -q 'createExportSnapshot' src/app/controller.ts && grep -q 'revokeObjectUrl' src/app/controller.ts` — exit 0.
+- `grep -q 'exportPhrase' src/app/controller.test.ts && grep -q 'objectUrlsHeld' src/app/controller.test.ts && npx vitest run --project unit src/app/controller.test.ts` — exit 0.
+- `test -f src/components/ExportPanel.tsx && grep -q 'export-button' src/components/ExportPanel.tsx && grep -q 'export-status' src/components/ExportPanel.tsx && grep -q 'export-download' src/components/ExportPanel.tsx && grep -q 'role="status"' src/components/ExportPanel.tsx && grep -q 'Pending changes are not included' src/components/ExportPanel.tsx && grep -q 'Done' src/components/ExportPanel.tsx` — exit 0.
+- `grep -q 'ExportPanel' src/app/App.tsx` — exit 0.
+- `test -f src/components/export-panel.test.ts && npx vitest run --project unit src/components/export-panel.test.ts src/components/controls.test.ts` — exit 0.
+- `test -f tests/browser/export.spec.ts && grep -q 'lofly-rainy-windowsill-seed' tests/browser/export.spec.ts && grep -q 'parseWavHeader' tests/browser/export.spec.ts && grep -q 'objectUrlsHeld' tests/browser/export.spec.ts` — exit 0.
+- `grep -Eq '^\| [0-9-]+ \| 24 \|' docs/03-IMPLEMENT.md` — exit 0.
+- `grep -Eq '^- \[x\] Add .exportPhrase\(\)' docs/03-IMPLEMENT.md && grep -Eq '^- \[x\] Create .src/components/ExportPanel\.tsx' docs/03-IMPLEMENT.md` — exit 0.
+- `npm run check` — exit 0.
+- `npx vitest run --project unit src/audio/engine.test.ts src/app/state.test.ts src/audio/wav.test.ts` — exit 0.
+- `grep -q 'beginExport' src/audio/engine.ts && grep -q 'endExport' src/audio/engine.ts` — exit 0.
+- Read controller, engine, export snapshot/rendering, reducer, R11/R12, mounted controls, diagnostics panel, and main wiring — flow matches requirements; active snapshot, lock, progress/error handling, and URL replacement/dismissal verified by inspection.
+- `git log -5 --oneline; cat package.json; cat playwright.config.ts; cat src/components/NewBeatButton.tsx; cat src/components/VariationControl.tsx; git status --short` — inspected pipeline task commits, unit-only check script and browser project configuration; only evaluator notes untracked.
+- `sed -n '1716,1755p' docs/03-IMPLEMENT.md; ls *.md; rg -n 'Phase 2[34]|phase 2[34]|export|Export' README.md docs/README.md 2>/dev/null; git diff --check main...HEAD -- . ':!.ralph'; date -u` — Phase 24 implementation boxes complete, browser verification correctly left operator-owned; whitespace check passed; clock 07:10:30 UTC.
+- Read README, sequencer, store, existing browser controls spec, and Vitest config — no further concrete issues; browser/audio runtime suites deliberately not executed, as instructed.
+- Updated only the Phase 24 Decision log with evaluator check results; wrote approve verdict and card summary.
+- `git diff --check; git status --short; git diff -- docs/03-IMPLEMENT.md; head -1 .ralph/EVALUATION.md` — passed; only allowed documentation and evaluator output paths changed; first line is `VERDICT: approve`.

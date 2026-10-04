@@ -1,0 +1,1 @@
+Phase 24 adds WAV export of the active phrase, pauses and locks playback during rendering, and manages download URLs with controller diagnostics. The mounted ExportPanel provides duration, progress, download, and dismissal controls; all Node acceptance checks pass, with browser/audio runtime verification deferred under the sandbox restriction.
