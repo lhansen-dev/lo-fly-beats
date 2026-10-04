@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { ABOUT_LINE, APP_TITLE, TAGLINE } from './copy'
 import { useController } from './ControllerContext'
 import { useAppState } from './store'
 import { getPreset } from '../presets/presets'
@@ -26,8 +27,8 @@ export default function App() {
 
   return <main className="app" data-preset={presetId} style={visualCssVars(getPreset(presetId).visual) as CSSProperties}>
     <header className="app-header">
-      <h1>Lo-fly beats</h1>
-      <p>Beats to relax / repeatedly fly into the same window to</p>
+      <h1>{APP_TITLE}</h1>
+      <p>{TAGLINE}</p>
     </header>
     <div className="app-layout">
       <SceneFrame />
@@ -49,6 +50,7 @@ export default function App() {
       </div>
     </div>
     <ExplanationPanel />
+    <footer className="app-footer"><p data-testid="about-line">{ABOUT_LINE}</p><a href="#credits">Credits</a></footer>
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
   </main>
 }

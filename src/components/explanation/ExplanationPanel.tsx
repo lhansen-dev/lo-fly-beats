@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { LOADING_TEXT } from '../../app/copy'
 import { useController } from '../../app/ControllerContext'
 import { getAppStore, useAppState } from '../../app/store'
 import { getPreset } from '../../presets/presets'
@@ -33,7 +34,7 @@ export default function ExplanationPanel() {
       <p>At least {manifest.extraction.minSynapseCount} synapses</p>
       <p>{manifest.extraction.neuronSelection}</p><p>{manifest.extraction.startNeuronRule}</p>
       <a href="#credits">Credits</a>
-    </> : <p>Loading the fly-brain wiring…</p>}</section>
+    </> : <p>{LOADING_TEXT}</p>}</section>
     <section><h2>Recent choices</h2>{steps.length === 0 || !graph ? <p>Press Start listening to see the walk's choices.</p> : <RecentChoicesList steps={steps} graph={graph} />}</section>
     <section><h2>This phrase's chords</h2>{score ? <ol>{score.chords.map((chord, index) => {
       const slot = score.trace[chord.traceBeat]
