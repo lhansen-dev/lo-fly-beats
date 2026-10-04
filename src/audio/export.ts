@@ -1,7 +1,7 @@
 import type { PhraseScore, SessionRecipe } from '../music/types'
 import type { PresetDefinition } from '../presets/types'
 import type { MixSettings } from './rig'
-import { eventDurationSeconds, eventTimeSeconds, exportSeconds } from './timing'
+import { eventDurationSeconds, eventTimeSeconds, exportSeconds, EXPORT_FADE_SECONDS } from './timing'
 import type { WavData } from './wav'
 
 export interface ExportSnapshot {
@@ -45,6 +45,13 @@ export async function renderPhrase(snapshot: ExportSnapshot): Promise<WavData> {
     const buffer = rendered.get()!
     const left = new Float32Array(buffer.getChannelData(0))
     const right = new Float32Array(buffer.getChannelData(1))
+    const fadeLength = Math.min(left.length, Math.round(EXPORT_FADE_SECONDS * 44100))
+    const fadeStart = left.length - fadeLength
+    for (let index = 0; index < fadeLength; index++) {
+      const gain = fadeLength <= 1 ? 0 : 1 - index / (fadeLength - 1)
+      left[fadeStart + index] = index === fadeLength - 1 ? 0 : left[fadeStart + index] * gain
+      right[fadeStart + index] = index === fadeLength - 1 ? 0 : right[fadeStart + index] * gain
+    }
     return { sampleRate: 44100, channels: [left, right] }
   } finally {
     rendered?.dispose()

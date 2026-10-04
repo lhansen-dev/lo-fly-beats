@@ -5,13 +5,13 @@ import type { PresetDefinition } from '../presets/types'
 import type { MixSettings } from './rig'
 import { createExportSnapshot } from './export'
 
-const mocks = vi.hoisted(() => ({ contexts: [] as any[], rigs: [] as any[], createRig: vi.fn() }))
+const mocks = vi.hoisted(() => ({ contexts: [] as any[], rigs: [] as any[], createRig: vi.fn(), samples: null as Float32Array[] | null }))
 vi.mock('tone', () => ({ OfflineContext: class {
   args: unknown[]
   buffer: any
   constructor(...args: unknown[]) {
     this.args = args
-    this.buffer = { numberOfChannels: 2, getChannelData: (i: number) => new Float32Array([0.2 + i, 0.4 + i]) }
+    this.buffer = { numberOfChannels: 2, getChannelData: (i: number) => mocks.samples?.[i] ?? new Float32Array([0.2 + i, 0.4 + i]) }
     mocks.contexts.push(this)
   }
   render() { return Promise.resolve({ get: () => this.buffer, dispose: vi.fn() }) }
@@ -37,7 +37,7 @@ function setupRig() {
   return rig
 }
 
-afterEach(() => { mocks.contexts.length = 0; mocks.rigs.length = 0; mocks.createRig.mockReset() })
+afterEach(() => { mocks.contexts.length = 0; mocks.rigs.length = 0; mocks.createRig.mockReset(); mocks.samples = null })
 
 describe('export snapshot', () => {
   it('preserves values in an isolated, recursively frozen copy', () => {
@@ -49,6 +49,39 @@ describe('export snapshot', () => {
     expect(snapshot.score.events[0]).not.toBe(score.events[0])
     expect(Object.isFrozen(snapshot)).toBe(true)
     expect(Object.isFrozen(snapshot.preset.sound)).toBe(true)
+  })
+})
+
+describe('export fade and repeatability', () => {
+  it('fades copied stereo PCM linearly without changing inputs or prefix', async () => {
+    const leftInput = new Float32Array(44100).fill(0.05)
+    const rightInput = new Float32Array(44100).fill(-0.05)
+    mocks.samples = [leftInput, rightInput]
+    setupRig()
+    setupRig()
+    const { renderPhrase } = await import('./export')
+    const snapshot = createExportSnapshot({ ...score, events: [] }, recipe, preset, mix)
+    const first = await renderPhrase(snapshot)
+    const second = await renderPhrase(snapshot)
+    const fadeLength = Math.round(0.5 * 44100)
+    const boundary = leftInput.length - fadeLength
+    expect(first.channels[0][boundary - 1]).toBeCloseTo(0.05, 7)
+    expect(first.channels[1][boundary - 1]).toBeCloseTo(-0.05, 7)
+    expect(first.channels[0][boundary]).toBeCloseTo(0.05, 7)
+    expect(first.channels[0][boundary + Math.floor((fadeLength - 1) / 2)]).toBeCloseTo(0.05 * (1 - Math.floor((fadeLength - 1) / 2) / (fadeLength - 1)), 7)
+    expect(first.channels[0].at(-1)).toBe(0)
+    expect(first.channels[1].at(-1)).toBe(0)
+    expect(leftInput[boundary]).toBeCloseTo(0.05, 7)
+    expect(rightInput[boundary]).toBeCloseTo(-0.05, 7)
+    let maxDifference = 0
+    let tailSquares = 0
+    for (let i = 0; i < first.channels[0].length; i++) {
+      maxDifference = Math.max(maxDifference, Math.abs(first.channels[0][i] - second.channels[0][i]), Math.abs(first.channels[1][i] - second.channels[1][i]))
+      if (i >= first.channels[0].length - 441) tailSquares += first.channels[0][i] ** 2 + first.channels[1][i] ** 2
+    }
+    expect(maxDifference).toBe(0)
+    expect(Math.sqrt(tailSquares / (441 * 2))).toBeLessThan(0.001)
+    expect(first.channels[0]).not.toBe(second.channels[0])
   })
 })
 
