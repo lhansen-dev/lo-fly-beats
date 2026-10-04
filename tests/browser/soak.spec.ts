@@ -9,7 +9,7 @@ test('playback stays stable for five minutes', async ({ page }) => {
 
   await page.goto('/?debug=1')
   await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
-  await page.getByTestId('start-restart').click()
+  await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
 
   for (let sample = 0; sample < 10; sample += 1) {

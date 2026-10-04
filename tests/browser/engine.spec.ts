@@ -8,7 +8,7 @@ test('live playback starts, pauses, resumes, and releases voices', async ({ page
 
   await page.goto('/?debug=1')
   await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
-  await page.getByTestId('start-restart').click()
+  await page.getByTestId('start-listening').click()
 
   const status = page.getByTestId('engine-status')
   const position = page.getByTestId('position')

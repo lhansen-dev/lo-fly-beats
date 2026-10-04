@@ -10,7 +10,7 @@ test('pending changes apply at the next bar and the next phrase', async ({ page 
   await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
   await page.getByTestId('tempo').press('End')
   await expect(page.getByTestId('tempo')).toHaveValue('100')
-  await page.getByTestId('start-restart').click()
+  await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
 
   await page.getByTestId('variation').press('End')
