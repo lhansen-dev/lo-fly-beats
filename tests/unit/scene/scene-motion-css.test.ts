@@ -9,5 +9,8 @@ describe('scene motion CSS', () => {
     expect(css).toContain('@keyframes rain-fall')
     expect(css).toContain('.rain-streak')
     expect(css).toContain('infinite')
+    expect(css).toContain('.scene--still')
+    expect(css).toContain('.scene--paused')
+    expect(css).toContain('animation-play-state: paused')
   })
 })

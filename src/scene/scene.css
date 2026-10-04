@@ -14,6 +14,15 @@
   transform-box: fill-box;
 }
 
+.scene--still .rain-streak {
+  animation: none;
+}
+
+.scene--paused,
+.scene--paused * {
+  animation-play-state: paused;
+}
+
 .fly-head {
   transform-box: view-box;
   transform-origin: 1045px 462px;
