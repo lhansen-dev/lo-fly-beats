@@ -1,16 +1,9 @@
-You are working on: closing Phase 30 (apply the scene art review) in `docs/03-IMPLEMENT.md` as a no-code-change phase, because the Phase 29 scene review was a blanket "lgtm" approval.
+You are working on: Phase 30 of `docs/03-IMPLEMENT.md`. Record the user's Phase 29 scene approval ("Approved as is."), complete Phase 30 without changing any code, and add Decision log rows that record the verification results this attempt actually observed.
 
 Your task for this iteration is given in the `## Your assigned task` block at
 the top of this prompt, together with a LAST_TASK=true|false flag. That block
 is your ONLY task source — there is no task list to find or update; the
 orchestrator tracks completion and makes all commits.
-
-Hints: every edit in this card goes in `docs/03-IMPLEMENT.md` only. Never edit
-anything under `src/`, `tests/`, or styles. Copy the text the task gives you
-exactly. Use the existing Phase 17 `**Gate status:**` line and the Phase 17/18
-Decision log rows in that file as style references. The file is long, so grep
-for the section headings (`## Phase 29:`, `## Phase 30:`, `## Decision log`,
-`## Reference`) and read only those regions.
 
 Do exactly that ONE task this iteration — nothing else:
 1. Do the task. Verify it worked: run the check named in the task (if any)
@@ -42,3 +35,9 @@ Batch independent reads/searches into a single turn instead of issuing
 them sequentially.
 Do not re-read a file after editing it unless a check fails or the edit tool
 reports ambiguity.
+
+Task-specific hints:
+- If your assigned task explicitly tells you to run `npm run check` and `npx playwright test --project=chromium` once each to record their results, that is part of the task. Run them exactly once and do not try to fix failures. A `listen EPERM` failure is expected in this sandbox; record it honestly.
+- Edit only `docs/03-IMPLEMENT.md`. Never edit anything under `src/` or `tests/`, and never edit the R13 section. Nobody can view the art here, so make no art judgments.
+- Copy the exact sentences the task gives you character for character. The acceptance checks grep for them.
+- Start `.ralph/ITERATION_DONE` with `docs(phase 30):` so the single commit names phase 30. If LAST_TASK=true, the `.ralph/DONE` header line must also mention "phase 30".
