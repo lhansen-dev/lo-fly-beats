@@ -108,6 +108,8 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-04 | 23 | Fade copied export PCM linearly over its final 0.5 seconds; add deterministic mocked fade tests and real Tone render coverage. | Browser/loopback audio verification is unavailable in this sandbox. Node-based targeted mocked tests are the development check; the authored real-audio tests, including onset, ambience, repeatability, and final RMS, remain for operator verification. |
 | 2026-10-04 | 24 | The controller injects `renderPhrase`/`createObjectUrl`/`revokeObjectUrl` for tests, revokes the previous URL at the start of each export and on Done, and reports `objectUrlsHeld` in diagnostics. | Evaluator verification: `npm run check` passes (174 Node unit tests), and targeted controller, panel/controls, and engine/state/WAV unit checks pass. `npm run test:audio` and `npm run test:browser` (Chromium, Firefox, WebKit) were not run — Firefox and WebKit results: not run, sandbox — because the sandbox denies local socket binds and the operator dropped browser checks from this card's verification; `tests/browser/export.spec.ts` is authored and typechecked only, and Verify steps 2–3 remain for the operator. |
 
+| 2026-10-04 | 25 | Draw callbacks and transport steps are invalidated with a `playbackGeneration` counter on interruption; extra test IDs `audio-notice` and `storage-note` were added beside the R12 table. | `npx tsc -b` and `npx oxlint tests/browser/failures.spec.ts` pass. `npx vitest` and `npx playwright test --project=chromium` could not run because this sandbox denies local socket binds, so the final verification box stays unchecked for the operator. |
+
 ## Reference
 
 ### R1. Stack, layout, and code rules
@@ -1741,11 +1743,11 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Agent** · **Read:** R9 (engine rules), R12 (failure behavior, debug mode), R14
 
-- [ ] Create `src/components/CircuitStatus.tsx`, showing the R14 loading text or the R12 error message with a `circuit-retry` button that calls `controller.loadCircuit()`.
-- [ ] Handle interruptions in the engine. Subscribe with `context.on('statechange', …)`. If the context state is anything other than `running` while the status is `playing`, pause the transport immediately without a ramp, release all voices, set status `interrupted`, and let the controller set the R12 notice. `play()` from `interrupted` awaits `Tone.start()` and then resumes the transport.
-- [ ] Add `debugInterrupt()` to the engine, which calls `context.rawContext.suspend()`, and a `simulate-interruption` button in the diagnostics panel.
-- [ ] Show the storage-unavailable note from R12.
-- [ ] Write `tests/browser/failures.spec.ts` (Chromium):
+- [x] Create `src/components/CircuitStatus.tsx`, showing the R14 loading text or the R12 error message with a `circuit-retry` button that calls `controller.loadCircuit()`.
+- [x] Handle interruptions in the engine. Subscribe with `context.on('statechange', …)`. If the context state is anything other than `running` while the status is `playing`, pause the transport immediately without a ramp, release all voices, set status `interrupted`, and let the controller set the R12 notice. `play()` from `interrupted` awaits `Tone.start()` and then resumes the transport.
+- [x] Add `debugInterrupt()` to the engine, which calls `context.rawContext.suspend()`, and a `simulate-interruption` button in the diagnostics panel.
+- [x] Show the storage-unavailable note from R12.
+- [x] Write `tests/browser/failures.spec.ts` (Chromium):
   1. With `**/circuit.json` answering 404, the error and Retry appear and Start listening is disabled. After removing the route, Retry leads to a ready circuit.
   2. With `circuit.json` answered by modified bytes, the error mentions the checksum.
   3. With `localStorage` made to throw through `page.addInitScript`, the app loads, plays, and shows the storage note.

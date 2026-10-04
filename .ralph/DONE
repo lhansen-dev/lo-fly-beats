@@ -1,0 +1,4 @@
+# Phase 25 failure coverage and documentation
+- Added four Chromium failure tests covering load retry, checksum tampering, throwing storage, and interruption/resume.
+- Recorded completed Phase 25 tasks and the playback-generation decision in docs/03-IMPLEMENT.md; left final verification unchecked due to sandbox socket-bind restrictions.
+- `npx tsc -b` and `npx oxlint tests/browser/failures.spec.ts` pass.
