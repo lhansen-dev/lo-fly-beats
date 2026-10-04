@@ -22,7 +22,10 @@ describe('SceneFrame', () => {
       'var(--scene-desk)',
       'var(--scene-light-color)',
       'id="scene-title"',
+      'class="fly"',
+      'class="banana"',
     ]) expect(markup).toContain(expected)
+    expect(markup).not.toContain('placeholder of colored blocks')
   })
 
   it('renders the narrow crop and defaults to it on the server', () => {
