@@ -6,6 +6,17 @@ import { MAPPING_VERSION } from '../music/versions'
 import type { PresetId } from '../presets/types'
 import { randomSessionSeed } from './seed'
 import type { AppAction, AppState, RestoredSettings } from './state'
+import type { MixSettings } from '../audio/rig'
+
+export type MixPatch = {
+  masterVolume?: number
+  ambienceOn?: boolean
+  layers?: {
+    drums?: Partial<MixSettings['layers']['drums']>
+    bass?: Partial<MixSettings['layers']['bass']>
+    keys?: Partial<MixSettings['layers']['keys']>
+  }
+}
 import type { Store } from './store'
 
 export interface SessionControllerOptions {
@@ -82,6 +93,22 @@ export class SessionController {
     if (status === 'starting' || status === 'exporting') return
     if (status === 'playing') this.engine.pause()
     else this.engine.play()
+  }
+
+  setMix(partial: MixPatch): void {
+    const current = this.store.getState().mix
+    const merged: MixSettings = {
+      ...current,
+      ...partial,
+      layers: {
+        drums: { ...current.layers.drums, ...partial.layers?.drums },
+        bass: { ...current.layers.bass, ...partial.layers?.bass },
+        keys: { ...current.layers.keys, ...partial.layers?.keys },
+      },
+    }
+    this.store.dispatch({ type: 'mixChanged', mix: merged })
+    this.engine?.setMix(merged)
+    this.save()
   }
 
   setTempo(tempoBpm: number): void {

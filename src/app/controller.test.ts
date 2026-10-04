@@ -46,6 +46,45 @@ function setup(loadGraph = async () => graph) {
   return { store, engine, saves, controller }
 }
 
+describe('controller mix settings', () => {
+  it('merges sequential nested patches immutably and saves the current complete mix', async () => {
+    const { controller, store, engine, saves } = setup()
+    const initial = store.getState().mix
+    controller.setMix({ layers: { drums: { muted: true } } })
+    expect(store.getState().mix.layers.drums).toEqual({ level: initial.layers.drums.level, muted: true })
+    controller.setMix({ layers: { drums: { level: 0.25 }, bass: { level: 0, muted: false } }, masterVolume: 0, ambienceOn: false })
+    const merged = store.getState().mix
+    expect(merged).toEqual({ masterVolume: 0, ambienceOn: false, layers: { drums: { level: 0.25, muted: true }, bass: { level: 0, muted: false }, keys: initial.layers.keys } })
+    expect(initial.layers.drums).toEqual({ level: 0.8, muted: false })
+    expect(store.getState().pending).toEqual({})
+    expect(store.getState().active).toEqual(createInitialState(null).active)
+    expect(engine.calls).toEqual([])
+    expect(saves).toHaveLength(2)
+    expect(saves.map(save => (save as { mix: unknown }).mix)).toEqual([expect.objectContaining({ layers: expect.objectContaining({ drums: { level: 0.8, muted: true } }) }), merged])
+
+    await controller.loadCircuit()
+    await controller.startListening()
+    expect(engine.calls.find(call => call.method === 'start')?.arg).toEqual([graph, store.getState().active, merged])
+    controller.setMix({ layers: { keys: { muted: true } } })
+    expect(engine.calls.filter(call => call.method === 'setMix')).toEqual([{ method: 'setMix', arg: store.getState().mix }])
+    expect(store.getState().mix.layers.keys).toEqual({ level: initial.layers.keys.level, muted: true })
+    expect(store.getState().active).toEqual(createInitialState(null).active)
+    expect(store.getState().pending).toEqual({})
+    expect((saves.at(-1) as { mix: unknown }).mix).toEqual(store.getState().mix)
+  })
+
+  it('retains initialized paused edits for resume without restarting playback', async () => {
+    const { controller, store, engine } = setup()
+    await controller.loadCircuit()
+    await controller.startListening()
+    store.dispatch({ type: 'engineStatusChanged', status: 'paused' })
+    controller.setMix({ layers: { bass: { muted: true } } })
+    expect(engine.calls.filter(call => call.method === 'setMix')).toHaveLength(1)
+    expect(engine.calls.filter(call => ['pause', 'play', 'reset', 'start'].includes(call.method))).toHaveLength(1)
+    expect(store.getState().mix.layers.bass).toEqual({ level: 0.7, muted: true })
+  })
+})
+
 describe('SessionController', () => {
   it('loads a circuit successfully', async () => {
     const { controller, store } = setup()
