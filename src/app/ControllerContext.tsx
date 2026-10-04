@@ -8,6 +8,10 @@ export function ControllerProvider({ controller, children }: { controller: Sessi
   return <ControllerContext.Provider value={controller}>{children}</ControllerContext.Provider>
 }
 
+export function useOptionalController(): SessionController | null {
+  return useContext(ControllerContext)
+}
+
 export function useController(): SessionController {
   const controller = useContext(ControllerContext)
   if (controller === null) throw new Error('useController must be used inside ControllerProvider')
