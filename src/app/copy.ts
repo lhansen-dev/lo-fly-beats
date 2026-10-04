@@ -1,0 +1,6 @@
+export const APP_TITLE = 'Lo-fly beats'
+export const TAGLINE = 'Beats to relax / repeatedly fly into the same window to'
+export const TRACK_TITLE = 'No Thoughts, Only Fruit'
+export const LOADING_TEXT = 'Loading the fly-brain wiring…'
+export const START_LABEL = 'Start listening'
+export const ABOUT_LINE = 'Music shaped by real fly-brain wiring. The connections come from a real fruit fly; the scale, rhythm, instruments, and probability rules are authored choices.'

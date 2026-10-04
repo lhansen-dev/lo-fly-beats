@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { ABOUT_LINE, APP_TITLE, TAGLINE } from './copy'
 import { useController } from './ControllerContext'
 import { useAppState } from './store'
 import { getPreset } from '../presets/presets'
@@ -6,6 +7,7 @@ import SceneFrame from '../scene/SceneFrame'
 import { visualCssVars } from './visualVars'
 import DiagnosticsPanel from '../components/DiagnosticsPanel'
 import NowPlaying from '../components/NowPlaying'
+import StatusJoke from '../components/StatusJoke'
 import TransportControls from '../components/TransportControls'
 import PresetPicker from '../components/PresetPicker'
 import TempoControl from '../components/TempoControl'
@@ -18,6 +20,7 @@ import Mixer from '../components/Mixer'
 import AnimationToggle from '../components/AnimationToggle'
 import ExportPanel from '../components/ExportPanel'
 import ExplanationPanel from '../components/explanation/ExplanationPanel'
+import Credits from '../components/Credits'
 
 export default function App() {
   const controller = useController()
@@ -26,8 +29,8 @@ export default function App() {
 
   return <main className="app" data-preset={presetId} style={visualCssVars(getPreset(presetId).visual) as CSSProperties}>
     <header className="app-header">
-      <h1>Lo-fly beats</h1>
-      <p>Beats to relax / repeatedly fly into the same window to</p>
+      <h1>{APP_TITLE}</h1>
+      <p>{TAGLINE}</p>
     </header>
     <div className="app-layout">
       <SceneFrame />
@@ -35,6 +38,7 @@ export default function App() {
         <CircuitStatus />
         <StorageNote />
         <NowPlaying />
+        <StatusJoke />
         <TransportControls />
         <section className="controls-panel">
       <PresetPicker />
@@ -49,6 +53,8 @@ export default function App() {
       </div>
     </div>
     <ExplanationPanel />
+    <Credits />
+    <footer className="app-footer"><p data-testid="about-line">{ABOUT_LINE}</p><a href="#credits">Credits</a></footer>
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
   </main>
 }
