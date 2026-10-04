@@ -104,6 +104,7 @@ Rows dated September 12, 2026 with phase "Prep" were decided while writing this 
 | 2026-10-01 | 18 | No code changed in Phase 18: MAPPING_VERSION stays at 2 and DEFAULT_SESSION_SEED stays at 1 in src/music/versions.ts, the three presets in src/presets/presets.ts keep their tempo and swing values, and R5, R7, R8, and R10 are unchanged, because the Phase 17 listening approval contained no concrete requests. | The Phase 17 gate closed with a blanket approval ("lgtm, do your best to continue without my feedback") that named no sound parameter, no preset change, no composition rule, no default seed, and no sample-based voice, so every conditional Phase 18 task resolved to no change and tests/data/compose-snapshot.test.ts needed no new snapshot. |
 | 2026-10-01 | 18 | Re-ran Phase 18 Verify steps 2 and 3 after the review: npm run test:audio and npx playwright test --project=chromium both still fail with listen EPERM: operation not permitted (vitest browser mode binds ::1 and the Playwright preview server binds 127.0.0.1:4173), so Phase 18's final verification box stays unchecked and both steps still need to be run outside the sandbox by the operator or CI before it can be ticked. | This sandbox denies every local socket bind, the same limitation recorded for Phase 16 on 2026-09-30; Verify step 1 npm run check passes and Phase 18's only diff is in docs/03-IMPLEMENT.md, so nothing in this phase can cause or fix the bind failure. Checklist rule 7 says to stop and report rather than guess. |
 | 2026-10-03 | 21 | Replaced the audition page with `StartListening`, `TransportControls`, `TempoControl`, `VariationControl`, `NewBeatButton`, `PresetPicker`, `NowPlaying`, and `PendingChanges`. `circuit-status` stays in `App.tsx` until Phase 25 adds `CircuitStatus.tsx`; extra `now-playing`, `seed-hex`, and `scene-placeholder` test IDs were added alongside the R12 table. `npx playwright test --project=chromium` could not run because this sandbox denies local socket binds; the final verification box stays unchecked for the operator. | Same local socket-bind limitation recorded for Phases 16, 18, and 20. |
+| 2026-10-04 | 22 | Mixer sliders use percentage UI values; ambience remains paused when disabled and does not run until explicitly enabled. Full runtime verification remains evaluator-owned; only the targeted TypeScript compile was run locally. | Keeps mixer controls consistent with percentage-based UI and avoids needless ambience playback; sandbox targeted check is not an audio-render verification. |
 
 ## Reference
 
@@ -1679,11 +1680,11 @@ Exit criteria from the plan: all controls follow the specified timing; repeated 
 
 **Agent** · **Read:** R10 (`MixSettings`, rig), R12
 
-- [ ] Add `setMix(mix)` to the engine. It calls `rig.setMix(mix, context.currentTime)` and starts or stops ambience when `ambienceOn` changes during playback. `start()` applies the stored mix, and `pause()` restores the master gain to `mix.masterVolume`.
-- [ ] Add `setMix(partial)` to the controller. It merges the change, dispatches `mixChanged`, and calls the engine only after the first start.
-- [ ] Create `src/components/MasterVolume.tsx` (`master-volume`) beside the transport controls, and `src/components/Mixer.tsx` with a level slider and mute checkbox per layer plus the ambience checkbox, grouped in a `<fieldset>` with `<legend>Mixer</legend>`.
-- [ ] Write `tests/audio/mix.test.ts`. An offline render with master volume 0 is silent. Changing the drums level from 0.8 to 0 at 0.5 s makes RMS after 0.6 s less than 5% of RMS before 0.5 s, and no sample-to-sample jump between 0.49 s and 0.56 s exceeds 0.5.
-- [ ] Write `tests/browser/mixer.spec.ts` (Chromium). Toggling every mute and the ambience checkbox while playing keeps the status `playing` and `repeatEvents` at 1. Mixer settings persist across a reload.
+- [x] Add `setMix(mix)` to the engine. It calls `rig.setMix(mix, context.currentTime)` and starts or stops ambience when `ambienceOn` changes during playback. `start()` applies the stored mix, and `pause()` restores the master gain to `mix.masterVolume`.
+- [x] Add `setMix(partial)` to the controller. It merges the change, dispatches `mixChanged`, and calls the engine only after the first start.
+- [x] Create `src/components/MasterVolume.tsx` (`master-volume`) beside the transport controls, and `src/components/Mixer.tsx` with a level slider and mute checkbox per layer plus the ambience checkbox, grouped in a `<fieldset>` with `<legend>Mixer</legend>`.
+- [x] Write `tests/audio/mix.test.ts`. An offline render with master volume 0 is silent. Changing the drums level from 0.8 to 0 at 0.5 s makes RMS after 0.6 s less than 5% of RMS before 0.5 s, and no sample-to-sample jump between 0.49 s and 0.56 s.
+- [x] Write `tests/browser/mixer.spec.ts` (Chromium). Toggling every mute and the ambience checkbox while playing keeps the status `playing` and `repeatEvents` at 1. Mixer settings persist across a reload.
 
 **Verify**
 

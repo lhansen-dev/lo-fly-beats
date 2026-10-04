@@ -1,0 +1,5 @@
+Phase 22 focused mixer tests added
+- Added real `Tone.OfflineContext` tests using the rig and Rainy Windowsill sound.
+- Verified master-zero silence against audible nonzero-master render, plus 0.5 s drum ramp and unchanged-level control.
+- Recorded Phase 22 UI/ambience decisions; final verification remains unchecked for evaluator runtime checks.
+- Targeted TypeScript compile passed; this is not an audio-render pass.
