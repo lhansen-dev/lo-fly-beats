@@ -8,12 +8,12 @@
 .scanner-badge { display: flex; align-items: center; gap: 7px; font: 8px var(--font-mono); letter-spacing: 1px; border: 1px solid #709a8b; border-radius: 5px; color: #b5e5d2; padding: 8px 10px; white-space: nowrap; }
 .scanner-badge .status-dot { background: var(--scan-accent); }
 .scanner-layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); border-top: 1px solid #3d554a; border-bottom: 1px solid #3d554a; }
-.scan-stage { min-width: 0; position: relative; background-color: #101d1b; background-image: linear-gradient(#8ee2cb08 1px, transparent 1px), linear-gradient(90deg, #8ee2cb08 1px, transparent 1px); background-size: 30px 30px; }
+.scan-stage { min-width: 0; position: relative; background: radial-gradient(ellipse at 45% 30%, #172a2720, transparent 65%), #0e1818; }
 .scan-stage-meta { position: absolute; top: 15px; left: 18px; right: 18px; display: flex; justify-content: space-between; gap: 10px; font: 7px var(--font-mono); letter-spacing: 1px; color: #a5c5b8; }
 .network-scan { display: block; width: 100%; height: auto; }
-.network-layers { position: relative; }
+.network-layers { position: relative; aspect-ratio: 760 / 680; }
 .network-overview { position: absolute; inset: 0; width: 100%; height: 100%; }
-.network-layers .network-scan { position: relative; }
+.network-layers .network-scan { position: relative; height: 100%; }
 .scan-guides { stroke: #8ee2cb; stroke-opacity: .12; stroke-width: .6; stroke-dasharray: 3 7; }
 .scan-connections { stroke: #83c4b2; stroke-opacity: .13; fill: none; }
 .scan-trail { stroke: #a5e3cc; stroke-opacity: .5; stroke-width: 1.5; fill: none; }
@@ -25,10 +25,20 @@
 .scan-target text { fill: #e0ffee; stroke: none; font: 11px var(--font-mono); paint-order: stroke; stroke: #132420; stroke-width: 4px; }
 .scan-pulse { stroke-opacity: .45; }
 .scan-side-label { fill: #a7cbbd; font: 8px var(--font-mono); letter-spacing: 2px; }
+.anatomy-labels { fill: #bad0c8; font: 10px var(--font-mono); letter-spacing: 1px; }
+.anatomy-labels path { stroke: #75978b; stroke-width: .7; stroke-opacity: .45; fill: none; }
+.anatomy-labels circle { fill: #75978b; }
+.anatomy-labels .anatomy-label-hint { fill: #8ea9a0; font-size: 10px; letter-spacing: 0; }
+.anatomy-label--active > text { fill: #e0fff0; }
+.anatomy-label--active > path { stroke: var(--scan-accent); stroke-opacity: .85; }
+.anatomy-label--active > circle { fill: var(--scan-accent); }
+.anatomy-cord-title { font-size: 10px; letter-spacing: 2px; }
+.unlocated-label { fill: #9db7ac; font-size: 8px; letter-spacing: .7px; }
+.anatomy-scale { fill: #91aaa0; font-size: 9px; letter-spacing: 0; }
 .scan-sweep { display: none; fill: none; stroke: var(--scan-accent); stroke-opacity: .15; }
 .scanner--animated .scan-sweep { display: block; animation: scan-sweep 8s linear infinite; }
 .scanner--animated .scan-pulse { animation: scan-pulse 850ms ease-out; transform-box: fill-box; transform-origin: center; }
-@keyframes scan-sweep { from { transform: translateY(0); } to { transform: translateY(360px); } }
+@keyframes scan-sweep { from { transform: translateY(0); } to { transform: translateY(630px); } }
 @keyframes scan-pulse { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
 .scan-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 22px; padding: 10px 12px 14px; font: 8px var(--font-mono); color: #bdd5c9; }
 .scan-legend > span { display: flex; align-items: center; gap: 7px; }
@@ -42,6 +52,22 @@
 .beat-counter { font: 9px var(--font-mono); color: #d3e9d9; }
 .scan-inspector h3 { font-size: 25px; letter-spacing: -.6px; margin-top: 17px; color: #d1f2df; }
 .neuron-id { font: 8px var(--font-mono); color: #b5cebf; letter-spacing: .9px; margin-top: 5px; }
+.fly-location { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 14px; align-items: center; margin-top: 20px; padding: 12px 0; border-top: 1px solid #3d554a; }
+.fly-body-map { width: 100%; height: auto; overflow: visible; }
+.fly-body-map .fly-body-part { fill: #233a33; stroke: #7f9c8e; stroke-width: 1; }
+.fly-body-wings .fly-body-part { fill: #87b2a30c; stroke: #76958a; }
+.fly-body-wings > path:last-child, .fly-body-segments { fill: none; stroke: #779486; stroke-width: .8; stroke-opacity: .5; }
+.fly-body-legs .fly-body-part { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.fly-body-map .fly-body-part--active { fill: #caa25f30; stroke: #f2cd94; }
+.fly-body-legs .fly-body-part--active { fill: none; stroke-width: 3; }
+.fly-body-cns > path:first-child { fill: none; stroke: #93bfa0; stroke-width: 1; opacity: .6; }
+.fly-body-cns .fly-body-part { fill: #789b89; stroke: #c0d8c6; stroke-width: .5; }
+.fly-body-cns .fly-body-part--active { fill: #f2cd94; stroke: #ffe8c7; }
+.fly-body-map text { fill: #b1cbbd; font: 8px var(--font-mono); }
+.fly-location-copy .detail-label { font-size: 7px; }
+.fly-location-copy .fly-region { font-size: 14px; line-height: 1.4; color: #f2d7ad; margin-top: 7px; overflow-wrap: anywhere; }
+.fly-location-copy > p:not(.fly-region) { font-size: 10px; line-height: 1.6; margin-top: 5px; color: #b8cfc1; }
+.position-kind { display: block; font: 7px/1.7 var(--font-mono); color: #a7c2b3; margin-top: 9px; }
 .connection-detail { border-block: 1px solid #47634f; margin-top: 20px; padding: 14px 0; }
 .detail-label { font: 8px var(--font-mono); letter-spacing: 1px; color: #b1cebb; }
 .connection-detail > p { margin-top: 8px; color: #ddedde; font-size: 11px; }
@@ -73,13 +99,14 @@ button.trace-beat--selected { background: #c5dfb5; border-color: #d7efc9; }
 button.trace-beat--selected > span { background: #233c27; }
 .trace-beat--rest > span { border-radius: 0; width: 7px; height: 1px; }
 .scan-disclaimer { border-top: 1px solid #3d554a; padding: 12px 28px; color: #b4c7b5; font-size: 9px; line-height: 1.8; }
+.scan-disclaimer a { color: #cbe5d4; text-underline-offset: 2px; }
 @media (max-width: 1000px) {
   .scanner-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
   .scan-inspector { padding: 20px; }
   .scan-stage-meta { font-size: 6px; }
-  .network-scan { height: 100%; max-height: 380px; object-fit: contain; }
-  .scan-legend { position: absolute; bottom: 0; inset-inline: 0; gap: 15px; font-size: 7px; }
+  .scan-legend { gap: 15px; font-size: 7px; }
   .scan-stage { min-height: 360px; }
+  .fly-location { grid-template-columns: 85px minmax(0, 1fr); gap: 10px; }
 }
 @media (max-width: 699px) {
   .circuit-scanner { margin-top: 20px; border-radius: 11px; }
@@ -89,7 +116,10 @@ button.trace-beat--selected > span { background: #233c27; }
   .scanner-badge { display: inline-flex; margin-top: 15px; }
   .scanner-layout { grid-template-columns: minmax(0, 1fr); }
   .scan-stage { min-height: 240px; }
-  .network-scan { height: auto; min-height: 220px; }
+  .network-scan { height: auto; }
+  .anatomy-labels { font-size: 13px; }
+  .anatomy-labels .anatomy-label-hint { font-size: 12px; }
+  .unlocated-label { font-size: 10px; letter-spacing: 0; }
   .scan-stage-meta { font-size: 6px; top: 12px; left: 12px; right: 12px; }
   .scan-legend { position: static; gap: 12px; padding-bottom: 12px; font-size: 6px; }
   .scan-inspector { border-left: 0; border-top: 1px solid #3d554a; padding: 20px 16px; }

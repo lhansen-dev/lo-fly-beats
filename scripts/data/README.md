@@ -52,6 +52,8 @@ The version-2 manifest describes two gzip-compressed files:
 
 The browser verifies each compressed file's exact byte count and SHA-256, then decompresses it with `DecompressionStream`. Assets deliberately use `.gzip` rather than `.gz`, because some static servers automatically add `Content-Encoding: gzip` to `.gz` files and cause browsers to decode them before integrity checks. Serve these files as ordinary binary assets; their contents are explicitly decoded by the application.
 
+Each neuron also retains an `anatomy` object with nullable `somaLocation`, `tosomaLocation`, `somaNeuromere`, `subclass`, `rootSide`, `entryNerve`, and `exitNerve` from the same upstream annotation row. Coordinates are original integer XYZ positions in 8 nm voxel units, not generated display positions. Independent verification compares these fields exactly to the source. There are 140,024 somas, 976 additional attachment positions, and 24,122 unlocated neurons. The scanner projects X–Z with one scale for both axes and keeps unlocated neurons separate. Body region associations use explicit source annotations, and limb laterality requires `rootSide`; `LN` in nerve names means leg nerve, not left.
+
 The graph fingerprint is SHA-256 of the UTF-8 string `annotations SHA-256:adjacency SHA-256`. It covers both annotation and connectivity changes. The full adjacency stays in typed arrays; at most 128 outgoing rows are cached as objects. Starts are derived from every nonempty row, so the manifest's `startNeuronIds` is empty. Dead ends rest until the next bar and restart from that same eligible pool. Strong/weak component counts are omitted; starts are not limited to one core or a small list of hubs.
 
 Gzip timestamps are zero and serialization is stable. Regenerating from the same sources, config, and locked environment produces identical assets.
@@ -64,9 +66,9 @@ Gzip timestamps are zero and serialization is stable. Regenerating from the same
 | Directed connections / synapses | 10,510,984 / 104,213,241 |
 | Dead ends / eligible starts | 3,442 / 161,680 |
 | Removed self-connections at threshold | 54 |
-| Compressed annotations / adjacency | 1,280,213 / 33,799,576 bytes |
+| Compressed annotations / adjacency | 3,205,690 / 33,799,576 bytes |
 | Uncompressed adjacency | 84,748,384 bytes |
-| Graph fingerprint | `466714bc473d63e3368fd19f2abd6255db625e97bc4c295e9f94a9d35dda0f59` |
+| Graph fingerprint | `ad42e3e52de41c931f79d4cbcc218f59f438387fec6a2abae8df7cc7046ca0cb` |
 
 The scanner plots every neuron but reduces background links to at most 1,200 representative connections. Its current and recent paths always use exact edges from the full graph. That display reduction does not affect music, totals, or exported data.
 

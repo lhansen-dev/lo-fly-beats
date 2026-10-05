@@ -7,6 +7,9 @@ import { formatChance } from '../explanation/describe'
 import Icon from '../Icon'
 import { edgeKey, layoutCircuit, MAX_DETAILED_NEURONS, scanEdge } from './layout'
 import NetworkOverview from './NetworkOverview'
+import AnatomyLabels from './AnatomyLabels'
+import FlyActivity from './FlyActivity'
+import { SCAN_HEIGHT, SCAN_WIDTH } from './anatomy'
 import './scanner.css'
 
 export default function CircuitScanner() {
@@ -49,25 +52,26 @@ export default function CircuitScanner() {
   const scanLabel = circuitStatus === 'error' ? 'DATA UNAVAILABLE' : circuitStatus === 'loading' ? 'LOADING CIRCUIT' : !score ? 'AWAITING PLAYBACK' : inspecting ? 'INSPECTING BEAT' : playing ? 'LIVE WALK' : 'WALK PAUSED'
 
   return <section className={`circuit-scanner${animated ? ' scanner--animated' : ''}`} id="circuit-scan" data-testid="circuit-scanner" aria-labelledby="scanner-title">
-    <div className="scanner-heading"><div><p className="eyebrow"><Icon name="scan" /> BEHIND THE BEAT</p><h2 id="scanner-title">A window into the wiring<span>.</span></h2><p>Follow the real MaleCNS connections shaping your music, one beat at a time.</p></div><span className="scanner-badge"><span className="status-dot" />{scanLabel}</span></div>
+    <div className="scanner-heading"><div><p className="eyebrow"><Icon name="scan" /> BEHIND THE BEAT</p><h2 id="scanner-title">A window into the fly<span>.</span></h2><p>From brain to body: follow the real connections shaping each beat.</p></div><span className="scanner-badge"><span className="status-dot" />{scanLabel}</span></div>
     <div className="scanner-layout">
       <div className="scan-stage">
-        <div className="scan-stage-meta"><span>MALE CNS / WHOLE CONNECTOME</span><span>CONNECTIVITY SCHEMATIC</span></div>
-        {layout ? <div className="network-layers">{wholeOverview && <NetworkOverview nodes={layout.nodes} edges={layout.edges} />}<svg className="network-scan" viewBox="0 0 760 400" aria-hidden="true" data-testid="network-scan">
+        <div className="scan-stage-meta"><span>MALE CNS / BRAIN + NERVE CORD</span><span>CELL-BODY PROJECTION · X–Z</span></div>
+        {layout ? <div className="network-layers">{wholeOverview && <NetworkOverview nodes={layout.nodes} edges={layout.edges} />}<svg className="network-scan" viewBox={`0 0 ${SCAN_WIDTH} ${SCAN_HEIGHT}`} aria-hidden="true" data-testid="network-scan">
           <defs>
             <radialGradient id="scan-aura"><stop stopColor="var(--scan-accent)" stopOpacity="0.14" /><stop offset="1" stopColor="var(--scan-accent)" stopOpacity="0" /></radialGradient>
             <linearGradient id="scan-sweep-gradient" x1="0" x2="0" y1="0" y2="1"><stop stopColor="var(--scan-accent)" stopOpacity="0" /><stop offset="1" stopColor="var(--scan-accent)" stopOpacity="0.09" /></linearGradient>
             <marker id="scan-arrow" markerWidth="5" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0 0 5 2.5 0 5" fill="var(--scan-accent)" /></marker>
           </defs>
-          <ellipse cx="255" cy="205" rx="235" ry="200" fill="url(#scan-aura)" /><ellipse cx="505" cy="205" rx="235" ry="200" fill="url(#scan-aura)" />
-          <g className="scan-guides" fill="none"><path d="M380 45v315M50 205h660" /><ellipse cx="255" cy="205" rx="185" ry="160" /><ellipse cx="505" cy="205" rx="185" ry="160" /></g>
+          <ellipse cx="340" cy="140" rx="240" ry="130" fill="url(#scan-aura)" /><ellipse cx="340" cy="435" rx="90" ry="175" fill="url(#scan-aura)" />
+          <g className="scan-guides" fill="none"><path d="M340 35v555M105 260h470" /></g>
+          <AnatomyLabels nodes={layout.nodes} current={currentNode} />
           {!wholeOverview && <g className="scan-connections">{layout.edges.map(edge => <path key={edge.key} d={edge.path} strokeWidth={Math.min(1.2, 0.3 + Math.log2(edge.synapseCount) / 10)} />)}</g>}
-          <g className="scan-trail">{visibleEdges.filter((edge, index) => recentEdges.has(edge.key) && visibleEdges.findIndex(other => other.key === edge.key) === index).map(edge => <path key={edge.key} d={edge.path} />)}</g>
-          {visibleEdges.filter((edge, index) => edge.key === activeEdge && visibleEdges.findIndex(other => other.key === edge.key) === index).map(edge => <path className="scan-active-edge" key={edge.key} d={edge.path} markerEnd="url(#scan-arrow)" data-source={edge.source} data-target={edge.target} data-synapses={edge.synapseCount} />)}
-          <g>{visibleNodes.map(node => <circle key={node.neuron.id} cx={node.x} cy={node.y} r={node.neuron.id === step?.neuronId ? 5.5 : node.radius} className={`scan-node${recentNodes.has(node.neuron.id) ? ' scan-node--visited' : ''}${node.neuron.id === step?.neuronId ? ' scan-node--current' : ''}`} data-neuron-id={node.neuron.id} />)}</g>
+          <g className="scan-trail">{visibleEdges.filter((edge, index) => recentEdges.has(edge.key) && visibleEdges.findIndex(other => other.key === edge.key) === index).map(edge => <path key={edge.key} d={edge.path} strokeDasharray={edge.positioned ? undefined : '4 6'} />)}</g>
+          {visibleEdges.filter((edge, index) => edge.key === activeEdge && visibleEdges.findIndex(other => other.key === edge.key) === index).map(edge => <path className="scan-active-edge" key={edge.key} d={edge.path} markerEnd="url(#scan-arrow)" strokeDasharray={edge.positioned ? undefined : '4 6'} data-source={edge.source} data-target={edge.target} data-synapses={edge.synapseCount} data-positioned={edge.positioned} />)}
+          <g>{visibleNodes.map(node => <circle key={node.neuron.id} cx={node.x} cy={node.y} r={node.neuron.id === step?.neuronId ? 5.5 : node.radius} className={`scan-node${recentNodes.has(node.neuron.id) ? ' scan-node--visited' : ''}${node.neuron.id === step?.neuronId ? ' scan-node--current' : ''}`} data-neuron-id={node.neuron.id} data-position-kind={node.positionKind} />)}</g>
           {currentNode && <g className="scan-target" key={`${score?.phraseIndex}-${beat}`} transform={`translate(${currentNode.x} ${currentNode.y})`}><circle className="scan-pulse" r="17" /><path d="M-24-8v-9h9M15-17h9v9M-24 8v9h9M15 17h9V8" /><text x="0" y="-30" textAnchor="middle">{neuron?.type ?? 'Untyped'}</text></g>}
           <g className="scan-sweep"><rect x="50" y="0" width="660" height="45" fill="url(#scan-sweep-gradient)" /><path d="M50 45h660" /></g>
-          <text className="scan-side-label" x="210" y="387">LEFT SOMA</text><text className="scan-side-label" x="460" y="387">RIGHT SOMA</text>
+          <text className="scan-side-label" x="145" y="665">LEFT</text><text className="scan-side-label" x="510" y="665">RIGHT</text>
         </svg></div> : <div className="scan-placeholder"><Icon name="scan" /><p>{circuitStatus === 'error' ? 'The circuit could not be loaded. Use Retry below to reconnect.' : 'Preparing the connectome…'}</p></div>}
         <div className="scan-legend"><span><i className="legend-current" />Selected neuron</span><span><i className="legend-trail" />Recent path</span><span><i className="legend-network" />{wholeOverview ? 'Whole connectome overview' : 'Real connection'}</span></div>
       </div>
@@ -75,6 +79,7 @@ export default function CircuitScanner() {
         <div className="inspector-heading"><p className="eyebrow">{inspecting ? 'SELECTED BEAT' : 'THIS BEAT’S SELECTION'}</p><span className="beat-counter">{step ? `${String(beat + 1).padStart(2, '0')} / 32` : '— / 32'}</span></div>
         <h3 data-testid="scan-neuron-type">{step?.kind === 'rest' ? 'A little silence' : neuron?.type ?? (score ? 'Untyped neuron' : 'Ready when you are')}</h3>
         <p className="neuron-id">{neuron ? `BODY ID ${neuron.id}` : step?.kind === 'rest' ? 'REST / NO NEURON SELECTED' : 'PRESS START LISTENING TO BEGIN'}</p>
+        <FlyActivity neuron={neuron} />
         {step ? <>
           <div className="connection-detail"><span className="detail-label">{step.kind === 'edge' ? 'INCOMING CONNECTION' : 'TRAVERSAL RULE'}</span><p>{step.kind === 'edge' ? <>{source?.type ?? 'Untyped'} <span className="connection-arrow">→</span> {neuron?.type ?? 'Untyped'}</> : step.kind === 'rest' ? 'Dead end · resting until the next bar' : step.kind === 'restart' ? 'Restart across the whole connectome' : 'Phrase begins across the whole connectome'}</p>{step.kind === 'edge' && <div className="connection-stats"><span><strong>{step.synapseCount}</strong> synapses</span><span><strong>{formatChance(step.probability)}</strong> selection chance</span></div>}</div>
           <div className="musical-choices"><span className="detail-label">SHAPING THE MUSIC</span>{step.uses.length ? <ul>{step.uses.map(use => <li key={use}>{use}</li>)}</ul> : <p>The bass rests. The arrangement continues.</p>}</div>
@@ -88,6 +93,6 @@ export default function CircuitScanner() {
       const visited = !!score && index <= liveBeat
       return <button key={index} type="button" className={`trace-beat${visited ? ' trace-beat--visited' : ''}${score && index === beat ? ' trace-beat--selected' : ''}${traceStep?.kind === 'rest' ? ' trace-beat--rest' : ''}`} data-testid={`scan-beat-${index}`} disabled={!visited} aria-label={`Inspect bar ${bar + 1}, beat ${beatInBar + 1}${traceStep?.neuronType ? `: ${traceStep.neuronType}` : ''}`} aria-pressed={!!score && index === beat} onClick={() => { if (phraseKey) setInspection({ phraseKey, beat: index }) }}><span /></button>
     })}</div>)}</div></div>
-    <p className="scan-disclaimer">Real neuron IDs and synapse counts from MaleCNS v1.0. {wholeOverview && 'The overview plots every traced neuron across the brain and nerve cord, with representative background connections. Each beat walks the full graph. '}Positions are schematic, not an anatomical scan. Highlights show the music’s traversal, not measured neural firing.</p>
+    <p className="scan-disclaimer">Real coordinates, neuron IDs, and synapse counts from <a href="https://male-cns.janelia.org/download/" target="_blank" rel="noreferrer">MaleCNS v1.0</a>. Cell bodies and soma attachment points are projected at a uniform scale; missing positions appear in a separate strip with dashed connections. Arcs show connectivity, not axon shapes. The body map uses annotated regions and nerve pathways. Highlights show the music’s traversal, not measured neural firing or movement.</p>
   </section>
 }

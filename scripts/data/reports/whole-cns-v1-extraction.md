@@ -13,6 +13,7 @@ Connectome data from MaleCNS male-cns:v1.0 by FlyEM (HHMI Janelia), the Universi
 - Kept every connection between selected bodies with at least 3 synapses; original weights are unchanged.
 - Removed self-connections that meet the synapse threshold; rejected duplicate pairs.
 - Preserved original decimal body IDs and annotations; missing annotations are null.
+- Preserved somaLocation and tosomaLocation in original 8nm voxel coordinates, plus neuromere, subclass, side, and entry/exit nerve annotations for anatomy views.
 - Stored every retained connection in sorted compressed sparse rows, without sampling or per-neuron edge caps.
 
 ## Verified counts
@@ -29,12 +30,12 @@ Connectome data from MaleCNS male-cns:v1.0 by FlyEM (HHMI Janelia), the Universi
 
 ## Integrity
 
-Graph fingerprint: `466714bc473d63e3368fd19f2abd6255db625e97bc4c295e9f94a9d35dda0f59` (SHA-256 of `annotations SHA-256:adjacency SHA-256`).
+Graph fingerprint: `ad42e3e52de41c931f79d4cbcc218f59f438387fec6a2abae8df7cc7046ca0cb` (SHA-256 of `annotations SHA-256:adjacency SHA-256`).
 Config SHA-256: `55b32ab7d37f4b77bb08e4ae9178975f2f8f0d52b80119fe5275f8a0a317b85a`.
 
 - body-annotations-male-cns-v1.0-minconf-0.5.feather: 14,483,314 bytes; SHA-256 `2177e246113e4cfbf1e7772ec37c6da1955ff22e8063d0b1f833101f99a9a3b2`.
 - connectome-weights-male-cns-v1.0-minconf-0.5.feather: 1,051,241,946 bytes; SHA-256 `e35da783d1c686b2b58b3b87cd6a403ae43bfcfba8bff28e08ef752c1a56afc1`.
-- neurons.json.gzip: 1,280,213 bytes; SHA-256 `8f5bc969079a0e7db5cf2217fe7d811caf1116f62a59730f9d301a97d1563bd7`.
+- neurons.json.gzip: 3,205,690 bytes; SHA-256 `caa5c519106b0af075ef870b51ed9193dac0f33c91862ed407a23b9ec1078361`.
 - adjacency.bin.gzip: 33,799,576 bytes; SHA-256 `19fb04b8d99f6f21d4918a70a06c536df631bee5f908bc8080b3b151610ae6e6`.
 
 ## Sample connections

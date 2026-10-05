@@ -4,6 +4,7 @@ const idSchema = z.string().regex(/^[1-9][0-9]*$/)
 const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/)
 const countSchema = z.number().int().nonnegative()
 const annotationSchema = z.string().nullable()
+const locationSchema = z.tuple([countSchema, countSchema, countSchema]).nullable()
 export const neuronSchema = z.strictObject({
   id: idSchema,
   type: annotationSchema,
@@ -11,6 +12,15 @@ export const neuronSchema = z.strictObject({
   class: annotationSchema,
   superclass: annotationSchema,
   somaSide: annotationSchema,
+  anatomy: z.strictObject({
+    somaLocation: locationSchema,
+    tosomaLocation: locationSchema,
+    somaNeuromere: annotationSchema,
+    subclass: annotationSchema,
+    rootSide: annotationSchema,
+    entryNerve: annotationSchema,
+    exitNerve: annotationSchema,
+  }).optional(),
 })
 
 export const compactCircuitSchema = z.strictObject({

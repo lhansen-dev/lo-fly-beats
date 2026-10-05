@@ -37,7 +37,7 @@
   },
   "extraction": {
     "script": "scripts/data/extract_whole_cns.py",
-    "scriptVersion": 1,
+    "scriptVersion": 2,
     "config": "scripts/data/config/whole-cns-v1.json",
     "configSha256": "55b32ab7d37f4b77bb08e4ae9178975f2f8f0d52b80119fe5275f8a0a317b85a",
     "neuronSelection": "annotations.status == \"Traced\" (all neuron classes)",
@@ -49,6 +49,7 @@
       "Kept every connection between selected bodies with at least 3 synapses; original weights are unchanged.",
       "Removed self-connections that meet the synapse threshold; rejected duplicate pairs.",
       "Preserved original decimal body IDs and annotations; missing annotations are null.",
+      "Preserved somaLocation and tosomaLocation in original 8nm voxel coordinates, plus neuromere, subclass, side, and entry/exit nerve annotations for anatomy views.",
       "Stored every retained connection in sorted compressed sparse rows, without sampling or per-neuron edge caps."
     ],
     "thresholdComparison": [
@@ -70,8 +71,8 @@
   "startNeuronIds": [],
   "output": {
     "file": "neurons.json.gzip",
-    "bytes": 1280213,
-    "sha256": "8f5bc969079a0e7db5cf2217fe7d811caf1116f62a59730f9d301a97d1563bd7",
+    "bytes": 3205690,
+    "sha256": "caa5c519106b0af075ef870b51ed9193dac0f33c91862ed407a23b9ec1078361",
     "adjacency": {
       "file": "adjacency.bin.gzip",
       "encoding": "csr-u32-le-v1",
@@ -79,6 +80,6 @@
       "sha256": "19fb04b8d99f6f21d4918a70a06c536df631bee5f908bc8080b3b151610ae6e6",
       "uncompressedBytes": 84748384
     },
-    "graphSha256": "466714bc473d63e3368fd19f2abd6255db625e97bc4c295e9f94a9d35dda0f59"
+    "graphSha256": "ad42e3e52de41c931f79d4cbcc218f59f438387fec6a2abae8df7cc7046ca0cb"
   }
 }

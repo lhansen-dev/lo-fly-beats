@@ -35,7 +35,13 @@ def main() -> None:
     annotations = feather.read_table(paths['annotations'])
     selection = config['selection']
     originals = annotations.filter(pc.equal(annotations[selection['column']], selection['equals'])).sort_by('bodyId')
-    expected_nodes = [{'id': str(row['bodyId']), **{field: row[field] for field in ('type', 'instance', 'class', 'superclass', 'somaSide')}} for row in originals.to_pylist()]
+    expected_nodes = [{
+        'id': str(row['bodyId']),
+        **{field: row[field] for field in ('type', 'instance', 'class', 'superclass', 'somaSide')},
+        'anatomy': {field: row[field] for field in (
+            'somaLocation', 'tosomaLocation', 'somaNeuromere', 'subclass', 'rootSide', 'entryNerve', 'exitNerve',
+        )},
+    } for row in originals.to_pylist()]
     check(circuit['schemaVersion'] == 2 and circuit['circuitId'] == manifest['circuitId'], 'Invalid annotation header')
     check(circuit['neurons'] == expected_nodes, 'Annotation set or values differ from upstream')
     ids = originals['bodyId'].to_numpy()

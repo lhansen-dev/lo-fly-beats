@@ -11,6 +11,15 @@ export interface Neuron {
   class: string | null
   superclass: string | null
   somaSide: string | null
+  anatomy?: {
+    somaLocation: [number, number, number] | null
+    tosomaLocation: [number, number, number] | null
+    somaNeuromere: string | null
+    subclass: string | null
+    rootSide: string | null
+    entryNerve: string | null
+    exitNerve: string | null
+  }
 }
 
 export interface Connection {

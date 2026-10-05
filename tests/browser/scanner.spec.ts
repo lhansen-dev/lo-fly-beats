@@ -1,15 +1,22 @@
 import { expect, test } from '@playwright/test'
 import { wholeConnectome } from '../helpers/wholeConnectome'
 import { composePhrase } from '../../src/music/compose'
+import { describeAnatomy, positionLabel, projectLocation } from '../../src/components/scanner/anatomy'
 
 const graph = wholeConnectome()
 const score = composePhrase(graph, { recipeVersion: 1, presetId: 'rainy-windowsill', sessionSeed: 1, variation: 0, tempoBpm: 72 }, 0)
 
 test('scanner follows the audible score, supports inspecting a beat, and clears on a new session', async ({ page }) => {
+  // This exercises a full eight-bar phrase on the real audio clock, after loading the whole CNS.
+  test.setTimeout(90_000)
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/')
   await expect(page.getByTestId('network-overview')).toHaveAttribute('data-neurons', '165122')
+  await expect(page.getByTestId('network-overview')).toHaveAttribute('data-positioned-neurons', '141000')
+  await expect(page.locator('.anatomy-labels')).toContainText('CENTRAL BRAIN')
+  await expect(page.locator('.anatomy-labels')).toContainText('VENTRAL')
+  await expect(page.locator('.unlocated-label')).toContainText('24,122')
   await expect(page.locator('.scan-connections path')).toHaveCount(0)
   await expect(page.locator('.scan-dataset-stats')).toContainText('10,510,984')
   expect(await page.locator('[data-testid=network-scan] *').count()).toBeLessThan(100)
@@ -32,12 +39,23 @@ test('scanner follows the audible score, supports inspecting a beat, and clears 
   await expect(page.getByTestId('scan-neuron-type')).toHaveText(step.neuronType!)
   for (const use of step.uses) await expect(inspector).toContainText(use)
   await expect(page.locator('.scan-node--current')).toHaveAttribute('data-neuron-id', step.neuronId)
+  const selectedNeuron = graph.neurons.get(step.neuronId)!
+  await expect(page.getByTestId('scan-region')).toHaveText(describeAnatomy(selectedNeuron).label)
+  await expect(page.getByTestId('scan-position-kind')).toHaveText(positionLabel(selectedNeuron))
+  const coordinates = selectedNeuron.anatomy?.somaLocation ?? selectedNeuron.anatomy?.tosomaLocation
+  if (coordinates) {
+    const point = projectLocation(coordinates)
+    await expect(page.locator('.scan-node--current')).toHaveAttribute('cx', String(point.x))
+    await expect(page.locator('.scan-node--current')).toHaveAttribute('cy', String(point.y))
+  }
+  await expect(page.locator('.fly-body-part--active').first()).toBeVisible()
   await page.waitForTimeout(1000)
   await expect(inspector).toHaveAttribute('data-beat', String(beat))
 
   await page.getByTestId('scan-beat-0').click()
   await expect(inspector).toHaveAttribute('data-neuron-id', score.trace[0]!.neuronId!)
   await expect(inspector).toHaveAttribute('data-beat', '0')
+  await expect(page.getByTestId('scan-region')).toHaveText(describeAnatomy(graph.neurons.get(score.trace[0]!.neuronId!)!).label)
   await expect(page.getByTestId('scan-follow')).toBeEnabled()
   await expect(page.getByTestId('scan-beat-31')).toBeDisabled()
   await page.getByTestId('scan-follow').click()
@@ -53,6 +71,7 @@ test('scanner follows the audible score, supports inspecting a beat, and clears 
   await page.getByTestId('new-beat').click()
   await expect(page.getByTestId('scan-neuron-type')).toHaveText('Ready when you are')
   await expect(page.locator('.scan-node--current')).toHaveCount(0)
+  await expect(page.locator('.fly-body-part--active')).toHaveCount(0)
   expect(errors).toEqual([])
 })
 

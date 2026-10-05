@@ -17,6 +17,20 @@ from extract_circuit import FIELDS, ROOT, DATA_DIR, require, write_json
 
 CONFIG_PATH = DATA_DIR / 'config/whole-cns-v1.json'
 MAGIC = 0x3242464C
+ANATOMY_FIELDS = ('somaNeuromere', 'subclass', 'rootSide', 'entryNerve', 'exitNerve')
+
+
+def export_neuron(row: dict) -> dict:
+    """Keep original voxel coordinates and body annotations, including missing values."""
+    return {
+        'id': str(row['bodyId']),
+        **{field: None if pd.isna(row[field]) else row[field] for field in FIELDS},
+        'anatomy': {
+            **{field: None if row[field] is None else [int(value) for value in row[field]]
+               for field in ('somaLocation', 'tosomaLocation')},
+            **{field: None if pd.isna(row[field]) else row[field] for field in ANATOMY_FIELDS},
+        },
+    }
 
 
 def main() -> None:
@@ -33,7 +47,7 @@ def main() -> None:
     require(selected.bodyId.is_unique and selected.bodyId.notna().all(), 'Non-unique or missing body IDs')
     ids = pa.array(selected.bodyId, type=pa.int64())
     require(config['limits']['minNeurons'] <= len(ids) <= config['limits']['maxNeurons'], 'Neuron count outside limits')
-    neurons = [{'id': str(row['bodyId']), **{field: None if pd.isna(row[field]) else row[field] for field in FIELDS}} for row in selected.to_dict('records')]
+    neurons = [export_neuron(row) for row in selected.to_dict('records')]
     sources, targets, weights = [], [], []
     self_connections = 0
     threshold = config['minSynapseCount']
@@ -99,7 +113,7 @@ def main() -> None:
         ]},
         'license': {**legacy['license'], 'attribution': f'Connectome data from MaleCNS male-cns:v1.0 by FlyEM (HHMI Janelia), the University of Cambridge, the MRC Laboratory of Molecular Biology, and Google Research, licensed CC BY 4.0. Includes all traced neurons across the brain and ventral nerve cord; connections contain at least {threshold} synapses.'},
         'extraction': {
-            'script': 'scripts/data/extract_whole_cns.py', 'scriptVersion': 1,
+            'script': 'scripts/data/extract_whole_cns.py', 'scriptVersion': 2,
             'config': str(CONFIG_PATH.relative_to(ROOT)), 'configSha256': hashlib.sha256(config_bytes).hexdigest(),
             'neuronSelection': 'annotations.status == "Traced" (all neuron classes)',
             'minSynapseCount': threshold, 'selfConnectionsRemoved': self_connections,
@@ -109,6 +123,7 @@ def main() -> None:
                 f'Kept every connection between selected bodies with at least {threshold} synapses; original weights are unchanged.',
                 'Removed self-connections that meet the synapse threshold; rejected duplicate pairs.',
                 'Preserved original decimal body IDs and annotations; missing annotations are null.',
+                'Preserved somaLocation and tosomaLocation in original 8nm voxel coordinates, plus neuromere, subclass, side, and entry/exit nerve annotations for anatomy views.',
                 'Stored every retained connection in sorted compressed sparse rows, without sampling or per-neuron edge caps.',
             ],
             'thresholdComparison': [{'minSynapseCount': threshold, 'connections': counts['connections'], 'deadEnds': counts['deadEnds']}],

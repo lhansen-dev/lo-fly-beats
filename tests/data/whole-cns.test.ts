@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { expect, it } from 'vitest'
 import { layoutCircuit, MAX_OVERVIEW_EDGES } from '../../src/components/scanner/layout'
+import { projectLocation, SCAN_HEIGHT, SCAN_WIDTH } from '../../src/components/scanner/anatomy'
 import { wholeConnectome, wholeManifest } from '../helpers/wholeConnectome'
 
 const graph = wholeConnectome()
@@ -27,6 +28,12 @@ it('plots every neuron with bounded overview connections and preserves compositi
   expect(layout.edges.length).toBeLessThanOrEqual(MAX_OVERVIEW_EDGES)
   expect(layout.edges.length).toBeGreaterThan(500)
   for (const edge of layout.edges) expect(graph.outgoing.get(edge.source)).toContainEqual({ target: edge.target, synapseCount: edge.synapseCount })
-  expect(layout.nodes.every(node => Number.isFinite(node.x) && Number.isFinite(node.y) && node.x >= 65 && node.x <= 695 && node.y >= 65 && node.y <= 345)).toBe(true)
+  expect(layout.nodes.every(node => Number.isFinite(node.x) && Number.isFinite(node.y) && node.x >= 0 && node.x <= SCAN_WIDTH && node.y >= 0 && node.y <= SCAN_HEIGHT)).toBe(true)
+  expect(layout.nodes.filter(node => node.positionKind === 'soma')).toHaveLength(140024)
+  expect(layout.nodes.filter(node => node.positionKind === 'attachment')).toHaveLength(976)
+  expect(layout.nodes.filter(node => node.positionKind === 'unavailable')).toHaveLength(24122)
+  for (const node of layout.nodes.filter(node => node.positionKind !== 'unavailable')) {
+    expect({ x: node.x, y: node.y }).toEqual(projectLocation(node.neuron.anatomy!.somaLocation ?? node.neuron.anatomy!.tosomaLocation!))
+  }
   expect(graph.manifest.counts.connections).toBe(10510984)
 })
