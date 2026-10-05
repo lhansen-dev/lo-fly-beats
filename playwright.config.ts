@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: 'tests/browser',
+  // Data loading and GPU shader preparation vary by browser and test runner.
+  // The startup test separately enforces the two-second playback budget.
+  expect: { timeout: 10_000 },
   webServer: {
     command: 'npm run build && npm run preview -- --host 127.0.0.1',
     url: 'http://127.0.0.1:4173',

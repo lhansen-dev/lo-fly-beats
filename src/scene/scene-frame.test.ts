@@ -6,37 +6,28 @@ import { sceneCrop } from './crop'
 
 describe('SceneFrame', () => {
   it('returns the responsive crops', () => {
-    expect(sceneCrop(true)).toEqual({ aspectRatio: '16 / 9', preserveAspectRatio: 'xMidYMid slice' })
-    expect(sceneCrop(false)).toEqual({ aspectRatio: '4 / 3', preserveAspectRatio: 'xMaxYMid slice' })
+    expect(sceneCrop(true)).toEqual({ aspectRatio: '16 / 9' })
+    expect(sceneCrop(false)).toEqual({ aspectRatio: '4 / 3' })
   })
 
-  it('renders the wide scene with its responsive tokens', () => {
+  it('renders the wide scene with its accessible canvas', () => {
     const markup = renderToStaticMarkup(createElement(SceneFrame, { wide: true }))
     for (const expected of [
       'data-testid="scene-frame"',
       'class="scene"',
-      'animation-delay:',
-      'viewBox="0 0 1600 900"',
-      'preserveAspectRatio="xMidYMid slice"',
+      'class="scene-canvas"',
       'aspect-ratio:16 / 9',
-      'var(--scene-wall)',
-      'var(--scene-window-sky)',
-      'var(--scene-desk)',
-      'var(--scene-light-color)',
       'id="scene-title"',
-      'class="fly"',
-      'class="banana"',
+      'id="scene-desc"',
     ]) expect(markup).toContain(expected)
     expect(markup).not.toContain('placeholder of colored blocks')
   })
 
   it('renders the narrow crop and defaults to it on the server', () => {
     const narrow = renderToStaticMarkup(createElement(SceneFrame, { wide: false }))
-    expect(narrow).toContain('preserveAspectRatio="xMaxYMid slice"')
     expect(narrow).toContain('aspect-ratio:4 / 3')
 
     const fallback = renderToStaticMarkup(createElement(SceneFrame))
-    expect(fallback).toContain('preserveAspectRatio="xMaxYMid slice"')
     expect(fallback).toContain('aspect-ratio:4 / 3')
   })
 })

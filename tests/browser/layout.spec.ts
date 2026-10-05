@@ -19,10 +19,8 @@ for (const { width, height } of sizes) {
     }))
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth)
 
-    await expect(page.getByTestId('scene-frame').locator('svg')).toHaveAttribute(
-      'preserveAspectRatio',
-      width >= 700 ? 'xMidYMid slice' : 'xMaxYMid slice',
-    )
+    await expect(page.getByTestId('scene-frame')).toHaveCSS('aspect-ratio', width >= 700 ? '16 / 9' : '4 / 3')
+    await expect(page.getByTestId('scene-canvas')).toHaveAttribute('data-renderer', 'webgl')
     await expect(page.locator('main.app')).toHaveAttribute('data-preset', 'rainy-windowsill')
     await testInfo.attach(`layout-${width}x${height}`, {
       body: await page.screenshot({ fullPage: true }),

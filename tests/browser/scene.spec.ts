@@ -1,103 +1,90 @@
 import { expect, test } from '@playwright/test'
 
 const presets = ['rainy-windowsill', 'overripe-2am', 'fruit-bowl-finals'] as const
-const sizes = [
-  { width: 1280, height: 720 },
-  { width: 390, height: 844 },
-]
+const sizes = [{ width: 1280, height: 720 }, { width: 390, height: 844 }]
 
 for (const { width, height } of sizes) {
-  test(`scene accessibility at ${width}x${height}`, async ({ page }) => {
+  test(`3D scene accessibility at ${width}x${height}`, async ({ page }) => {
+    const errors: Error[] = []
+    page.on('pageerror', error => errors.push(error))
     await page.setViewportSize({ width, height })
     await page.goto('/')
-    await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-    const svg = page.getByTestId('scene-frame').locator('svg.scene')
-    await expect(svg).toHaveAttribute('aria-labelledby', 'scene-title scene-desc')
-    await expect(svg.locator('#scene-title')).toHaveText('A fruit fly studying beside a banana')
-    await expect(svg.locator('#scene-desc')).not.toBeEmpty()
+    const scene = page.getByTestId('scene-frame').getByRole('img')
+    await expect(scene).toHaveAccessibleName('A fruit fly studying beside a banana')
+    await expect(scene).toHaveAttribute('aria-labelledby', 'scene-title')
+    await expect(scene).toHaveAttribute('aria-describedby', 'scene-desc')
+    await expect(scene.locator('#scene-desc')).toContainText('six jointed legs')
+    await expect(page.getByTestId('scene-canvas')).toHaveAttribute('data-renderer', 'webgl')
+    await expect(page.getByTestId('scene-canvas')).toHaveAttribute('aria-hidden', 'true')
+    expect(errors).toEqual([])
   })
 }
 
-test('scene contains one fly and one banana', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-  const svg = page.getByTestId('scene-frame').locator('svg.scene')
-  await expect(svg.locator('.fly')).toHaveCount(1)
-  await expect(svg.locator('.banana')).toHaveCount(1)
-})
-
-test('scene contains all fly features exactly once', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-  const svg = page.getByTestId('scene-frame').locator('svg.scene')
-  for (const name of ['fly', 'fly-body', 'fly-wings', 'fly-head', 'fly-eye-shine', 'fly-headphones', 'fly-hands-front']) {
-    await expect(svg.locator(`.${name}`)).toHaveCount(1)
-  }
-})
-
-test('fly stays within the scene bounds', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-  const svg = page.getByTestId('scene-frame').locator('svg.scene')
-  const box = await svg.locator('.fly').evaluate((el) => {
-    const b = (el as SVGGraphicsElement).getBBox()
-    return { x: b.x, y: b.y, width: b.width, height: b.height }
-  })
-  expect(box.x).toBeGreaterThanOrEqual(800)
-  expect(box.y).toBeGreaterThanOrEqual(230)
-  expect(box.x + box.width).toBeLessThanOrEqual(1280)
-  expect(box.y + box.height).toBeLessThanOrEqual(740)
-})
-
-test('changing preset while paused changes the wall fill', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-  const fill = () => page.evaluate(() => getComputedStyle(document.querySelector('.wall-base')!).fill)
-  const initialFill = await fill()
-  expect(initialFill).toBe('rgb(59, 74, 90)')
-  await page.getByTestId('preset-overripe-2am').check()
-  await expect.poll(fill).toBe('rgb(42, 35, 32)')
-  expect(await fill()).not.toBe(initialFill)
-})
-
-test.describe('fly close-ups', () => {
-  test.use({ deviceScaleFactor: 2, reducedMotion: 'reduce' })
-
-  for (const preset of presets) {
-    test(`fly close-up ${preset}`, async ({ page }, testInfo) => {
-      await page.setViewportSize({ width: 1280, height: 720 })
-      await page.goto('/')
-      await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-      await page.getByTestId(`preset-${preset}`).check()
-      await expect(page.locator('main.app')).toHaveAttribute('data-preset', preset)
-      const svg = page.getByTestId('scene-frame').locator('svg.scene')
-      const body = await svg.locator('.fly').screenshot({ animations: 'disabled' })
-      await testInfo.attach(`fly-closeup-${preset}`, { body, contentType: 'image/png' })
-    })
-  }
-})
-
 for (const preset of presets) {
   for (const { width, height } of sizes) {
-    test(`scene ${preset} screenshot at ${width}x${height}`, async ({ page }, testInfo) => {
+    test(`3D scene ${preset} at ${width}x${height}`, async ({ page }, testInfo) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
       await page.setViewportSize({ width: 1280, height: 720 })
       await page.goto('/')
       await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
+      const canvas = page.getByTestId('scene-canvas')
+      await expect(canvas).toHaveAttribute('data-renderer', 'webgl')
       await page.getByTestId(`preset-${preset}`).check()
-      await expect(page.locator('main.app')).toHaveAttribute('data-preset', preset)
+      await expect(canvas).toHaveAttribute('data-preset', preset)
       await page.setViewportSize({ width, height })
       await testInfo.attach(`scene-${preset}-${width}x${height}`, {
-        body: await page.getByTestId('scene-frame').screenshot({ animations: 'disabled' }),
-        contentType: 'image/png',
+        body: await page.getByTestId('scene-frame').screenshot(), contentType: 'image/png',
       })
     })
   }
 }
 
-test('serialized scene markup is under 150 KB', async ({ page }) => {
+test('changing presets repaints the 3D scene while animation is disabled', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
-  const svg = page.getByTestId('scene-frame').locator('svg.scene')
-  const length = await svg.evaluate(el => new XMLSerializer().serializeToString(el).length)
-  expect(length).toBeLessThan(150 * 1024)
+  const canvas = page.getByTestId('scene-canvas')
+  await expect(canvas).toHaveAttribute('data-renderer', 'webgl')
+  const initial = await canvas.screenshot()
+  await page.getByTestId('preset-overripe-2am').check()
+  await expect(canvas).toHaveAttribute('data-preset', 'overripe-2am')
+  expect(await canvas.screenshot()).not.toEqual(initial)
+  await expect(canvas).toHaveAttribute('data-motion', 'still')
+})
+
+test('WebGL failure leaves an accessible still image and working audio', async ({ page }) => {
+  await page.addInitScript(() => {
+    const getContext = HTMLCanvasElement.prototype.getContext
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, ...args: Parameters<typeof getContext>) {
+      if (String(args[0]).startsWith('webgl')) return null
+      return getContext.apply(this, args)
+    } as typeof getContext
+  })
+  await page.goto('/')
+  await expect(page.getByTestId('scene-canvas')).toHaveAttribute('data-renderer', 'fallback')
+  await expect(page.getByTestId('scene-frame').getByRole('img')).toBeVisible()
+  const fallback = await page.request.get('/images/listening-room.jpg')
+  expect(fallback.ok()).toBe(true)
+  expect(fallback.headers()['content-type']).toContain('image/jpeg')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
+  await page.getByTestId('start-listening').click()
+  await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
+})
+
+test('WebGL context loss and restoration preserve the scene and playback', async ({ page }) => {
+  await page.goto('/')
+  const canvas = page.getByTestId('scene-canvas')
+  await expect(canvas).toHaveAttribute('data-renderer', 'webgl')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
+  await page.getByTestId('start-listening').click()
+  await expect(page.getByTestId('engine-status')).toHaveText('playing')
+  await canvas.evaluate(element => {
+    const gl = (element as HTMLCanvasElement).getContext('webgl2')!
+    const extension = gl.getExtension('WEBGL_lose_context')!
+    extension.loseContext()
+    setTimeout(() => extension.restoreContext(), 750)
+  })
+  await expect(canvas).toHaveAttribute('data-renderer', 'fallback')
+  await expect(canvas).toHaveAttribute('data-renderer', 'webgl')
+  await expect(page.getByTestId('engine-status')).toHaveText('playing')
 })

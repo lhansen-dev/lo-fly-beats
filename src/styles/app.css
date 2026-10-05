@@ -104,7 +104,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(44px, 5vw,
 .listening-panel, .controls-panel { border: 1px solid #3d4b46; border-radius: 14px; background: var(--ui-surface); overflow: hidden; }
 .scene-wrapper { position: relative; }
 .scene-frame { width: 100%; overflow: hidden; background: var(--scene-wall); }
-.scene-frame svg { display: block; width: 100%; height: 100%; }
+.scene-frame .scene { display: block; width: 100%; height: 100%; }
 .scene-label { display: flex; align-items: center; gap: 8px; position: absolute; top: 18px; left: 18px; border: 1px solid #89998b; background: #172322db; border-radius: 5px; padding: 6px 9px; font-family: var(--font-mono); font-size: 8px; letter-spacing: 1.2px; color: #eef0e8; pointer-events: none; }
 .scene-caption { position: absolute; right: 18px; bottom: 15px; color: #fff5de; font: italic 14px Georgia, serif; text-shadow: 0 2px 3px #101913; pointer-events: none; }
 .player-content { padding: 24px 24px 18px; }

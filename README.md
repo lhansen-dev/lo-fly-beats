@@ -140,7 +140,7 @@ Serve static `dist/` on any static host. There is no backend, database, secret, 
 | `src/audio/` | Buffers, instruments, timing, live playback, rendering, WAV |
 | `src/presets/` | Musical, sound, and visual presets |
 | `src/components/`, `src/styles/` | Controls, export, explanation, credits, layout |
-| `src/scene/` | Original SVG illustration and animation |
+| `src/scene/` | Three.js listening room, procedural fly model, and musical animation |
 | `public/data/circuits/whole-cns-v1/` | Full traced connectome, compressed adjacency, annotations, and manifest |
 | `public/data/circuits/mbon-v1/` | Previous circuit retained for regression checks |
 | `scripts/data/` | Locked Python pipeline, config, reports |
@@ -150,4 +150,6 @@ Serve static `dist/` on any static host. There is no backend, database, secret, 
 
 ## Credits
 
-Data credit appears above and in the application's Credits section. Artwork is original inline SVG, sound is synthesized or generated in code, and fonts are system fonts. Sources and asset paths are in [ASSETS.md](ASSETS.md).
+Data credit appears above and in the application's Credits section. The listening room is original procedural 3D artwork rendered with Three.js; interface icons use original SVG. Sound is synthesized or generated in code, and fonts are system fonts. Sources and asset paths are in [ASSETS.md](ASSETS.md).
+
+The 3D fly has red compound eyes, a segmented chitin body, bristles, six jointed legs, veined translucent wings, and headphones. Its gentle head bobs and leg grooming follow the existing musical cues. The renderer loads after the circuit data, compiles shaders asynchronously, caps pixel density and rendering at 30 frames per second, and stops rendering when animation is disabled or the tab is hidden. Presets change the room materials and lighting. A still image of the same 3D room appears while it loads, when WebGL is unavailable, or when its context is lost.
