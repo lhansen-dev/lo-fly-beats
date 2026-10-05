@@ -895,12 +895,14 @@ Rules:
 
 | Name | Length and channels | Recipe | Peak |
 | --- | --- | --- | --- |
-| `kick` | 0.5 s, mono | Sine whose frequency is `48 + 62 * exp(-t / 0.03)` Hz (accumulate the phase) times `exp(-t / 0.18)`, plus noise times `0.3 * exp(-t / 0.002)` | 0.9 |
-| `snare` | 0.35 s, mono | Noise high-passed at 1,200 Hz times `0.7 * exp(-t / 0.09)`, plus a 185 Hz sine times `0.5 * exp(-t / 0.05)` | 0.8 |
-| `hat` | 0.12 s, mono | Noise high-passed twice at 7,000 Hz, times `exp(-t / 0.03)` | 0.6 |
+| `kick` | 0.5 s, mono | Sine whose frequency is `48 + 62 * exp(-t / 0.03)` Hz (accumulate the phase) times `exp(-t / 0.14)`, plus noise low-passed at 1,500 Hz times `0.12 * exp(-t / 0.003)`; 0.6 ms attack | 0.9 |
+| `snare` | 0.22 s, mono | Noise high-passed at 600 Hz then low-passed twice at 2,800 Hz times `0.45 * exp(-t / 0.035)`; sine at `165 + 45 * exp(-t / 0.012)` Hz (accumulate the phase) times `0.65 * exp(-t / 0.025)`, plus 330 Hz sine times `0.18 * exp(-t / 0.012)`; 0.8 ms attack | 0.62 |
+| `hat` | 0.1 s, mono | Noise high-passed twice at 5,500 Hz then low-passed twice at 9,000 Hz, times `exp(-t / 0.018)`; 0.4 ms attack | 0.4 |
 | `rain` | 8 s, stereo, looped | Independent noise per channel, low-passed at 2,500 Hz then high-passed at 400 Hz, times `0.85 + 0.15 * sin(2π * 0.13 * t + channel * π / 2)`; plus about 3 drips per second, each a 3,000–6,000 Hz sine with amplitude 0.05–0.15 times `exp(-t / 0.01)` | 0.5 |
 | `crackle` | 6 s, stereo, looped | Noise low-passed at 6,000 Hz times 0.01, plus about 12 clicks per second at random positions with amplitude `0.05 + 0.35 * u * u` decaying over 3 samples | 0.5 |
 | `impulse` | 2.2 s, stereo | 12 ms of silence, then noise times `exp(-t / 0.45)`, low-passed at 5,000 Hz | 0.7 |
+
+For each drum, multiply by `1 - exp(-t / attackSeconds)` and fade linearly over the final 10 ms to an exactly zero last sample, before peak normalization. Drum timbre changes do not alter composition streams, scores, or rhythm patterns.
 
 Make `rain` and `crackle` loop without a click. With `F` samples in 0.25 s and `N` total samples, set `out[i] = x[i] * sqrt(i / F) + x[N - F + i] * sqrt(1 - i / F)` for `i < F`, then drop the last `F` samples. After this required overlap, linearly blend the final `max(2, round(0.001 * sampleRate))` samples toward `out[0]`, before peak normalization.
 
@@ -908,6 +910,7 @@ Make `rain` and `crackle` loop without a click. With `F` samples in 0.25 s and `
 
 ```ts
 export interface SoundParams {
+  drumsCutoffHz: number;
   keysCutoffHz: number;
   bassCutoffHz: number;
   masterCutoffHz: number;
@@ -946,12 +949,12 @@ export function createRig(context: BaseContext, sound: SoundParams, mix: MixSett
 Signal flow. Pass `{ context }` to every node.
 
 ```text
-drums Sampler ─► drums bus ─────────────┬─► master gain ─► saturation ─► master low-pass ─► limiter ─► context.destination
+drums Sampler ─► drums low-pass ─► drums bus ─┬─► master gain ─► saturation ─► master low-pass ─► limiter ─► context.destination
 bass MonoSynth ─► bass bus ─────────────┤
 keys PolySynth ─► keys low-pass ─► keys bus ─┤
 rain Player + crackle Player ─► ambience bus ┘
 keys bus ─► reverb send ─┐
-drums bus ─► send 0.08 ──┴─► Convolver ─► master gain
+drums bus ─► send 0.035 ─┴─► Convolver ─► master gain
 ```
 
 | Node | Version 1 settings |
@@ -960,6 +963,7 @@ drums bus ─► send 0.08 ──┴─► Convolver ─► master gain
 | Keys low-pass | `new Tone.Filter({ context, type: 'lowpass', frequency: sound.keysCutoffHz, Q: 0.5 })` |
 | Bass | `new Tone.MonoSynth({ context, volume: -6, oscillator: { type: 'triangle' }, envelope: { attack: 0.008, decay: 0.25, sustain: 0.7, release: 0.2 }, filter: { type: 'lowpass', Q: 0.8 }, filterEnvelope: { attack: 0.005, decay: 0.25, sustain: 0.4, release: 0.2, baseFrequency: sound.bassCutoffHz, octaves: 2 } })`, triggered with `triggerAttackRelease(midiToHz(midi), duration, time, velocity)` |
 | Drums | `new Tone.Sampler({ context, urls: { C2: kick, D2: snare, 'F#2': hat }, release: 0.05 })` using native `AudioBuffer` objects at `context.sampleRate`, triggered with `triggerAttack(note, time, velocity)` |
+| Drums low-pass | `new Tone.Filter({ context, type: 'lowpass', frequency: sound.drumsCutoffHz, Q: 0.5 })`; ramp cutoff over 0.5 s on sound changes |
 | Ambience | Two `new Tone.Player({ context, url, loop: true, fadeIn: 1.5, fadeOut: 1 })` players whose gains are `sound.rainLevel` and `sound.crackleLevel` |
 | Reverb | `new Tone.Convolver({ context, url: impulse })`; the keys send gain is `sound.reverbSend` |
 | Saturation | `new Tone.Distortion({ context, distortion: 0.1, oversample: '2x', wet: sound.saturationWet })` |
@@ -971,6 +975,7 @@ Create native buffers with `new AudioBuffer({ length, numberOfChannels, sampleRa
 
 | Parameter | Rainy Windowsill | Overripe at 2 AM | Fruit Bowl Finals |
 | --- | --- | --- | --- |
+| `drumsCutoffHz` | 5200 | 3800 | 6500 |
 | `keysCutoffHz` | 2200 | 1400 | 3400 |
 | `bassCutoffHz` | 140 | 110 | 180 |
 | `masterCutoffHz` | 12000 | 9000 | 14000 |

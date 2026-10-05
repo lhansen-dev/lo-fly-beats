@@ -62,6 +62,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   const keysBus = new Tone.Gain({ context, gain: initialMix.layers.keys.muted ? 0 : initialMix.layers.keys.level })
   const ambienceBus = new Tone.Gain({ context, gain: 1 })
   const master = new Tone.Gain({ context, gain: initialMix.masterVolume })
+  const drumsFilter = new Tone.Filter({ context, type: 'lowpass', frequency: sound.drumsCutoffHz, Q: 0.5 })
   const keysFilter = new Tone.Filter({ context, type: 'lowpass', frequency: sound.keysCutoffHz, Q: 0.5 })
   const bass = new Tone.MonoSynth({
     context,
@@ -100,12 +101,12 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   const crackleGain = new Tone.Gain({ context, gain: initialMix.ambienceOn ? sound.crackleLevel : 0 })
   const reverb = new Tone.Convolver({ context, url: audio.impulse })
   const keysSend = new Tone.Gain({ context, gain: sound.reverbSend })
-  const drumsSend = new Tone.Gain({ context, gain: 0.08 })
+  const drumsSend = new Tone.Gain({ context, gain: 0.035 })
   const saturation = new Tone.Distortion({ context, distortion: 0.1, oversample: '2x', wet: sound.saturationWet })
   const masterFilter = new Tone.Filter({ context, type: 'lowpass', frequency: sound.masterCutoffHz })
   const limiter = new Tone.Limiter({ context, threshold: -1 })
 
-  drums.connect(drumsBus)
+  drums.chain(drumsFilter, drumsBus)
   bass.connect(bassBus)
   keys.connect(keysFilter)
   keysFilter.connect(keysBus)
@@ -130,7 +131,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   let disposed = false
   const audioNodes = [
     drums, bass, keys, rain, crackle, drumsBus, bassBus, keysBus, ambienceBus, master,
-    keysFilter, bassEnvelopeScale, rainGain, crackleGain, reverb, keysSend, drumsSend,
+    drumsFilter, keysFilter, bassEnvelopeScale, rainGain, crackleGain, reverb, keysSend, drumsSend,
     saturation, masterFilter, limiter,
   ]
 
@@ -159,6 +160,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
     applySound(nextSound, time) {
       if (disposed) return
       currentSound = nextSound
+      drumsFilter.frequency.rampTo(nextSound.drumsCutoffHz, 0.5, time)
       keysFilter.frequency.rampTo(nextSound.keysCutoffHz, 0.5, time)
       bassEnvelopeScale.factor.rampTo(nextSound.bassCutoffHz / sound.bassCutoffHz, 0.5, time)
       masterFilter.frequency.rampTo(nextSound.masterCutoffHz, 0.5, time)

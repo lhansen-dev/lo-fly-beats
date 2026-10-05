@@ -47,6 +47,26 @@ function rms(samples: Float32Array, start: number, end: number) {
 }
 
 describe('mixer offline rendering', () => {
+  it('softens hats on a preset sound change while preserving the kick body', async () => {
+    const mix = { ...DEFAULT_MIX, ambienceOn: false }
+    const hits = (rig: ReturnType<typeof createRig>) => {
+      for (const time of [0.1, 1.1]) rig.trigger({ ...note('drums'), drum: 'hat' }, time, 0)
+      rig.trigger(note('drums'), 1.4, 0)
+    }
+    const control = await render(2, mix, hits)
+    const changed = await render(2, mix, rig => {
+      hits(rig)
+      rig.applySound({ ...sound, drumsCutoffHz: PRESETS['overripe-2am'].sound.drumsCutoffHz }, 0.4)
+    })
+    for (let channel = 0; channel < 2; channel++) {
+      expect(rms(changed[channel], 0.1, 0.25)).toBeCloseTo(rms(control[channel], 0.1, 0.25), 6)
+      const originalHat = rms(control[channel], 1.1, 1.25)
+      expect(rms(changed[channel], 1.1, 1.25)).toBeLessThan(originalHat * 0.9)
+      expect(rms(changed[channel], 1.1, 1.25)).toBeGreaterThan(originalHat * 0.4)
+      expect(rms(changed[channel], 1.4, 1.6)).toBeGreaterThan(rms(control[channel], 1.4, 1.6) * 0.95)
+    }
+  })
+
   it('silences all layers and ambience at zero master while nonzero master is audible', async () => {
     const silentMix: MixSettings = { ...DEFAULT_MIX, masterVolume: 0, ambienceOn: true }
     const renderMix = (mix: MixSettings) => render(3, mix, rig => {

@@ -12,6 +12,7 @@ export interface ChordDef {
 export type DrumHits = Record<DrumVoice, ReadonlyArray<readonly [step: number, velocity: number]>>
 
 export interface SoundParams {
+  drumsCutoffHz: number
   keysCutoffHz: number
   bassCutoffHz: number
   masterCutoffHz: number

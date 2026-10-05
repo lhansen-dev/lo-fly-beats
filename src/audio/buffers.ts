@@ -42,6 +42,11 @@ function mono(sampleRate: number, seconds: number, render: (t: number, i: number
   return { sampleRate, channels }
 }
 
+function drumEdgeGain(t: number, i: number, length: number, sampleRate: number, attackSeconds: number): number {
+  // Ease into the transient and end at zero so each one-shot has no hard sample edges.
+  return (1 - Math.exp(-t / attackSeconds)) * Math.min(1, (length - 1 - i) / (0.01 * sampleRate))
+}
+
 function crossfadeLoop(input: Float32Array, sampleRate: number): Float32Array {
   const fadeSamples = Math.round(0.25 * sampleRate)
   const output = input.slice(0, input.length - fadeSamples)
@@ -62,33 +67,45 @@ function crossfadeLoop(input: Float32Array, sampleRate: number): Float32Array {
 
 export function generateKick(sampleRate: number): SeededAudioBuffer {
   const rng = bufferRng('kick', sampleRate)
+  const raw = new Float32Array(Math.round(0.5 * sampleRate))
+  for (let i = 0; i < raw.length; i++) raw[i] = noise(rng)
+  const transient = lowpass(raw, 1500, sampleRate)
   let phase = 0
-  return mono(sampleRate, 0.5, (t) => {
+  return mono(sampleRate, 0.5, (t, i, length) => {
     const frequency = 48 + 62 * Math.exp(-t / 0.03)
     phase += 2 * Math.PI * frequency / sampleRate
-    return Math.sin(phase) * Math.exp(-t / 0.18) + noise(rng) * 0.3 * Math.exp(-t / 0.002)
+    const body = Math.sin(phase) * Math.exp(-t / 0.14)
+    const click = transient[i]! * 0.12 * Math.exp(-t / 0.003)
+    return (body + click) * drumEdgeGain(t, i, length, sampleRate, 0.0006)
   }, 0.9)
 }
 
 export function generateSnare(sampleRate: number): SeededAudioBuffer {
   const rng = bufferRng('snare', sampleRate)
-  const length = Math.round(0.35 * sampleRate)
+  const length = Math.round(0.22 * sampleRate)
   const raw = new Float32Array(length)
   for (let i = 0; i < length; i++) raw[i] = noise(rng)
-  const filtered = highpass(raw, 1200, sampleRate)
-  const drum = mono(sampleRate, 0.35, (t, i) => filtered[i]! * 0.7 * Math.exp(-t / 0.09) + Math.sin(2 * Math.PI * 185 * t) * 0.5 * Math.exp(-t / 0.05), 0.8)
-  return drum
+  // A damped, woody backbeat with a little wire texture instead of a long white-noise snap.
+  const filtered = lowpass(lowpass(highpass(raw, 600, sampleRate), 2800, sampleRate), 2800, sampleRate)
+  let phase = 0
+  return mono(sampleRate, 0.22, (t, i, length) => {
+    phase += 2 * Math.PI * (165 + 45 * Math.exp(-t / 0.012)) / sampleRate
+    const body = Math.sin(phase) * 0.65 * Math.exp(-t / 0.025)
+    const rim = Math.sin(2 * Math.PI * 330 * t) * 0.18 * Math.exp(-t / 0.012)
+    const wires = filtered[i]! * 0.45 * Math.exp(-t / 0.035)
+    return (body + rim + wires) * drumEdgeGain(t, i, length, sampleRate, 0.0008)
+  }, 0.62)
 }
 
 export function generateHat(sampleRate: number): SeededAudioBuffer {
   const rng = bufferRng('hat', sampleRate)
-  const length = Math.round(0.12 * sampleRate)
+  const length = Math.round(0.1 * sampleRate)
   const raw = new Float32Array(length)
   for (let i = 0; i < length; i++) raw[i] = noise(rng)
-  const once = highpass(raw, 7000, sampleRate)
-  const twice = highpass(once, 7000, sampleRate)
-  const result = mono(sampleRate, 0.12, (t, i) => twice[i]! * Math.exp(-t / 0.03), 0.6)
-  return result
+  const high = highpass(highpass(raw, 5500, sampleRate), 5500, sampleRate)
+  const filtered = lowpass(lowpass(high, 9000, sampleRate), 9000, sampleRate)
+  return mono(sampleRate, 0.1, (t, i, length) =>
+    filtered[i]! * Math.exp(-t / 0.018) * drumEdgeGain(t, i, length, sampleRate, 0.0004), 0.4)
 }
 
 function generateRainChannel(sampleRate: number, channelIndex: number, rng: ReturnType<typeof bufferRng>): Float32Array {

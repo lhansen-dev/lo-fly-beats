@@ -51,6 +51,7 @@ The live MaleCNS scanner plots every selected neuron on a canvas overview with r
 
 ## Audio behavior
 
+- The drum kit uses a short, damped snare, restrained hats, and a rounded kick. Each preset filters the drums separately; Overripe at 2 AM is darkest and Fruit Bowl Finals is brightest. Playback and WAV export use the same kit and mix.
 - **Start listening** requires a user action. Reloads restore active settings but start at phrase 1 with playback idle.
 - Tempo changes apply at the next bar while playing. Preset, variation, and New beat changes apply at the next phrase, with pending descriptions until applied. Mixer settings apply immediately with short ramps.
 - Desktop scheduling uses the audio clock and continues when the tab is hidden; scene updates pause. Browser or OS suspension interrupts audio and displays **Press Play to resume**. Resuming continues from the saved step. Actual background and mobile suspension behavior still requires the release device checks.
