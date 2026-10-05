@@ -13,3 +13,6 @@ export const RESERVOIR_CONFIGURATION = Object.freeze({
   inputScale: 0.2,
   maxExploration: 0.2,
 })
+
+/** Versioned sampling calibration; internal activity/input weights are unchanged. */
+export const DECODER_CONFIGURATION = Object.freeze({ decoderVersion: 2, samplingTemperature: 0.8 })

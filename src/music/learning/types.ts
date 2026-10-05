@@ -8,6 +8,8 @@ export interface LearningConfiguration {
   retention: number
   inputScale: number
   maxExploration: number
+  decoderVersion: number
+  samplingTemperature: number
   reservoirSize: number
   recentActionLimit: number
   motifHistoryLimit: number

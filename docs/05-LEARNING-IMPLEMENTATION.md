@@ -1,6 +1,6 @@
 # Lo-fly beats: learning prototype in five sessions
 
-Created October 5, 2026. Implements the first milestone in [04-LEARNING-RADIO.md](./04-LEARNING-RADIO.md). Sessions 1 and 2 are implemented and verified; later sessions remain planned.
+Created October 5, 2026. Implements the first milestone in [04-LEARNING-RADIO.md](./04-LEARNING-RADIO.md). Sessions 1–3 are implemented with their automated finish checks verified; sessions 4 and 5 remain planned. Session 3 listening review and browser audition verification remain pending.
 
 ## The result we are building
 
@@ -119,7 +119,7 @@ Run `npm run check`; add one focused real-audio rendering check for an overridde
 
 **Work**
 
-- [ ] Add a versioned, original two-bar teaching example, using these initial choices:
+- [x] Add a versioned, original two-bar teaching example, using these initial choices:
 
   ```text
   bar A: root-hold,  and-root, root-push,   fifth
@@ -127,11 +127,11 @@ Run `npm run check`; add one focused real-audio rendering check for an overridde
   ```
 
   Include a few sparse variants with legal cell substitutions. Store action sequences and provenance in `src/music/learning/curriculum.ts`, with held-out context fixtures under `tests/fixtures/learning/`; the examples are curriculum data, not inference rules.
-- [ ] Implement supervised cross-entropy updates for output weights only. Start with learning rate `0.03`, L2 coefficient `0.0001`, gradient norm capped at `1`, and a maximum of 20,000 updates per Teach operation. Keep these values in versioned configuration.
-- [ ] Train on a copied model in bounded chunks. Start by feeding previous teacher actions, then include rollouts with the model's own previous choices and corrective labels. Keep training runtime separate from the listening runtime.
-- [ ] Accept finite candidate weights and return measured results. Reject failed/non-finite candidates without replacing the live parameters. Evaluation uses fresh runtime and held-out seeds/context sequences.
-- [ ] Add `scripts/learning/evaluate.ts` and a documented `npm run learning:eval` command. Use one lightweight TS script runner if needed; include script files in typechecking. Write reproducible score JSON and a metric report to ignored `artifacts/learning/`, plus a concise checked-in result report.
-- [ ] Compare the existing generator, untrained reservoir decoder, trained decoder with updates frozen, and a trained decoder using only the same context features. Also train controls with connectome weights set to zero (retaining the same leak) and with source indices permuted while target indices/input weights stay fixed. Preserve incoming row counts and weights in the permuted control; a relabeling of both sources and targets would not test a changed topology. Retrain each control under the same update budget.
+- [x] Implement supervised cross-entropy updates for output weights only. Start with learning rate `0.03`, L2 coefficient `0.0001`, gradient norm capped at `1`, and a maximum of 20,000 updates per Teach operation. Keep these values in versioned configuration.
+- [x] Train on a copied model in bounded chunks. Start by feeding previous teacher actions, then include rollouts with the model's own previous choices and corrective labels. Keep training runtime separate from the listening runtime.
+- [x] Accept finite candidate weights and return measured results. Reject failed/non-finite candidates without replacing the live parameters. Evaluation uses fresh runtime and held-out seeds/context sequences.
+- [x] Add `scripts/learning/evaluate.ts` and a documented `npm run learning:eval` command. Use one lightweight TS script runner if needed; include script files in typechecking. Write reproducible score JSON and a metric report to ignored `artifacts/learning/`, plus a concise checked-in result report.
+- [x] Compare the existing generator, untrained reservoir decoder, trained decoder with updates frozen, and a trained decoder using only the same context features. Also train controls with connectome weights set to zero (retaining the same leak) and with source indices permuted while target indices/input weights stay fixed. Preserve incoming row counts and weights in the permuted control; a relabeling of both sources and targets would not test a changed topology. Retrain each control under the same update budget.
 
 **Files:** add `src/music/learning/{curriculum,train,evaluate}.ts`, context fixtures, training tests, `scripts/learning/evaluate.ts`, and `docs/learning/experiment-01.md`. Update `package.json` only for the evaluation command and any justified development dependency.
 
@@ -207,7 +207,7 @@ At the end of each session, update its boxes and add a short entry below with co
 | --- | --- | --- | --- |
 | 1 | Complete | Baseline snapshot unchanged; pure preparation/adoption, retained context, and override constraints verified. See handoff below. | Load and verify MBON graph; replace the test selector with fixed reservoir activity and a decoder. |
 | 2 | Complete | Verified MBON loader, fixed sparse activity, masked decoder, 10,000-phrase measurements, and captured-score audio/WAV audition. See handoff below. | Teach the original motif and measure frozen retention against the planned controls. |
-| 3 | Planned | — | Teach the original motif and run frozen evaluation. |
+| 3 | Complete (automated checks) | Decoder-only teaching, frozen retention/variation targets, and all controls verified. Failed runs and sampling calibration recorded in [experiment 01](./learning/experiment-01.md). Listening/browser audition pending. | Integrate worker preparation and boundary checkpoints. |
 | 4 | Planned | — | Integrate worker preparation and boundary checkpoints. |
 | 5 | Planned | — | Finish the experimental UI and paired listening review. |
 
@@ -246,6 +246,22 @@ Use `npm run dev`, then `/?learning=1`: Prepare does not advance memory; Adopt m
 Verification: `npm run check` passed (68 unit/data files, 332 tests; data validation and production build passed), and `npm run test:audio -- tests/audio/export.test.ts` passed (7 real Chromium Web Audio tests). The new audio check isolates bass, verifies audible finite stereo 44.1 kHz output and the PCM WAV header, and proves rendering preserves model/snapshot/score. Existing baseline snapshots and bass-override constraint tests pass unchanged. The developer browser smoke verifies the panel, repeatable preparation, native audio playback/download, adoption/reset behavior, URL disposal, and corrupt-circuit retry. Existing lint/build warnings remain.
 
 Next: add the original curriculum and bounded decoder-only training, then evaluate frozen retention and variation against the legacy, context-only, zero-connectivity, and source-permuted controls. Preserve fixed internal/input weights, explicit model identity, pure preparation, and boundary snapshot semantics.
+
+### Session 3 handoff — October 5, 2026
+
+Completed `src/music/learning/{curriculum,train,evaluate}.ts`, deterministic context partitions under `tests/fixtures/learning/`, focused training/metric tests, `scripts/learning/evaluate.ts`, and [experiment 01](./learning/experiment-01.md). Added Teach/Cancel to the development-only manual `LearningLab`. `npm run learning:eval` uses the pinned lightweight `tsx` runner via `node --import`; scripts participate in typechecking. Generated score bundles and the detailed metric report live in ignored `artifacts/learning/` and are written through temporary files. The default listening flow and legacy mapping version 2 remain unchanged.
+
+Teaching copies only decoder weights and uses separate runtime. A chunk performs at most 128 updates, also bounding visited beats. Each operation permits at most 20,000 eligible updates: 4,000 teacher-forced, followed by 16,000 self-fed exploratory updates with corrective labels. Learning rate 0.03, L2 0.0001, and gradient cap 1 remain the planned values. Training alternates retained four-phrase sequences with fresh starts. Forced rests advance context without a label/update. Finite candidates return fresh validation measurements; cancelled, failed/non-finite, or stale candidates cannot replace live parameters. Acceptance returns parameters with one new model revision and the actual added update count, preserving listening runtime. Production worker/boundary adoption remains session 4; the developer lab uses an explicit manual boundary and invalidates previously prepared results when accepting teaching.
+
+The first real-graph run reached 100% greedy accuracy but failed full-variation retention at 58.53%. Reweighting the original curriculum example from 16 to 32 relative to one per sparse variant still failed at 59.21%. Curriculum version 2 and decoder configuration version 2 now use that weighting and sampling temperature 0.8, retaining the 20% exploration ceiling. All controls were retrained, and thresholds stayed at 80% greedy / 60% full variation. The failed reports are preserved locally and their results are recorded in the checked-in experiment report. Reservoir configuration, anatomical counts, input/internal weights, model seed, and learning RNG namespace remain unchanged; snapshots now include and validate decoder configuration. No target sequence or motif identifier enters normal inference.
+
+With updates frozen over 20 disjoint recipe seeds × three presets, trained MBON mean target-cell accuracy is **99.66%** at zero variation and **65.32%** over ten consecutive full-variation phrases per seed/preset. Each preset has those same action metrics because ring-index/rest inputs match across presets; rendered pitches/chords differ and are checked. Final held-out raw cross-entropy falls from **1.496793 to 0.178014**; at least **35 distinct two-bar sequences** occur in every trained ten-phrase trial after neutralizing forced-rest positions for diversity. All six conditions have zero hard constraint violations. The report includes onset/interval similarity, rest fraction, distinct cells, repetition, per-preset accuracy, and graph/weight identities.
+
+The controls show no anatomical advantage: context-only reaches **100% / 83.97%** greedy/full-variation accuracy, zero connectivity **99.66% / 65.74%**, and source-permuted connectivity **99.49% / 64.83%**. The permutation changes sources only and preserves target rows, incoming counts, weights, synapse counts, and input weights. Hash checks and unit tests verify fixed model arrays stay unchanged. On Apple M1 Max / Node v22.22.3, a reference full evaluation takes about 17.1 s; MBON training takes about 1.36 s. These informational timings are not browser-worker guarantees.
+
+Verification: `npm run check` passed (70 unit/data files, 344 tests; typechecking, circuit validation, baseline snapshots, and build passed), and `npm run learning:eval` passed with reproducible musical results. Hand-calculated evaluator tests also verify the reported metrics. Existing lint/build warnings remain. The current restricted environment denied starting the local Vite server (`listen EPERM`), so browser audition smoke and human listening are explicitly pending. Live worker playback, persistence, and the audible-learning milestone are not claimed.
+
+Next: move bounded inference/training into the dedicated worker, prioritize prepared scores, adopt trained candidates only at real playback boundaries, and persist compatible starting-boundary snapshots with recovery. Preserve isolated training runtime, frozen score export, stale-candidate rejection, decoder compatibility, and honest control comparisons.
 
 ## What follows the five sessions
 

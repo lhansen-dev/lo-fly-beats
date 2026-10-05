@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { BASS_VOCABULARY, legalBassActions } from '../../../../src/music/learning/context'
 import { createDecoderWeights, decodeBassAction, decoderLogits, exploratoryProbabilities, maskedSoftmax } from '../../../../src/music/learning/decoder'
 import type { MusicalContext } from '../../../../src/music/learning/types'
+import { DECODER_CONFIGURATION } from '../../../../src/music/learning/versions'
 
 const context = (beatInBar = 0, traversalRest = false): MusicalContext => ({
   beat: beatInBar, beatInBar, barParity: 0, chordRingIndex: 0, previousBassAction: null, traversalRest, inputs: [],
@@ -62,5 +63,18 @@ describe('masked reservoir readout', () => {
     weights[3] = 1 // root-push neuron weight, with zero bias
     expect(decodeBassAction(context(), [1], weights, 0, 1, 0).cellId).toBe('root-push')
     expect(decodeBassAction(context(), [-1], weights, 0, 1, 0).cellId).toBe('root-hold')
+  })
+
+  it('calibrates positive-variation sampling without changing greedy choices or uniform exploration', () => {
+    const weights = createDecoderWeights(1)
+    weights[0] = 2
+    const mask = legalBassActions(0, false)
+    const expected = exploratoryProbabilities(maskedSoftmax(decoderLogits(weights, [0])
+      .map(logit => logit / DECODER_CONFIGURATION.samplingTemperature), mask), mask, 1)
+    for (let generation = 0; generation < 30; generation++) {
+      const decision = decodeBassAction(context(), [0], weights, 1, 1, generation)
+      expect(decision.probability).toBeCloseTo(expected[BASS_VOCABULARY.indexOf(decision.cellId)]!, 12)
+    }
+    expect(decodeBassAction(context(), [0], weights, 0, 1, 0).cellId).toBe('root-hold')
   })
 })

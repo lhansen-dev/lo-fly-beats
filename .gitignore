@@ -32,3 +32,4 @@ playwright-report/
 blob-report/
 __screenshots__/
 .vitest/
+artifacts/learning/

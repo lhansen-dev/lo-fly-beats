@@ -2,7 +2,17 @@ import { clamp } from '../math'
 import { BASS_VOCABULARY, legalBassActions } from './context'
 import { learningRng } from './random'
 import type { BassDecision, MusicalContext } from './types'
-import { RESERVOIR_CONFIGURATION } from './versions'
+import { DECODER_CONFIGURATION, RESERVOIR_CONFIGURATION } from './versions'
+import { stepReservoir, type ReservoirModel } from './reservoir'
+import type { LearningRuntime } from './types'
+
+export type ReadoutFeatures = 'reservoir' | 'context-only'
+
+/** The context control has the same 22 inputs, without recurrent activity. */
+export function readoutFeatures(model: ReservoirModel, runtime: LearningRuntime, context: MusicalContext, kind: ReadoutFeatures) {
+  const activations = kind === 'reservoir' ? stepReservoir(model, runtime.activations, context.inputs) : runtime.activations
+  return { activations, features: kind === 'reservoir' ? activations : context.inputs }
+}
 
 export function createDecoderWeights(reservoirSize: number): number[] {
   return Array<number>(BASS_VOCABULARY.length * (reservoirSize + 1)).fill(0)
@@ -56,7 +66,7 @@ export function decodeBassAction(
   for (const action of legal) if (logits[action]! > logits[chosen]!) chosen = action
   let probability = 1
   if (variation > 0) {
-    const probabilities = exploratoryProbabilities(maskedSoftmax(logits, legalActionMask), legalActionMask, variation)
+    const probabilities = exploratoryProbabilities(maskedSoftmax(logits.map(logit => logit / DECODER_CONFIGURATION.samplingTemperature), legalActionMask), legalActionMask, variation)
     const draw = learningRng(modelSeed, generationIndex, `bass-selection|${context.beat}`).float()
     let cumulative = 0
     chosen = legal[legal.length - 1]!

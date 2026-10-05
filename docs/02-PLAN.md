@@ -2,6 +2,8 @@
 
 Created September 12, 2026. Based on [idea 21: Lofly — Beats to Buzz to](./01-IDEAS.md#21-lofly---beats-to-buzz-to).
 
+For a proposed next direction involving online learning and a shared 24/7 station, see [A fly that learns to make radio](./04-LEARNING-RADIO.md).
+
 Build a browser music toy where a small, real fruit-fly connectome graph helps compose lofi beats. An animated fly in oversized headphones studies beside an overripe banana while rain runs down the kitchen window. The music should be enjoyable enough to leave playing and the controls simple enough to explore immediately.
 
 The repository currently contains the ideas document and this plan. The work below is proposed implementation work; dataset extraction, musical validation, and browser testing have not yet been performed.

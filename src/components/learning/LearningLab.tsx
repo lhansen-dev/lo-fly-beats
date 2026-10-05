@@ -7,12 +7,14 @@ import { encodeWav16 } from '../../audio/wav'
 import type { CircuitGraph } from '../../connectome/types'
 import { buildPhrasePlan } from '../../music/compose'
 import { buildReservoirGraph } from '../../music/learning/graph'
+import { originalContexts, teachingContexts, TRAINING_CONFIGURATION } from '../../music/learning/curriculum'
 import { loadLearningCircuit } from '../../music/learning/load'
 import { createReservoirModel, type ReservoirModel } from '../../music/learning/reservoir'
 import { commitPhrase, createLearningSnapshot, preparePhrase, resetLearningContext } from '../../music/learning/session'
+import { acceptTrainingCandidate, createTrainingOperation } from '../../music/learning/train'
 import type { CommittedLearningPhrase, PreparedLearningPhrase } from '../../music/learning/types'
 import type { PhraseScore, SessionRecipe } from '../../music/types'
-import { getPreset } from '../../presets/presets'
+import { getPreset, PRESETS } from '../../presets/presets'
 
 function PhraseAudition({ score, recipe, mix }: { score: PhraseScore; recipe: SessionRecipe; mix: MixSettings }) {
   const controller = useController()
@@ -65,6 +67,50 @@ function PhraseExperiment({ graph, model, recipe, mix }: { graph: CircuitGraph; 
     committed: null as CommittedLearningPhrase | null,
     recipe: { ...recipe }, phraseIndex: 0,
   }))
+  const [teachingStatus, setTeachingStatus] = useState('Decoder has not been taught.')
+  const [teaching, setTeaching] = useState(false)
+  const operation = useRef<ReturnType<typeof createTrainingOperation> | null>(null)
+  useEffect(() => () => { operation.current?.cancel(); operation.current = null }, [])
+  const teach = async () => {
+    if (operation.current) return
+    let currentOperation: ReturnType<typeof createTrainingOperation> | null = null
+    try {
+      const plans = (seeds: number[], indices = [0]) => Object.values(PRESETS).flatMap(preset => seeds.flatMap(sessionSeed => indices.map(phraseIndex =>
+        buildPhrasePlan(graph, { ...recipe, presetId: preset.id, sessionSeed, variation: 1 }, phraseIndex))))
+      currentOperation = createTrainingOperation(model, state.parent.parameters,
+        teachingContexts(plans(Array.from({ length: 12 }, (_, index) => index + 1), [0, 1])),
+        originalContexts(plans([1001, 1002, 1003, 1004])))
+      operation.current = currentOperation
+      setTeaching(true)
+      let done = false
+      while (!done && operation.current === currentOperation) {
+        const progress = currentOperation.advance()
+        done = progress.done
+        setTeachingStatus(`Teaching candidate: ${progress.updates} / ${TRAINING_CONFIGURATION.maxUpdates} output-weight updates.`)
+        await new Promise<void>(resolve => setTimeout(resolve, 0))
+      }
+      if (operation.current !== currentOperation) return
+      const result = currentOperation.result()!
+      const parameters = acceptTrainingCandidate(state.parent.parameters, result)
+      if (parameters) {
+        setState(previous => {
+          const adopted = acceptTrainingCandidate(previous.parent.parameters, result)
+          return adopted ? { ...previous, parent: { ...previous.parent, parameters: adopted }, prepared: null } : previous
+        })
+        setTeachingStatus(`Ready at manual boundary. Validation accuracy: ${(100 * result.after!.accuracy).toFixed(1)}%; cross-entropy: ${result.after!.crossEntropy.toFixed(4)}. Updates are frozen during inference.`)
+      } else setTeachingStatus(`Candidate rejected: ${result.reason ?? 'stale model revision'}.`)
+    } catch (error) {
+      if (!currentOperation || operation.current === currentOperation) setTeachingStatus(`Teaching failed: ${error instanceof Error ? error.message : String(error)}`)
+    } finally {
+      if (currentOperation && operation.current === currentOperation) { operation.current = null; setTeaching(false) }
+    }
+  }
+  const cancelTeaching = () => {
+    operation.current?.cancel()
+    operation.current = null
+    setTeaching(false)
+    setTeachingStatus('Teaching cancelled; live parameters preserved.')
+  }
   const recipeChanged = state.recipe.sessionSeed !== recipe.sessionSeed || state.recipe.presetId !== recipe.presetId
   const preparedIsCurrent = !recipeChanged && state.prepared?.score.variation === recipe.variation
   const prepare = () => {
@@ -83,15 +129,18 @@ function PhraseExperiment({ graph, model, recipe, mix }: { graph: CircuitGraph; 
   const activity = state.prepared?.endingRuntime.activations ?? state.parent.runtime.activations
 
   return <section aria-labelledby="learning-lab-title" data-testid="learning-lab">
-    <h2 id="learning-lab-title">MBON activity experiment</h2>
-    <p>Fixed MBON reservoir with an untrained decoder. Prepare and adopt phrases manually, then audition a captured score with the current tempo and mix.</p>
+    <h2 id="learning-lab-title">MBON motif experiment</h2>
+    <p>Teach an original two-bar bass motif to the decoder over a fixed MBON reservoir. Prepare and adopt phrases manually, then audition a captured score with the current tempo and mix.</p>
     <p>{model.graph.neuronIds.length} modeled neurons, {model.graph.incoming.reduce((sum, row) => sum + row.length, 0)} retained connections. Model seed: {model.modelSeed}.</p>
-    <button type="button" onClick={prepare}>Prepare next phrase</button>{' '}
-    <button type="button" disabled={!state.prepared || !preparedIsCurrent} onClick={adopt}>Adopt prepared phrase</button>
+    <button type="button" disabled={teaching} onClick={() => { void teach() }}>Teach motif</button>{' '}
+    <button type="button" disabled={!teaching} onClick={cancelTeaching}>Cancel teaching</button>
+    <p role="status">{teachingStatus}</p>
+    <button type="button" disabled={teaching} onClick={prepare}>Prepare next phrase</button>{' '}
+    <button type="button" disabled={teaching || !state.prepared || !preparedIsCurrent} onClick={adopt}>Adopt prepared phrase</button>
     <p role="status">{state.prepared ? (preparedIsCurrent ? 'Prepared; memory has not advanced.' : 'Recipe changed; prepare a replacement.') : 'Ready to prepare.'}</p>
-    <p>Adopted phrases: {state.parent.runtime.generationIndex}. Previous bass action for the next phrase: {state.parent.runtime.previousBassAction ?? 'none'}. Recent actions: {state.parent.runtime.recentActions.length}. Model revision: {state.parent.parameters.modelRevision}.</p>
+    <p>Adopted phrases: {state.parent.runtime.generationIndex}. Previous bass action for the next phrase: {state.parent.runtime.previousBassAction ?? 'none'}. Recent actions: {state.parent.runtime.recentActions.length}. Model revision: {state.parent.parameters.modelRevision}. Accepted training updates: {state.parent.parameters.trainingUpdateCount}.</p>
     <p>Activity range: {Math.min(...activity).toFixed(4)} to {Math.max(...activity).toFixed(4)}. Reservoir checksum: <code>{model.graph.checksum}</code>.</p>
-    <p>Accompaniment follows the whole-CNS traversal. Bass comes from a masked nine-action decoder. Its weights are zero: positive variation samples legal actions uniformly; zero variation chooses the first legal action. The variation mixture permits up to 20% uniform exploration once the decoder has nonuniform probabilities.</p>
+    <p>Accompaniment follows the whole-CNS traversal. Bass comes from a masked nine-action decoder. Zero variation chooses greedily; positive variation samples decoder probabilities at temperature 0.8 with up to 20% uniform exploration. Teaching changes only output weights and preserves listening memory. This developer audition does not save learning across reloads.</p>
     {current && <PhraseAudition key={state.prepared?.requestId ?? state.parent.requestRevision} score={current.score}
       recipe={{ ...recipe, presetId: current.score.presetId, sessionSeed: current.score.sessionSeed, variation: current.score.variation }} mix={mix} />}
     {decisions && <ol aria-label="Reservoir decoder bass decisions">{decisions.map(decision => <li key={decision.beat}>

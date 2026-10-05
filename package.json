@@ -12,6 +12,7 @@
     "lint": "oxlint",
     "preview": "vite preview --port 4173 --strictPort",
     "typecheck": "tsc -b",
+    "learning:eval": "node --import tsx scripts/learning/evaluate.ts",
     "test": "vitest run --project unit",
     "test:audio": "vitest run --project audio",
     "check": "npm run typecheck && npm run lint && npm run test && npm run data:validate && npm run build",
@@ -40,6 +41,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/browser-playwright": "5.0.1",
     "oxlint": "^1.81.0",
+    "tsx": "4.23.15",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vitest": "5.0.1"

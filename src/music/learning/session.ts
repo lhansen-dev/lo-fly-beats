@@ -7,11 +7,11 @@ import {
 import { createDecoderWeights, decodeBassAction } from './decoder'
 import { stepReservoir, type ReservoirModel } from './reservoir'
 import {
-  INPUT_VERSION, LEARNER_VERSION, MOTIF_HISTORY_LIMIT, RECENT_ACTION_LIMIT,
+  DECODER_CONFIGURATION, INPUT_VERSION, LEARNER_VERSION, MOTIF_HISTORY_LIMIT, RECENT_ACTION_LIMIT,
   RESERVOIR_CONFIGURATION, SNAPSHOT_VERSION, VOCABULARY_VERSION,
 } from './versions'
 import type {
-  BassDecision, CommittedLearningPhrase, LearningRuntime, LearningSnapshot,
+  BassDecision, CommittedLearningPhrase, LearningParameters, LearningRuntime, LearningSnapshot,
   MotifSummary, PreparedLearningPhrase,
 } from './types'
 
@@ -23,7 +23,7 @@ function freeze<T>(value: T): T {
   return value
 }
 
-function freshRuntime(reservoirSize: number, generationIndex = 0): LearningRuntime {
+export function freshRuntime(reservoirSize: number, generationIndex = 0): LearningRuntime {
   return { activations: Array<number>(reservoirSize).fill(0), previousBassAction: null, generationIndex, contextBeatIndex: 0, recentActions: [] }
 }
 
@@ -33,7 +33,7 @@ export function createLearningSnapshot(accompanimentGraphChecksum: string, model
     parameters: {
       graphChecksum: model.graph.checksum, modelSeed: model.modelSeed, learnerVersion: LEARNER_VERSION,
       configuration: {
-        ...RESERVOIR_CONFIGURATION, selector: 'reservoir-decoder', reservoirSize,
+        ...RESERVOIR_CONFIGURATION, ...DECODER_CONFIGURATION, selector: 'reservoir-decoder', reservoirSize,
         recentActionLimit: RECENT_ACTION_LIMIT, motifHistoryLimit: MOTIF_HISTORY_LIMIT,
       },
       inputVersion: INPUT_VERSION, vocabularyVersion: VOCABULARY_VERSION,
@@ -55,19 +55,26 @@ export function resetLearningContext(snapshot: LearningSnapshot): LearningSnapsh
   })
 }
 
-export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot, model: ReservoirModel): PreparedLearningPhrase {
-  if (plan.graphChecksum !== snapshot.compatibility.accompanimentGraphChecksum) throw new Error('Incompatible accompaniment graph')
-  const parameters = snapshot.parameters
+export function assertLearningParameters(parameters: LearningParameters, model: ReservoirModel): void {
   if (parameters.graphChecksum !== model.graph.checksum || parameters.modelSeed !== model.modelSeed
     || parameters.configuration.reservoirSize !== model.graph.neuronIds.length
     || parameters.configuration.selector !== 'reservoir-decoder'
     || parameters.learnerVersion !== LEARNER_VERSION || parameters.inputVersion !== INPUT_VERSION
     || parameters.vocabularyVersion !== VOCABULARY_VERSION
-    || Object.entries(RESERVOIR_CONFIGURATION).some(([key, value]) => parameters.configuration[key as keyof typeof RESERVOIR_CONFIGURATION] !== value)) {
+    || Object.entries({ ...RESERVOIR_CONFIGURATION, ...DECODER_CONFIGURATION }).some(([key, value]) =>
+      parameters.configuration[key as keyof typeof parameters.configuration] !== value)) {
     throw new Error('Incompatible reservoir model')
   }
   if (parameters.decoderWeights.length !== BASS_VOCABULARY.length * (model.graph.neuronIds.length + 1)
     || parameters.decoderWeights.some(value => !Number.isFinite(value))) throw new Error('Invalid decoder weights')
+  if (!Number.isSafeInteger(parameters.modelRevision) || parameters.modelRevision < 0
+    || !Number.isSafeInteger(parameters.trainingUpdateCount) || parameters.trainingUpdateCount < 0) throw new Error('Invalid learning counters')
+}
+
+export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot, model: ReservoirModel): PreparedLearningPhrase {
+  if (plan.graphChecksum !== snapshot.compatibility.accompanimentGraphChecksum) throw new Error('Incompatible accompaniment graph')
+  const parameters = snapshot.parameters
+  assertLearningParameters(parameters, model)
   let runtime = structuredClone(snapshot.runtime)
   const decisions: BassDecision[] = []
   for (let beat = 0; beat < plan.trace.length; beat++) {
