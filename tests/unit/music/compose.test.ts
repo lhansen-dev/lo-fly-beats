@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { getPreset, PRESETS } from '../../../src/presets/presets'
 import { CHORD_QUALITIES } from '../../../src/music/harmony'
-import { composePhrase } from '../../../src/music/compose'
+import { buildPhrasePlan, composePhrase, renderBassCell, renderPhrasePlan } from '../../../src/music/compose'
+import { STRONG_BASS_CELLS, WEAK_BASS_CELLS } from '../../../src/music/patterns'
 import { fixtureGraph } from '../helpers/fixtureGraph'
 import type { PhraseScore, SessionRecipe } from '../../../src/music/types'
 
@@ -84,6 +85,62 @@ function assertComposition(score: PhraseScore): void {
 }
 
 describe('composePhrase', () => {
+  it('renders reusable plans without changing them or the baseline score', () => {
+    const input = recipe('rainy-windowsill', 17, 0.5)
+    const plan = buildPhrasePlan(graph, input, 2)
+    const before = structuredClone(plan)
+    expect(renderPhrasePlan(plan)).toEqual(composePhrase(graph, input, 2))
+    const first = renderPhrasePlan(plan)
+    first.chords[0]!.voicing[0] = 0
+    first.trace[0]!.uses.push('changed by caller')
+    first.events[0]!.velocity = 0
+    expect(plan).toEqual(before)
+    expect(renderPhrasePlan(plan)).toEqual(composePhrase(graph, input, 2))
+  })
+
+  it('keeps every musical constraint with bass overrides across all presets and variations', () => {
+    const exercised = new Set<string>()
+    for (let seed = 1; seed <= 12; seed++) {
+      for (const variation of variations) {
+        for (const preset of Object.values(PRESETS)) {
+          const plan = buildPhrasePlan(graph, recipe(preset.id, seed, variation), 0)
+          const cells = plan.trace.map(step => {
+            if (step.kind === 'rest') return null
+            const legal = step.beatInBar % 2 === 0 ? STRONG_BASS_CELLS : WEAK_BASS_CELLS
+            const id = legal[(seed + step.beat) % legal.length]!.id
+            exercised.add(id)
+            return id
+          })
+          const score = renderPhrasePlan(plan, { cells })
+          assertComposition(score)
+          expect(score.trace.every(step => step.uses.every(use => !use.startsWith('bass ')))).toBe(true)
+          expect(score.chords).toEqual(plan.chords)
+          expect(score.fill).toBe(plan.fill)
+          expect(score.events.filter(event => event.layer !== 'bass').map(event => [event.layer, event.step, event.midi, event.drum, event.durationSteps]))
+            .toEqual(composePhrase(graph, plan.recipe, 0).events.filter(event => event.layer !== 'bass').map(event => [event.layer, event.step, event.midi, event.drum, event.durationSteps]))
+        }
+      }
+    }
+    expect([...exercised].sort()).toEqual([...STRONG_BASS_CELLS, ...WEAK_BASS_CELLS].map(cell => cell.id).sort())
+  })
+
+  it('rejects incomplete, wrong-beat, and sounding forced-rest overrides', () => {
+    const plan = buildPhrasePlan(graph, recipe('rainy-windowsill', 1, 0), 0)
+    expect(() => renderPhrasePlan(plan, { cells: [] })).toThrow('one action per trace beat')
+    expect(() => renderPhrasePlan(plan, { cells: plan.bassCells.map((cell, beat) => beat === 0 ? 'fifth' : cell) })).toThrow('Illegal bass cell')
+    const restPlan = structuredClone(plan)
+    restPlan.trace[1] = { kind: 'rest', neuronId: null, beat: 1, beatInBar: 1, bar: 0, neuronType: null, uses: [] }
+    expect(() => renderPhrasePlan(restPlan, { cells: restPlan.bassCells.map((cell, beat) => beat === 1 ? 'fifth' : cell) })).toThrow('silent at traversal rest')
+  })
+
+  it('exposes the same bass pitch and duration rules for chord approaches', () => {
+    const plan = buildPhrasePlan(graph, recipe('rainy-windowsill', 1, 0), 0)
+    const approach = WEAK_BASS_CELLS.find(cell => cell.id === 'approach')!
+    const event = renderBassCell(approach, 7, plan.chords, getPreset(plan.recipe.presetId))[0]!
+    expect(event).toMatchObject({ layer: 'bass', step: 30, durationSteps: 2, midi: plan.chords[1]!.rootMidi - 1, traceBeat: 7 })
+    expect(renderBassCell(WEAK_BASS_CELLS[0]!, 1, plan.chords, getPreset(plan.recipe.presetId))).toEqual([])
+  })
+
   it('is deterministic, keeps the authored score shape, and ignores tempo', () => {
     const input = recipe('rainy-windowsill', 17, 0.5)
     const first = composePhrase(graph, input, 2)

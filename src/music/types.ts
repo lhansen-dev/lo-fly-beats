@@ -1,4 +1,6 @@
 import type { PresetId } from '../presets/types'
+import type { BassCellId } from './patterns'
+import type { LearningProvenance } from './learning/types'
 
 export type WalkStep =
   | { beat: number; kind: 'start' | 'restart'; neuronId: string }
@@ -44,6 +46,25 @@ export type TraceStep = WalkStep & {
   uses: string[]
 }
 
+/** Unhumanized accompaniment and legacy bass choices; rendering never changes the plan. */
+export interface PhrasePlan {
+  recipe: SessionRecipe
+  phraseIndex: number
+  compositionPhraseIndex: number
+  graphChecksum: string
+  chords: ChordSlot[]
+  trace: TraceStep[]
+  accompaniment: NoteEvent[]
+  bassCells: (BassCellId | null)[]
+  fill: boolean
+}
+
+export interface BassOverrides {
+  /** One action per trace beat. Traversal rests require null or the silent 'rest' cell. */
+  cells: readonly (BassCellId | null)[]
+  provenance?: LearningProvenance
+}
+
 export interface PhraseScore {
   scoreVersion: 1
   mappingVersion: number
@@ -60,4 +81,5 @@ export interface PhraseScore {
   events: NoteEvent[]
   trace: TraceStep[]
   fill: boolean
+  learning?: LearningProvenance
 }

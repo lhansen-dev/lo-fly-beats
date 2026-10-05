@@ -5,7 +5,7 @@ import { fnv1a32 } from './rng'
 import { clamp } from './math'
 import { compositionPhraseIndex, compositionStreams } from './streams'
 import { walkPhrase } from './traversal'
-import type { ChordSlot, NoteEvent, PhraseScore, SessionRecipe, TraceStep } from './types'
+import type { BassOverrides, ChordSlot, NoteEvent, PhrasePlan, PhraseScore, SessionRecipe, TraceStep } from './types'
 import { MAPPING_VERSION, SCORE_VERSION } from './versions'
 import { HUMANIZE_MAX_OFFSETS, HUMANIZE_VELOCITY_SPREAD, KEYS_PATTERNS, STRONG_BASS_CELLS, WEAK_BASS_CELLS, type BassCell, type BassDegree, type KeysPattern } from './patterns'
 
@@ -64,6 +64,19 @@ function pushDrums(events: NoteEvent[], pattern: ReturnType<typeof getPreset>['d
   }
 }
 
+/** Shared pitch, onset, and duration rules for both legacy and experimental bass. */
+export function renderBassCell(cell: BassCell, beat: number, chords: readonly ChordSlot[], preset: ReturnType<typeof getPreset>): NoteEvent[] {
+  const bar = Math.floor(beat / 4)
+  const beatInBar = beat % 4
+  const chord = chordForBar(chords, bar)
+  return cell.notes.map(note => ({
+    layer: 'bass', step: bar * 16 + beatInBar * 4 + note.offset, microOffset: 0,
+    durationSteps: note.durationSteps,
+    midi: resolveDegree(note.degree, chord, preset, bar, beatInBar, chords), drum: null,
+    velocity: note.velocity, traceBeat: beat,
+  }))
+}
+
 function humanize(events: NoteEvent[], rng: ReturnType<typeof compositionStreams>['humanize']): void {
   const round4 = (value: number) => Math.round(value * 10000) / 10000
   for (const event of events) {
@@ -75,7 +88,7 @@ function humanize(events: NoteEvent[], rng: ReturnType<typeof compositionStreams
   }
 }
 
-export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phraseIndex: number): PhraseScore {
+export function buildPhrasePlan(graph: CircuitGraph, recipe: SessionRecipe, phraseIndex: number): PhrasePlan {
   const compositionIndex = compositionPhraseIndex(recipe.variation, phraseIndex)
   const streams = compositionStreams(recipe.sessionSeed, compositionIndex)
   const preset = getPreset(recipe.presetId)
@@ -116,13 +129,6 @@ export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phrase
       bassCells[bar]![beatInBar] = cell
       const reuseText = priorCell ? ` (reused from bar ${reusedFrom! + 1})` : ''
       current.uses.push(`bass ${cell.id}${reuseText}`)
-      const chord = chordForBar(chords, bar)
-      for (const note of cell.notes) events.push({
-        layer: 'bass', step: bar * 16 + beatInBar * 4 + note.offset, microOffset: 0,
-        durationSteps: note.durationSteps,
-        midi: resolveDegree(note.degree, chord, preset, bar, beatInBar, chords), drum: null,
-        velocity: note.velocity, traceBeat: current.beat,
-      })
     }
     const slot = chords.find(item => item.traceBeat === start.beat)
     if (slot) start.uses.push(`chord ${slot.symbol}`)
@@ -151,6 +157,34 @@ export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phrase
     pushDrums(events, preset.drums.fill, 7)
   }
 
+  return {
+    recipe: { ...recipe }, phraseIndex, compositionPhraseIndex: compositionIndex,
+    graphChecksum: graph.checksum, chords, trace, accompaniment: events,
+    bassCells: bassCells.flatMap(bar => Array.from(bar, cell => cell?.id ?? null)), fill,
+  }
+}
+
+export function renderPhrasePlan(plan: PhrasePlan, bassOverrides?: BassOverrides): PhraseScore {
+  const { recipe, phraseIndex, compositionPhraseIndex: compositionIndex, fill } = plan
+  const preset = getPreset(recipe.presetId)
+  const chords = structuredClone(plan.chords)
+  const trace = structuredClone(plan.trace)
+  const events = structuredClone(plan.accompaniment)
+  const cells = bassOverrides?.cells ?? plan.bassCells
+  if (cells.length !== trace.length) throw new RangeError('Bass overrides must contain one action per trace beat')
+  for (const step of trace) {
+    if (bassOverrides) step.uses = step.uses.filter(use => !use.startsWith('bass '))
+    const id = cells[step.beat]
+    if (step.kind === 'rest') {
+      if (id !== null && id !== 'rest') throw new RangeError(`Bass must be silent at traversal rest ${step.beat}`)
+      continue
+    }
+    const legal = step.beatInBar % 2 === 0 ? STRONG_BASS_CELLS : WEAK_BASS_CELLS
+    const cell = legal.find(cell => cell.id === id)
+    if (!cell) throw new RangeError(`Illegal bass cell ${id} at beat ${step.beat}`)
+    events.push(...renderBassCell(cell, step.beat, chords, preset))
+  }
+
   // Shorten each bass note to the next onset so the line is monophonic.
   const bassEvents = events.filter(event => event.layer === 'bass').sort((a, b) => a.step - b.step)
   for (let i = 0; i < bassEvents.length - 1; i++) {
@@ -159,13 +193,18 @@ export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phrase
     event.durationSteps = Math.max(1, Math.min(event.durationSteps, gap))
   }
   events.sort(compareEvents)
-  humanize(events, streams.humanize)
+  humanize(events, compositionStreams(recipe.sessionSeed, compositionIndex).humanize)
 
   const score: PhraseScore = {
     scoreVersion: SCORE_VERSION, mappingVersion: MAPPING_VERSION, presetId: recipe.presetId,
     presetVersion: preset.version, sessionSeed: recipe.sessionSeed, phraseIndex,
-    compositionPhraseIndex: compositionIndex, variation: recipe.variation, graphChecksum: graph.checksum,
+    compositionPhraseIndex: compositionIndex, variation: recipe.variation, graphChecksum: plan.graphChecksum,
     bars: 8, stepsPerBar: 16, chords, events, trace, fill,
   }
+  if (bassOverrides?.provenance) score.learning = structuredClone(bassOverrides.provenance)
   return score
+}
+
+export function composePhrase(graph: CircuitGraph, recipe: SessionRecipe, phraseIndex: number): PhraseScore {
+  return renderPhrasePlan(buildPhrasePlan(graph, recipe, phraseIndex))
 }

@@ -2,6 +2,8 @@ export const HUMANIZE_VELOCITY_SPREAD = 0.06
 export const HUMANIZE_MAX_OFFSETS = { kick: 0, snare: 0.04, hat: 0.06, bass: 0.03, keys: 0.08 } as const
 
 export type BassDegree = 'root' | 'fifth' | 'octave' | 'third' | 'seventh' | 'approach'
+export type BassCellId = 'root-hold' | 'root-push' | 'root-octave' | 'root-short'
+  | 'rest' | 'fifth' | 'and-root' | 'seventh-fifth' | 'approach'
 export interface BassNotePattern {
   offset: number
   durationSteps: number
@@ -9,7 +11,7 @@ export interface BassNotePattern {
   velocity: number
 }
 export interface BassCell {
-  id: string
+  id: BassCellId
   notes: readonly BassNotePattern[]
 }
 
