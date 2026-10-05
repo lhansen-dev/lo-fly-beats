@@ -2,15 +2,19 @@ import type { BassCellId } from '../patterns'
 import type { PhraseScore } from '../types'
 
 export interface LearningConfiguration {
-  selector: 'deterministic-test'
+  selector: 'reservoir-decoder'
+  modelVersion: number
+  incomingWeightTotal: number
+  retention: number
+  inputScale: number
+  maxExploration: number
   reservoirSize: number
   recentActionLimit: number
   motifHistoryLimit: number
 }
 
 export interface LearningParameters {
-  /** Null until an actual reservoir graph is loaded in session 2. */
-  graphChecksum: string | null
+  graphChecksum: string
   modelSeed: number
   configuration: Readonly<LearningConfiguration>
   learnerVersion: number
@@ -78,7 +82,7 @@ export interface BassDecision {
 }
 
 export interface LearningProvenance {
-  reservoirGraphChecksum: string | null
+  reservoirGraphChecksum: string
   learnerVersion: number
   modelRevision: number
   selector: LearningConfiguration['selector']

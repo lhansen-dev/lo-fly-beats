@@ -8,7 +8,12 @@ import { exportSeconds } from '../../src/audio/timing'
 import { PRESETS } from '../../src/presets/presets'
 import type { PhraseScore, SessionRecipe } from '../../src/music/types'
 import { DEFAULT_MIX, type MixSettings } from '../../src/audio/rig'
-import { composePhrase } from '../../src/music/compose'
+import { buildPhrasePlan, composePhrase } from '../../src/music/compose'
+import { loadLearningCircuit } from '../../src/music/learning/load'
+import { buildReservoirGraph } from '../../src/music/learning/graph'
+import { createReservoirModel } from '../../src/music/learning/reservoir'
+import { createLearningSnapshot, preparePhrase } from '../../src/music/learning/session'
+import { encodeWav16 } from '../../src/audio/wav'
 import { detectOnsets } from './onsets'
 
 const preset = PRESETS['rainy-windowsill']
@@ -41,6 +46,30 @@ const makeSnapshot = (events: PhraseScore['events'], bpm: number, mix: MixSettin
   createExportSnapshot(score(events), recipe(bpm), { ...preset, swing }, mix)
 
 describe('offline phrase rendering', () => {
+  it('renders a captured reservoir bass override audibly and exports WAV without advancing the fly', async () => {
+    const model = createReservoirModel(buildReservoirGraph(await loadLearningCircuit('/')))
+    const session = recipe(100)
+    const memory = createLearningSnapshot(graph.checksum, model)
+    const prepared = preparePhrase(buildPhrasePlan(graph, session, 0), memory, model)
+    const before = structuredClone({ memory, prepared, model })
+    // Isolate bass so accompaniment cannot satisfy the audibility assertion.
+    const snapshot = createExportSnapshot(prepared.score, session, preset, {
+      ...DEFAULT_MIX, ambienceOn: false, layers: {
+        ...DEFAULT_MIX.layers, drums: { level: 0, muted: true }, keys: { level: 0, muted: true },
+      },
+    })
+    expect(snapshot.score.learning?.reservoirGraphChecksum).toBe(model.graph.checksum)
+    expect(snapshot.score.events.some(event => event.layer === 'bass')).toBe(true)
+    const data = await checkedRender(snapshot)
+    expect(rms(data.channels[0], 0, data.channels[0].length)).toBeGreaterThan(0.001)
+    const wav = encodeWav16(data)
+    const header = new DataView(wav)
+    expect(header.getUint32(24, true)).toBe(44100)
+    expect(header.getUint16(22, true)).toBe(2)
+    expect(wav.byteLength).toBe(44 + data.channels[0].length * 4)
+    expect({ memory, prepared, model }).toEqual(before)
+  }, 60000)
+
   it.each([60, 72, 100])('renders stereo 44.1 kHz at %i BPM', async bpm => {
     const data = await checkedRender(makeSnapshot([], bpm))
     expect(Math.abs(data.channels[0].length - Math.round(exportSeconds(bpm) * 44100))).toBeLessThanOrEqual(1)

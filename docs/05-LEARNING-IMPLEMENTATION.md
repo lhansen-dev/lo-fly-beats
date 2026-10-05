@@ -1,6 +1,6 @@
 # Lo-fly beats: learning prototype in five sessions
 
-Created October 5, 2026. Implements the first milestone in [04-LEARNING-RADIO.md](./04-LEARNING-RADIO.md). Session 1 is implemented and verified; later sessions remain planned.
+Created October 5, 2026. Implements the first milestone in [04-LEARNING-RADIO.md](./04-LEARNING-RADIO.md). Sessions 1 and 2 are implemented and verified; later sessions remain planned.
 
 ## The result we are building
 
@@ -92,13 +92,13 @@ Run `npm run check` and the focused composition/learning unit tests. No live-wor
 
 **Work**
 
-- [ ] Load and verify `mbon-v1` using the existing schema/checksum code. Introduce an explicit loader path; the current app loader selects `whole-cns-v1`. Pin stable numeric-ID ordering for model arrays.
-- [ ] Build sparse incoming model rows from the retained anatomical edges. Store original synapse counts separately from modeled weights.
-- [ ] Start with `rawWeight = log1p(synapseCount)` and normalize each incoming row to a total of `0.85`. A row without inputs remains zero. These effective weights are positive by design; transmitter signs and physiological strengths are not known from this export.
-- [ ] Update once per musical beat: `xNext = 0.75*x + 0.25*tanh(W*x + Win*u)`. Use separate old/new arrays so neuron iteration order cannot change the result.
-- [ ] Encode `u` as beat position (4), bar parity within the two-bar motif (2), chord-ring index (6), previous executed bass cell (9), and traversal-rest status (1). Initialize the previous-action vector to zeros. Generate input weights in `[-0.2,0.2]` deterministically from model seed `1`; this seed belongs to the fly, independently of the recipe seed.
-- [ ] Add a nine-action decoder with logits `Wout*[1,x]`, stable masked softmax, and seeded selection. Initialize output weights to zero; use fixed vocabulary ordering to resolve greedy ties. Keep the input mapping and internal weights fixed.
-- [ ] Define exploratory selection as a mixture of decoder probabilities and a uniform distribution over legal actions, initially at most 20% exploration at full variation. This is an authored variation mechanism, not evidence of learning.
+- [x] Load and verify `mbon-v1` using the existing schema/checksum code. Introduce an explicit loader path; the current app loader selects `whole-cns-v1`. Pin stable numeric-ID ordering for model arrays.
+- [x] Build sparse incoming model rows from the retained anatomical edges. Store original synapse counts separately from modeled weights.
+- [x] Start with `rawWeight = log1p(synapseCount)` and normalize each incoming row to a total of `0.85`. A row without inputs remains zero. These effective weights are positive by design; transmitter signs and physiological strengths are not known from this export.
+- [x] Update once per musical beat: `xNext = 0.75*x + 0.25*tanh(W*x + Win*u)`. Use separate old/new arrays so neuron iteration order cannot change the result.
+- [x] Encode `u` as beat position (4), bar parity within the two-bar motif (2), chord-ring index (6), previous executed bass cell (9), and traversal-rest status (1). Initialize the previous-action vector to zeros. Generate input weights in `[-0.2,0.2]` deterministically from model seed `1`; this seed belongs to the fly, independently of the recipe seed.
+- [x] Add a nine-action decoder with logits `Wout*[1,x]`, stable masked softmax, and seeded selection. Initialize output weights to zero; use fixed vocabulary ordering to resolve greedy ties. Keep the input mapping and internal weights fixed.
+- [x] Define exploratory selection as a mixture of decoder probabilities and a uniform distribution over legal actions, initially at most 20% exploration at full variation. This is an authored variation mechanism, not evidence of learning.
 
 **Files:** add `src/music/learning/{graph,reservoir,decoder,versions}.ts`, a small experimental circuit loader, and reservoir/decoder tests. Reuse the existing developer UI or add `src/components/learning/LearningLab.tsx` behind the experiment switch.
 
@@ -206,7 +206,7 @@ At the end of each session, update its boxes and add a short entry below with co
 | Session | Status | Evidence / decisions | Next task |
 | --- | --- | --- | --- |
 | 1 | Complete | Baseline snapshot unchanged; pure preparation/adoption, retained context, and override constraints verified. See handoff below. | Load and verify MBON graph; replace the test selector with fixed reservoir activity and a decoder. |
-| 2 | Planned | — | Build the fixed sparse reservoir and constrained decoder. |
+| 2 | Complete | Verified MBON loader, fixed sparse activity, masked decoder, 10,000-phrase measurements, and captured-score audio/WAV audition. See handoff below. | Teach the original motif and measure frozen retention against the planned controls. |
 | 3 | Planned | — | Teach the original motif and run frozen evaluation. |
 | 4 | Planned | — | Integrate worker preparation and boundary checkpoints. |
 | 5 | Planned | — | Finish the experimental UI and paired listening review. |
@@ -226,6 +226,26 @@ Use `npm run dev`, then open `/?learning=1` for the manual Prepare/Adopt panel. 
 Verification: `npm run check` passed (64 unit/data files, 317 tests; data validation and production build passed), and `npx vitest run --project unit tests/unit/music/learning tests/unit/music/compose.test.ts tests/data/compose-snapshot.test.ts` passed (4 files, 23 tests). The override suite exercises all nine cells over all three presets and variations 0/0.5/1, checking the existing register, harmony, strong-beat root, monophony, duration, density, sorting, and forced-rest invariants. A Chromium development smoke check verified the panel is hidden by default, repeated Prepare produces identical decisions, and two successive adoptions advance the generation counter without page errors. Existing lint/build warnings remain. No listening judgment is claimed.
 
 Next: explicitly load/checksum the MBON graph, pin numeric neuron ordering, build sparse fixed model rows, and replace the test selector with measured reservoir activity plus the masked decoder. Preserve the pure preparation/adoption and starting-versus-ending snapshot contracts.
+
+### Session 2 handoff — October 5, 2026
+
+Completed `src/music/learning/{graph,reservoir,decoder,versions,random,load}.ts`; replaced the test selector in `session.ts`; updated types, context, and the developer `LearningLab`; added graph, reservoir, decoder, and activity tests and a focused real-audio override/export test. The explicit learning loader reuses the existing manifest/schema, SHA-256, byte-count, and graph-integrity checks, loads `mbon-v1` under the deployment base, and rejects another circuit identity. The default application loader still selects `whole-cns-v1`. Circuit files and anatomical counts are unchanged.
+
+The immutable model uses 97 numerically ordered IDs, 936 incoming edges, and 25,379 original synapses. Each edge retains its synapse count separately from its positive effective weight. Nonempty incoming rows sum to 0.85 after `log1p` scaling; empty rows contribute zero. Activity updates synchronously once per beat, including forced rests, with retention 0.75 and tanh contribution 0.25. Model seed 1 produces 2,134 fixed input weights for the existing 22 features. The action-major decoder has 882 zero-initialized weights, including one bias per action. The original numeric choices required no tuning.
+
+The fixed model is supplied explicitly to `createLearningSnapshot(accompanimentChecksum, model)` and `preparePhrase(plan, snapshot, model)`. This keeps graph/input weights shared and outside the copied, future-checkpoint snapshot, and keeps inference pure without a module-global graph. Preparation checks the graph checksum, fly seed, configuration, versions, and decoder dimensions/finite values. The starting-versus-ending snapshot and adoption gate are unchanged. Transient resets zero the 97 activations and previous-action vector but retain parameters, model seed, histories, and the monotonic generation index. Learner and snapshot versions advance to 2; input/vocabulary versions remain 1 and legacy mapping remains 2.
+
+At positive variation, selection samples `(1 - 0.2*variation)*maskedSoftmax + 0.2*variation*legalUniform`; zero variation is greedy with stable vocabulary ties and selection probability 1. Because the untrained decoder has zero logits, every positive variation currently samples legal actions uniformly. Different carried activity therefore does not yet imply different greedy bass decisions. A hand-set readout test demonstrates that nonzero output weights can distinguish activity; teaching remains session 3. Forced rests execute silence and advance activity/context without becoming teaching/accuracy observations.
+
+Measured on an Apple M1 Max with Node v22.22.3, using the real MBON model and 60 branching-accompaniment plans (20 seeds × three presets, variation 1): 10,000 sequential preparations/adoptions covered 320,000 beats. Every beat update checked finite, bounded input activity; all ending activations remained in `[-1,1]`. Across 970,000 sampled boundary activations, the range was **[-0.420685, 0.479360]** and saturation at `abs(x) >= 0.95` was **0%**. Mean RMS change between phrase boundaries was **0.118623**. Changing one feature group from the same state produced RMS activity differences of **0.038354** (beat), **0.035544** (bar parity), **0.039135** (chord), **0.035843** (previous action), and **0.027564** (rest). These checks reject an effectively constant reservoir; they do not establish an anatomical advantage or learning. Internal/input/readout weights stayed unchanged; recent actions and motif summaries each remained at most 8.
+
+In the same informational local run, mean preparation time was **2.397 ms**, p95 **2.831 ms**, and mean beat inference time **0.0558 ms**; the 10,000-phrase test took **25.03 s**. Preparation includes rendering/copying/freezing the score but excludes accompaniment planning and loading. The inference microbenchmark includes context encoding, reservoir update, and decoding; these Node timings are not browser-worker guarantees. Reproduce metrics with `npx vitest run --project unit tests/unit/music/learning/activity.test.ts --reporter=verbose --disableConsoleIntercept`.
+
+Use `npm run dev`, then `/?learning=1`: Prepare does not advance memory; Adopt makes the ending runtime the next parent. Render audition WAV captures the selected score and current tempo/mix through the existing offline rig, then exposes native audio controls and a WAV download. Playback/rendering never runs inference or adopts memory. The panel shows measured activity and separate bass provenance, handles a failed learning load with Retry, and disposes replaced audition URLs. This is a manual developer audition; live sequencing, worker ownership, teaching, and saved checkpoints remain later sessions. No listening-quality judgment is claimed.
+
+Verification: `npm run check` passed (68 unit/data files, 332 tests; data validation and production build passed), and `npm run test:audio -- tests/audio/export.test.ts` passed (7 real Chromium Web Audio tests). The new audio check isolates bass, verifies audible finite stereo 44.1 kHz output and the PCM WAV header, and proves rendering preserves model/snapshot/score. Existing baseline snapshots and bass-override constraint tests pass unchanged. The developer browser smoke verifies the panel, repeatable preparation, native audio playback/download, adoption/reset behavior, URL disposal, and corrupt-circuit retry. Existing lint/build warnings remain.
+
+Next: add the original curriculum and bounded decoder-only training, then evaluate frozen retention and variation against the legacy, context-only, zero-connectivity, and source-permuted controls. Preserve fixed internal/input weights, explicit model identity, pure preparation, and boundary snapshot semantics.
 
 ## What follows the five sessions
 

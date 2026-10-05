@@ -17,8 +17,12 @@ function parseJson(text: string, name: string): unknown {
   }
 }
 
-export async function loadCircuit(baseUrl: string, fetchImpl: typeof fetch = fetch): Promise<CircuitGraph> {
-  const directory = `${baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`}data/circuits/whole-cns-v1/`
+export async function loadCircuit(
+  baseUrl: string,
+  fetchImpl: typeof fetch = fetch,
+  circuitId: 'whole-cns-v1' | 'mbon-v1' = 'whole-cns-v1',
+): Promise<CircuitGraph> {
+  const directory = `${baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`}data/circuits/${circuitId}/`
   async function fetchBytes(file: string): Promise<ArrayBuffer> {
     try {
       const response = await fetchImpl(directory + file)

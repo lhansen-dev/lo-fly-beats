@@ -1,15 +1,18 @@
 import { renderPhrasePlan } from '../compose'
-import { clamp } from '../math'
-import { createRng, type Rng } from '../rng'
 import type { PhrasePlan } from '../types'
 import { MAPPING_VERSION } from '../versions'
 import {
-  advanceContext, BASS_VOCABULARY, INPUT_VERSION, LEARNER_VERSION, legalBassActions,
-  MOTIF_HISTORY_LIMIT, musicalContext, RECENT_ACTION_LIMIT, SNAPSHOT_VERSION, VOCABULARY_VERSION,
+  advanceContext, BASS_VOCABULARY, musicalContext,
 } from './context'
+import { createDecoderWeights, decodeBassAction } from './decoder'
+import { stepReservoir, type ReservoirModel } from './reservoir'
+import {
+  INPUT_VERSION, LEARNER_VERSION, MOTIF_HISTORY_LIMIT, RECENT_ACTION_LIMIT,
+  RESERVOIR_CONFIGURATION, SNAPSHOT_VERSION, VOCABULARY_VERSION,
+} from './versions'
 import type {
   BassDecision, CommittedLearningPhrase, LearningRuntime, LearningSnapshot,
-  MotifSummary, MusicalContext, PreparedLearningPhrase,
+  MotifSummary, PreparedLearningPhrase,
 } from './types'
 
 function freeze<T>(value: T): T {
@@ -20,26 +23,23 @@ function freeze<T>(value: T): T {
   return value
 }
 
-export function learningRng(modelSeed: number, generationIndex: number, purpose: string): Rng {
-  return createRng(`learning|${LEARNER_VERSION}|${modelSeed}|${generationIndex}|${purpose}`)
+function freshRuntime(reservoirSize: number, generationIndex = 0): LearningRuntime {
+  return { activations: Array<number>(reservoirSize).fill(0), previousBassAction: null, generationIndex, contextBeatIndex: 0, recentActions: [] }
 }
 
-function freshRuntime(generationIndex = 0): LearningRuntime {
-  return { activations: [], previousBassAction: null, generationIndex, contextBeatIndex: 0, recentActions: [] }
-}
-
-export function createLearningSnapshot(accompanimentGraphChecksum: string, modelSeed = 1): LearningSnapshot {
+export function createLearningSnapshot(accompanimentGraphChecksum: string, model: ReservoirModel): LearningSnapshot {
+  const reservoirSize = model.graph.neuronIds.length
   return freeze({
     parameters: {
-      graphChecksum: null, modelSeed, learnerVersion: LEARNER_VERSION,
+      graphChecksum: model.graph.checksum, modelSeed: model.modelSeed, learnerVersion: LEARNER_VERSION,
       configuration: {
-        selector: 'deterministic-test', reservoirSize: 0,
+        ...RESERVOIR_CONFIGURATION, selector: 'reservoir-decoder', reservoirSize,
         recentActionLimit: RECENT_ACTION_LIMIT, motifHistoryLimit: MOTIF_HISTORY_LIMIT,
       },
       inputVersion: INPUT_VERSION, vocabularyVersion: VOCABULARY_VERSION,
-      decoderWeights: [], trainingUpdateCount: 0, modelRevision: 0,
+      decoderWeights: createDecoderWeights(reservoirSize), trainingUpdateCount: 0, modelRevision: 0,
     },
-    runtime: freshRuntime(), recentMotifs: [], recipeGeneration: 0, requestRevision: 0,
+    runtime: freshRuntime(reservoirSize), recentMotifs: [], recipeGeneration: 0, requestRevision: 0,
     compatibility: {
       snapshotVersion: SNAPSHOT_VERSION, learnerVersion: LEARNER_VERSION,
       accompanimentGraphChecksum, mappingVersion: MAPPING_VERSION,
@@ -50,41 +50,31 @@ export function createLearningSnapshot(accompanimentGraphChecksum: string, model
 /** Apply New beat/preset resets at the selected boundary; parameters and fly seed survive. */
 export function resetLearningContext(snapshot: LearningSnapshot): LearningSnapshot {
   return freeze({
-    ...structuredClone(snapshot), runtime: freshRuntime(snapshot.runtime.generationIndex),
+    ...structuredClone(snapshot), runtime: freshRuntime(snapshot.parameters.configuration.reservoirSize, snapshot.runtime.generationIndex),
     recipeGeneration: snapshot.recipeGeneration + 1,
   })
 }
 
-/** A state-carrying test selector, not a trained model or a connectome simulation. */
-function selectTestAction(context: MusicalContext, snapshot: LearningSnapshot, variation: number): BassDecision {
-  const legalActionMask = legalBassActions(context.beatInBar, context.traversalRest)
-  if (context.traversalRest) return { beat: context.beat, cellId: 'rest', probability: 1, legalActionMask, forcedRest: true }
-  const legal = BASS_VOCABULARY.filter((_, index) => legalActionMask[index])
-  const previousIndex = context.previousBassAction === null ? -1 : BASS_VOCABULARY.indexOf(context.previousBassAction)
-  const greedyIndex = (previousIndex + 1 + context.chordRingIndex + context.barParity) % legal.length
-  const exploration = 0.2 * clamp(variation, 0, 1)
-  const probabilities = legal.map((_, index) => exploration / legal.length + (index === greedyIndex ? 1 - exploration : 0))
-  let chosenIndex = greedyIndex
-  if (exploration > 0) {
-    const draw = learningRng(snapshot.parameters.modelSeed, snapshot.runtime.generationIndex, `bass-selection|${context.beat}`).float()
-    let cumulative = 0
-    chosenIndex = legal.length - 1
-    for (let index = 0; index < legal.length; index++) {
-      cumulative += probabilities[index]!
-      if (draw < cumulative) { chosenIndex = index; break }
-    }
-  }
-  return { beat: context.beat, cellId: legal[chosenIndex]!, probability: probabilities[chosenIndex]!, legalActionMask, forcedRest: false }
-}
-
-export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot): PreparedLearningPhrase {
+export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot, model: ReservoirModel): PreparedLearningPhrase {
   if (plan.graphChecksum !== snapshot.compatibility.accompanimentGraphChecksum) throw new Error('Incompatible accompaniment graph')
-  if (snapshot.parameters.configuration.selector !== 'deterministic-test') throw new Error('Unsupported selector')
+  const parameters = snapshot.parameters
+  if (parameters.graphChecksum !== model.graph.checksum || parameters.modelSeed !== model.modelSeed
+    || parameters.configuration.reservoirSize !== model.graph.neuronIds.length
+    || parameters.configuration.selector !== 'reservoir-decoder'
+    || parameters.learnerVersion !== LEARNER_VERSION || parameters.inputVersion !== INPUT_VERSION
+    || parameters.vocabularyVersion !== VOCABULARY_VERSION
+    || Object.entries(RESERVOIR_CONFIGURATION).some(([key, value]) => parameters.configuration[key as keyof typeof RESERVOIR_CONFIGURATION] !== value)) {
+    throw new Error('Incompatible reservoir model')
+  }
+  if (parameters.decoderWeights.length !== BASS_VOCABULARY.length * (model.graph.neuronIds.length + 1)
+    || parameters.decoderWeights.some(value => !Number.isFinite(value))) throw new Error('Invalid decoder weights')
   let runtime = structuredClone(snapshot.runtime)
   const decisions: BassDecision[] = []
   for (let beat = 0; beat < plan.trace.length; beat++) {
     const context = musicalContext(plan, beat, runtime)
-    const decision = selectTestAction(context, snapshot, plan.recipe.variation)
+    runtime = { ...runtime, activations: stepReservoir(model, runtime.activations, context.inputs) }
+    const decision = decodeBassAction(context, runtime.activations, parameters.decoderWeights,
+      plan.recipe.variation, parameters.modelSeed, runtime.generationIndex)
     decisions.push(decision)
     runtime = advanceContext(runtime, decision, snapshot.parameters.configuration.recentActionLimit)
   }

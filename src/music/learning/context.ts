@@ -1,13 +1,8 @@
 import { STRONG_BASS_CELLS, WEAK_BASS_CELLS, type BassCellId } from '../patterns'
 import type { PhrasePlan } from '../types'
 import type { BassDecision, LearningRuntime, MusicalContext } from './types'
+import { RECENT_ACTION_LIMIT } from './versions'
 
-export const LEARNER_VERSION = 1
-export const INPUT_VERSION = 1
-export const VOCABULARY_VERSION = 1
-export const SNAPSHOT_VERSION = 1
-export const RECENT_ACTION_LIMIT = 8
-export const MOTIF_HISTORY_LIMIT = 8
 export const BASS_VOCABULARY: readonly BassCellId[] = Object.freeze([
   ...STRONG_BASS_CELLS.map(cell => cell.id), ...WEAK_BASS_CELLS.map(cell => cell.id),
 ])
