@@ -26,7 +26,7 @@ def matches(path: Path, expected: dict) -> bool:
 
 
 def main() -> None:
-    config = json.loads((DATA_DIR / 'config/mbon-v1.json').read_text())
+    config = json.loads((DATA_DIR / 'config/whole-cns-v1.json').read_text())
     cache = DATA_DIR / '.cache'
     cache.mkdir(exist_ok=True)
     retrieval_path = cache / 'retrieval.json'

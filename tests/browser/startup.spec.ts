@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('playback and the first beat position start within two seconds', async ({ page, browser }) => {
   test.skip(test.info().project.name !== 'chromium', 'Startup budget targets Chromium')
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.evaluate(() => {
     const button = document.querySelector('[data-testid="start-listening"]')!
     const status = document.querySelector('[data-testid="engine-status"]')!

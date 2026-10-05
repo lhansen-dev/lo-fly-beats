@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test'
 test.beforeEach(async ({ page }) => {
   test.skip(test.info().project.name !== 'chromium', 'Accessibility audit uses Chromium')
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
 })
 
 test('WCAG audit on first load, playing, expanded explanation and credits, and mobile', async ({ page }) => {

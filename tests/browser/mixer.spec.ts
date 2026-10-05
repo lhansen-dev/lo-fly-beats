@@ -7,7 +7,7 @@ test('mixer controls remain live during playback', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   for (const id of [...layers.map(x => `layer-${x}-level`), ...layers.map(x => `layer-${x}-mute`), 'ambience-toggle']) await expect(page.getByTestId(id)).toBeEnabled()
   await page.getByTestId('start-listening').click()
   const requirePlaying = async () => {
@@ -28,7 +28,7 @@ test('mixer controls remain live during playback', async ({ page }) => {
 
 test('complete mixer settings persist and restore', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('master-volume').press('Home')
   await page.getByTestId('layer-drums-level').press('End')
   await page.getByTestId('layer-bass-level').press('Home')
@@ -37,7 +37,7 @@ test('complete mixer settings persist and restore', async ({ page }) => {
   await page.getByTestId('ambience-toggle').uncheck()
   await expect.poll(async () => page.evaluate(() => JSON.parse(localStorage.getItem('lofly:settings:v1') ?? '{}').mix)).toEqual({ masterVolume: 0, layers: { drums: { level: 1, muted: true }, bass: { level: 0, muted: true }, keys: { level: 1, muted: true } }, ambienceOn: false })
   await page.reload()
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await expect(page.getByTestId('master-volume')).toHaveValue('0')
   await expect(page.getByTestId('layer-drums-level')).toHaveValue('100')
   await expect(page.getByTestId('layer-bass-level')).toHaveValue('0')

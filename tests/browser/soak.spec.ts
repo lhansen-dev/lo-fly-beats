@@ -11,7 +11,7 @@ test('sustained playback and five exports retain bounded resources', async ({ pa
   page.on('pageerror', error => pageErrors.push(error))
 
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
 

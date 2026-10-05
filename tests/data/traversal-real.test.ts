@@ -1,16 +1,9 @@
-import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { wholeConnectome } from '../helpers/wholeConnectome'
 import { expect, it } from 'vitest'
-import { buildGraph } from '../../src/connectome/graph'
-import { manifestSchema } from '../../src/connectome/schema'
 import { createRng } from '../../src/music/rng'
 import { walkPhrase } from '../../src/music/traversal'
 
-const directory = new URL('../../public/data/circuits/mbon-v1/', import.meta.url)
-const manifest = manifestSchema.parse(JSON.parse(readFileSync(new URL('manifest.json', directory), 'utf8')))
-const bytes = readFileSync(new URL('circuit.json', directory))
-const checksum = createHash('sha256').update(bytes).digest('hex')
-const graph = buildGraph(manifest, JSON.parse(bytes.toString('utf8')), checksum)
+const graph = wholeConnectome()
 
 it('keeps 150 real-graph walks valid at all variation levels', () => {
   for (let seed = 1; seed <= 50; seed++) {
@@ -36,7 +29,7 @@ it('matches the prepared seed 1 traversal sequence', () => {
   expect(walk.slice(0, 8).map(step => step.kind === 'edge'
     ? `${step.kind} ${step.neuronId}`
     : step.kind === 'rest' ? `${step.kind}` : `${step.kind} ${step.neuronId}`)).toEqual([
-    'start 13768', 'edge 38853', 'edge 531829', 'edge 13728',
-    'edge 38853', 'edge 531829', 'edge 13728', 'edge 521526',
+    'start 102059', 'edge 12296', 'edge 16298', 'edge 15926',
+    'edge 12582', 'edge 523771', 'edge 517268', 'edge 556567',
   ])
 })

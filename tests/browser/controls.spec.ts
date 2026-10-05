@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('first visit', async ({ page }) => {
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await expect(page.getByTestId('start-listening')).toBeVisible()
   await expect(page.getByTestId('position')).toHaveText('Phrase 1 · Bar 1 · Beat 1')
   expect(JSON.parse((await page.getByTestId('diagnostics').textContent()) ?? '{}').status).toBe('idle')
@@ -11,7 +11,7 @@ test('first visit', async ({ page }) => {
 test('start listening reaches playing', async ({ page }) => {
   test.setTimeout(90_000)
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
   await expect(page.getByTestId('play-toggle')).toBeVisible()
@@ -20,7 +20,7 @@ test('start listening reaches playing', async ({ page }) => {
 
 test('preset and New beat apply immediately while paused', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   const seed = await page.getByTestId('seed-hex').textContent()
   await page.getByTestId('preset-fruit-bowl-finals').check()
   await expect(page.getByTestId('now-playing')).toContainText('Fruit Bowl Finals')
@@ -35,7 +35,7 @@ test('preset and New beat apply immediately while paused', async ({ page }) => {
 test('New beat while playing is pending until the next phrase', async ({ page }) => {
   test.setTimeout(90_000)
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('tempo').press('End')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
@@ -49,7 +49,7 @@ test('New beat while playing is pending until the next phrase', async ({ page })
 
 test('settings survive a reload', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('preset-overripe-2am').check()
   await page.getByTestId('tempo').press('End')
   await page.getByTestId('variation').press('End')
@@ -57,7 +57,7 @@ test('settings survive a reload', async ({ page }) => {
   const seed = await page.getByTestId('seed-hex').textContent()
   await page.waitForTimeout(800)
   await page.reload()
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await expect(page.getByTestId('now-playing')).toContainText('Overripe at 2 AM')
   await expect(page.getByTestId('seed-hex')).toHaveText(seed ?? '')
   await expect(page.getByTestId('tempo')).toHaveValue('100')

@@ -10,7 +10,7 @@ for (const { width, height } of sizes) {
   test(`layout at ${width}x${height}`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height })
     await page.goto('/')
-    await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+    await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
     await expect(page.getByTestId('scene-frame')).toBeVisible()
 
     const { scrollWidth, clientWidth } = await page.evaluate(() => ({
@@ -45,7 +45,7 @@ test('sticky bottom bar keeps play and volume on screen at 390x844', async ({ pa
   test.setTimeout(90_000)
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
   await page.evaluate(() => window.scrollTo(0, (document.documentElement.scrollHeight - window.innerHeight) / 2))

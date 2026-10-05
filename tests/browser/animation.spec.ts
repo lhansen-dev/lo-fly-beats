@@ -28,7 +28,7 @@ test('reduced motion keeps the scene still until animation is enabled', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await installAnimationRecorder(page)
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
 
@@ -54,7 +54,7 @@ test('default motion animates the scene during playback', async ({ page }) => {
   page.on('pageerror', error => pageErrors.push(error))
   await installAnimationRecorder(page)
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
   await expect.poll(() => page.evaluate(() => (window as typeof window & { __animateCalls: string[] }).__animateCalls.includes('fly-head')), { timeout: 3_000 }).toBe(true)
@@ -66,7 +66,7 @@ test('hidden document pauses scene animation without stopping playback', async (
   page.on('pageerror', error => pageErrors.push(error))
   await installAnimationRecorder(page)
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
   await page.evaluate(() => {

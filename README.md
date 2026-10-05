@@ -2,7 +2,7 @@
 
 ## What it is
 
-A lo-fi beat player starring a fruit fly studying beside an overripe banana. A seeded walk through a verified subset of the MaleCNS connectome selects bass and chord motifs; authored musical rules keep the arrangement coherent. Three presets, a mixer, gentle animation, and eight-bar WAV export run entirely in the browser, without an account.
+A lo-fi beat player starring a fruit fly studying beside an overripe banana. A seeded walk through the complete traced MaleCNS connectome, covering the brain and ventral nerve cord, selects bass and chord motifs; authored musical rules keep the arrangement coherent. Three presets, a mixer, gentle animation, and eight-bar WAV export run entirely in the browser, without an account.
 
 **Beats to relax / repeatedly fly into the same window to**
 
@@ -11,11 +11,15 @@ A lo-fi beat player starring a fruit fly studying beside an overripe banana. A s
 Use Node 22 (22.12 or newer) and npm. The circuit is committed; Python and upstream downloads are only needed to regenerate it.
 
 ```sh
-npm ci
-npm run dev
+make setup
+make run
 ```
 
 Open the URL Vite prints and press **Start listening**.
+
+## Make targets
+
+Run `make` to list the common targets. The main ones are `make setup`, `make run`, `make check`, `make test-all`, `make build`, and `make preview`. Run `make browsers` once before `make test-browser` or `make test-all` if the Playwright browser binaries are not installed. Node 22.12 or newer, npm, and Make are required. The connectome is already committed, so running the app does not require Python or a data download.
 
 ## Commands
 
@@ -29,8 +33,8 @@ Open the URL Vite prints and press **Start listening**.
 | `test` | `vitest run --project unit` | Unit and committed-data tests |
 | `check` | `npm run typecheck && npm run lint && npm run test && npm run data:validate && npm run build` | Routine validation and build |
 | `data:download` | `uv run --project scripts/data python scripts/data/download_sources.py` | Download and verify upstream sources |
-| `data:extract` | `uv run --project scripts/data python scripts/data/extract_circuit.py` | Regenerate circuit and manifest |
-| `data:verify` | `uv run --project scripts/data python scripts/data/verify_circuit.py` | Compare export to upstream and write the report |
+| `data:extract` | `uv run --project scripts/data python scripts/data/extract_whole_cns.py` | Regenerate whole-connectome assets and manifest |
+| `data:verify` | `uv run --project scripts/data python scripts/data/verify_whole_cns.py` | Compare export to upstream and write the report |
 | `data:validate` | `vitest run --project unit tests/data` | Validate committed data and composition |
 | `test:browser` | `playwright test` | Production browser interaction tests |
 | `test:audio` | `vitest run --project audio` | Chromium Web Audio rendering tests |
@@ -39,11 +43,11 @@ Open the URL Vite prints and press **Start listening**.
 
 ## How it works
 
-The app loads 97 real mushroom body output neurons (MBONs) and 936 directed connections with original IDs and synapse counts. A versioned seeded generator walks those connections, weighting choices by their synapse counts and variation. Neuron types select chords and bass motifs within authored harmony and rhythm rules. Drums, keys, timing, and humanization turn the trace into an immutable eight-bar score. Tone.js schedules that score against the audio clock and renders the same score for export. Drum hits, ambience, and the convolution impulse use separate seeded streams.
+The app loads all 165,122 traced MaleCNS neurons and 10,510,984 directed connections with original IDs and synapse counts. A versioned seeded generator walks the complete retained graph, weighting choices by synapse count and variation. Each phrase can start at any of the 161,680 neurons with outgoing connections, so visual, central-brain, sensory, motor, and nerve-cord circuits can all shape the music. Neuron types select chords and bass motifs within authored harmony and rhythm rules. Drums, keys, timing, and humanization turn the trace into an immutable eight-bar score. Tone.js schedules that score against the audio clock and renders the same score for export. Drum hits, ambience, and the convolution impulse use separate seeded streams.
 
 The musical mapping is authored and does not simulate neural activity. Scene animation and jokes cannot change the score. See the [plan](docs/02-PLAN.md), [implementation contracts and decisions](docs/03-IMPLEMENT.md), and in-app **How the beat is made** panel.
 
-The live MaleCNS scanner displays every neuron and directed connection in the verified circuit. It follows the score's current beat, highlighting the selected neuron, incoming edge, and the last eight traversal steps. The inspector shows the original body ID, synapse count, selection probability, and exact musical uses. Select an elapsed beat in the eight-bar timeline to inspect it; **Follow live beat** returns to playback. Inspection resets when a new phrase begins. The scanner pauses with playback and respects reduced motion, the animation switch, and tab visibility. Its layout groups neurons by soma side; these are schematic positions, not anatomical coordinates or measured neural activity.
+The live MaleCNS scanner plots every selected neuron on a canvas overview with representative background connections. Its SVG overlay follows the score's current beat, highlighting the exact selected neuron, incoming connection, and last eight traversal steps from the full graph. The inspector shows original body IDs, synapse counts, selection probability, and musical uses; totals always describe the complete dataset. Select an elapsed beat in the eight-bar timeline to inspect it; **Follow live beat** returns to playback. Inspection resets when a new phrase begins. The scanner pauses with playback and respects reduced motion, the animation switch, and tab visibility. Its layout groups neurons by soma side; these are schematic positions, not anatomical coordinates or measured neural activity. Only the overview's background links are reduced; composition uses every retained connection.
 
 ## Audio behavior
 
@@ -73,7 +77,11 @@ Source: [MaleCNS](https://male-cns.janelia.org/), release `male-cns:v1.0`, [down
 
 Berg, S., Beckett, I. R., Costa, M., Schlegel, P., Januszewski, M., et al. (2025). *Sexual dimorphism in the complete connectome of the Drosophila male central nervous system*. bioRxiv. [Preprint DOI](https://doi.org/10.1101/2025.10.09.680999). [Published paper](https://www.cell.com/cell/fulltext/S0092-8674(26)00942-6).
 
-Filtering selects every annotation with `class == "MBON"`, retains connections between selected bodies, removes self-connections, and keeps weights of at least three synapses unchanged. IDs are decimal strings; missing annotations are null. [circuit.json](public/data/circuits/mbon-v1/circuit.json) and [manifest.json](public/data/circuits/mbon-v1/manifest.json) load from the deployment base. The manifest records source checksums, filtering, counts, starts, and circuit SHA-256. The browser verifies exact circuit bytes before building the graph. `data:validate` checks committed files; `data:verify` independently checks all 936 retained weights and annotations against upstream, including 20 reported samples. See the [extraction report](scripts/data/reports/mbon-v1-extraction.md).
+Selection includes every annotation with `status == "Traced"`, across all neuron classes and both the brain and nerve cord, including neurons without a type annotation. Glia and unfinished or untraced bodies are excluded. Connections between selected bodies retain the existing minimum of three synapses; self-connections are removed. There is no sampling or per-neuron connection cap. IDs are decimal strings; missing annotations are null.
+
+[The manifest](public/data/circuits/whole-cns-v1/manifest.json) records source checksums, selection, counts, start rules, and both compressed asset hashes. `neurons.json.gzip` contains annotations, while `adjacency.bin.gzip` stores every retained edge in compact sorted sparse rows. The browser verifies both files before decompression and checks graph integrity. Typed arrays retain the entire graph; a bounded cache materializes only outgoing rows currently used by playback or inspection. The initial graph download is about 33.5 MiB, and adjacency occupies 84.7 MB uncompressed. Loading time depends on the connection and device; playback starts after data validation. These assets use `.gzip` rather than `.gz` to avoid static servers implicitly decoding them before checksum verification.
+
+`data:verify` independently checks all 165,122 annotation records and 10,510,984 retained weights against upstream. See the [whole-connectome extraction report](scripts/data/reports/whole-cns-v1-extraction.md). The previous MBON files remain committed as regression fixtures; the application loads `whole-cns-v1`.
 
 ## Regenerating the data
 
@@ -87,11 +95,11 @@ npm run data:verify
 npm run data:validate
 ```
 
-Downloads and cache require about 1.1 GB, plus Python dependencies and any temporary replacement downloads. Sources remain in ignored `scripts/data/.cache/`; builds use committed JSON. Downloads reuse verified caches and preserve retrieval dates.
+Downloads and cache require about 1.1 GB, plus Python dependencies and any temporary replacement downloads. Sources remain in ignored `scripts/data/.cache/`; builds use committed compressed assets. Downloads reuse verified caches and preserve retrieval dates.
 
-Expected results: 97 neurons, 37 types (48 left, 49 right), 936 connections, 25,379 synapses, a 92-neuron strong core, one weak component, five dead ends, and eight starts. Thresholds 1/3/5 retain 1,605/936/682 connections and strong cores of 97/92/82 neurons. Annotations contain 211,577 rows; connections contain 151,856,684 rows in 2,318 Arrow batches. The circuit is 100,029 bytes, SHA-256 `95a7781dac7989cf56a9bcf0383d715569b45d421b0b44d606813bacf825ad3c`.
+Expected results: 165,122 neurons, 11,751 cell types, 10,510,984 connections, 104,213,241 synapses, 3,442 dead ends, and 161,680 eligible phrase starts. Annotations contain 211,577 total rows; the complete upstream connection file contains 151,856,684 rows in 2,318 Arrow batches. The graph fingerprint is `466714bc473d63e3368fd19f2abd6255db625e97bc4c295e9f94a9d35dda0f59`, derived from both compressed asset hashes.
 
-For a changed circuit, update the config, circuit-specific verifier and metadata, expected tests, relevant R3/R4 values, asset credits, and loader/budget paths if the circuit ID changes. Regenerate and verify both JSON files and the report. Composition rule changes require a mapping version bump. The [data guide](scripts/data/README.md) covers scripts, config, and troubleshooting.
+For changed data, update `scripts/data/config/whole-cns-v1.json`, regenerate both assets and the manifest, run independent verification, and update expected counts and documentation. Composition rule changes require a mapping version bump; this expansion preserves mapping version 2 and changes the graph fingerprint. The [data guide](scripts/data/README.md) documents the format and regeneration.
 
 ## Testing
 
@@ -109,7 +117,7 @@ SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=
 npm run build && npm run budget
 ```
 
-The opt-in soak defaults to five minutes, verifies bounded playback resources, performs five exports, and logs heap sizes without asserting on garbage collection. Budgets are 200 KiB gzipped for the circuit and 4 MiB for all build files except source maps. Startup tests require playing status and the first position change within two seconds after circuit loading. Timings supplement measurements on a reference laptop and phone at phase 38. Add `?debug=1` to view resource counts and simulate an interruption.
+The opt-in soak defaults to five minutes, verifies bounded playback resources, performs five exports, and logs heap sizes without asserting on garbage collection. Budgets are 36 MiB compressed for the whole connectome and 40 MiB for all build files except source maps. Already compressed `.gzip` assets count at their stored size. Startup tests require playing status and the first position change within two seconds after circuit loading. Timings supplement measurements on a reference laptop and phone at phase 38. Add `?debug=1` to view resource counts and simulate an interruption.
 
 ## Deployment
 
@@ -132,7 +140,8 @@ Serve static `dist/` on any static host. There is no backend, database, secret, 
 | `src/presets/` | Musical, sound, and visual presets |
 | `src/components/`, `src/styles/` | Controls, export, explanation, credits, layout |
 | `src/scene/` | Original SVG illustration and animation |
-| `public/data/circuits/mbon-v1/` | Circuit and manifest |
+| `public/data/circuits/whole-cns-v1/` | Full traced connectome, compressed adjacency, annotations, and manifest |
+| `public/data/circuits/mbon-v1/` | Previous circuit retained for regression checks |
 | `scripts/data/` | Locked Python pipeline, config, reports |
 | `scripts/` | Budget and subdirectory preview tools |
 | `tests/` | Fixtures, data, unit, audio, browser acceptance |

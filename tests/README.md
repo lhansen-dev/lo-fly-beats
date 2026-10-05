@@ -6,8 +6,8 @@ The acceptance areas below correspond to [the plan's validation table](../docs/0
 
 | Area | Automated evidence | Phase 38 manual checks |
 | --- | --- | --- |
-| Data integrity | `tests/data/real-circuit.test.ts`, `tests/unit/connectome/`, and `npm run data:verify` against upstream records | Confirm the circuit, attribution, and filtering in the MVP checklist |
-| Live circuit scanner | `tests/unit/scanner/layout.test.ts`, `tests/browser/scanner.spec.ts`: original neurons and edge weights, audio position, inspection and phrase resets, motion and visibility | Inspect real IDs and counts while listening |
+| Data integrity | `tests/data/whole-cns.test.ts` (165,122 neurons and 10,510,984 edges), `tests/data/real-circuit.test.ts` (legacy regression), `tests/unit/connectome/`, and `npm run data:verify` against upstream records | Confirm the circuit, attribution, and filtering in the MVP checklist |
+| Live circuit scanner | `tests/unit/scanner/layout.test.ts`, `tests/browser/scanner.spec.ts`: every neuron in the bounded canvas overview, exact highlighted edge weights from the full graph, audio position, inspection and phrase resets, motion and visibility | Inspect real IDs and counts while listening |
 | Graph contribution | `tests/unit/music/traversal.test.ts`, `tests/data/traversal-real.test.ts`, `tests/data/compose-real.test.ts`, `tests/browser/explanation.spec.ts` | Inspect the explanation and confirm the real circuit materially selects motifs |
 | Repeatability | `tests/data/compose-snapshot.test.ts`, `tests/data/animation-isolation.test.ts`, `src/music/streams.test.ts`, `tests/audio/export.test.ts` | Audition the presets and seeds; inspect exported files |
 | Musical constraints | `tests/unit/music/compose.test.ts`, `tests/data/compose-real.test.ts`, `src/audio/timing.test.ts`, `tests/audio/rig.test.ts`, `tests/audio/mix.test.ts` | Listen at variation and tempo limits for compatible harmony, groove, clicks, and clipping |

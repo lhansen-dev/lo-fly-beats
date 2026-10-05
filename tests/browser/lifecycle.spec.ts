@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
     })
   })
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
 })
 
 test('audio stays idle for three seconds without interaction', async ({ page }) => {

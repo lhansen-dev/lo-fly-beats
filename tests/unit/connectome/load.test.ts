@@ -18,7 +18,7 @@ describe('loadCircuit', () => {
     expect(graph.neurons.size).toBe(5)
     expect(graph.checksum).toBe(manifest.output.sha256)
     expect(fetchImpl.mock.calls.map(([url]) => url)).toEqual([
-      `${base}data/circuits/mbon-v1/manifest.json`, `${base}data/circuits/mbon-v1/circuit.json`,
+      `${base}data/circuits/whole-cns-v1/manifest.json`, `${base}data/circuits/whole-cns-v1/circuit.json`,
     ])
   })
 

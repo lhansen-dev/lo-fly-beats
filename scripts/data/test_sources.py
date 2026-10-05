@@ -25,7 +25,7 @@ class SourceTests(unittest.TestCase):
             config = {'baseUrl': 'https://example.invalid/', 'files': {'annotations': {
                 'name': 'source', 'bytes': 5, 'md5Base64': 'incorrect',
             }}}
-            (directory / 'config/mbon-v1.json').write_text(json.dumps(config))
+            (directory / 'config/whole-cns-v1.json').write_text(json.dumps(config))
             with patch.object(download_sources, 'DATA_DIR', directory), patch.object(download_sources, 'urlopen', return_value=io.BytesIO(b'wrong')):
                 with self.assertRaisesRegex(ValueError, 'size or MD5 mismatch'):
                     download_sources.main()

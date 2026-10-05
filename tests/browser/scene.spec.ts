@@ -10,7 +10,7 @@ for (const { width, height } of sizes) {
   test(`scene accessibility at ${width}x${height}`, async ({ page }) => {
     await page.setViewportSize({ width, height })
     await page.goto('/')
-    await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+    await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
     const svg = page.getByTestId('scene-frame').locator('svg.scene')
     await expect(svg).toHaveAttribute('aria-labelledby', 'scene-title scene-desc')
     await expect(svg.locator('#scene-title')).toHaveText('A fruit fly studying beside a banana')
@@ -20,7 +20,7 @@ for (const { width, height } of sizes) {
 
 test('scene contains one fly and one banana', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   const svg = page.getByTestId('scene-frame').locator('svg.scene')
   await expect(svg.locator('.fly')).toHaveCount(1)
   await expect(svg.locator('.banana')).toHaveCount(1)
@@ -28,7 +28,7 @@ test('scene contains one fly and one banana', async ({ page }) => {
 
 test('scene contains all fly features exactly once', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   const svg = page.getByTestId('scene-frame').locator('svg.scene')
   for (const name of ['fly', 'fly-body', 'fly-wings', 'fly-head', 'fly-eye-shine', 'fly-headphones', 'fly-hands-front']) {
     await expect(svg.locator(`.${name}`)).toHaveCount(1)
@@ -37,7 +37,7 @@ test('scene contains all fly features exactly once', async ({ page }) => {
 
 test('fly stays within the scene bounds', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   const svg = page.getByTestId('scene-frame').locator('svg.scene')
   const box = await svg.locator('.fly').evaluate((el) => {
     const b = (el as SVGGraphicsElement).getBBox()
@@ -51,7 +51,7 @@ test('fly stays within the scene bounds', async ({ page }) => {
 
 test('changing preset while paused changes the wall fill', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   const fill = () => page.evaluate(() => getComputedStyle(document.querySelector('.wall-base')!).fill)
   const initialFill = await fill()
   expect(initialFill).toBe('rgb(59, 74, 90)')
@@ -67,7 +67,7 @@ test.describe('fly close-ups', () => {
     test(`fly close-up ${preset}`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width: 1280, height: 720 })
       await page.goto('/')
-      await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+      await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
       await page.getByTestId(`preset-${preset}`).check()
       await expect(page.locator('main.app')).toHaveAttribute('data-preset', preset)
       const svg = page.getByTestId('scene-frame').locator('svg.scene')
@@ -82,7 +82,7 @@ for (const preset of presets) {
     test(`scene ${preset} screenshot at ${width}x${height}`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width: 1280, height: 720 })
       await page.goto('/')
-      await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+      await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
       await page.getByTestId(`preset-${preset}`).check()
       await expect(page.locator('main.app')).toHaveAttribute('data-preset', preset)
       await page.setViewportSize({ width, height })
@@ -96,7 +96,7 @@ for (const preset of presets) {
 
 test('serialized scene markup is under 150 KB', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   const svg = page.getByTestId('scene-frame').locator('svg.scene')
   const length = await svg.evaluate(el => new XMLSerializer().serializeToString(el).length)
   expect(length).toBeLessThan(150 * 1024)

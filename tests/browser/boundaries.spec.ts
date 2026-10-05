@@ -7,7 +7,7 @@ test('pending changes apply at the next bar and the next phrase', async ({ page 
   page.on('pageerror', error => pageErrors.push(error))
 
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('tempo').press('End')
   await expect(page.getByTestId('tempo')).toHaveValue('100')
   await page.getByTestId('start-listening').click()

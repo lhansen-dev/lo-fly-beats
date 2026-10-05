@@ -23,7 +23,7 @@ describe('buildGraph', () => {
   it('rejects schema violations before integrity checks', () => {
     const { manifest, circuit } = fixture()
     expectError(() => buildGraph(manifest, { ...circuit, schemaVersion: 2 }, manifest.output.sha256), 'schema')
-    expectError(() => buildGraph({ ...manifest, schemaVersion: 2 }, circuit, manifest.output.sha256), 'schema')
+    expectError(() => buildGraph({ ...manifest, schemaVersion: 3 }, circuit, manifest.output.sha256), 'schema')
     expectError(() => buildGraph(manifest, { ...circuit, neurons: [{ id: '01' }] }, manifest.output.sha256), 'schema')
   })
 

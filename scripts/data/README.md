@@ -1,6 +1,6 @@
 # Data regeneration
 
-The app uses committed JSON from MaleCNS `male-cns:v1.0`; upstream downloads are optional for development. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) for the locked Python 3.12, pyarrow, pandas, and networkx environment. Run from the repository root:
+The application uses the complete traced MaleCNS `male-cns:v1.0` connectome, including the brain and ventral nerve cord. Committed compressed assets allow development without Python or upstream downloads. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) to regenerate them with the locked Python 3.12, pyarrow, pandas, and networkx environment:
 
 ```sh
 uv sync --locked --project scripts/data
@@ -10,76 +10,79 @@ npm run data:verify
 npm run data:validate
 ```
 
-## Configuration
+Run these commands from the repository root. Downloads and cache need about 1.1 GB; allow additional space for the Python environment, extraction arrays, and the 35 MB committed export. The connection table is scanned in Arrow batches instead of loading 151 million rows into pandas.
 
-Scripts read [config/mbon-v1.json](config/mbon-v1.json) directly; there are no command-line config arguments.
+## Selection and configuration
+
+[config/whole-cns-v1.json](config/whole-cns-v1.json) is the active configuration.
 
 | Field | Meaning |
 | --- | --- |
-| `circuitId`, `release` | Circuit and upstream release identifiers |
-| `baseUrl` | Directory containing source Feather files |
-| `files.annotations`, `files.connections` | Source name, exact byte count, base64 MD5 |
-| `selection.column`, `selection.equals` | Exact annotation match; currently `class == "MBON"` |
-| `minSynapseCount` | Inclusive threshold, currently 3 |
-| `compareThresholds` | Manifest comparisons, currently 1, 3, 5 |
-| `removeSelfConnections` | Remove source-equals-target rows before thresholding |
-| `limits.minNeurons`, `limits.maxNeurons`, `limits.maxConnections` | Reject subsets outside the 32–128 neuron / 2,000 connection bounds |
-| `startNeurons.count`, `startNeurons.onePerType` | Eight starts with distinct types in the largest strong component |
-| `outputDir` | Repository-relative directory for committed JSON |
+| `circuitId`, `release` | `whole-cns-v1`, `male-cns:v1.0` |
+| `baseUrl`, `files` | Source locations, exact sizes, and base64 MD5 checksums |
+| `selection.column`, `selection.equals` | Every body with `status == "Traced"`; no class or type restriction |
+| `minSynapseCount` | Inclusive threshold, currently 3, preserving the previous music graph's threshold |
+| `compareThresholds` | The retained threshold only; component analysis is omitted for the full graph |
+| `removeSelfConnections` | Required to be true; self-connections meeting the threshold are counted and removed |
+| `limits` | 150,000–250,000 neurons and at most 20 million retained connections |
+| `startNeurons.allWithOutgoing` | Every neuron with a retained outgoing connection is an eligible phrase start |
+| `outputDir` | `public/data/circuits/whole-cns-v1` |
 
-Starts rank by descending out-degree, descending outgoing synapse total, then ascending numeric body ID. Records sort by numeric IDs; JSON key order, two-space indentation, UTF-8 encoding, and final newline are stable. Unchanged sources/config regenerate identical bytes.
+Traced neurons without cell-type annotations remain included. Glia and unfinished or untraced bodies are excluded using the upstream status field. Connections require both endpoints in the selected neuron set. Every qualifying connection is exported with its original weight; there is no sampling, strongest-edge selection, or per-neuron edge cap. Numeric IDs and adjacency rows sort in ascending numeric order. Missing annotations are null.
 
-## Scripts and outputs
+## Scripts
 
-| Command | Work and output |
+| Command | Result |
 | --- | --- |
-| `npm run data:download` | Downloads annotations (14,483,314 bytes) and connections (1,051,241,946 bytes) into `.cache/`. Verifies size/MD5 before replacing cached sources, records dates/SHA-256 in `.cache/retrieval.json`, reuses verified caches, and removes failed `.part` downloads. |
-| `uv run --project scripts/data python scripts/data/inspect_sources.py` | Reads annotation and IPC metadata; writes `reports/source-schema.md`. |
-| `npm run data:extract` | Selects annotations, scans connection batches, filters/validates pairs, ranks starts, and writes `public/data/circuits/mbon-v1/circuit.json` and `manifest.json` with checksums, attribution, rules, and counts. |
-| `npm run data:verify` | Independently compares every annotation and retained weight, complete edge set, counts, thresholds, starts, and source/config/circuit checksums. Writes `reports/mbon-v1-extraction.md`, including 20 samples. |
-| `npm run data:validate` | TypeScript validation of committed JSON, composition, and provenance; no source cache needed. |
-| `uv run --project scripts/data python -m unittest discover -s scripts/data -p 'test_*.py'` | Regression checks for cache integrity, failed downloads, and metadata inspection. |
+| `npm run data:download` | Verifies cached sources by size and MD5, preserves retrieval dates, and records SHA-256. Replaces sources only after successful verification. |
+| `npm run data:extract` | Runs `extract_whole_cns.py`, validates sources, selects all traced annotations, scans connection batches, rejects duplicate pairs, sorts compact adjacency, and writes both assets and the manifest. |
+| `npm run data:verify` | Runs `verify_whole_cns.py`, independently selects source annotations with Arrow and locates edges with NumPy binary searches. Compares every annotation, retained pair, and weight, both source and output checksums, counts, and starts; writes [the report](reports/whole-cns-v1-extraction.md). |
+| `npm run data:validate` | TypeScript validation of committed assets, graph integrity, traversal, composition, and provenance; no source cache needed. |
+| `uv run --project scripts/data python -m unittest discover -s scripts/data -p 'test_*.py'` | Source-tool regression checks for downloads, cache integrity, and IPC metadata inspection. |
+| `uv run --project scripts/data python scripts/data/inspect_sources.py` | Writes [source-schema.md](reports/source-schema.md); its MBON section describes the original subset. |
 
-About 1.1 GB is needed for downloads/cache, plus dependencies and temporary replacement downloads. Source names are `body-annotations-male-cns-v1.0-minconf-0.5.feather` and `connectome-weights-male-cns-v1.0-minconf-0.5.feather`. Extraction scans 151,856,684 connections in 2,318 Arrow batches; loading the full table into pandas uses much more memory. Cache and virtual environment are ignored by git and excluded from builds.
+Source filenames remain `body-annotations-male-cns-v1.0-minconf-0.5.feather` (14,483,314 bytes) and `connectome-weights-male-cns-v1.0-minconf-0.5.feather` (1,051,241,946 bytes). Source caches and virtual environments are ignored by git and excluded from builds.
+
+## Export format
+
+The version-2 manifest describes two gzip-compressed files:
+
+- `neurons.json.gzip`: UTF-8 JSON containing `schemaVersion: 2`, `circuitId`, and original neuron annotation records.
+- `adjacency.bin.gzip`: `csr-u32-le-v1` compressed sparse rows. All words are unsigned 32-bit little-endian integers. The five-word header contains magic `0x3242464c` (`LFB2`), neuron count, edge count, synapse threshold, and a reserved zero. It is followed by `neuronCount + 1` row offsets, `edgeCount` target indices, and `edgeCount` original weights. Targets index the sorted annotation array.
+
+The browser verifies each compressed file's exact byte count and SHA-256, then decompresses it with `DecompressionStream`. Assets deliberately use `.gzip` rather than `.gz`, because some static servers automatically add `Content-Encoding: gzip` to `.gz` files and cause browsers to decode them before integrity checks. Serve these files as ordinary binary assets; their contents are explicitly decoded by the application.
+
+The graph fingerprint is SHA-256 of the UTF-8 string `annotations SHA-256:adjacency SHA-256`. It covers both annotation and connectivity changes. The full adjacency stays in typed arrays; at most 128 outgoing rows are cached as objects. Starts are derived from every nonempty row, so the manifest's `startNeuronIds` is empty. Dead ends rest until the next bar and restart from that same eligible pool. Strong/weak component counts are omitted; starts are not limited to one core or a small list of hubs.
+
+Gzip timestamps are zero and serialization is stable. Regenerating from the same sources, config, and locked environment produces identical assets.
 
 ## Expected results
 
-Pinned in [R3](../../docs/03-IMPLEMENT.md#r3-source-data-facts) and the [report](reports/mbon-v1-extraction.md):
-
 | Measure | Value |
 | --- | --- |
-| Annotation rows | 211,577 |
-| Connection rows / batches | 151,856,684 / 2,318 |
-| Neurons / types | 97 / 37; all Traced; 48 left and 49 right |
-| Selected upstream pairs | 1,606 including one weight-1 self-connection |
-| Retained connections / synapses | 936 / 25,379 |
-| Strong core / weak components / isolated neurons | 92 / 1 / 0 |
-| Dead ends | Five: four MBON10, one MBON15 |
-| Out-degree median / p90 / maximum | 7 / 22 / 41 |
-| Starts | `10704`, `519373`, `10013`, `13768`, `10495`, `522749`, `21242`, `513174` |
-| Example | `10013` is right MBON01; `10013` → `10495` has 16 synapses |
-| Circuit bytes / SHA-256 | 100,029 / `95a7781dac7989cf56a9bcf0383d715569b45d421b0b44d606813bacf825ad3c` |
+| Neurons / cell types | 165,122 / 11,751 |
+| Directed connections / synapses | 10,510,984 / 104,213,241 |
+| Dead ends / eligible starts | 3,442 / 161,680 |
+| Removed self-connections at threshold | 54 |
+| Compressed annotations / adjacency | 1,280,213 / 33,799,576 bytes |
+| Uncompressed adjacency | 84,748,384 bytes |
+| Graph fingerprint | `466714bc473d63e3368fd19f2abd6255db625e97bc4c295e9f94a9d35dda0f59` |
 
-| Threshold | Connections without self-connections | Strong core | Dead ends |
-| --- | --- | --- | --- |
-| ≥1 | 1,605 | 97 | 0 |
-| ≥3 | 936 | 92 | 5 |
-| ≥5 | 682 | 82 | 11 |
+The scanner plots every neuron but reduces background links to at most 1,200 representative connections. Its current and recent paths always use exact edges from the full graph. That display reduction does not affect music, totals, or exported data.
 
-Original IDs and weights are preserved. Source MD5 values are `UKdxh3DFciDxYLpPQxq4ng==` (annotations) and `8w6dzKJc/QIb8eez2XVZng==` (connections); SHA-256 values are in the manifest/report.
+## Previous circuit and changed data
 
-## Selecting another circuit
+The original [MBON config](config/mbon-v1.json), `extract_circuit.py`, `verify_circuit.py`, and `public/data/circuits/mbon-v1/` remain for regression checks. The old extractor/verifier can be run directly through `uv run --project scripts/data python`; application loading and npm extraction commands use the whole connectome.
 
-Edit selection, threshold, limits, starts, and output in the config and rerun the pipeline. The current metadata and independent verifier are MBON-specific: also update the verifier's selection, fixed output path, threshold expectations, and extractor title, description, and filtering/attribution strings for a new selection. Update the recorded config path if renamed. Check schema and licensing for different source releases.
-
-After independent verification, update tests' expected values and R3/R4, regenerate both JSON files and reports, and update `ASSETS.md`. A changed output directory also requires loader paths in `src/main.tsx` / `src/connectome/load.ts`, data-test paths, and the budget's circuit path. Composition rule changes require a mapping version bump and updated snapshots.
+For changes to the full graph, regenerate both assets and the manifest, independently verify them, and update expected values, the report, README, and asset credits. Keep loader paths and size budgets synchronized with renamed outputs. Composition rule changes require a mapping version bump; expanding the dataset changes its fingerprint while preserving the existing musical rules.
 
 ## Troubleshooting
 
-- **Checksum mismatch:** delete the affected cached source and run `npm run data:download` again. Investigate before changing expected checksums. Regenerate committed circuit/config output if needed and verify upstream evidence.
-- **Missing cache/metadata:** run `npm run data:download` before extraction; do not invent retrieval dates.
-- **Dependency/import errors:** run `uv sync --locked --project scripts/data` and invoke Python through `uv run --project scripts/data`.
-- **Unexpected counts/schema:** check release, file names, selection, threshold, source schema report, and R3 before accepting changed values.
-- **Memory pressure:** keep batch-wise Arrow scanning; avoid loading the connections table into pandas.
+- **Source checksum mismatch:** remove the affected cached file and run `npm run data:download`. Investigate discrepancies before changing expected checksums.
+- **Browser checksum mismatch:** confirm both assets match their manifest and are served without implicit gzip decoding. Rebuild if outputs changed.
+- **Missing retrieval metadata:** run `npm run data:download`; do not invent retrieval dates.
+- **Dependency errors:** run `uv sync --locked --project scripts/data` and invoke Python through uv.
+- **Unexpected counts:** check the source release, status selection, and synapse threshold before accepting results.
+- **Memory pressure:** preserve Arrow batch scanning and typed-array adjacency; avoid loading all source connections into pandas or materializing all outgoing rows at once.
 
-Source: [MaleCNS downloads](https://male-cns.janelia.org/download/), licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Collaboration credit and citation links appear in the root [README](../../README.md#data), [manifest](../../public/data/circuits/mbon-v1/manifest.json), and [ASSETS.md](../../ASSETS.md).
+Source: [MaleCNS downloads](https://male-cns.janelia.org/download/), licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribution appears in the manifest, root README, and [ASSETS.md](../../ASSETS.md).

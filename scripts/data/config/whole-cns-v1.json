@@ -1,0 +1,35 @@
+{
+  "circuitId": "whole-cns-v1",
+  "release": "male-cns:v1.0",
+  "baseUrl": "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/",
+  "files": {
+    "annotations": {
+      "name": "body-annotations-male-cns-v1.0-minconf-0.5.feather",
+      "bytes": 14483314,
+      "md5Base64": "UKdxh3DFciDxYLpPQxq4ng=="
+    },
+    "connections": {
+      "name": "connectome-weights-male-cns-v1.0-minconf-0.5.feather",
+      "bytes": 1051241946,
+      "md5Base64": "8w6dzKJc/QIb8eez2XVZng=="
+    }
+  },
+  "selection": {
+    "column": "status",
+    "equals": "Traced"
+  },
+  "minSynapseCount": 3,
+  "compareThresholds": [
+    3
+  ],
+  "removeSelfConnections": true,
+  "limits": {
+    "minNeurons": 150000,
+    "maxNeurons": 250000,
+    "maxConnections": 20000000
+  },
+  "startNeurons": {
+    "allWithOutgoing": true
+  },
+  "outputDir": "public/data/circuits/whole-cns-v1"
+}

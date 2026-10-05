@@ -1,18 +1,11 @@
-import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { wholeConnectome } from '../helpers/wholeConnectome'
 import { expect, it } from 'vitest'
-import { buildGraph } from '../../src/connectome/graph'
-import { manifestSchema } from '../../src/connectome/schema'
 import { composePhrase } from '../../src/music/compose'
 import { CHORD_QUALITIES } from '../../src/music/harmony'
 import { PRESETS, getPreset } from '../../src/presets/presets'
 import type { PhraseScore, SessionRecipe } from '../../src/music/types'
 
-const directory = new URL('../../public/data/circuits/mbon-v1/', import.meta.url)
-const manifest = manifestSchema.parse(JSON.parse(readFileSync(new URL('manifest.json', directory), 'utf8')))
-const bytes = readFileSync(new URL('circuit.json', directory))
-const checksum = createHash('sha256').update(bytes).digest('hex')
-const graph = buildGraph(manifest, JSON.parse(bytes.toString('utf8')), checksum)
+const graph = wholeConnectome()
 const variations = [0, 0.5, 1]
 
 function assertRealComposition(score: PhraseScore): void {

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 2,
+  "circuitId": "whole-cns-v1",
+  "title": "The whole MaleCNS connectome",
+  "description": "Every traced neuron across the MaleCNS v1.0 brain and ventral nerve cord, with every directed connection among them containing at least 3 synapses.",
+  "source": {
+    "dataset": "MaleCNS",
+    "release": "male-cns:v1.0",
+    "homepage": "https://male-cns.janelia.org/",
+    "downloadPage": "https://male-cns.janelia.org/download/",
+    "citation": "Berg, S., Beckett, I. R., Costa, M., Schlegel, P., Januszewski, M., et al. (2025). Sexual dimorphism in the complete connectome of the Drosophila male central nervous system. bioRxiv. https://doi.org/10.1101/2025.10.09.680999",
+    "paperUrl": "https://www.cell.com/cell/fulltext/S0092-8674(26)00942-6",
+    "retrievedOn": "2026-09-19",
+    "files": [
+      {
+        "role": "annotations",
+        "name": "body-annotations-male-cns-v1.0-minconf-0.5.feather",
+        "bytes": 14483314,
+        "md5Base64": "UKdxh3DFciDxYLpPQxq4ng==",
+        "url": "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-annotations-male-cns-v1.0-minconf-0.5.feather",
+        "sha256": "2177e246113e4cfbf1e7772ec37c6da1955ff22e8063d0b1f833101f99a9a3b2"
+      },
+      {
+        "role": "connections",
+        "name": "connectome-weights-male-cns-v1.0-minconf-0.5.feather",
+        "bytes": 1051241946,
+        "md5Base64": "8w6dzKJc/QIb8eez2XVZng==",
+        "url": "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/connectome-weights-male-cns-v1.0-minconf-0.5.feather",
+        "sha256": "e35da783d1c686b2b58b3b87cd6a403ae43bfcfba8bff28e08ef752c1a56afc1"
+      }
+    ]
+  },
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Connectome data from MaleCNS male-cns:v1.0 by FlyEM (HHMI Janelia), the University of Cambridge, the MRC Laboratory of Molecular Biology, and Google Research, licensed CC BY 4.0. Includes all traced neurons across the brain and ventral nerve cord; connections contain at least 3 synapses."
+  },
+  "extraction": {
+    "script": "scripts/data/extract_whole_cns.py",
+    "scriptVersion": 1,
+    "config": "scripts/data/config/whole-cns-v1.json",
+    "configSha256": "55b32ab7d37f4b77bb08e4ae9178975f2f8f0d52b80119fe5275f8a0a317b85a",
+    "neuronSelection": "annotations.status == \"Traced\" (all neuron classes)",
+    "minSynapseCount": 3,
+    "selfConnectionsRemoved": 54,
+    "rules": [
+      "Selected every annotated body with status Traced, across all neuron classes, including untyped neurons.",
+      "Glia, unfinished fragments, and untraced bodies are excluded using the upstream status annotation.",
+      "Kept every connection between selected bodies with at least 3 synapses; original weights are unchanged.",
+      "Removed self-connections that meet the synapse threshold; rejected duplicate pairs.",
+      "Preserved original decimal body IDs and annotations; missing annotations are null.",
+      "Stored every retained connection in sorted compressed sparse rows, without sampling or per-neuron edge caps."
+    ],
+    "thresholdComparison": [
+      {
+        "minSynapseCount": 3,
+        "connections": 10510984,
+        "deadEnds": 3442
+      }
+    ],
+    "startNeuronRule": "Choose uniformly from every selected neuron with at least one outgoing connection; dead ends rest until the next bar, then restart from the same whole-connectome pool."
+  },
+  "counts": {
+    "neurons": 165122,
+    "cellTypes": 11751,
+    "connections": 10510984,
+    "synapses": 104213241,
+    "deadEnds": 3442
+  },
+  "startNeuronIds": [],
+  "output": {
+    "file": "neurons.json.gzip",
+    "bytes": 1280213,
+    "sha256": "8f5bc969079a0e7db5cf2217fe7d811caf1116f62a59730f9d301a97d1563bd7",
+    "adjacency": {
+      "file": "adjacency.bin.gzip",
+      "encoding": "csr-u32-le-v1",
+      "bytes": 33799576,
+      "sha256": "19fb04b8d99f6f21d4918a70a06c536df631bee5f908bc8080b3b151610ae6e6",
+      "uncompressedBytes": 84748384
+    },
+    "graphSha256": "466714bc473d63e3368fd19f2abd6255db625e97bc4c295e9f94a9d35dda0f59"
+  }
+}

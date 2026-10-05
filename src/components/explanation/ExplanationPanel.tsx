@@ -41,6 +41,6 @@ export default function ExplanationPanel() {
       return <li key={`${chord.bar}-${index}`}>{chord.symbol} — Bars {chord.bar + 1}–{chord.bar + 2}; {slot?.neuronType ?? 'an untyped neuron'}; {chord.ringStepped ? 'ring rule stepped' : 'no ring step'}</li>
     })}</ol> : <p>No phrase has been composed yet.</p>}</section>
     <section><h2>Rules we wrote</h2><ul>{describeMappingRules(preset).map(rule => <li key={rule}>{rule}</li>)}</ul></section>
-    <section><h2>Versions</h2><p>Mapping version: {MAPPING_VERSION}</p><p>Engine version: {ENGINE_VERSION}</p><p>Preset version: {preset.version}</p><p>Circuit SHA-256: {manifest?.output.sha256.slice(0, 12) ?? '—'}</p></section>
+    <section><h2>Versions</h2><p>Mapping version: {MAPPING_VERSION}</p><p>Engine version: {ENGINE_VERSION}</p><p>Preset version: {preset.version}</p><p>Circuit SHA-256: {graph?.checksum.slice(0, 12) ?? '—'}</p></section>
   </details>
 }

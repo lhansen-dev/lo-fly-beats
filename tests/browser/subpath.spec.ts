@@ -35,7 +35,7 @@ test('production assets and circuit load beneath a nested path', async ({ page }
   const errors: Error[] = []
   page.on('pageerror', error => errors.push(error))
   await page.goto('http://localhost:4174/nested/lofly/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing')
   expect(errors).toEqual([])

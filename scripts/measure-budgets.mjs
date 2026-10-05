@@ -4,9 +4,9 @@ import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url))
-const circuitPath = 'data/circuits/mbon-v1/circuit.json'
-const circuitLimit = 200 * 1024
-const totalLimit = 4 * 1024 * 1024
+const circuitPaths = ['data/circuits/whole-cns-v1/neurons.json.gzip', 'data/circuits/whole-cns-v1/adjacency.bin.gzip']
+const circuitLimit = 36 * 1024 * 1024
+const totalLimit = 40 * 1024 * 1024
 
 async function filesIn(directory) {
   const entries = await readdir(directory, { withFileTypes: true })
@@ -23,14 +23,18 @@ try {
   const rows = []
   for (const path of await filesIn(dist)) {
     const bytes = await readFile(path)
-    rows.push({ file: relative(dist, path).replaceAll('\\', '/'), bytes: bytes.length, gzipBytes: gzipSync(bytes, { level: 9 }).length })
+    rows.push({ file: relative(dist, path).replaceAll('\\', '/'), bytes: bytes.length, gzipBytes: path.endsWith('.gzip') ? bytes.length : gzipSync(bytes, { level: 9 }).length })
   }
-  const circuit = rows.find(row => row.file === circuitPath)
-  if (!circuit) throw new Error(`Missing ${circuitPath}; run npm run build first`)
+  const circuitRows = circuitPaths.map(file => {
+    const row = rows.find(row => row.file === file)
+    if (!row) throw new Error(`Missing ${file}; run npm run build first`)
+    return row
+  })
+  const circuitBytes = circuitRows.reduce((sum, row) => sum + row.gzipBytes, 0)
   const total = rows.reduce((sum, row) => sum + row.gzipBytes, 0)
   console.table([...rows, { file: 'TOTAL (excluding source maps)', bytes: rows.reduce((sum, row) => sum + row.bytes, 0), gzipBytes: total }])
-  console.log(`Circuit: ${circuit.gzipBytes} bytes / ${circuitLimit} bytes; total: ${total} bytes / ${totalLimit} bytes (gzip level 9)`)
-  if (circuit.gzipBytes > circuitLimit || total > totalLimit) {
+  console.log(`Circuit: ${circuitBytes} bytes / ${circuitLimit} bytes; total: ${total} bytes / ${totalLimit} bytes (gzip level 9; .gzip assets counted as stored)`)
+  if (circuitBytes > circuitLimit || total > totalLimit) {
     console.error('Performance budget exceeded')
     process.exitCode = 1
   }

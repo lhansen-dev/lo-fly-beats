@@ -1,24 +1,25 @@
 import { expect, test } from '@playwright/test'
 
 test('circuit loading failure can be retried', async ({ page }) => {
-  await page.route('**/circuit.json', route => route.fulfill({ status: 404, body: 'missing' }))
+  await page.route('**/adjacency.bin.gzip', route => route.fulfill({ status: 404, body: 'missing' }))
   await page.goto('/')
 
   await expect(page.getByTestId('circuit-status')).toContainText("couldn't be loaded")
   await expect(page.getByTestId('circuit-retry')).toBeVisible()
   await expect(page.getByTestId('start-listening')).toBeDisabled()
 
-  await page.unroute('**/circuit.json')
+  await page.unroute('**/adjacency.bin.gzip')
   await page.getByTestId('circuit-retry').click()
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await expect(page.getByTestId('start-listening')).toBeEnabled()
 })
 
 test('tampered circuit bytes fail the checksum', async ({ page }) => {
-  await page.route('**/circuit.json', async route => {
+  await page.route('**/adjacency.bin.gzip', async route => {
     const response = await route.fetch()
-    const text = await response.text()
-    await route.fulfill({ status: 200, contentType: 'application/json', body: text.replace(/1/, '2') })
+    const bytes = Buffer.from(await response.body())
+    bytes[0] ^= 1
+    await route.fulfill({ status: 200, contentType: 'application/gzip', body: bytes })
   })
   await page.goto('/')
   await expect(page.getByTestId('circuit-status')).toContainText('checksum')
@@ -31,7 +32,7 @@ test('playback works when storage is unavailable', async ({ page }) => {
     Object.defineProperty(window, 'localStorage', { configurable: true, get() { throw new Error('storage disabled') } })
   })
   await page.goto('/')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
   await expect(page.getByTestId('storage-note')).toContainText("Settings won't be remembered in this browser")
@@ -43,7 +44,7 @@ test('playback resumes from a browser interruption', async ({ page }) => {
   const pageErrors: Error[] = []
   page.on('pageerror', error => pageErrors.push(error))
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
 
   const status = page.getByTestId('engine-status')

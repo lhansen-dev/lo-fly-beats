@@ -17,6 +17,7 @@ export function buildGraph(manifestInput: unknown, circuitInput: unknown, checks
   if (!circuitResult.success) throw new CircuitError('schema', `Invalid circuit: ${circuitResult.error.message}`)
   const manifest = manifestResult.data
   const circuit = circuitResult.data
+  requireIntegrity(manifest.schemaVersion === 1 && manifest.output.file === 'circuit.json', 'Expected JSON circuit manifest')
   requireIntegrity(circuit.circuitId === manifest.circuitId, `Circuit ID ${circuit.circuitId} does not match manifest ${manifest.circuitId}`)
   requireIntegrity(checksum === manifest.output.sha256, 'Supplied circuit checksum does not match the manifest')
   const neurons = new Map<string, Neuron>()

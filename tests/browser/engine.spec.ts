@@ -7,7 +7,7 @@ test('live playback starts, pauses, resumes, and releases voices', async ({ page
   page.on('pageerror', error => pageErrors.push(error))
 
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
 
   const status = page.getByTestId('engine-status')

@@ -7,7 +7,7 @@ test.setTimeout(180_000)
 
 test('exports a phrase and releases replaced object URLs', async ({ page }) => {
   await page.goto('/?debug=1')
-  await expect(page.getByTestId('circuit-status')).toContainText('97 neurons')
+  await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons')
   await page.getByTestId('start-listening').click()
   await expect(page.getByTestId('engine-status')).toHaveText('playing', { timeout: 10_000 })
   await page.waitForTimeout(2000)
