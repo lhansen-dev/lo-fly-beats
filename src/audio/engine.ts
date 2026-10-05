@@ -7,7 +7,7 @@ import { getPreset } from '../presets/presets'
 import type { MixSettings, InstrumentRig } from './rig'
 import { createRig, DEFAULT_MIX } from './rig'
 import { PlaybackSequencer } from './sequencer'
-import type { PendingChange } from './sequencer'
+import type { PendingChange, PreparedScoreProvider } from './sequencer'
 import { eventDurationSeconds, eventOffsetSeconds } from './timing'
 
 export type EngineStatus = 'idle' | 'starting' | 'playing' | 'paused' | 'interrupted' | 'exporting'
@@ -32,7 +32,7 @@ export type EngineEventMap = {
 }
 export interface EngineLike {
   on<K extends keyof EngineEventMap>(name: K, handler: (payload: EngineEventMap[K]) => void): () => void
-  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void>
+  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void>
   setMix(mix: MixSettings): void
   play(): void | Promise<void>
   debugInterrupt(): void
@@ -52,6 +52,7 @@ class PlaybackEngine implements EngineLike {
   private context: BaseContext | null = null
   private rig: InstrumentRig | null = null
   private sequencer: PlaybackSequencer | null = null
+  private prepared: PreparedScoreProvider | undefined
   private recipe: SessionRecipe | null = null
   private mix: MixSettings = { ...DEFAULT_MIX, layers: { ...DEFAULT_MIX.layers } }
   private repeatEvents = 0
@@ -79,13 +80,17 @@ class PlaybackEngine implements EngineLike {
     this.emit('status', status)
   }
 
-  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings): Promise<void> {
+  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void> {
     if (this.status === 'exporting' || this.status === 'playing' || this.status === 'paused') return Promise.resolve()
     if (this.startPromise) return this.startPromise
     this.mix = mix
     this.setStatus('starting')
     this.startPromise = (async () => {
       await Tone.start()
+      let scoreProvider = prepared
+      try { await scoreProvider?.ensureReady(recipe, scoreProvider.initialPhraseIndex) }
+      catch { scoreProvider = undefined }
+      this.prepared = scoreProvider
       const context = Tone.getContext()
       this.context = context
       context.on('statechange', () => this.handleContextStateChange())
@@ -93,7 +98,7 @@ class PlaybackEngine implements EngineLike {
       const preset = getPreset(recipe.presetId)
       this.rig = createRig(context, preset.sound, this.mix)
       this.rig.setMix(this.mix, context.currentTime)
-      this.sequencer = new PlaybackSequencer((r, i) => composePhrase(graph, r, i), recipe)
+      this.sequencer = new PlaybackSequencer((r, i) => composePhrase(graph, r, i), recipe, scoreProvider)
       context.transport.bpm.value = recipe.tempoBpm
       context.transport.swing = 0
       if (this.mix.ambienceOn) this.rig.startAmbience(context.currentTime)
@@ -184,6 +189,10 @@ class PlaybackEngine implements EngineLike {
     const fromStatus = this.status
     const operation = (async () => {
       try { await Tone.start() } catch { return }
+      if (this.prepared && this.sequencer?.currentScore === null && this.recipe) {
+        try { await this.prepared.ensureReady(this.recipe, this.prepared.initialPhraseIndex) }
+        catch { this.prepared = undefined; this.sequencer.useBaseline() }
+      }
       if (generation !== this.resumeGeneration || this.status !== fromStatus || this.context?.state !== 'running') return
       this.resumeTransport()
     })()
@@ -194,7 +203,8 @@ class PlaybackEngine implements EngineLike {
 
   play(): void | Promise<void> {
     if (!this.context || !this.rig) return
-    if (this.status === 'interrupted' || (this.status === 'paused' && this.context.state !== 'running')) return this.resumeAfterStart()
+    if (this.status === 'interrupted' || (this.status === 'paused'
+      && (this.context.state !== 'running' || (this.prepared && this.sequencer?.currentScore === null)))) return this.resumeAfterStart()
     if (this.status === 'paused') this.resumeTransport()
   }
 
@@ -218,6 +228,7 @@ class PlaybackEngine implements EngineLike {
 
   reset(recipe: SessionRecipe): void {
     if (!this.context || !this.sequencer) return
+    this.resumeGeneration += 1
     this.context.transport.stop()
     this.sequencer.reset(recipe)
     this.recipe = recipe

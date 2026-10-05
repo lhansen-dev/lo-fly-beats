@@ -26,3 +26,11 @@ SOAK=1 SOAK_MINUTES=15 npx playwright test tests/browser/soak.spec.ts --project=
 ```
 
 `SOAK_MINUTES` defaults to 5 and must be positive. Heap values are informational because garbage collection and browser support vary; resource counts are asserted. `npm run build && npm run budget` checks gzip size budgets. Startup and subdirectory deployment checks live in `tests/browser/startup.spec.ts` and `tests/browser/subpath.spec.ts`.
+
+## Learning checkpoint coverage
+
+The phase 4 experiment remains behind `?learning=1` in development builds. Run `npm run test:learning:browser` for its dedicated Chromium/Vite configuration; the production browser suite skips these specs. The five development specs cover live teaching with paused/boundary adoption, exact checkpoint replay and captured-score export, current/previous corruption recovery, denied IndexedDB, a delayed worker reply with frozen repeat fallback, and preparation latency with bounded forecasts and paused resets.
+
+`tests/unit/app/learningClient.test.ts` exercises delayed/stale replies, coalesced preparation, candidate deferral and cancellation, worker failure, recipe resets, restore equivalence, and unavailable/quota-failed storage. `learningPersistence.test.ts` validates complete checkpoint compatibility and transactional rollback using the pinned development-only `fake-indexeddb` implementation. `tests/unit/music/learning/worker.test.ts` verifies typed response identity, chunk priority/cancellation, finite training, and fixed model weights. Engine tests verify initial/reset readiness before starting the single repeat scheduler. Browser diagnostics retain at most 64 preparation timings and report the most recent time and p95, excluding initial graph loading.
+
+The production boundary/lifecycle/export specs and real Chromium Web Audio tests remain required alongside the development learning checks. Human listening and the 15-minute learning-mode soak remain session 5 work.

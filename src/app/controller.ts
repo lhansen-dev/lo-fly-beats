@@ -12,6 +12,7 @@ import type { PresetId } from '../presets/types'
 import { randomSessionSeed } from './seed'
 import type { AppAction, AppState, RestoredSettings } from './state'
 import type { MixSettings } from '../audio/rig'
+import type { LearningClient, LearningDiagnostics } from './learningClient'
 
 export const AUDIO_INTERRUPTED_NOTICE = 'Audio was interrupted by the browser. Press Play to resume.'
 
@@ -26,7 +27,7 @@ export type MixPatch = {
 }
 import type { Store } from './store'
 
-export type ControllerDiagnostics = EngineDiagnostics & { objectUrlsHeld: number }
+export type ControllerDiagnostics = EngineDiagnostics & { objectUrlsHeld: number; learning?: LearningDiagnostics }
 
 export interface SessionControllerOptions {
   store: Store<AppState, AppAction>
@@ -37,6 +38,7 @@ export interface SessionControllerOptions {
   renderPhrase?: (snapshot: ExportSnapshot) => Promise<WavData>
   createObjectUrl?: (blob: Blob) => string
   revokeObjectUrl?: (url: string) => void
+  createLearningClient?: (graph: CircuitGraph) => LearningClient
 }
 
 export class SessionController {
@@ -48,6 +50,12 @@ export class SessionController {
   private readonly renderPhrase: (snapshot: ExportSnapshot) => Promise<WavData>
   private readonly createObjectUrl: (blob: Blob) => string
   private readonly revokeObjectUrl: (url: string) => void
+  private readonly createLearningClient?: (graph: CircuitGraph) => LearningClient
+  private learning: LearningClient | null = null
+  private learningInitialization: Promise<void> | null = null
+  private recipeChanges = 0
+  private circuitGeneration = 0
+  private disposed = false
   private readonly heldUrls = new Set<string>()
   private exporting = false
   private graph: CircuitGraph | null = null
@@ -66,14 +74,40 @@ export class SessionController {
     this.renderPhrase = options.renderPhrase ?? renderPhrase
     this.createObjectUrl = options.createObjectUrl ?? (blob => URL.createObjectURL(blob))
     this.revokeObjectUrl = options.revokeObjectUrl ?? (url => URL.revokeObjectURL(url))
+    this.createLearningClient = options.createLearningClient
   }
 
   async loadCircuit(): Promise<void> {
+    const generation = ++this.circuitGeneration
     this.store.dispatch({ type: 'circuitLoading' })
     try {
       const graph = await this.loadGraph()
+      if (generation !== this.circuitGeneration || this.disposed) return
       this.graph = graph
       this.store.dispatch({ type: 'circuitLoaded', manifest: graph.manifest })
+      if (this.createLearningClient) {
+        this.learningInitialization = (async () => {
+          const changes = this.recipeChanges
+          let learning: LearningClient | null = null
+          try {
+            this.learning?.dispose()
+            learning = this.createLearningClient!(graph)
+            this.learning = learning
+            const result = await learning.initialize(this.store.getState().active, import.meta.env.BASE_URL)
+            if (this.disposed || generation !== this.circuitGeneration) { learning.dispose(); return }
+            if (changes !== this.recipeChanges) learning.reset(this.store.getState().active)
+            else if (result.restored) this.store.dispatch({ type: 'changesApplied', recipe: result.recipe })
+          } catch (error) {
+            if (this.disposed || generation !== this.circuitGeneration) return
+            this.store.dispatch({ type: 'learningStatusChanged', learning: {
+              status: 'error', message: `Learning could not start; the baseline player remains available. ${error instanceof Error ? error.message : String(error)}`,
+              checkpoint: '', modelRevision: 0, trainingUpdateCount: 0, generationIndex: 0,
+            } })
+            learning?.dispose()
+            this.learning = null
+          }
+        })()
+      }
     } catch (error) {
       const circuitError = error instanceof CircuitError ? error : null
       this.store.dispatch({
@@ -89,6 +123,8 @@ export class SessionController {
     if (this.startPromise) return this.startPromise
     const operation = (async () => {
       const engine = await this.createEngine()
+      await this.learningInitialization
+      if (this.disposed) return
       this.engine = engine
       this.unsubscribers = [
         engine.on('status', status => {
@@ -110,7 +146,7 @@ export class SessionController {
         engine.on('position', position => this.store.dispatch({ type: 'positionChanged', position })),
       ]
       const state = this.store.getState()
-      await engine.start(this.graph!, state.active, state.mix)
+      await engine.start(this.graph!, state.active, state.mix, this.learning ?? undefined)
     })()
     this.startPromise = operation
     void operation.finally(() => {
@@ -163,6 +199,7 @@ export class SessionController {
   }
 
   setTempo(tempoBpm: number): void {
+    this.recipeChanges++
     const playing = this.store.getState().engineStatus === 'playing'
     this.store.dispatch({ type: 'tempoRequested', tempoBpm, immediate: !playing })
     if (playing) this.engine!.request({ kind: 'tempo', tempoBpm })
@@ -171,12 +208,15 @@ export class SessionController {
   }
 
   setVariation(variation: number): void {
+    this.recipeChanges++
     this.store.dispatch({ type: 'variationRequested', variation, immediate: this.engine === null })
     if (this.engine) this.engine.request({ kind: 'variation', variation })
+    else this.learning?.update(this.store.getState().active, this.learning.initialPhraseIndex)
     this.save()
   }
 
   newBeat(): void {
+    this.recipeChanges++
     const sessionSeed = this.randomSeed()
     const playing = this.store.getState().engineStatus === 'playing'
     if (playing) {
@@ -184,12 +224,13 @@ export class SessionController {
       this.engine!.request({ kind: 'newBeat', sessionSeed })
     } else {
       this.store.dispatch({ type: 'newBeatRequested', sessionSeed, immediate: true })
-      if (this.engine) this.engine.reset(this.store.getState().active)
+      this.resetListeningRecipe()
     }
     this.save()
   }
 
   selectPreset(presetId: PresetId): void {
+    this.recipeChanges++
     const tempoBpm = getPreset(presetId).tempoBpm
     const playing = this.store.getState().engineStatus === 'playing'
     if (playing) {
@@ -197,9 +238,17 @@ export class SessionController {
       this.engine!.request({ kind: 'preset', presetId, tempoBpm })
     } else {
       this.store.dispatch({ type: 'presetRequested', presetId, tempoBpm, immediate: true })
-      if (this.engine) this.engine.reset(this.store.getState().active)
+      this.resetListeningRecipe()
     }
     this.save()
+  }
+
+  private resetListeningRecipe(): void {
+    const state = this.store.getState()
+    const recipe = this.learning ? { ...state.active, ...state.pending } : state.active
+    if (this.learning) this.store.dispatch({ type: 'changesApplied', recipe })
+    if (this.engine) this.engine.reset(recipe)
+    else this.learning?.reset(recipe)
   }
 
   async exportPhrase(): Promise<void> {
@@ -239,13 +288,21 @@ export class SessionController {
     return this.graph
   }
 
+  teachMotif(): void { this.learning?.teach() }
+  cancelTeaching(): void { this.learning?.cancelTeaching() }
+
   getDiagnostics(): ControllerDiagnostics | null {
-    return this.engine ? { ...this.engine.getDiagnostics(), objectUrlsHeld: this.heldUrls.size } : null
+    return this.engine ? { ...this.engine.getDiagnostics(), objectUrlsHeld: this.heldUrls.size,
+      ...(this.learning ? { learning: this.learning.getDiagnostics() } : {}),
+    } : null
   }
 
   dispose(): void {
+    this.disposed = true
+    this.circuitGeneration++
     for (const unsubscribe of this.unsubscribers) unsubscribe()
     this.unsubscribers = []
+    this.learning?.dispose()
   }
 
   private save(): void {

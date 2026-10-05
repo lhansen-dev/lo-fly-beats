@@ -12,7 +12,7 @@ import {
 } from './versions'
 import type {
   BassDecision, CommittedLearningPhrase, LearningParameters, LearningRuntime, LearningSnapshot,
-  MotifSummary, PreparedLearningPhrase,
+  LearningPhraseInput, MotifSummary, PreparedBassPhrase, PreparedLearningPhrase,
 } from './types'
 
 function freeze<T>(value: T): T {
@@ -71,7 +71,15 @@ export function assertLearningParameters(parameters: LearningParameters, model: 
     || !Number.isSafeInteger(parameters.trainingUpdateCount) || parameters.trainingUpdateCount < 0) throw new Error('Invalid learning counters')
 }
 
-export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot, model: ReservoirModel): PreparedLearningPhrase {
+export function phraseInput(plan: PhrasePlan): LearningPhraseInput {
+  return {
+    recipe: plan.recipe, phraseIndex: plan.phraseIndex, graphChecksum: plan.graphChecksum,
+    chords: plan.chords.map(({ ringIndex }) => ({ ringIndex })),
+    trace: plan.trace.map(({ beat, bar, beatInBar, kind }) => ({ beat, bar, beatInBar, kind })),
+  }
+}
+
+export function prepareBass(plan: LearningPhraseInput, snapshot: LearningSnapshot, model: ReservoirModel): PreparedBassPhrase {
   if (plan.graphChecksum !== snapshot.compatibility.accompanimentGraphChecksum) throw new Error('Incompatible accompaniment graph')
   const parameters = snapshot.parameters
   assertLearningParameters(parameters, model)
@@ -100,18 +108,27 @@ export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot, mode
       plan.recipe.variation, plan.phraseIndex].join('|'),
     requestRevision, recipeGeneration: snapshot.recipeGeneration, phraseIndex: plan.phraseIndex,
     parentModelRevision: snapshot.parameters.modelRevision,
-    score: renderPhrasePlan(plan, {
-      cells: decisions.map(decision => decision.cellId),
-      provenance: {
-        reservoirGraphChecksum: snapshot.parameters.graphChecksum, learnerVersion: snapshot.parameters.learnerVersion,
-        modelRevision: snapshot.parameters.modelRevision, selector: snapshot.parameters.configuration.selector,
-        bassDecisions: decisions,
-      },
-    }),
+    provenance: {
+      reservoirGraphChecksum: snapshot.parameters.graphChecksum, learnerVersion: snapshot.parameters.learnerVersion,
+      modelRevision: snapshot.parameters.modelRevision, selector: snapshot.parameters.configuration.selector,
+      bassDecisions: decisions,
+    },
     startingSnapshot: structuredClone(snapshot),
     endingRuntime: { ...runtime, generationIndex: snapshot.runtime.generationIndex + 1 },
     endingMotifs: [...structuredClone(snapshot.recentMotifs), ...motifs].slice(-snapshot.parameters.configuration.motifHistoryLimit),
   })
+}
+
+/** Rendering stays on the main thread; only bass inference runs in the worker. */
+export function renderPreparedBass(plan: PhrasePlan, bass: PreparedBassPhrase): PreparedLearningPhrase {
+  const { provenance, ...prepared } = bass
+  return freeze({ ...prepared, score: renderPhrasePlan(plan, {
+    cells: provenance.bassDecisions.map(decision => decision.cellId), provenance,
+  }) })
+}
+
+export function preparePhrase(plan: PhrasePlan, snapshot: LearningSnapshot, model: ReservoirModel): PreparedLearningPhrase {
+  return renderPreparedBass(plan, prepareBass(phraseInput(plan), snapshot, model))
 }
 
 /** Pure adoption gate. The caller owns the expected parent; preparation never changes it. */

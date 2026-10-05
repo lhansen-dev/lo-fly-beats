@@ -22,7 +22,8 @@
     "data:validate": "vitest run --project unit tests/data",
     "test:browser": "playwright test",
     "test:all": "npm run check && npm run test:audio && npm run test:browser",
-    "budget": "node scripts/measure-budgets.mjs"
+    "budget": "node scripts/measure-budgets.mjs",
+    "test:learning:browser": "playwright test --config playwright.learning.config.ts"
   },
   "dependencies": {
     "react": "^19.2.8",
@@ -40,6 +41,7 @@
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/browser-playwright": "5.0.1",
+    "fake-indexeddb": "6.2.5",
     "oxlint": "^1.81.0",
     "tsx": "4.23.15",
     "typescript": "~6.0.2",

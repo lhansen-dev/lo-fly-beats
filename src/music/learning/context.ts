@@ -1,6 +1,5 @@
 import { STRONG_BASS_CELLS, WEAK_BASS_CELLS, type BassCellId } from '../patterns'
-import type { PhrasePlan } from '../types'
-import type { BassDecision, LearningRuntime, MusicalContext } from './types'
+import type { BassDecision, LearningPhraseInput, LearningRuntime, MusicalContext } from './types'
 import { RECENT_ACTION_LIMIT } from './versions'
 
 export const BASS_VOCABULARY: readonly BassCellId[] = Object.freeze([
@@ -13,7 +12,7 @@ export function legalBassActions(beatInBar: number, forcedRest: boolean): boolea
   return BASS_VOCABULARY.map(id => !forcedRest && legal.some(cell => cell.id === id))
 }
 
-export function musicalContext(plan: PhrasePlan, beat: number, runtime: LearningRuntime): MusicalContext {
+export function musicalContext(plan: LearningPhraseInput, beat: number, runtime: LearningRuntime): MusicalContext {
   const step = plan.trace[beat]
   if (!step) throw new RangeError(`No musical context at beat ${beat}`)
   const chord = plan.chords[Math.floor(step.bar / 2)]!

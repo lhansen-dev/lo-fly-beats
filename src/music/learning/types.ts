@@ -1,5 +1,16 @@
 import type { BassCellId } from '../patterns'
-import type { PhraseScore } from '../types'
+import type { PhraseScore, SessionRecipe } from '../types'
+
+/** The worker needs musical context, never CNS edges, accompaniment events, or labels. */
+export interface LearningPhraseInput {
+  recipe: SessionRecipe
+  phraseIndex: number
+  graphChecksum: string
+  chords: readonly { ringIndex: number }[]
+  trace: readonly { beat: number; bar: number; beatInBar: number; kind: string }[]
+}
+
+export type PreparedBassPhrase = Omit<PreparedLearningPhrase, 'score'> & { provenance: LearningProvenance }
 
 export interface LearningConfiguration {
   selector: 'reservoir-decoder'

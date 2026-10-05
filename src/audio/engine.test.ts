@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { MixSettings } from './rig'
+import type { PreparedScoreProvider } from './sequencer'
 
 const mock = vi.hoisted(() => {
   const calls: Array<{ method: string; args: unknown[] }> = []
@@ -109,5 +110,45 @@ describe('live mix lifecycle', () => {
     engine.setMix(mix(false, 0.2))
     expect(engine.getDiagnostics()).toMatchObject({ status: 'playing', repeatEvents: 1 })
     expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
+  })
+})
+
+
+describe('prepared learning transport', () => {
+  it('waits for the first score before starting one scheduler, including after a paused reset', async () => {
+    const engine = await freshEngine()
+    let release!: () => void
+    const provider: PreparedScoreProvider = {
+      initialPhraseIndex: 3, scoresHeld: 1, take: vi.fn(), update: vi.fn(), reset: vi.fn(),
+      ensureReady: vi.fn(() => new Promise<void>(resolve => { release = resolve })),
+    }
+    const starting = engine.start(graph, recipe, mix(false), provider)
+    await Promise.resolve()
+    expect(mock.transport.scheduleRepeat).not.toHaveBeenCalled()
+    release()
+    await starting
+    expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
+    engine.pause()
+    engine.reset(recipe)
+    expect(provider.reset).toHaveBeenCalledWith(recipe)
+    mock.transport.start.mockClear()
+    const playing = engine.play()
+    await Promise.resolve()
+    expect(mock.transport.start).not.toHaveBeenCalled()
+    release()
+    await playing
+    expect(mock.transport.start).toHaveBeenCalledTimes(1)
+    expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the baseline player available when initial learning preparation fails', async () => {
+    const engine = await freshEngine()
+    const provider: PreparedScoreProvider = {
+      initialPhraseIndex: 0, scoresHeld: 0, take: vi.fn(), update: vi.fn(), reset: vi.fn(),
+      ensureReady: vi.fn(() => Promise.reject(new Error('worker failed'))),
+    }
+    await engine.start(graph, recipe, mix(false), provider)
+    expect(engine.getDiagnostics()).toMatchObject({ status: 'playing', repeatEvents: 1 })
+    expect(provider.take).not.toHaveBeenCalled()
   })
 })

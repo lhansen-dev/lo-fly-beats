@@ -6,11 +6,13 @@ import type { PhraseScore, SessionRecipe } from '../music/types'
 import { DEFAULT_PRESET_ID, getPreset } from '../presets/presets'
 import type { PresetId } from '../presets/types'
 import { DEFAULT_SESSION_SEED } from '../music/versions'
+import type { LearningStatus } from './learningClient'
 
 export interface AppState {
   circuit: { status: 'loading' | 'ready' | 'error'; manifest: CircuitManifest | null; error: { code: CircuitErrorCode | 'unknown'; message: string } | null }
   engineStatus: EngineStatus
   audioNotice: string | null
+  learning: LearningStatus | null
   active: SessionRecipe
   pending: Partial<Pick<SessionRecipe, 'tempoBpm' | 'variation' | 'sessionSeed' | 'presetId'>>
   position: { phraseIndex: number; bar: number; beat: number }
@@ -37,6 +39,7 @@ export type AppAction =
   | { type: 'circuitFailed'; code: CircuitErrorCode | 'unknown'; message: string }
   | { type: 'engineStatusChanged'; status: EngineStatus }
   | { type: 'audioNoticeChanged'; notice: string | null }
+  | { type: 'learningStatusChanged'; learning: LearningStatus }
   | { type: 'tempoRequested'; tempoBpm: number; immediate: boolean }
   | { type: 'variationRequested'; variation: number; immediate: boolean }
   | { type: 'newBeatRequested'; sessionSeed: number; immediate: boolean }
@@ -55,6 +58,7 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
     circuit: { status: 'loading', manifest: null, error: null },
     engineStatus: 'idle',
     audioNotice: null,
+    learning: null,
     active: {
       recipeVersion: 1,
       presetId,
@@ -89,6 +93,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, engineStatus: action.status }
     case 'audioNoticeChanged':
       return { ...state, audioNotice: action.notice }
+    case 'learningStatusChanged':
+      return { ...state, learning: action.learning }
     case 'tempoRequested':
       return action.immediate
         ? { ...state, active: { ...state.active, tempoBpm: action.tempoBpm }, pending: withoutPending(state.pending, 'tempoBpm') }

@@ -17,6 +17,14 @@ make run
 
 Open the URL Vite prints and press **Start listening**.
 
+## Learning prototype
+
+Run `npm run dev` and open `/?learning=1&debug=1` to use the development-only MBON bass experiment. **Start listening** plays prepared learning scores through the normal transport; **Teach motif** trains a candidate in one dedicated worker and adopts it at a phrase boundary after a replacement score is ready. Teaching while paused preserves the active phrase until playback reaches that boundary. The initial screen can accept teaching before playback begins.
+
+IndexedDB keeps the current and previous committed boundary checkpoints separately from UI settings. Reload starts without audio and replays the saved phrase after Start listening. New beat and preset changes reset transient activity while preserving learned parameters. Pause, mixer changes, and captured-score WAV export preserve learning. A missed preparation repeats the current phrase with model progress frozen; worker/storage failures display a status and leave listening usable.
+
+`npm run test:learning:browser` checks the development experiment in Chromium. `npm run learning:eval` measures frozen retention and the comparison controls. See [the implementation handoffs](docs/05-LEARNING-IMPLEMENTATION.md) and [experiment 01](docs/learning/experiment-01.md). Human listening, production mode selection, Forget learning, and the extended learning soak remain session 5 work; the measured motif task has not established a benefit from fly connectivity.
+
 ## Make targets
 
 Run `make` to list the common targets. The main ones are `make setup`, `make run`, `make check`, `make test-all`, `make build`, and `make preview`. Run `make browsers` once before `make test-browser` or `make test-all` if the Playwright browser binaries are not installed. Node 22.12 or newer, npm, and Make are required. The connectome is already committed, so running the app does not require Python or a data download.
@@ -37,6 +45,7 @@ Run `make` to list the common targets. The main ones are `make setup`, `make run
 | `data:verify` | `uv run --project scripts/data python scripts/data/verify_whole_cns.py` | Compare export to upstream and write the report |
 | `data:validate` | `vitest run --project unit tests/data` | Validate committed data and composition |
 | `test:browser` | `playwright test` | Production browser interaction tests |
+| `test:learning:browser` | `playwright test --config playwright.learning.config.ts` | Development learning playback, teaching, restart, and failure checks |
 | `test:audio` | `vitest run --project audio` | Chromium Web Audio rendering tests |
 | `test:all` | `npm run check && npm run test:audio && npm run test:browser` | All automated checks |
 | `budget` | `node scripts/measure-budgets.mjs` | Measure gzip budgets after building |

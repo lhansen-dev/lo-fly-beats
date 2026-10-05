@@ -8,6 +8,15 @@ export type PendingChange =
   | { kind: 'newBeat'; sessionSeed: number }
   | { kind: 'preset'; presetId: PresetId; tempoBpm: number }
 
+export interface PreparedScoreProvider {
+  readonly initialPhraseIndex: number
+  readonly scoresHeld: number
+  ensureReady(recipe: SessionRecipe, phraseIndex: number): Promise<void>
+  take(recipe: SessionRecipe, phraseIndex: number): PhraseScore
+  update(recipe: SessionRecipe, phraseIndex: number, resetContext?: boolean): void
+  reset(recipe: SessionRecipe): void
+}
+
 export interface StepPlan {
   globalStep: number
   phraseIndex: number
@@ -33,10 +42,15 @@ export class PlaybackSequencer {
   private pendingVariation: number | null = null
   private pendingSeed: number | null = null
   private pendingPreset: { presetId: PresetId; tempoBpm: number } | null = null
+  private prepared?: PreparedScoreProvider
 
-  constructor(compose: (recipe: SessionRecipe, phraseIndex: number) => PhraseScore, recipe: SessionRecipe) {
+  useBaseline(): void { this.prepared = undefined }
+
+  constructor(compose: (recipe: SessionRecipe, phraseIndex: number) => PhraseScore, recipe: SessionRecipe, prepared?: PreparedScoreProvider) {
     this.compose = compose
     this.recipe = recipe
+    this.prepared = prepared
+    this.recipeStartStep = -(prepared?.initialPhraseIndex ?? 0) * PHRASE_STEPS
   }
 
   get active(): SessionRecipe { return this.recipe }
@@ -53,7 +67,16 @@ export class PlaybackSequencer {
 
   get currentScore(): PhraseScore | null { return this.score }
 
-  get scoresHeld(): number { return this.score === null ? 0 : 1 }
+  get scoresHeld(): number { return this.prepared?.scoresHeld ?? (this.score === null ? 0 : 1) }
+
+  get nextPhrase(): { recipe: SessionRecipe; phraseIndex: number } {
+    return {
+      recipe: { ...this.recipe, ...this.pending },
+      phraseIndex: this.pendingSeed !== null ? 0 : this.score === null
+        ? Math.floor(-this.recipeStartStep / PHRASE_STEPS)
+        : Math.floor((this.globalStep - 1 - this.recipeStartStep) / PHRASE_STEPS) + 1,
+    }
+  }
 
   reset(recipe: SessionRecipe): void {
     this.recipe = recipe
@@ -66,6 +89,7 @@ export class PlaybackSequencer {
     this.score = null
     this.eventsByStep = []
     this.tempoNeedsApply = true
+    this.prepared?.reset(recipe)
   }
 
   request(change: PendingChange): void {
@@ -73,9 +97,11 @@ export class PlaybackSequencer {
       switch (change.kind) {
         case 'tempo': this.recipe = { ...this.recipe, tempoBpm: change.tempoBpm }; this.tempoNeedsApply = true; break
         case 'variation': this.recipe = { ...this.recipe, variation: change.variation }; break
-        case 'newBeat': this.recipe = { ...this.recipe, sessionSeed: change.sessionSeed }; break
+        case 'newBeat': this.recipe = { ...this.recipe, sessionSeed: change.sessionSeed }; this.recipeStartStep = this.globalStep; break
         case 'preset': this.recipe = { ...this.recipe, presetId: change.presetId, tempoBpm: change.tempoBpm }; this.tempoNeedsApply = true; break
       }
+      const next = this.nextPhrase
+      this.prepared?.update(next.recipe, next.phraseIndex, change.kind === 'preset' || change.kind === 'newBeat')
       return
     }
     switch (change.kind) {
@@ -84,6 +110,8 @@ export class PlaybackSequencer {
       case 'newBeat': this.pendingSeed = change.sessionSeed; break
       case 'preset': this.pendingTempo = null; this.pendingPreset = { presetId: change.presetId, tempoBpm: change.tempoBpm }; break
     }
+    const next = this.nextPhrase
+    this.prepared?.update(next.recipe, next.phraseIndex, change.kind === 'preset' || change.kind === 'newBeat')
   }
 
   applyTempoNow(tempoBpm: number): void {
@@ -127,7 +155,7 @@ export class PlaybackSequencer {
     const phraseIndex = Math.floor(rel / PHRASE_STEPS)
     let phraseStarted: PhraseScore | null = null
     if (stepInPhrase === 0) {
-      phraseStarted = this.compose(this.recipe, phraseIndex)
+      phraseStarted = this.prepared?.take(this.recipe, phraseIndex) ?? this.compose(this.recipe, phraseIndex)
       this.score = phraseStarted
       const indexed: NoteEvent[][] = Array.from({ length: PHRASE_STEPS }, () => [])
       for (const event of phraseStarted.events) indexed[event.step]?.push(event)

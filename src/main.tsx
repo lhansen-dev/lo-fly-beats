@@ -10,6 +10,8 @@ import { createInitialState } from './app/state'
 import { createAppStore } from './app/store'
 import { loadCircuit } from './connectome/load'
 import { createSettingsSaver, isStorageAvailable, loadSettings } from './app/persistence'
+import { LearningClient } from './app/learningClient'
+import { createLearningPersistence } from './app/learningPersistence'
 
 const getStorage = () => {
   try {
@@ -30,8 +32,15 @@ const controller = new SessionController({
   loadGraph: () => loadCircuit(import.meta.env.BASE_URL),
   saveSettings: settings => saver.save(settings),
   randomSeed: randomSessionSeed,
+  ...(import.meta.env.DEV && new URLSearchParams(window.location.search).get('learning') === '1' ? {
+    createLearningClient: (graph: import('./connectome/types').CircuitGraph) => new LearningClient({
+      graph, persistence: createLearningPersistence(),
+      onStatus: learning => store.dispatch({ type: 'learningStatusChanged', learning }),
+    }),
+  } : {}),
 })
 void controller.loadCircuit()
+window.addEventListener('pagehide', event => { if (!event.persisted) controller.dispose(); saver.flush() })
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,5 +1,5 @@
 import type { BassCellId } from '../patterns'
-import type { PhrasePlan } from '../types'
+import type { LearningPhraseInput } from './types'
 import { createRng } from '../rng'
 
 export const CURRICULUM_VERSION = 2
@@ -17,13 +17,13 @@ export const TEACHING_EXAMPLES: readonly Readonly<{
 ].map(example => Object.freeze({ ...example, cells: Object.freeze(example.cells as BassCellId[]) })))
 
 /** Labels belong to training/evaluation data, never to the inference API. */
-export interface TeachingContext {
+export interface TeachingContext<T extends LearningPhraseInput = LearningPhraseInput> {
   id: string
-  plan: PhrasePlan
+  plan: T
   cells: readonly BassCellId[]
 }
 
-export function teachingContexts(plans: readonly PhrasePlan[]): TeachingContext[] {
+export function teachingContexts<T extends LearningPhraseInput>(plans: readonly T[]): TeachingContext<T>[] {
   const contexts = plans.flatMap(plan => TEACHING_EXAMPLES.flatMap(example =>
     Array.from({ length: example.weight }, () => ({
       id: `${example.id}|${plan.recipe.presetId}|${plan.recipe.sessionSeed}|${plan.phraseIndex}`, plan, cells: example.cells,
@@ -36,7 +36,7 @@ export function teachingContexts(plans: readonly PhrasePlan[]): TeachingContext[
   return contexts
 }
 
-export function originalContexts(plans: readonly PhrasePlan[]): TeachingContext[] {
+export function originalContexts<T extends LearningPhraseInput>(plans: readonly T[]): TeachingContext<T>[] {
   return plans.map(plan => ({ id: `original-v1|${plan.recipe.presetId}|${plan.recipe.sessionSeed}|${plan.phraseIndex}`,
     plan, cells: TEACHING_EXAMPLES[0]!.cells }))
 }
