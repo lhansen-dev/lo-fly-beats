@@ -161,4 +161,4 @@ The 9.83 for readout-only practice is not a better fly. That practice has no sch
 
 ## Listening status
 
-Not done. Listening needs a person. Please compare the [demo tapes](../demos/) with the classic connectome walk (`/?composer=walk`), and record who listened and what they heard here.
+Not done yet. A blind test is ready. `scripts/brain/render-listening-test.mjs` renders nine matched clips: the fly, the tutor, and the classic walk, one each per preset, two phrases each, at the same tempo and mix. The clips are loudness-matched to −16 LUFS and given shuffled neutral names, and `scripts/brain/listening-test-template.html` is the page. Listeners rate each clip from 1 to 5 before a reveal. Ratings are stored per listener in the page's `ratings` collection, so they can be read back and reported here, with who listened and what they heard.

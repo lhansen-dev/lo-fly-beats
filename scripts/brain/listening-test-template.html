@@ -1,0 +1,255 @@
+<title>Blind Banana Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of unlabeled clips to rate, then the reveal. Night listening room, banana-yellow accents. */
+:root {
+  --night: #15131a;
+  --card: #231f2a;
+  --line: #3b3344;
+  --fg: #ece6ee;
+  --muted: #b5abbd;
+  --banana: #f2cf3a;
+  --song: #ff8db3;
+  --good: #8ee2cb;
+  --display: 'Young Serif', Georgia, 'Times New Roman', serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--night); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 18px; padding-block: 36px 64px; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(36px, 7vw, 56px); line-height: 1.05; }
+h1 span { color: var(--banana); }
+h2 { font-size: 26px; }
+p { margin: 0; }
+.label { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 12px; }
+.lede { font-size: 17px; max-width: 62ch; }
+.status { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.status b { color: var(--banana); font-weight: 500; }
+.clips { display: grid; gap: 12px; }
+.clip { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: center; }
+.clip.playing { border-color: var(--banana); }
+.play { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--banana); background: transparent; color: var(--banana); cursor: pointer; display: grid; place-items: center; grid-row: span 2; }
+.play svg { width: 18px; height: 18px; fill: currentColor; }
+.clip-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.clip-name { font-family: var(--display); font-size: 20px; }
+.clip-time { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; flex: 1 1 120px; align-self: center; }
+.bar span { display: block; height: 100%; width: 0; background: var(--banana); }
+.rate { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.rate button { font-family: var(--mono); font-size: 13px; min-width: 40px; padding: 5px 9px; border-radius: 99px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+.rate button[aria-pressed="true"] { border-color: var(--banana); background: color-mix(in srgb, var(--banana) 18%, transparent); color: var(--banana); }
+.rate .hint { font-size: 12px; color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--banana); outline-offset: 3px; }
+.reveal { display: grid; gap: 14px; }
+.reveal button.primary { justify-self: start; font: 600 15px var(--body); padding: 11px 18px; border-radius: 8px; border: 1px solid var(--banana); background: color-mix(in srgb, var(--banana) 16%, transparent); color: var(--banana); cursor: pointer; }
+.reveal button.primary:disabled { opacity: .45; cursor: default; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+td.num { text-align: right; font-family: var(--mono); }
+tr.fly td:first-child { color: var(--song); }
+.quiet { color: var(--muted); font-size: 14px; }
+@media (max-width: 480px) { .clip { grid-template-columns: minmax(0, 1fr); } .play { grid-row: auto; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="label">Lo-fly beats · listening test</p>
+    <h1>Blind <span>Banana</span> Test</h1>
+    <p class="lede">Nine unlabeled clips of about 45 seconds each. Three were composed by the fly's brain, three by the tutor he learned from, and three by the original connectome walk, in matching keys and tempos. All are loudness-matched. Rate each one before the reveal: would you keep it playing?</p>
+    <p class="status" id="status">Loading your ratings…</p>
+  </header>
+  <section class="clips" id="clips" aria-label="Clips to rate"></section>
+  <section class="reveal" aria-labelledby="reveal-title">
+    <h2 id="reveal-title">The reveal</h2>
+    <p class="quiet" id="reveal-note">Rate all nine clips to see which composer made each one.</p>
+    <button class="primary" type="button" id="reveal-button" disabled>Show who made what</button>
+    <div id="results"></div>
+  </section>
+</div>
+
+<script>
+const CLIPS = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9']
+// The composer of each clip, kept out of plain sight until the reveal.
+const SEALED = '/*SEALED*/'
+const LETTERS = 'ABCDEFGHI'
+const SCALE = [[1, 'Skip'], [2, 'Meh'], [3, 'Fine'], [4, 'Nice'], [5, 'Keep it on']]
+const SOURCE_NAMES = { fly: "The fly's brain", tutor: 'His tutor', walk: 'Connectome walk' }
+const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>'
+const PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>'
+
+const state = { ratings: {}, revealed: false, order: null, all: [] }
+let ratingsDoc = null
+let saveTimer = null
+
+function storage(get, value) {
+  try {
+    if (get) return JSON.parse(localStorage.getItem('blind-banana') ?? 'null')
+    localStorage.setItem('blind-banana', JSON.stringify(value))
+  } catch { return null }
+}
+
+function shuffled(seedText) {
+  let seed = 2166136261
+  for (const char of seedText) seed = Math.imul(seed ^ char.charCodeAt(0), 16777619) >>> 0
+  const order = [...CLIPS]
+  for (let i = order.length - 1; i > 0; i--) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+    const j = seed % (i + 1)
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  return order
+}
+
+const mapping = () => JSON.parse(atob(SEALED.split('').reverse().join('')))
+const ratedCount = () => CLIPS.filter(id => state.ratings[id]).length
+
+const players = []
+function renderClips() {
+  const host = document.getElementById('clips')
+  for (const audio of players.splice(0)) audio.pause()
+  host.innerHTML = ''
+  state.order.forEach((id, index) => {
+    const card = document.createElement('article')
+    card.className = 'clip'
+    card.innerHTML = `
+      <button class="play" type="button" aria-label="Play clip ${LETTERS[index]}">${PLAY}</button>
+      <div class="clip-top"><span class="clip-name">Clip ${LETTERS[index]}</span><span class="clip-time">0:00</span><div class="bar"><span></span></div></div>
+      <div class="rate" role="group" aria-label="Rate clip ${LETTERS[index]}"></div>`
+    const audio = new Audio(`clips/${id}.mp3`)
+    audio.preload = 'none'
+    const button = card.querySelector('.play')
+    const fill = card.querySelector('.bar span')
+    const time = card.querySelector('.clip-time')
+    const rate = card.querySelector('.rate')
+    for (const [score, word] of SCALE) {
+      const choice = document.createElement('button')
+      choice.type = 'button'
+      choice.textContent = `${score} · ${word}`
+      choice.setAttribute('aria-pressed', String(state.ratings[id] === score))
+      choice.addEventListener('click', () => rateClip(id, score))
+      rate.append(choice)
+    }
+    button.addEventListener('click', () => {
+      if (audio.paused) {
+        for (const other of players) if (other !== audio) other.pause()
+        audio.play().catch(() => {})
+      } else audio.pause()
+    })
+    const sync = () => {
+      button.innerHTML = audio.paused ? PLAY : PAUSE
+      button.setAttribute('aria-label', `${audio.paused ? 'Play' : 'Pause'} clip ${LETTERS[index]}`)
+      card.classList.toggle('playing', !audio.paused)
+    }
+    audio.addEventListener('play', sync)
+    audio.addEventListener('pause', sync)
+    audio.addEventListener('timeupdate', () => {
+      const seconds = Math.floor(audio.currentTime)
+      time.textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+      if (audio.duration) fill.style.width = `${audio.currentTime / audio.duration * 100}%`
+    })
+    players.push(audio)
+    host.append(card)
+  })
+}
+
+function renderStatus(message) {
+  const count = ratedCount()
+  document.getElementById('status').innerHTML = `<b>${count}</b> of 9 rated${message ? ` · ${message}` : ''}`
+  const button = document.getElementById('reveal-button')
+  button.disabled = count < 9
+  document.getElementById('reveal-note').textContent = count < 9
+    ? 'Rate all nine clips to see which composer made each one.'
+    : 'All nine rated. The reveal shows your scores by composer, and everyone’s once others have rated too.'
+}
+
+function rateClip(id, score) {
+  state.ratings[id] = score
+  document.querySelectorAll('.clip').forEach((card, index) => {
+    if (state.order[index] !== id) return
+    card.querySelectorAll('.rate button').forEach((choice, i) => choice.setAttribute('aria-pressed', String(i + 1 === score)))
+  })
+  storage(false, { ratings: state.ratings, order: state.order, revealed: state.revealed })
+  renderStatus('saving…')
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(save, 600)
+}
+
+async function save() {
+  if (!ratingsDoc) { renderStatus('saved in this browser only'); return }
+  try {
+    await ratingsDoc.set({ ratings: { ...state.ratings }, revealed: state.revealed, updatedAt: new Date().toISOString(), version: 1 })
+    renderStatus('saved')
+  } catch {
+    renderStatus('saved in this browser only (your ratings could not be shared)')
+  }
+}
+
+function summarize(sets) {
+  const map = mapping()
+  const by = { fly: [], tutor: [], walk: [] }
+  for (const ratings of sets) for (const [id, score] of Object.entries(ratings)) if (map[id] && typeof score === 'number') by[map[id].source].push(score)
+  return by
+}
+
+function renderResults() {
+  if (!state.revealed) return
+  const map = mapping()
+  const mine = summarize([state.ratings])
+  const everyone = summarize(state.all.length ? state.all : [state.ratings])
+  const listeners = Math.max(1, state.all.length)
+  const mean = values => values.length ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2) : '–'
+  const rows = Object.keys(SOURCE_NAMES).map(source => `<tr class="${source}"><td>${SOURCE_NAMES[source]}</td><td class="num">${mean(mine[source])}</td><td class="num">${mean(everyone[source])}</td></tr>`).join('')
+  const clips = state.order.map((id, index) => `<tr class="${map[id].source}"><td>Clip ${LETTERS[index]}</td><td>${SOURCE_NAMES[map[id].source]}</td><td>${map[id].preset.replace(/-/g, ' ')}</td><td class="num">${state.ratings[id] ?? '–'}</td></tr>`).join('')
+  document.getElementById('results').innerHTML = `
+    <div class="table-wrap"><table><thead><tr><th>Composer</th><th style="text-align:right">Your mean</th><th style="text-align:right">Everyone (${listeners} listener${listeners === 1 ? '' : 's'})</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th>Clip</th><th>Composer</th><th>Preset</th><th style="text-align:right">Your score</th></tr></thead><tbody>${clips}</tbody></table></div>
+    <p class="quiet">Scores are 1 (skip) to 5 (keep it on). Three clips per composer is a small sample: treat one listener's means as a first impression.</p>`
+  document.getElementById('reveal-button').hidden = true
+}
+
+document.getElementById('reveal-button').addEventListener('click', () => {
+  state.revealed = true
+  storage(false, { ratings: state.ratings, order: state.order, revealed: true })
+  void save()
+  renderResults()
+})
+
+async function start() {
+  const saved = storage(true)
+  if (saved?.ratings) state.ratings = saved.ratings
+  state.revealed = !!saved?.revealed
+  state.order = saved?.order?.length === 9 ? saved.order : shuffled(String(Math.random()))
+  renderClips()
+  renderStatus(null)
+  renderResults()
+  const [db, user] = await Promise.all([window.claude?.use?.('db') ?? null, window.claude?.use?.('user') ?? null])
+  const id = user ? await user.id() : null
+  if (!db || !id) { renderStatus('saved in this browser only'); return }
+  ratingsDoc = db.collection('ratings').doc(id)
+  try {
+    const snapshot = await ratingsDoc.get()
+    const stored = snapshot.exists ? snapshot.data() : null
+    if (stored?.ratings) {
+      state.ratings = { ...stored.ratings, ...state.ratings }
+      state.revealed = state.revealed || !!stored.revealed
+      if (!saved?.order) state.order = shuffled(id)
+      renderClips()
+    }
+  } catch { /* keep the local copy */ }
+  renderStatus(ratedCount() ? 'saved' : null)
+  db.collection('ratings').onSnapshot(snapshot => {
+    state.all = snapshot.docs.map(doc => doc.data()?.ratings).filter(Boolean)
+    renderResults()
+  }, () => {})
+  renderResults()
+}
+start()
+</script>
