@@ -102,6 +102,28 @@ In all six pairs, **the shuffled brain imitated the tutor better** in school. **
 
 A cautious reading: with the real connectome's structured recurrence, the song neurons are a worse copier and a better improviser. Before rescaling, the real circuit's spectral radius is 0.85 against 0.32 for the shuffled one. Confirming this needs more seeds, a held-out critic, and listening.
 
+## Learning inside the circuit (stage 2): a first, negative result
+
+The original plan's stage 2 lets selected internal connections learn from reward, inspired by dopamine-gated plasticity. [`plasticityStep`](../../src/brain/learn.ts) gives each of the 18,341 premotor→song, song→song, and premotor/song→wing-motor synapses a gain in [0.5, 1.5] on its anatomical weight. Each gain moves by a three-factor rule: the covariance of presynaptic rate (one step earlier) with postsynaptic rate over the phrase, times the phrase's normalized critic advantage, times the synapse's sign. Anatomy itself never changes. [`scripts/brain/plasticity.ts`](../../scripts/brain/plasticity.ts) runs the experiment from the shipped fly.
+
+**Readout frozen, 1,500 batches.** Bananas are measured over 24 sessions × 6 phrases at temperature 0.8.
+
+| Condition | Before | After |
+| --- | ---: | ---: |
+| Real reward, rate 0.002 | 9.43 | **7.09** |
+| Real reward, rate 0.006 | 9.43 | 5.79 |
+| Shuffled-sign reward (control), rate 0.002 | 9.43 | 9.46 |
+
+Reward-driven plasticity made the fly worse, while random reward left it unchanged. The real reward pushes gains coherently, with their spread growing steadily to 0.32. That reshapes the dynamics the frozen readout depends on, and the falling scores then feed negative advantages back into further change, a positive-feedback collapse. **Joint learning, 1,500 batches.** The readout keeps practicing at half the usual rate while the gains learn slowly (rate 0.0005).
+
+| Condition | Before | After |
+| --- | ---: | ---: |
+| Readout practice + reward plasticity | 9.43 | 9.41 |
+| Readout practice only | 9.43 | 9.83 |
+| Readout practice + shuffled-reward plasticity | 9.43 | 9.83 |
+
+Even when the readout can follow, this plasticity rule cancels the gains from practice, while random plasticity of the same size is harmless. The phrase-level covariance rule is too blunt: one critic score per phrase cannot tell which of 18,341 synapses helped. Per-bar credit, eligibility filtered to the decisions a synapse feeds, or a slower separate timescale are the obvious next attempts. The app does not use internal plasticity.
+
 ## Listening status
 
 Not done. Listening needs a person. Please compare the [demo tapes](../demos/) with the classic connectome walk (`/?composer=walk`), and record who listened and what they heard here.
