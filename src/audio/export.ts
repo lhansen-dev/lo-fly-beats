@@ -28,6 +28,17 @@ export function createExportSnapshot(
   return deepFreeze(structuredClone({ score, recipe, preset, mix }))
 }
 
+/** The limiter's attack can let a transient overshoot; exports are scaled so they never clip. */
+export const EXPORT_PEAK_CEILING = 0.94
+
+export function guardPeaks(channels: Float32Array[]): void {
+  let peak = 0
+  for (const channel of channels) for (const sample of channel) peak = Math.max(peak, Math.abs(sample))
+  if (peak <= EXPORT_PEAK_CEILING) return
+  const gain = EXPORT_PEAK_CEILING / peak
+  for (const channel of channels) for (let index = 0; index < channel.length; index++) channel[index] = channel[index]! * gain
+}
+
 export async function renderPhrase(snapshot: ExportSnapshot): Promise<WavData> {
   const Tone = await import('tone')
   const { createRig } = await import('./rig')
@@ -45,6 +56,7 @@ export async function renderPhrase(snapshot: ExportSnapshot): Promise<WavData> {
     const buffer = rendered.get()!
     const left = new Float32Array(buffer.getChannelData(0))
     const right = new Float32Array(buffer.getChannelData(1))
+    guardPeaks([left, right])
     const fadeLength = Math.min(left.length, Math.round(EXPORT_FADE_SECONDS * 44100))
     const fadeStart = left.length - fadeLength
     for (let index = 0; index < fadeLength; index++) {
@@ -83,6 +95,7 @@ export async function renderTrack(scores: readonly PhraseScore[], recipe: Sessio
     try {
       const buffer = rendered.get()!
       const channels = [new Float32Array(buffer.getChannelData(0)), new Float32Array(buffer.getChannelData(1))]
+      guardPeaks(channels)
       const fadeLength = Math.round(EXPORT_FADE_SECONDS * 2 * 44100)
       for (const channel of channels) {
         for (let index = 0; index < fadeLength; index++) channel[channel.length - fadeLength + index]! *= 1 - index / (fadeLength - 1)

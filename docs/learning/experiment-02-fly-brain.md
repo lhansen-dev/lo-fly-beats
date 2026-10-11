@@ -2,7 +2,7 @@
 
 October 11, 2026. The fly now composes every layer of the music itself: drums, bass, chords, keys, a new lead melody, and when to loop. Its choices are read from a simulated network built from the male fly's real ear-to-song wiring. It learned from an original lofi tutor (school), then practiced alone against a banana critic (practice), and it keeps practicing gently while people listen. Automated measurements are below; **human listening has not been done yet**. The author of this report cannot hear audio.
 
-Rendered tapes (six-phrase songs) and their scores are in [docs/demos](../demos/). Each `.txt` file shows exactly what the fly played, step by step.
+Rendered tapes (six-phrase songs) and their scores are in [docs/demos](../demos/). `scripts/brain/audio-qa.py` checks them for clipping, clicks, DC offset, spectral balance, and stereo width. All are clean, with peaks at or below −0.5 dBFS after export peak guarding. Each `.txt` file shows exactly what the fly played, step by step.
 
 ## The circuit: `song-v1`
 
@@ -50,14 +50,16 @@ Version 1 (all layers, no sections) is described by the first table. The shipped
 
 ### Shipped fly (version 3), 30 sessions × 6 phrases, three presets
 
+These measurements were taken after a final 1,500-batch lesson on hat accents, prompted by the independent judge below. That lesson traded about 0.1 banana for more idiomatic hats and more progressions (from 8 to 11), so the critic was version 6 at measurement time.
+
 | Player | Bananas | Distinct progressions | Original drums / bass / lead | Sections (groove / breakdown / intro) | Sections realized |
 | --- | ---: | ---: | --- | --- | ---: |
 | Tutor | 9.36 | 11 | 0 / 0 / 23% | 67 / 17 / 17% | 100% |
-| **Shipped fly, temperature 0.8 (default Variation 0.5)** | **9.47** | 8 | 77 / 57 / 93% | 66 / 17 / 17% | 100% |
-| Shipped fly, temperature 1 | 9.36 | 9 | 86 / 71 / 97% | 67 / 17 / 17% | 100% |
-| Shipped fly, temperature 0.6 | 9.52 | 8 | 71 / 50 / 88% | 67 / 17 / 17% | 100% |
+| **Shipped fly, temperature 0.8 (default Variation 0.5)** | **9.35** | 11 | 69 / 59 / 93% | 67 / 17 / 17% | 100% |
+| Shipped fly, temperature 1 | 9.27 | 13 | 80 / 67 / 96% | 67 / 17 / 17% | 100% |
+| Shipped fly, temperature 0.6 | 9.36 | 9 | 61 / 50 / 89% | 67 / 17 / 17% | 100% |
 
-The fly opens each session with an intro, plays three grooves, and drops into a breakdown before the groove returns. That shape came from the tutor, but the fly chooses it, and he times it from his own habituation sense. Harmonic variety is lower than version 1 (8 against 11 progressions).
+The fly opens each session with an intro, plays three grooves, and drops into a breakdown before the groove returns. That shape came from the tutor, but the fly chooses it, and he times it from his own habituation sense. Harmonic variety now matches the tutor's.
 
 ### How song form was learned
 
@@ -73,12 +75,13 @@ The critic is what the fly optimized, so it cannot also certify the result. [`sc
 | Player | Kick | Snare | Hat | Bass | Keys | Lead | Mean |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Tutor, held-out seeds | 0.27 | 0.28 | 0.17 | 0.46 | 0.24 | 0.72 | 0.36 |
-| **Shipped fly, temperature 0.8** | 0.36 | 0.33 | 1.08 | 0.87 | 0.25 | 1.89 | **0.80** |
-| Shipped fly, temperature 1 | 0.40 | 0.35 | 1.26 | 0.95 | 0.30 | 2.27 | 0.92 |
+| Fly before the hat lesson, temperature 0.8 | 0.36 | 0.33 | 1.08 | 0.87 | 0.25 | 1.89 | 0.80 |
+| **Shipped fly, temperature 0.8** | 0.37 | 0.31 | 0.68 | 0.75 | 0.33 | 1.93 | **0.73** |
+| Shipped fly, temperature 1 | 0.42 | 0.35 | 0.78 | 0.84 | 0.39 | 2.21 | 0.83 |
 | Anchor-free over-optimized fly | 0.52 | 0.56 | 2.30 | 1.03 | 0.22 | 3.00 | 1.27 |
 | Untrained fly | 1.55 | 2.08 | 2.43 | 3.42 | 3.03 | 3.90 | 2.73 |
 
-By this independent measure the shipped fly plays far closer to the idiom than noise, and its departures sit mostly in melody, where originality is expected, and in hat patterns. The judge independently flags the critic-gamed fly as less idiomatic, so the critic and the judge disagree exactly where reward hacking was suspected.
+The hat lesson was added to the critic because this judge showed hats as the least idiomatic layer. That makes the judge less independent for hats from here on; the other layers are unaffected. By this independent measure the shipped fly plays far closer to the idiom than noise, and its departures sit mostly in melody, where originality is expected, and in hat patterns. The judge independently flags the critic-gamed fly as less idiomatic, so the critic and the judge disagree exactly where reward hacking was suspected.
 
 ### Version 1 (no sections), model seed 1, 30 sessions × 4 phrases
 

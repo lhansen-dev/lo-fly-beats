@@ -126,7 +126,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   const drumsSend = new Tone.Gain({ context, gain: 0.035 })
   const saturation = new Tone.Distortion({ context, distortion: 0.1, oversample: '2x', wet: sound.saturationWet })
   const masterFilter = new Tone.Filter({ context, type: 'lowpass', frequency: sound.masterCutoffHz })
-  const limiter = new Tone.Limiter({ context, threshold: -1 })
+  const limiter = new Tone.Limiter({ context, threshold: -2 })
 
   drums.chain(drumsFilter, drumsBus)
   bass.connect(bassBus)

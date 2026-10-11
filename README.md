@@ -29,6 +29,7 @@ Open the URL Vite prints and press **Start listening**.
 | `public/data/brains/fly-v1/` | The trained fly: int8 readout (about 530 KB) and a checkpoint with his training history |
 | `src/brain/` | Circuit loading, rate dynamics, senses, decisions, tutor, critic, learning, the persistent `FlyMind`, and its worker |
 | `scripts/brain/train.ts` | School + practice + evaluation; `--publish` writes the shipped fly, `--connectivity source-permuted|zero` trains controls |
+| `scripts/brain/evaluate.ts`, `judge.ts`, `compare-wiring.py`, `audio-qa.py`, `publish.ts` | Measure a fly with the critic and with an independent style judge, compare wirings, check rendered audio, and ship a measured readout |
 | `scripts/brain/render-demos.mjs` | Renders demo tapes through the app's audio rig in headless Chromium (needs the dev server) |
 
 ```sh
