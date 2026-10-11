@@ -83,7 +83,7 @@ The app plays at temperature 0.6 + 0.4 × Variation. Every measurement uses the 
 
 - Practice clearly helps: school alone reaches about 8.2–8.4 bananas, and practice takes the fly above the tutor it learned from. Most of what it plays is not in the tutor's repertoire.
 - The critic and the tutor share authors and ideas about lofi, so a high score means "matches our proxies", not "sounds good". The reward hack above shows how easily the proxies can be gamed. **Listening is pending.**
-- **Wiring:** removing recurrent connections costs about 0.7–1 banana; the decoder then sees only seeded spontaneous offsets. Shuffled wiring comes close. See the paired comparison below.
+- **Wiring:** removing recurrent connections costs about 0.7–1 banana; the decoder then sees only seeded spontaneous offsets. Shuffled wiring imitates the tutor better and ties after practice. See the paired comparison below.
 
 ### Real versus shuffled wiring: six paired runs
 
@@ -98,9 +98,19 @@ Each pair uses the same model seed and the same budget: 1,500 lessons and 3,000 
 | 3 | 2 | 8.29 / 9.16 | 9.33 / 9.24 | 74 / 68% |
 | 3 | 3 | 8.55 / 8.94 | 9.34 / 9.22 | 75 / 73% |
 
-In all six pairs, **the shuffled brain imitated the tutor better** in school. **The real fly ended up ahead after practice** and played more drum bars of its own. A two-sided sign test over six pairs gives p ≈ 0.03 for each pattern. However, the after-practice gaps are small (0.01–0.12 bananas), the critic is our own, and the versions share seeds, so the pairs are not fully independent.
+In all six of those pairs the shuffled brain imitated the tutor better, and the real fly finished slightly ahead. That second pattern **did not replicate**.
 
-A cautious reading: with the real connectome's structured recurrence, the song neurons are a worse copier and a better improviser. Before rescaling, the real circuit's spectral radius is 0.85 against 0.32 for the shuffled one. Confirming this needs more seeds, a held-out critic, and listening.
+**Seven clean pairs under the final configuration** (brain version 3 with gated sections and the truthful critic; seeds 1–7; same budget) are produced by `python3 scripts/brain/compare-wiring.py`:
+
+| Measure | Real (mean) | Shuffled (mean) | Real − shuffled | Real higher | Sign test p | Paired t (df 6) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| School bananas | 8.65 | 9.09 | −0.44 | 0/7 | 0.016 | −7.19 |
+| Practiced bananas | 9.38 | 9.35 | +0.03 | 3/7 | 1.000 | 0.84 |
+| Original drum bars | 81.5% | 72.8% | +8.7 pts | 5/7 | 0.45 | 2.20 |
+| Original lead bars | 90.0% | 89.2% | +0.8 pts | 4/7 | 1.000 | 0.76 |
+| Distinct progressions | 8.7 | 7.4 | +1.3 | 5/6 (one tie) | 0.22 | 1.72 |
+
+What holds up: **the shuffled circuit is a consistently better copier of the tutor**. After practice the two are equal. The real circuit's drums are somewhat more often its own, but that falls short of conventional significance. The connectome's structured recurrence measurably changes how the song neurons learn by imitation, and it does not by itself make better music by this critic. Before rescaling, the real circuit's spectral radius is 0.85 against 0.32 for the shuffled one.
 
 ## Learning inside the circuit (stage 2): a first, negative result
 
