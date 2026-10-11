@@ -8,11 +8,13 @@ export default function ExportPanel() {
   const active = useAppState(state => state.active)
   const activeScore = useAppState(state => state.activeScore)
   const exportState = useAppState(state => state.exportState)
+  const tapePhrases = useAppState(state => state.tapePhrases)
   const busy = exportState.status === 'preparing' || exportState.status === 'rendering' || exportState.status === 'encoding'
 
   return <div className="export-panel" data-testid="export-panel">
     <p>About {Math.round(exportSeconds(active.tempoBpm))} seconds: 8 bars at {active.tempoBpm} BPM plus a 2-second tail. Pending changes are not included.</p>
     <button type="button" data-testid="export-button" disabled={activeScore === null || busy} onClick={() => { void controller.exportPhrase() }}><Icon name="download" />Export WAV</button>
+    {tapePhrases > 1 && <button type="button" data-testid="export-tape" disabled={busy} onClick={() => { void controller.exportTape() }}><Icon name="download" />Save tape ({tapePhrases} phrases)</button>}
     <div hidden={exportState.status === 'idle'}>
       <span data-testid="export-status">{exportState.status}</span>
       {exportState.message && <p>{exportState.message}</p>}

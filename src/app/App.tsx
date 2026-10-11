@@ -1,5 +1,5 @@
 import { lazy, Suspense, type CSSProperties } from 'react'
-import { ABOUT_LINE, APP_TITLE, TAGLINE } from './copy'
+import { ABOUT_LINE, APP_TITLE, BRAIN_ABOUT_LINE, TAGLINE } from './copy'
 import { useController } from './ControllerContext'
 import { useAppState } from './store'
 import { getPreset } from '../presets/presets'
@@ -25,6 +25,8 @@ import PlaybackStatus from '../components/PlaybackStatus'
 import { useKeyboardShortcuts } from './useKeyboardShortcuts'
 import Icon from '../components/Icon'
 import CircuitScanner from '../components/scanner/CircuitScanner'
+import FlyBrainPanel from '../components/brain/FlyBrainPanel'
+import '../components/brain/brain.css'
 
 const LearningLab = import.meta.env.DEV ? lazy(() => import('../components/learning/LearningLab')) : null
 
@@ -32,6 +34,8 @@ export default function App() {
   const controller = useController()
   useKeyboardShortcuts()
   const presetId = useAppState(state => state.active.presetId)
+  const brainComposing = useAppState(state => state.brain !== null && state.brain.status !== 'error')
+  const walkRequested = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('composer') === 'walk'
   const debugMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1'
   const learningExperiment = import.meta.env.DEV && typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('learning') === '1'
@@ -61,10 +65,12 @@ export default function App() {
         <PendingChanges /><StorageNote />
       </section>
     </div>
+    <FlyBrainPanel />
+    {walkRequested && <p className="composer-switch composer-switch--walk">The classic seeded walk is composing. <a href="./">Let the fly compose</a></p>}
     <CircuitScanner />
     <div className="circuit-load"><CircuitStatus /></div>
     <div className="about-section"><ExplanationPanel /><Credits /></div>
-    <footer className="app-footer"><p data-testid="about-line">{ABOUT_LINE}</p><a href="#credits">Credits</a><span>Made for the slow moments.</span></footer>
+    <footer className="app-footer"><p data-testid="about-line">{brainComposing ? BRAIN_ABOUT_LINE : ABOUT_LINE}</p><a href="#credits">Credits</a><span>Made for the slow moments.</span></footer>
     {debugMode && <DiagnosticsPanel getDiagnostics={() => controller.getDiagnostics()} onSimulateInterruption={() => controller.simulateInterruption()} />}
     {learningExperiment && LearningLab && <Suspense fallback={<p>Loading phrase experiment…</p>}><LearningLab /></Suspense>}
   </main>

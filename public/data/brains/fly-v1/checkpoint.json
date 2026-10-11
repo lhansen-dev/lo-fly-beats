@@ -1,0 +1,524 @@
+{
+  "schemaVersion": 1,
+  "brainId": "fly-v1",
+  "brainVersion": 3,
+  "circuitChecksum": "1a9c734397506da4dde2b66a237882c83c69e4b7a5f50b241b894a1ff784c404",
+  "modelSeed": 1,
+  "modelVersion": 1,
+  "connectivity": "anatomical",
+  "readoutNeurons": 887,
+  "outputs": 683,
+  "tutorVersion": 2,
+  "criticVersion": 6,
+  "learningVersion": 1,
+  "experience": {
+    "schoolLessons": 1500,
+    "practicePhrases": 57000,
+    "listeningPhrases": 0,
+    "bananasFromListeners": 0
+  },
+  "history": [
+    {
+      "stage": "school",
+      "phrases": 150,
+      "bananas": 8.1
+    },
+    {
+      "stage": "school",
+      "phrases": 300,
+      "bananas": 8.8
+    },
+    {
+      "stage": "school",
+      "phrases": 450,
+      "bananas": 8.3
+    },
+    {
+      "stage": "school",
+      "phrases": 600,
+      "bananas": 8.9
+    },
+    {
+      "stage": "school",
+      "phrases": 750,
+      "bananas": 8.8
+    },
+    {
+      "stage": "school",
+      "phrases": 900,
+      "bananas": 9
+    },
+    {
+      "stage": "school",
+      "phrases": 1050,
+      "bananas": 9
+    },
+    {
+      "stage": "school",
+      "phrases": 1200,
+      "bananas": 8.9
+    },
+    {
+      "stage": "school",
+      "phrases": 1350,
+      "bananas": 8.9
+    },
+    {
+      "stage": "school",
+      "phrases": 1500,
+      "bananas": 8.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 600,
+      "bananas": 8.8
+    },
+    {
+      "stage": "practice",
+      "phrases": 1200,
+      "bananas": 8.9
+    },
+    {
+      "stage": "practice",
+      "phrases": 1800,
+      "bananas": 9
+    },
+    {
+      "stage": "practice",
+      "phrases": 2400,
+      "bananas": 9
+    },
+    {
+      "stage": "practice",
+      "phrases": 3000,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 3600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 4200,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 4800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 5400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 6000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 6600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 7200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 7800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 8400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 9000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 9600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 10200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 10800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 11400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 12000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 12600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 13200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 13800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 14400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 15000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 15600,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 16200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 16800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 17400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 18000,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 18600,
+      "bananas": 9
+    },
+    {
+      "stage": "practice",
+      "phrases": 19200,
+      "bananas": 9
+    },
+    {
+      "stage": "practice",
+      "phrases": 19800,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 20400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 21000,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 21600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 22200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 22800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 23400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 24000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 24600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 25200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 25800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 26400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 27000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 27600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 28200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 28800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 29400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 30000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 30600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 31200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 31800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 32400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 33000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 33600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 34200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 34800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 35400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 36000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 36600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 37200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 37800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 38400,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 39000,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 39600,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 40200,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 40800,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 41400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 42000,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 42600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 43200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 43800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 44400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 45000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 45600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 46200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 46800,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 47400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 48000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 48600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 49200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 49800,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 50400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 51000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 52500,
+      "bananas": 9.38
+    },
+    {
+      "stage": "practice",
+      "phrases": 54000,
+      "bananas": 9.46
+    },
+    {
+      "stage": "practice",
+      "phrases": 55500,
+      "bananas": 9.48
+    },
+    {
+      "stage": "practice",
+      "phrases": 57000,
+      "bananas": 9.55
+    }
+  ],
+  "trainedAt": "2026-10-11T15:45:42.383Z",
+  "readout": {
+    "encoding": "int8-row-scaled-v1",
+    "file": "readout.bin.gzip",
+    "bytes": 531128,
+    "sha256": "3bbfc1384df47c83ecdeae7cd76d9d0375f2690f8ca313ceb90f3d2d23e5312f"
+  }
+}

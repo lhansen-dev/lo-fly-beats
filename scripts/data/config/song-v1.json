@@ -1,0 +1,44 @@
+{
+  "circuitId": "song-v1",
+  "title": "The fly's ear-to-song circuit",
+  "description": "Auditory Johnston's organ neurons, the wing and haltere sensory neurons that feed the song circuit, their strongest downstream auditory partners, male courtship-song neurons and wing motor neurons, and the strongest premotor inputs to that song circuit, with predicted neurotransmitters.",
+  "neurotransmitters": {
+    "name": "body-neurotransmitters-male-cns-v1.0.feather",
+    "url": "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-neurotransmitters-male-cns-v1.0.feather",
+    "bytes": 43282834,
+    "md5Base64": "PYQrEv5cSe763lKNfdJKHw=="
+  },
+  "selection": {
+    "earTypePattern": "^JO-[AB]",
+    "songTypePattern": "^(pIP10|vPR6|vPR9|dPR1|TN1|vMS|dMS|b1 MN|b2 MN|b3 MN|i1 MN|i2 MN|hg[1-4] MN|ps1 MN|tp[12] MN|pC1|vpoEN|vpoIN|aSP|pMP2|DNp13|CL062)",
+    "auditoryHop1": 300,
+    "auditoryHop2": 300,
+    "premotorHop1": 300,
+    "premotorHop2": 250,
+    "motorSuperclasses": ["vnc_motor", "cb_motor"],
+    "wingSenseSuperclasses": ["vnc_sensory", "sensory_ascending"],
+    "wingSenseCount": 150
+  },
+  "minSynapseCount": 3,
+  "limits": { "minNeurons": 1000, "maxNeurons": 2500, "maxConnections": 150000 },
+  "transmitterSigns": {
+    "acetylcholine": 1,
+    "gaba": -1,
+    "glutamate": -1,
+    "histamine": -1,
+    "dopamine": 0.5,
+    "serotonin": 0.5,
+    "octopamine": 0.5,
+    "tyramine": 0.5
+  },
+  "rules": [
+    "Ear: every neuron typed JO-A or JO-B (sound-sensitive Johnston's organ subgroups).",
+    "Wing sense: the 150 nerve-cord sensory neurons sending the most synapses onto the song set (wing campaniform sensilla and haltere afferents).",
+    "Auditory: the 300 neurons receiving the most synapses from the ear, then the 300 receiving the most from ear plus that first hop.",
+    "Song: male courtship-song and wing-song types (pC1, pIP10, vPR6, vPR9, dPR1, TN1, vMS, dMS, aSP, vpoEN/IN, pMP2, DNp13, CL062) and the direct wing motor neurons.",
+    "Premotor: the 300 neurons sending the most synapses to the song set, then the 250 sending the most to song plus that hop.",
+    "Connections keep the whole-CNS threshold of at least 3 synapses among selected neurons, with original counts.",
+    "Transmitters use upstream consensus_nt predictions; the model maps acetylcholine to excitation, GABA, glutamate, and histamine to inhibition, and monoamines to weak excitation. Unknown transmitters are treated as excitatory."
+  ],
+  "outputDir": "public/data/circuits/song-v1"
+}

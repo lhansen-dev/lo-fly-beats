@@ -59,7 +59,7 @@ function assertComposition(score: PhraseScore): void {
   }
   const bass = score.events.filter(event => event.layer === 'bass').sort((a, b) => a.step - b.step)
   for (let i = 0; i < bass.length - 1; i++) expect(bass[i]!.step + bass[i]!.durationSteps).toBeLessThanOrEqual(bass[i + 1]!.step)
-  const layerOrder = { drums: 0, bass: 1, keys: 2 } as const
+  const layerOrder = { drums: 0, bass: 1, keys: 2, lead: 3 } as const
   const drumOrder = { kick: 0, snare: 1, hat: 2 } as const
   for (let i = 1; i < score.events.length; i++) {
     const a = score.events[i - 1]!

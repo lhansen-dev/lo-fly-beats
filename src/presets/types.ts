@@ -18,8 +18,6 @@ export interface SoundParams {
   masterCutoffHz: number
   reverbSend: number
   saturationWet: number
-  rainLevel: number
-  crackleLevel: number
 }
 
 export interface VisualParams {

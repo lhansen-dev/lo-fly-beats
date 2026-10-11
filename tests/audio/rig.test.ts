@@ -21,7 +21,6 @@ async function renderFirstBar(presetId: PresetId, mix: MixSettings = DEFAULT_MIX
   const context = new Tone.OfflineContext(2, 16 * stepSeconds + 1, 44100)
   const rig = createRig(context, preset.sound, mix)
   try {
-    rig.startAmbience(0)
     for (const event of events) {
       rig.trigger(event, eventTimeSeconds(event, recipe.tempoBpm, preset.swing), event.durationSteps * stepSeconds)
     }
@@ -57,15 +56,15 @@ describe('instrument rig browser audio rendering', () => {
     expect(result.rms).toBeGreaterThan(0.01)
   })
 
-  it('is silent when every layer is muted and ambience is off', async () => {
+  it('is silent when every layer is muted', async () => {
     const mix: MixSettings = {
       masterVolume: 0.8,
       layers: {
         drums: { level: 0.8, muted: true },
         bass: { level: 0.7, muted: true },
         keys: { level: 0.6, muted: true },
+        lead: { level: 0.55, muted: true },
       },
-      ambienceOn: false,
     }
     const result = await renderFirstBar('rainy-windowsill', mix)
     expect(result.peak).toBeLessThan(0.001)

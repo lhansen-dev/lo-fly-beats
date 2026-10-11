@@ -100,6 +100,42 @@ describe('controller export', () => {
     return score
   }
 
+  it('radio queues a new song when the last phrase of a fly song begins, unless switched off', async () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const engine = new FakeEngine()
+    const controller = new SessionController({ store, loadGraph: async () => graph, createEngine: async () => engine, saveSettings: () => undefined, randomSeed: () => 77 })
+    await controller.loadCircuit()
+    await controller.startListening()
+    store.dispatch({ type: 'engineStatusChanged', status: 'playing' })
+    const phrase = (phraseIndex: number) => ({ scoreVersion: 1, phraseIndex, presetId: 'rainy-windowsill', sessionSeed: 1, events: [], brain: {} }) as unknown as PhraseScore
+    const requests = () => engine.calls.filter(call => call.method === 'request')
+    engine.emit('phraseStarted', { score: phrase(6), recipe: store.getState().active })
+    expect(requests()).toHaveLength(0)
+    engine.emit('phraseStarted', { score: phrase(7), recipe: store.getState().active })
+    expect(requests()).toEqual([{ method: 'request', arg: { kind: 'newBeat', sessionSeed: 77 } }])
+    store.dispatch({ type: 'changesApplied', recipe: { ...store.getState().active, sessionSeed: 77 } })
+    controller.setRadio(false)
+    engine.emit('phraseStarted', { score: phrase(7), recipe: store.getState().active })
+    expect(requests()).toHaveLength(1)
+  })
+
+  it('saves the recent phrases of one session as a tape and restarts the tape on a new session', async () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const engine = new FakeEngine()
+    const renderTrack = vi.fn(async () => wav)
+    const controller = new SessionController({ store, loadGraph: async () => graph, createEngine: async () => engine, saveSettings: () => undefined, renderTrack, createObjectUrl: () => 'blob:tape', revokeObjectUrl: () => undefined })
+    await controller.loadCircuit()
+    await controller.startListening()
+    const phrase = (phraseIndex: number, sessionSeed = 1) => ({ scoreVersion: 1, phraseIndex, presetId: 'rainy-windowsill', sessionSeed, events: [] }) as unknown as PhraseScore
+    for (let index = 0; index < 8; index++) engine.emit('phraseStarted', { score: phrase(index), recipe: store.getState().active })
+    expect(store.getState().tapePhrases).toBe(6)
+    await controller.exportTape()
+    expect((renderTrack.mock.calls[0] as unknown[])[0]).toHaveLength(6)
+    expect(store.getState().exportState).toMatchObject({ status: 'ready', fileName: 'lofly-tape-rainy-windowsill-seed-00000001.wav' })
+    engine.emit('phraseStarted', { score: phrase(0, 2), recipe: store.getState().active })
+    expect(store.getState().tapePhrases).toBe(1)
+  })
+
   it('renders the active phrase snapshot, reports progress, and holds the WAV URL', async () => {
     const subject = exportSetup()
     const score = await withScore(subject)
@@ -189,9 +225,9 @@ describe('controller mix settings', () => {
     const initial = store.getState().mix
     controller.setMix({ layers: { drums: { muted: true } } })
     expect(store.getState().mix.layers.drums).toEqual({ level: initial.layers.drums.level, muted: true })
-    controller.setMix({ layers: { drums: { level: 0.25 }, bass: { level: 0, muted: false } }, masterVolume: 0, ambienceOn: false })
+    controller.setMix({ layers: { drums: { level: 0.25 }, bass: { level: 0, muted: false } }, masterVolume: 0 })
     const merged = store.getState().mix
-    expect(merged).toEqual({ masterVolume: 0, ambienceOn: false, layers: { drums: { level: 0.25, muted: true }, bass: { level: 0, muted: false }, keys: initial.layers.keys } })
+    expect(merged).toEqual({ masterVolume: 0, layers: { drums: { level: 0.25, muted: true }, bass: { level: 0, muted: false }, keys: initial.layers.keys, lead: initial.layers.lead } })
     expect(initial.layers.drums).toEqual({ level: 0.8, muted: false })
     expect(store.getState().pending).toEqual({})
     expect(store.getState().active).toEqual(createInitialState(null).active)

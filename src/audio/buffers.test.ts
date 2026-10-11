@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { generateAudioBuffers, generateHat, generateKick, generateSnare } from './buffers'
 
-const expectedPeaks = { kick: 0.9, snare: 0.62, hat: 0.4, rain: 0.5, crackle: 0.5, impulse: 0.7 }
+const expectedPeaks = { kick: 0.9, snare: 0.62, hat: 0.4, impulse: 0.7 }
 
 function peakAndRms(channels: Float32Array[]): { peak: number; rms: number } {
   let peak = 0
@@ -19,7 +19,7 @@ describe('seeded audio buffers', () => {
   it('has deterministic samples, documented lengths, peaks, finite samples, and useful RMS at 44.1 kHz', () => {
     const first = generateAudioBuffers(44100)
     const second = generateAudioBuffers(44100)
-    const expectedLengths = { kick: [22050], snare: [9702], hat: [4410], rain: [341775, 341775], crackle: [253575, 253575], impulse: [97020, 97020] }
+    const expectedLengths = { kick: [22050], snare: [9702], hat: [4410], impulse: [97020, 97020] }
 
     for (const name of Object.keys(first) as (keyof typeof first)[]) {
       const buffer = first[name]
@@ -38,10 +38,6 @@ describe('seeded audio buffers', () => {
     }
   })
 
-  it('crossfades both rain loop seams smoothly', () => {
-    const rain = generateAudioBuffers(44100).rain
-    for (const channel of rain.channels) expect(Math.abs(channel.at(-1)! - channel[0]!)).toBeLessThan(0.1)
-  })
 
   it.each([44100, 48000])('keeps drum edges silent and the snare damped at %i Hz', sampleRate => {
     for (const render of [generateKick, generateSnare, generateHat]) {
@@ -63,12 +59,12 @@ describe('seeded audio buffers', () => {
     expect(differenceEnergy / energy).toBeLessThan(0.1)
   })
 
-  it('renders all six buffers at 48 kHz within the generation budget', () => {
+  it('renders all four buffers at 48 kHz within the generation budget', () => {
     const start = performance.now()
     const buffers = generateAudioBuffers(48000)
     const elapsedMs = performance.now() - start
-    console.info(`Generated all six 48 kHz audio buffers in ${elapsedMs.toFixed(1)} ms`)
-    expect(Object.keys(buffers)).toHaveLength(6)
+    console.info(`Generated all four 48 kHz audio buffers in ${elapsedMs.toFixed(1)} ms`)
+    expect(Object.keys(buffers)).toHaveLength(4)
     expect(elapsedMs).toBeLessThan(2000)
   })
 })

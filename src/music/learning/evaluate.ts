@@ -112,7 +112,7 @@ export function countConstraintViolations(score: PhraseScore, cells: readonly Ba
   }
   for (let step = 0; step < 128; step++) check(score.events.filter(note => note.layer === 'keys'
     && note.step <= step && step < note.step + note.durationSteps).length <= 8)
-  const layerOrder = { drums: 0, bass: 1, keys: 2 }
+  const layerOrder = { drums: 0, bass: 1, keys: 2, lead: 3 }
   const drumOrder = { kick: 0, snare: 1, hat: 2 }
   for (let index = 1; index < score.events.length; index++) {
     const a = score.events[index - 1]!

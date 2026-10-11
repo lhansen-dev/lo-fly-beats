@@ -28,10 +28,10 @@ const score: PhraseScore = {
   trace: [{ beat: 0, kind: 'start', neuronId: '1', bar: 0, beatInBar: 0, neuronType: 'MBON01', uses: ['chord Dm9'] }], fill: false,
 }
 const preset: PresetDefinition = structuredClone(PRESETS['rainy-windowsill'])
-const mix: MixSettings = { masterVolume: 0.8, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false } }, ambienceOn: true }
+const mix: MixSettings = { masterVolume: 0.8, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false }, lead: { level: 0.55, muted: false } } }
 
 function setupRig() {
-  const rig = { trigger: vi.fn(), startAmbience: vi.fn(), dispose: vi.fn() }
+  const rig = { trigger: vi.fn(), dispose: vi.fn() }
   mocks.rigs.push(rig)
   mocks.createRig.mockReturnValueOnce(rig)
   return rig
@@ -80,7 +80,6 @@ describe('export snapshot', () => {
     p.sound.reverbSend = 0.99
     p.chordRing[0].symbol = 'X'
     m.layers.drums.level = 0.01
-    m.ambienceOn = false
 
     expect(s.events).toHaveLength(2)
     expect(s.events[0].velocity).toBe(0.01)
@@ -90,7 +89,6 @@ describe('export snapshot', () => {
     expect(p.sound.reverbSend).toBe(0.99)
     expect(p.chordRing[0].symbol).toBe('X')
     expect(m.layers.drums.level).toBe(0.01)
-    expect(m.ambienceOn).toBe(false)
     expect(snapshot).toEqual(expected)
     expect(() => { (snapshot.recipe as { tempoBpm: number }).tempoBpm = 1 }).toThrow()
   })
@@ -132,12 +130,11 @@ describe('export fade and repeatability', () => {
 describe('offline phrase rendering', () => {
   it.each([60, 72, 100])('creates the exact offline context for %i BPM', async bpm => {
     const rig = setupRig()
-    const snapshot = createExportSnapshot({ ...score, events: [] }, { ...recipe, tempoBpm: bpm }, preset, { ...mix, ambienceOn: false })
+    const snapshot = createExportSnapshot({ ...score, events: [] }, { ...recipe, tempoBpm: bpm }, preset, mix)
     const { renderPhrase } = await import('./export')
     const result = await renderPhrase(snapshot)
     expect(mocks.contexts[0].args).toEqual([2, 128 * 60 / bpm / 4 + 2, 44100])
     expect(mocks.createRig).toHaveBeenCalledWith(mocks.contexts[0], preset.sound, snapshot.mix)
-    expect(rig.startAmbience).not.toHaveBeenCalled()
     expect(result.channels[0]).not.toBe(mocks.contexts[0].buffer.getChannelData(0))
     expect(rig.dispose).toHaveBeenCalledOnce()
     expect(mocks.contexts[0].dispose).toHaveBeenCalledOnce()
@@ -151,24 +148,34 @@ describe('offline phrase rendering', () => {
     ]
     const snapshot = createExportSnapshot({ ...score, phraseIndex: 9, events }, recipe, preset, mix)
     const frames = Math.round((128 * 60 / 72 / 4 + 2) * 44100)
-    mocks.samples = [new Float32Array(frames).fill(0.2), new Float32Array(frames).fill(1.2)]
+    mocks.samples = [new Float32Array(frames).fill(0.2), new Float32Array(frames).fill(0.7)]
     const { renderPhrase } = await import('./export')
     const data = await renderPhrase(snapshot)
-    expect(rig.startAmbience).toHaveBeenCalledWith(0)
     expect(rig.trigger.mock.calls).toEqual([[events[0], (1 + 0.12 + 0.1) * 60 / 72 / 4, 3 * 60 / 72 / 4], [events[1], (1 + 0.12 + 0.05) * 60 / 72 / 4, 2 * 60 / 72 / 4]])
     expect(data.channels[0]).toHaveLength(frames)
     expect(data.channels[1]).toHaveLength(frames)
     const boundary = frames - Math.round(0.5 * 44100)
     expect(data.channels[0][0]).toBeCloseTo(0.2, 6)
     expect(data.channels[0][boundary - 1]).toBeCloseTo(0.2, 6)
-    expect(data.channels[1][0]).toBeCloseTo(1.2, 6)
-    expect(data.channels[1][boundary - 1]).toBeCloseTo(1.2, 6)
+    expect(data.channels[1][0]).toBeCloseTo(0.7, 6)
+    expect(data.channels[1][boundary - 1]).toBeCloseTo(0.7, 6)
     expect(data.channels[0].at(-1)).toBe(0)
     expect(data.channels[1].at(-1)).toBe(0)
     expect(data.channels[0]).not.toBe(mocks.samples[0])
     data.channels[0][0] = 99
     expect(mocks.contexts[0].buffer.getChannelData(0)[0]).toBeCloseTo(0.2)
     expect(rig.dispose).toHaveBeenCalledOnce()
+  })
+
+  it('scales a render that would clip so its peak sits at the export ceiling', async () => {
+    const { guardPeaks, EXPORT_PEAK_CEILING } = await import('./export')
+    const loud = [Float32Array.from([0.5, -1.2, 0.3]), Float32Array.from([0.1, 0.2, 0.9])]
+    guardPeaks(loud)
+    expect(Math.max(...loud.flatMap(channel => [...channel].map(Math.abs)))).toBeCloseTo(EXPORT_PEAK_CEILING, 6)
+    expect(loud[0]![0]! / loud[1]![2]!).toBeCloseTo(0.5 / 0.9, 6)
+    const quiet = [Float32Array.from([0.5])]
+    guardPeaks(quiet)
+    expect(quiet[0]![0]).toBe(0.5)
   })
 
   it('cleans up if rig creation fails', async () => {

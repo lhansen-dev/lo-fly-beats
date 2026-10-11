@@ -32,7 +32,7 @@ export type EngineEventMap = {
 }
 export interface EngineLike {
   on<K extends keyof EngineEventMap>(name: K, handler: (payload: EngineEventMap[K]) => void): () => void
-  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void>
+  start(graph: CircuitGraph | null, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void>
   setMix(mix: MixSettings): void
   play(): void | Promise<void>
   debugInterrupt(): void
@@ -80,7 +80,7 @@ class PlaybackEngine implements EngineLike {
     this.emit('status', status)
   }
 
-  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void> {
+  start(graph: CircuitGraph | null, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void> {
     if (this.status === 'exporting' || this.status === 'playing' || this.status === 'paused') return Promise.resolve()
     if (this.startPromise) return this.startPromise
     this.mix = mix
@@ -98,10 +98,13 @@ class PlaybackEngine implements EngineLike {
       const preset = getPreset(recipe.presetId)
       this.rig = createRig(context, preset.sound, this.mix)
       this.rig.setMix(this.mix, context.currentTime)
-      this.sequencer = new PlaybackSequencer((r, i) => composePhrase(graph, r, i), recipe, scoreProvider)
+      // The fly can start before the whole connectome arrives; the walk needs it only as a fallback.
+      this.sequencer = new PlaybackSequencer((r, i) => {
+        if (!graph) throw new Error('The connectome is still loading')
+        return composePhrase(graph, r, i)
+      }, recipe, scoreProvider)
       context.transport.bpm.value = recipe.tempoBpm
       context.transport.swing = 0
-      if (this.mix.ambienceOn) this.rig.startAmbience(context.currentTime)
       context.transport.scheduleRepeat(time => this.onStep(time), '16n', 0)
       this.repeatEvents = 1
       context.transport.start()
@@ -141,21 +144,14 @@ class PlaybackEngine implements EngineLike {
   }
 
   setMix(mix: MixSettings): void {
-    const previousAmbienceOn = this.mix.ambienceOn
     this.mix = mix
     if (!this.context || !this.rig) return
-    const now = this.context.currentTime
-    this.rig.setMix(mix, now)
-    if (this.status === 'playing' && previousAmbienceOn !== mix.ambienceOn) {
-      if (mix.ambienceOn) this.rig.startAmbience(now)
-      else this.rig.stopAmbience(now)
-    }
+    this.rig.setMix(mix, this.context.currentTime)
   }
 
   pause(): void {
     if (this.status !== 'playing' || !this.context || !this.rig) return
     const now = this.context.currentTime
-    this.rig.stopAmbience(now)
     this.rig.rampMasterGain(0, 0.08, now)
     this.context.transport.pause()
     this.rig.releaseAll(now + 0.09)
@@ -169,7 +165,6 @@ class PlaybackEngine implements EngineLike {
     if (!context || !rig || this.status !== 'playing' || context.state === 'running') return
     const now = context.currentTime
     context.transport.pause(now)
-    rig.stopAmbience(now)
     rig.releaseAll(now)
     this.playbackGeneration += 1
     this.setStatus('interrupted')
@@ -178,7 +173,6 @@ class PlaybackEngine implements EngineLike {
   private resumeTransport(): void {
     const now = this.context!.currentTime
     this.rig!.setMix(this.mix, now)
-    if (this.mix.ambienceOn) this.rig!.startAmbience(now)
     this.context!.transport.start()
     this.setStatus('playing')
   }

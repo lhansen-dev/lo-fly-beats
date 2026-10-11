@@ -18,6 +18,7 @@ export default function Credits() {
       <p data-testid="credits-attribution">{manifest.license.attribution}</p>
       <ul>{manifest.extraction.rules.map((rule, index) => <li key={index}>{rule}</li>)}</ul>
     </>}
-    <p>The musical mapping (version {MAPPING_VERSION}) is authored and does not simulate neural activity.</p>
+    <p>The fly's composer uses a 1,771-neuron ear-to-song subcircuit of the same release, with transmitter predictions from MaleCNS v1.0 body neurotransmitters (consensus_nt), CC BY 4.0. Its dynamics, tutor, and critic are this project's modeling choices.</p>
+    <p>The classic connectome walk's musical mapping (version {MAPPING_VERSION}) is authored and does not simulate neural activity.</p>
   </section>
 }

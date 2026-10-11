@@ -7,17 +7,24 @@ import { DEFAULT_PRESET_ID, getPreset } from '../presets/presets'
 import type { PresetId } from '../presets/types'
 import { DEFAULT_SESSION_SEED } from '../music/versions'
 import type { LearningStatus } from './learningClient'
+import type { BrainStatus } from './brainClient'
 
 export interface AppState {
   circuit: { status: 'loading' | 'ready' | 'error'; manifest: CircuitManifest | null; error: { code: CircuitErrorCode | 'unknown'; message: string } | null }
   engineStatus: EngineStatus
   audioNotice: string | null
   learning: LearningStatus | null
+  /** The fly's brain composer; null when the connectome walk composes. */
+  brain: BrainStatus | null
   active: SessionRecipe
   pending: Partial<Pick<SessionRecipe, 'tempoBpm' | 'variation' | 'sessionSeed' | 'presetId'>>
   position: { phraseIndex: number; bar: number; beat: number }
   mix: MixSettings
   activeScore: PhraseScore | null
+  /** How many recent phrases a saved tape would contain. */
+  tapePhrases: number
+  /** Radio: the fly finishes each song after a few phrases and starts a new one. */
+  radio: boolean
   exportState: { status: 'idle' | 'preparing' | 'rendering' | 'encoding' | 'ready' | 'error'; fileName: string | null; url: string | null; message: string | null }
   ui: { animationEnabled: boolean | null; storageAvailable: boolean }
 }
@@ -40,6 +47,7 @@ export type AppAction =
   | { type: 'engineStatusChanged'; status: EngineStatus }
   | { type: 'audioNoticeChanged'; notice: string | null }
   | { type: 'learningStatusChanged'; learning: LearningStatus }
+  | { type: 'brainStatusChanged'; brain: BrainStatus | null }
   | { type: 'tempoRequested'; tempoBpm: number; immediate: boolean }
   | { type: 'variationRequested'; variation: number; immediate: boolean }
   | { type: 'newBeatRequested'; sessionSeed: number; immediate: boolean }
@@ -51,6 +59,8 @@ export type AppAction =
   | { type: 'exportStateChanged'; exportState: Partial<AppState['exportState']> }
   | { type: 'animationToggled'; enabled: boolean }
   | { type: 'storageUnavailable' }
+  | { type: 'tapeChanged'; phrases: number }
+  | { type: 'radioToggled'; enabled: boolean }
 
 export function createInitialState(restored: RestoredSettings | null): AppState {
   const presetId = restored?.presetId ?? DEFAULT_PRESET_ID
@@ -59,6 +69,7 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
     engineStatus: 'idle',
     audioNotice: null,
     learning: null,
+    brain: null,
     active: {
       recipeVersion: 1,
       presetId,
@@ -70,6 +81,8 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
     position: { phraseIndex: 0, bar: 0, beat: 0 },
     mix: restored?.mix ?? DEFAULT_MIX,
     activeScore: null,
+    tapePhrases: 0,
+    radio: true,
     exportState: { status: 'idle', fileName: null, url: null, message: null },
     ui: { animationEnabled: restored?.animationEnabled ?? null, storageAvailable: true },
   }
@@ -95,6 +108,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, audioNotice: action.notice }
     case 'learningStatusChanged':
       return { ...state, learning: action.learning }
+    case 'brainStatusChanged':
+      return { ...state, brain: action.brain }
     case 'tempoRequested':
       return action.immediate
         ? { ...state, active: { ...state.active, tempoBpm: action.tempoBpm }, pending: withoutPending(state.pending, 'tempoBpm') }
@@ -129,6 +144,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, exportState: { ...state.exportState, ...action.exportState } }
     case 'animationToggled':
       return { ...state, ui: { ...state.ui, animationEnabled: action.enabled } }
+    case 'radioToggled':
+      return { ...state, radio: action.enabled }
+    case 'tapeChanged':
+      return { ...state, tapePhrases: action.phrases }
     case 'storageUnavailable':
       return { ...state, ui: { ...state.ui, storageAvailable: false } }
     default:

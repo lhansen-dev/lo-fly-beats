@@ -2,9 +2,13 @@
 
 ## What it is
 
-A lo-fi beat player starring a fruit fly studying beside an overripe banana. A seeded walk through the complete traced MaleCNS connectome, covering the brain and ventral nerve cord, selects bass and chord motifs; authored musical rules keep the arrangement coherent. Three presets, a mixer, gentle animation, and eight-bar WAV export run entirely in the browser, without an account.
+A lo-fi beat player starring a fruit fly studying beside an overripe banana, and **the fly composes the beats himself**. A simulated network built from the male fly's real ear-to-song wiring (MaleCNS: Johnston's organ, wing and haltere sense, auditory relays, courtship-song neurons, and wing motor neurons) chooses every kick, snare, hat, bass note, chord, keys strike, melody move, and loop. He learned from an original lofi tutor, practiced alone for bananas from his own critic, and keeps practicing on what he plays for you. Give him a banana when you like a phrase.
 
 **Beats to relax / repeatedly fly into the same window to**
+
+- Hear him first: [demo tapes](docs/demos/), with the score of every phrase he played.
+- How he works and what the measurements do and do not show: [experiment 02](docs/learning/experiment-02-fly-brain.md).
+- The classic seeded walk through the whole connectome is still available at `/?composer=walk`.
 
 ## Quick start
 
@@ -17,7 +21,25 @@ make run
 
 Open the URL Vite prints and press **Start listening**.
 
-## Learning prototype
+## The fly's brain
+
+| Path | Purpose |
+| --- | --- |
+| `public/data/circuits/song-v1/` | The 1,771-neuron ear-to-song circuit with predicted transmitters; regenerate with `uv run --project scripts/data python scripts/data/extract_song_circuit.py` after placing `body-neurotransmitters-male-cns-v1.0.feather` in `scripts/data/.cache/` |
+| `public/data/brains/fly-v1/` | The trained fly: int8 readout (about 530 KB) and a checkpoint with his training history |
+| `src/brain/` | Circuit loading, rate dynamics, senses, decisions, tutor, critic, learning, the persistent `FlyMind`, and its worker |
+| `scripts/brain/train.ts` | School + practice + evaluation; `--publish` writes the shipped fly, `--connectivity source-permuted|zero` trains controls |
+| `scripts/brain/evaluate.ts`, `judge.ts`, `compare-wiring.py`, `audio-qa.py`, `publish.ts` | Measure a fly with the critic and with an independent style judge, compare wirings, check rendered audio, and ship a measured readout |
+| `scripts/brain/render-demos.mjs` | Renders demo tapes through the app's audio rig in headless Chromium (needs the dev server) |
+
+```sh
+node --import tsx scripts/brain/train.ts --school 1500 --practice 3000 --publish   # ~20 minutes
+npm run dev -- --port 5173 & node scripts/brain/render-demos.mjs artifacts/brain/demos 5
+```
+
+In the app, the fly runs in a worker one phrase ahead of playback. Only phrases that actually play advance his neural state and get practiced; preparation never changes him. New beat or a preset change wakes the same fly in a new mood (seeded spontaneous activity), keeping everything he learned. Variation sets how adventurous he is (sampling temperature 0.6–1.0). In radio mode (on by default) he finishes each song after eight phrases, an intro, grooves, and a breakdown, and starts a new one in a new mood. **Save tape** exports the last six phrases he played. His browser-local practice is saved in IndexedDB; **Forget his practice here** returns to the shipped fly.
+
+## Learning prototype (experiment 01)
 
 Run `npm run dev` and open `/?learning=1&debug=1` to use the development-only MBON bass experiment. **Start listening** plays prepared learning scores through the normal transport; **Teach motif** trains a candidate in one dedicated worker and adopts it at a phrase boundary after a replacement score is ready. Teaching while paused preserves the active phrase until playback reaches that boundary. The initial screen can accept teaching before playback begins.
 
@@ -52,7 +74,7 @@ Run `make` to list the common targets. The main ones are `make setup`, `make run
 
 ## How it works
 
-The app loads all 165,122 traced MaleCNS neurons and 10,510,984 directed connections with original IDs and synapse counts. A versioned seeded generator walks the complete retained graph, weighting choices by synapse count and variation. Each phrase can start at any of the 161,680 neurons with outgoing connections, so visual, central-brain, sensory, motor, and nerve-cord circuits can all shape the music. Neuron types select chords and bass motifs within authored harmony and rhythm rules. Drums, keys, timing, and humanization turn the trace into an immutable eight-bar score. Tone.js schedules that score against the audio clock and renders the same score for export. Drum hits, ambience, and the convolution impulse use separate seeded streams.
+The app loads all 165,122 traced MaleCNS neurons and 10,510,984 directed connections with original IDs and synapse counts. A versioned seeded generator walks the complete retained graph, weighting choices by synapse count and variation. Each phrase can start at any of the 161,680 neurons with outgoing connections, so visual, central-brain, sensory, motor, and nerve-cord circuits can all shape the music. Neuron types select chords and bass motifs within authored harmony and rhythm rules. Drums, keys, timing, and humanization turn the trace into an immutable eight-bar score. Tone.js schedules that score against the audio clock and renders the same score for export. Drum hits and the convolution impulse use separate seeded streams.
 
 The musical mapping is authored and does not simulate neural activity. Scene animation and jokes cannot change the score. See the [plan](docs/02-PLAN.md), [implementation contracts and decisions](docs/03-IMPLEMENT.md), and in-app **How the beat is made** panel.
 

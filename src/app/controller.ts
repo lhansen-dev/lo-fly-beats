@@ -1,5 +1,5 @@
 import type { EngineDiagnostics, EngineEventMap, EngineLike } from '../audio/engine'
-import { createExportSnapshot, renderPhrase } from '../audio/export'
+import { createExportSnapshot, renderPhrase, renderTrack } from '../audio/export'
 import type { ExportSnapshot } from '../audio/export'
 import { encodeWav16 } from '../audio/wav'
 import type { WavData } from '../audio/wav'
@@ -9,25 +9,31 @@ import type { CircuitGraph } from '../connectome/types'
 import { getPreset } from '../presets/presets'
 import { MAPPING_VERSION } from '../music/versions'
 import type { PresetId } from '../presets/types'
+import type { PhraseScore } from '../music/types'
 import { randomSessionSeed } from './seed'
 import type { AppAction, AppState, RestoredSettings } from './state'
 import type { MixSettings } from '../audio/rig'
 import type { LearningClient, LearningDiagnostics } from './learningClient'
+import type { BrainClient, BrainDiagnostics } from './brainClient'
+import type { BrainAtlas } from '../brain/protocol'
+
+export const TAPE_PHRASES = 6
+export const SONG_PHRASES = 8
 
 export const AUDIO_INTERRUPTED_NOTICE = 'Audio was interrupted by the browser. Press Play to resume.'
 
 export type MixPatch = {
   masterVolume?: number
-  ambienceOn?: boolean
   layers?: {
     drums?: Partial<MixSettings['layers']['drums']>
     bass?: Partial<MixSettings['layers']['bass']>
     keys?: Partial<MixSettings['layers']['keys']>
+    lead?: Partial<MixSettings['layers']['lead']>
   }
 }
 import type { Store } from './store'
 
-export type ControllerDiagnostics = EngineDiagnostics & { objectUrlsHeld: number; learning?: LearningDiagnostics }
+export type ControllerDiagnostics = EngineDiagnostics & { objectUrlsHeld: number; learning?: LearningDiagnostics; brain?: BrainDiagnostics }
 
 export interface SessionControllerOptions {
   store: Store<AppState, AppAction>
@@ -36,9 +42,12 @@ export interface SessionControllerOptions {
   saveSettings: (settings: RestoredSettings) => void
   randomSeed?: () => number
   renderPhrase?: (snapshot: ExportSnapshot) => Promise<WavData>
+  renderTrack?: typeof renderTrack
   createObjectUrl?: (blob: Blob) => string
   revokeObjectUrl?: (url: string) => void
   createLearningClient?: (graph: CircuitGraph) => LearningClient
+  /** When present, the fly's own brain composes every phrase. */
+  createBrainClient?: () => BrainClient
 }
 
 export class SessionController {
@@ -48,11 +57,17 @@ export class SessionController {
   private readonly saveSettings: (settings: RestoredSettings) => void
   private readonly randomSeed: () => number
   private readonly renderPhrase: (snapshot: ExportSnapshot) => Promise<WavData>
+  private readonly renderTrack: typeof renderTrack
+  /** Phrases heard since the last preset or session change, for saving a tape. */
+  private tape: PhraseScore[] = []
   private readonly createObjectUrl: (blob: Blob) => string
   private readonly revokeObjectUrl: (url: string) => void
   private readonly createLearningClient?: (graph: CircuitGraph) => LearningClient
   private learning: LearningClient | null = null
   private learningInitialization: Promise<void> | null = null
+  private readonly createBrainClient?: () => BrainClient
+  private brain: BrainClient | null = null
+  private brainInitialization: Promise<void> | null = null
   private recipeChanges = 0
   private circuitGeneration = 0
   private disposed = false
@@ -72,13 +87,44 @@ export class SessionController {
     this.saveSettings = options.saveSettings
     this.randomSeed = options.randomSeed ?? randomSessionSeed
     this.renderPhrase = options.renderPhrase ?? renderPhrase
+    this.renderTrack = options.renderTrack ?? renderTrack
     this.createObjectUrl = options.createObjectUrl ?? (blob => URL.createObjectURL(blob))
     this.revokeObjectUrl = options.revokeObjectUrl ?? (url => URL.revokeObjectURL(url))
     this.createLearningClient = options.createLearningClient
+    this.createBrainClient = options.createBrainClient
+  }
+
+  /** The fly wakes while the connectome downloads; a failure leaves the connectome walk composing. */
+  private startBrain(): void {
+    if (!this.createBrainClient || this.brain || this.brainInitialization) return
+    this.brainInitialization = (async () => {
+      const changes = this.recipeChanges
+      let brain: BrainClient | null = null
+      try {
+        brain = this.createBrainClient!()
+        this.brain = brain
+        await brain.initialize(import.meta.env.BASE_URL, this.store.getState().active)
+        if (this.disposed) { brain.dispose(); return }
+        if (changes !== this.recipeChanges) brain.reset(this.store.getState().active)
+      } catch (error) {
+        if (this.disposed) return
+        brain?.dispose()
+        this.brain = null
+        this.store.dispatch({ type: 'brainStatusChanged', brain: {
+          status: 'error', message: `The fly brain could not wake up, so the connectome walk is composing. ${error instanceof Error ? error.message : String(error)}`,
+          experience: null, playing: null, bananaGiven: null,
+        } })
+      }
+    })()
+  }
+
+  private get provider(): BrainClient | LearningClient | null {
+    return this.brain ?? this.learning
   }
 
   async loadCircuit(): Promise<void> {
     const generation = ++this.circuitGeneration
+    this.startBrain()
     this.store.dispatch({ type: 'circuitLoading' })
     try {
       const graph = await this.loadGraph()
@@ -119,11 +165,12 @@ export class SessionController {
   }
 
   startListening(): Promise<void> {
-    if (!this.graph) return Promise.resolve()
+    if (!this.graph && !this.brain) return Promise.resolve()
     if (this.startPromise) return this.startPromise
     const operation = (async () => {
       const engine = await this.createEngine()
       await this.learningInitialization
+      await this.brainInitialization
       if (this.disposed) return
       this.engine = engine
       this.unsubscribers = [
@@ -137,7 +184,14 @@ export class SessionController {
         }),
         engine.on('phraseStarted', ({ score }) => {
           this.store.dispatch({ type: 'phraseStarted', score })
+          const last = this.tape.at(-1)
+          if (last && (last.presetId !== score.presetId || last.sessionSeed !== score.sessionSeed)) this.tape = []
+          this.tape = [...this.tape, score].slice(-TAPE_PHRASES)
+          this.store.dispatch({ type: 'tapeChanged', phrases: this.tape.length })
           for (const handler of Array.from(this.phraseStartedListeners)) handler({ phraseIndex: score.phraseIndex })
+          // Radio: after the last phrase of a song begins, queue a new song (a new mood) for the next boundary.
+          const state = this.store.getState()
+          if (state.radio && score.brain && score.phraseIndex >= SONG_PHRASES - 1 && state.pending.sessionSeed === undefined && state.engineStatus === 'playing') this.newBeat()
         }),
         engine.on('applied', ({ recipe }) => {
           this.store.dispatch({ type: 'changesApplied', recipe })
@@ -146,7 +200,8 @@ export class SessionController {
         engine.on('position', position => this.store.dispatch({ type: 'positionChanged', position })),
       ]
       const state = this.store.getState()
-      await engine.start(this.graph!, state.active, state.mix, this.learning ?? undefined)
+      if (!this.graph && !this.brain) return
+      await engine.start(this.graph, state.active, state.mix, this.provider ?? undefined)
     })()
     this.startPromise = operation
     void operation.finally(() => {
@@ -191,6 +246,7 @@ export class SessionController {
         drums: { ...current.layers.drums, ...partial.layers?.drums },
         bass: { ...current.layers.bass, ...partial.layers?.bass },
         keys: { ...current.layers.keys, ...partial.layers?.keys },
+        lead: { ...current.layers.lead, ...partial.layers?.lead },
       },
     }
     this.store.dispatch({ type: 'mixChanged', mix: merged })
@@ -211,7 +267,7 @@ export class SessionController {
     this.recipeChanges++
     this.store.dispatch({ type: 'variationRequested', variation, immediate: this.engine === null })
     if (this.engine) this.engine.request({ kind: 'variation', variation })
-    else this.learning?.update(this.store.getState().active, this.learning.initialPhraseIndex)
+    else this.provider?.update(this.store.getState().active, this.provider.initialPhraseIndex)
     this.save()
   }
 
@@ -245,10 +301,11 @@ export class SessionController {
 
   private resetListeningRecipe(): void {
     const state = this.store.getState()
-    const recipe = this.learning ? { ...state.active, ...state.pending } : state.active
-    if (this.learning) this.store.dispatch({ type: 'changesApplied', recipe })
+    const provider = this.provider
+    const recipe = provider ? { ...state.active, ...state.pending } : state.active
+    if (provider) this.store.dispatch({ type: 'changesApplied', recipe })
     if (this.engine) this.engine.reset(recipe)
-    else this.learning?.reset(recipe)
+    else provider?.reset(recipe)
   }
 
   async exportPhrase(): Promise<void> {
@@ -277,6 +334,33 @@ export class SessionController {
     }
   }
 
+  /** Save the last few phrases that played, back to back, as one WAV. */
+  async exportTape(): Promise<void> {
+    const engine = this.engine
+    const state = this.store.getState()
+    const scores = this.tape
+    if (!engine || scores.length === 0 || this.exporting) return
+    this.exporting = true
+    try {
+      for (const url of this.heldUrls) this.revokeObjectUrl(url)
+      this.heldUrls.clear()
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'preparing', fileName: null, url: null, message: null } })
+      engine.beginExport()
+      const recipe = { ...state.active, presetId: scores[0]!.presetId, sessionSeed: scores[0]!.sessionSeed }
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'rendering' } })
+      const data = await this.renderTrack(scores, recipe, getPreset(recipe.presetId), state.mix)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'encoding' } })
+      const url = this.createObjectUrl(new Blob([encodeWav16(data)], { type: 'audio/wav' }))
+      this.heldUrls.add(url)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'ready', fileName: `lofly-tape-${recipe.presetId}-seed-${seedHex(recipe.sessionSeed)}.wav`, url, message: null } })
+    } catch (error) {
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'error', message: error instanceof Error ? error.message : String(error), url: null, fileName: null } })
+    } finally {
+      engine.endExport()
+      this.exporting = false
+    }
+  }
+
   dismissExport(): void {
     if (this.exporting) return
     for (const url of this.heldUrls) this.revokeObjectUrl(url)
@@ -289,11 +373,21 @@ export class SessionController {
   }
 
   teachMotif(): void { this.learning?.teach() }
+
+  setRadio(enabled: boolean): void { this.store.dispatch({ type: 'radioToggled', enabled }) }
+
+  /** Reward what the fly is playing right now. */
+  giveBanana(): void { this.brain?.giveBanana() }
+  forgetBrainPractice(): Promise<void> { return this.brain?.forget() ?? Promise.resolve() }
+  getBrainAtlas(): BrainAtlas | null { return this.brain?.atlas ?? null }
+  getBrainFrames(phraseId: string): Int8Array | null { return this.brain?.framesFor(phraseId) ?? null }
+  getBrainExplanations(phraseId: string) { return this.brain?.explanationsFor(phraseId) ?? null }
   cancelTeaching(): void { this.learning?.cancelTeaching() }
 
   getDiagnostics(): ControllerDiagnostics | null {
     return this.engine ? { ...this.engine.getDiagnostics(), objectUrlsHeld: this.heldUrls.size,
       ...(this.learning ? { learning: this.learning.getDiagnostics() } : {}),
+      ...(this.brain ? { brain: this.brain.getDiagnostics() } : {}),
     } : null
   }
 
@@ -303,6 +397,7 @@ export class SessionController {
     for (const unsubscribe of this.unsubscribers) unsubscribe()
     this.unsubscribers = []
     this.learning?.dispose()
+    this.brain?.dispose()
   }
 
   private save(): void {
