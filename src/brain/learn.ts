@@ -1,7 +1,7 @@
 import type { Rng } from '../music/rng'
 import type { PresetId } from '../presets/types'
 import { BAR_PARTS, critique, CRITIC_PARTS, type BarPart, type CriticPart, type Critique } from './critic'
-import type { BrainModel } from './model'
+import { PLASTICITY_CONFIGURATION, type BrainModel } from './model'
 import { headLogits, perform, readoutWidth, softmaxInto, type Decision, type FlyRuntime, type Performance, type PhraseActions } from './perform'
 import { headRow, HEADS, positionOf, STEPS_PER_BAR, type HeadName } from './vocabulary'
 
@@ -213,4 +213,30 @@ export function practiceBatch(
   }
   adamStep(readout, gradient, optimizer, rate)
   return { results, anchorRuntime }
+}
+
+/**
+ * Reward-modulated plasticity inside the circuit (three factors: presynaptic rate, postsynaptic
+ * rate, and a dopamine-like advantage). Each plastic synapse's gain moves along
+ * advantage * eligibility * sign(weight), scaled so one update moves gains by about `rate` (RMS),
+ * and stays within the anatomical bounds.
+ */
+export function plasticityStep(model: BrainModel, gains: Float32Array, eligibilities: readonly Float32Array[], advantages: readonly number[], rate: number): void {
+  if (eligibilities.length !== advantages.length) throw new Error('Each eligibility needs an advantage')
+  const direction = new Float64Array(gains.length)
+  eligibilities.forEach((eligibility, sample) => {
+    const advantage = advantages[sample]!
+    for (let index = 0; index < gains.length; index++) direction[index] = direction[index]! + advantage * eligibility[index]!
+  })
+  let squares = 0
+  for (let index = 0; index < gains.length; index++) {
+    direction[index] = direction[index]! * Math.sign(model.weight[model.plasticSlots[index]!]!)
+    squares += direction[index]! * direction[index]!
+  }
+  const rms = Math.sqrt(squares / Math.max(1, gains.length))
+  if (!(rms > 0)) return
+  const { minGain, maxGain } = PLASTICITY_CONFIGURATION
+  for (let index = 0; index < gains.length; index++) {
+    gains[index] = Math.min(maxGain, Math.max(minGain, gains[index]! + rate * direction[index]! / rms))
+  }
 }

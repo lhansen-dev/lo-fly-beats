@@ -49,12 +49,21 @@ export interface BrainModel {
   /** Each readout neuron is heard relative to its own typical rate and range. */
   featureMean: Float32Array
   featureScale: Float32Array
+  /** CSR slots of synapses that may learn: premotor or song neurons onto song or wing motor neurons. */
+  plasticSlots: Int32Array
 }
+
+export const PLASTICITY_CONFIGURATION = Object.freeze({
+  sourceRoles: Object.freeze(['premotor', 'song']),
+  targetRoles: Object.freeze(['song', 'motor']),
+  minGain: 0.5,
+  maxGain: 1.5,
+})
 
 const CALIBRATION_STEPS = 768
 
 /** Run the brain on the clock and seeded random sounds to learn each readout neuron's range. */
-function calibrate(model: Omit<BrainModel, 'featureMean' | 'featureScale'>): { mean: Float32Array; scale: Float32Array } {
+function calibrate(model: Omit<BrainModel, 'featureMean' | 'featureScale' | 'plasticSlots'>): { mean: Float32Array; scale: Float32Array } {
   const rng = createRng(`brain|${model.seed}|calibration`)
   let state = new Float32Array(model.size)
   let next = new Float32Array(model.size)
@@ -204,13 +213,20 @@ export function createBrainModel(circuit: BrainCircuit, seed = 1, connectivity: 
       readoutRoles.includes(neuron.role) ? [index] : [])),
   }
   const { mean, scale } = calibrate(partial)
-  return Object.freeze({ ...partial, featureMean: mean, featureScale: scale })
+  const plastic: number[] = []
+  for (let target = 0; target < size; target++) {
+    if (!(PLASTICITY_CONFIGURATION.targetRoles as readonly string[]).includes(circuit.neurons[target]!.role)) continue
+    for (let slot = rowStart[target]!; slot < rowStart[target + 1]!; slot++) {
+      if ((PLASTICITY_CONFIGURATION.sourceRoles as readonly string[]).includes(circuit.neurons[col[slot]!]!.role)) plastic.push(slot)
+    }
+  }
+  return Object.freeze({ ...partial, featureMean: mean, featureScale: scale, plasticSlots: Int32Array.from(plastic) })
 }
 
 /** One synchronous update per sixteenth note. Reads `state`, writes `next`; they must differ. */
-export function stepBrain(model: BrainModel, state: Float32Array, inputs: Float32Array, next: Float32Array): void {
+export function stepBrain(model: BrainModel, state: Float32Array, inputs: Float32Array, next: Float32Array, weight: Float32Array = model.weight): void {
   if (state === next) throw new Error('Brain step requires separate state buffers')
-  const { size, rowStart, col, weight, leak, bias, inputWeights, hearing } = model
+  const { size, rowStart, col, leak, bias, inputWeights, hearing } = model
   for (let neuron = 0; neuron < size; neuron++) {
     let drive = bias[neuron]!
     for (let slot = rowStart[neuron]!; slot < rowStart[neuron + 1]!; slot++) drive += weight[slot]! * state[col[slot]!]!
@@ -221,4 +237,16 @@ export function stepBrain(model: BrainModel, state: Float32Array, inputs: Float3
     const rate = leak[neuron]!
     next[neuron] = (1 - rate) * state[neuron]! + rate * Math.tanh(drive)
   }
+}
+
+/** Anatomical weights with learned gains applied to the plastic synapses. */
+export function plasticWeights(model: BrainModel, gains: Float32Array): Float32Array {
+  if (gains.length !== model.plasticSlots.length) throw new Error('Synaptic gains do not match this brain')
+  const weight = model.weight.slice()
+  for (let index = 0; index < gains.length; index++) {
+    const gain = gains[index]!
+    if (!(gain >= PLASTICITY_CONFIGURATION.minGain && gain <= PLASTICITY_CONFIGURATION.maxGain)) throw new Error('Invalid synaptic gain')
+    weight[model.plasticSlots[index]!] = weight[model.plasticSlots[index]!]! * gain
+  }
+  return weight
 }

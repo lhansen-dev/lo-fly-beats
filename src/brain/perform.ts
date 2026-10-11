@@ -1,6 +1,6 @@
 import type { Rng } from '../music/rng'
 import type { BrainModel } from './model'
-import { stepBrain } from './model'
+import { plasticWeights, stepBrain } from './model'
 import type { PresetId } from '../presets/types'
 import { isLeadOnset, LEAD_START_DEGREE, resolveLeadDegree } from './melody'
 import { INPUT_SIZE, leadPitchSense, senseInputs, SILENCE, type HeardSound } from './senses'
@@ -50,6 +50,8 @@ export interface Performance {
   decisions: Decision[]
   /** Neural state used for each step's decisions, only when recording. */
   features: Float32Array[] | null
+  /** Covariance of presynaptic (previous step) and postsynaptic rates per plastic synapse. */
+  eligibility: Float32Array | null
   frames: Int8Array | null
   runtime: FlyRuntime
   activity: PhraseActivity
@@ -125,6 +127,10 @@ export interface PerformOptions {
   record?: boolean
   /** Capture every neuron's rate at the end of each beat, as int8 (rate * 127), for display. */
   frames?: boolean
+  /** Learned multipliers on the plastic synapses; anatomy alone when absent. */
+  gains?: Float32Array
+  /** Collect pre-before-post covariance for each plastic synapse, for reward-modulated plasticity. */
+  eligibility?: boolean
 }
 
 function loopMask(head: LoopHead, available: number): boolean[] {
@@ -138,6 +144,21 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   if (!(options.temperature >= 0)) throw new Error('Invalid temperature')
   let state = start.state.slice()
   let next = new Float32Array(model.size)
+  const weights = options.gains ? plasticWeights(model, options.gains) : model.weight
+  const plasticCount = model.plasticSlots.length
+  const plasticTargets = new Int32Array(plasticCount)
+  const plasticSources = new Int32Array(plasticCount)
+  if (options.eligibility) {
+    let index = 0
+    for (let target = 0; target < model.size && index < plasticCount; target++) {
+      for (let slot = model.rowStart[target]!; slot < model.rowStart[target + 1]! && index < plasticCount; slot++) {
+        if (model.plasticSlots[index] === slot) { plasticTargets[index] = target; plasticSources[index] = model.col[slot]!; index++ }
+      }
+    }
+  }
+  const sumPrePost = options.eligibility ? new Float64Array(plasticCount) : null
+  const sumRate = options.eligibility ? new Float64Array(model.size) : null
+  const sumPrevious = options.eligibility ? new Float64Array(model.size) : null
   const current = new Float32Array(model.readoutNeurons.length)
   const inputs = new Float32Array(INPUT_SIZE)
   const logits = new Float64Array(16)
@@ -211,7 +232,12 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
     const bar = Math.floor(step / STEPS_PER_BAR)
     const stepInBar = step % STEPS_PER_BAR
     heard = { ...heard, chordRing, section, habituation }
-    stepBrain(model, state, senseInputs(step, heard, inputs), next)
+    stepBrain(model, state, senseInputs(step, heard, inputs), next, weights)
+    if (sumPrePost && sumRate && sumPrevious) {
+      // state holds the previous step (pre), next the new one (post).
+      for (let index = 0; index < plasticCount; index++) sumPrePost[index] = sumPrePost[index]! + state[plasticSources[index]!]! * next[plasticTargets[index]!]!
+      for (let neuron = 0; neuron < model.size; neuron++) { sumPrevious[neuron] = sumPrevious[neuron]! + state[neuron]!; sumRate[neuron] = sumRate[neuron]! + next[neuron]! }
+    }
     ;[state, next] = [next, state]
     gatherFeatures(model, state, current)
     if (features) features.push(current.slice())
@@ -292,6 +318,8 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   if (actions.chords.length !== BARS / 2) throw new Error('Expected four chord decisions')
   return {
     actions, decisions, features, frames,
+    eligibility: sumPrePost && sumRate && sumPrevious ? Float32Array.from(sumPrePost, (sum, index) =>
+      sum / PHRASE_STEPS - (sumPrevious[plasticSources[index]!]! / PHRASE_STEPS) * (sumRate[plasticTargets[index]!]! / PHRASE_STEPS)) : null,
     runtime: { state, leadDegree, heard, history, chordRing, grooveRun: section === 0 ? start.grooveRun + 1 : 0 },
     activity: { beatPeaks, roleLevels },
   }
