@@ -6,10 +6,15 @@ ROOT = Path(__file__).resolve().parents[2]
 out = Path(sys.argv[1])
 (out / 'tapes').mkdir(parents=True, exist_ok=True)
 checkpoint = json.loads((ROOT / 'public/data/brains/fly-v1/checkpoint.json').read_text())
-report = json.loads((ROOT / 'artifacts/brain/report-anatomical.json').read_text())
+def load(name):
+    return json.loads((ROOT / f'artifacts/brain/report-{name}.json').read_text())['results']
+fresh = load('anatomical')
+# The shipped fly continued practicing from that run; its own report measures the published readout.
+shipped = load(sys.argv[2]) if len(sys.argv) > 2 else fresh
+report = {'results': {'shippedT08': shipped['shippedT08'], 'tutor': shipped['tutor'], 'schoolT08': fresh['schoolT08'], 'untrained': fresh['untrained'], 'sameBudget': fresh['shippedT08']}}
 controls = {}
-for name in ['source-permuted', 'zero']:
-    path = ROOT / f'artifacts/brain/report-{name}.json'
+for name, file in [('source-permuted', 'source-permuted-seed1'), ('zero', 'zero')]:
+    path = ROOT / f'artifacts/brain/report-{file}.json'
     if path.exists():
         controls[name] = json.loads(path.read_text())['results']['shippedT08']
 TAPES = [

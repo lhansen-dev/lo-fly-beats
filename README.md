@@ -26,7 +26,7 @@ Open the URL Vite prints and press **Start listening**.
 | Path | Purpose |
 | --- | --- |
 | `public/data/circuits/song-v1/` | The 1,771-neuron ear-to-song circuit with predicted transmitters; regenerate with `uv run --project scripts/data python scripts/data/extract_song_circuit.py` after placing `body-neurotransmitters-male-cns-v1.0.feather` in `scripts/data/.cache/` |
-| `public/data/brains/fly-v1/` | The trained fly: int8 readout (548 KB) and a checkpoint with his training history |
+| `public/data/brains/fly-v1/` | The trained fly: int8 readout (about 530 KB) and a checkpoint with his training history |
 | `src/brain/` | Circuit loading, rate dynamics, senses, decisions, tutor, critic, learning, the persistent `FlyMind`, and its worker |
 | `scripts/brain/train.ts` | School + practice + evaluation; `--publish` writes the shipped fly, `--connectivity source-permuted|zero` trains controls |
 | `scripts/brain/render-demos.mjs` | Renders demo tapes through the app's audio rig in headless Chromium (needs the dev server) |

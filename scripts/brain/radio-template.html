@@ -92,7 +92,7 @@ tr.fly td { color: var(--banana); }
 
   <section aria-labelledby="tapes-title">
     <h2 id="tapes-title">The tapes</h2>
-    <p class="legend">Each tape is five phrases of eight bars, rendered by the app's own instruments. The grid under each tape is exactly what he played in one phrase, one character per sixteenth note. Kick <code>o</code> soft, <code>x</code> hard. Snare <code>g</code> ghost, <code>X</code> hit. Hat <code>-</code> soft, <code>+</code> accent. Bass <code>R</code> root, <code>5</code> fifth, <code>O</code> octave, <code>3</code> third, <code>7</code> seventh, <code>a</code> approach, <code>s</code> stop. Keys <code>#</code> full chord, <code>^</code> top notes. Lead digits are scale steps above the tonic (<code>A</code> = 10, <code>B</code> = 11), and <code>.</code> is a rest.</p>
+    <p class="legend">Each tape is six phrases of eight bars, a short song with an intro, grooves, and a breakdown that he chose himself, rendered by the app's own instruments. The grid under each tape is exactly what he played in one phrase, one character per sixteenth note. Kick <code>o</code> soft, <code>x</code> hard. Snare <code>g</code> ghost, <code>X</code> hit. Hat <code>-</code> soft, <code>+</code> accent. Bass <code>R</code> root, <code>5</code> fifth, <code>O</code> octave, <code>3</code> third, <code>7</code> seventh, <code>a</code> approach, <code>s</code> stop. Keys <code>#</code> full chord, <code>^</code> top notes. Lead digits are scale steps above the tonic (<code>A</code> = 10, <code>B</code> = 11), and <code>.</code> is a rest.</p>
     <div class="tapes" id="tapes"></div>
   </section>
 
@@ -125,7 +125,7 @@ tr.fly td { color: var(--banana); }
     <div class="table-wrap"><table id="results"></table></div>
     <div class="prose">
       <p>“Original” is the share of his drum, bass, and melody bars that never appear anywhere in 1,800 phrases of his tutor's playing.</p>
-      <p class="quiet">Bananas come from a critic we wrote, so a high score means the music matches our idea of lofi. It does not prove the music sounds good; that takes listening, which has not happened yet. Across three training seeds, a fly with shuffled wiring scores the same bananas. The real-wiring fly consistently played more varied chord progressions (11.7 against 8 on average) and more drum bars of his own (92% against 79%). That is a small-sample pattern worth testing further, not proof that his wiring makes better music.</p>
+      <p class="quiet">Bananas come from a critic we wrote, so a high score means the music matches our idea of lofi. It does not prove the music sounds good; that takes listening, which has not happened yet. Trained with the same budget, a fly with shuffled wiring comes close. Across six paired runs, the shuffled brain imitated the tutor better in school every time, and the real-wiring fly ended up slightly ahead after practice every time, with more drum bars of his own. The gaps are small and the runs share seeds, so treat this as a lead worth testing, not proof that his wiring makes better music.</p>
     </div>
   </section>
 
@@ -258,10 +258,11 @@ document.getElementById('learned').innerHTML = `
 const pct = v => `${Math.round(v * 100)}%`
 const rows = [
   ['The fly, shipped', R0.shippedT08, 'fly'],
+  ['The fly, same budget as the controls', R0.sameBudget, ''],
   ['His tutor', R0.tutor, ''],
   ['The fly after school only', R0.schoolT08, ''],
-  ...(DATA.controls['source-permuted'] ? [['Shuffled wiring (control)', DATA.controls['source-permuted'], '']] : []),
-  ...(DATA.controls.zero ? [['No recurrent wiring (control)', DATA.controls.zero, '']] : []),
+  ...(DATA.controls['source-permuted'] ? [['Shuffled wiring (control, same budget)', DATA.controls['source-permuted'], '']] : []),
+  ...(DATA.controls.zero ? [['No recurrent wiring (control, same budget)', DATA.controls.zero, '']] : []),
   ['Untrained', R0.untrained, ''],
 ]
 document.getElementById('results').innerHTML = `<thead><tr><th>Player</th><th style="text-align:right">Bananas</th><th style="text-align:right">Progressions</th><th style="text-align:right">Original drums</th><th style="text-align:right">Original melody</th></tr></thead><tbody>${rows.map(([name, r, cls]) => `<tr class="${cls}"><td>${name}</td><td class="num">${r.bananas.toFixed(2)}</td><td class="num">${r.progressions}</td><td class="num">${name === 'Untrained' ? '–' : pct(r.original.drums)}</td><td class="num">${name === 'Untrained' ? '–' : pct(r.original.lead)}</td></tr>`).join('')}</tbody>`
