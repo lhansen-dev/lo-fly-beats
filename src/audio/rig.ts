@@ -22,6 +22,9 @@ export const DEFAULT_MIX: MixSettings = {
   ambienceOn: true,
 }
 
+export const PUMP_DEPTH = 0.28
+export const PUMP_RELEASE_SECONDS = 0.22
+
 export interface InstrumentRig {
   trigger(event: NoteEvent, time: number, durationSeconds: number): void
   applySound(sound: SoundParams, time: number): void
@@ -109,6 +112,9 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   const leadFilter = new Tone.Filter({ context, type: 'lowpass', frequency: Math.min(3600, sound.keysCutoffHz * 1.4), Q: 0.4 })
   const leadEcho = new Tone.FeedbackDelay({ context, delayTime: 0.36, feedback: 0.28, wet: 0.18 })
   const leadSend = new Tone.Gain({ context, gain: Math.min(0.5, sound.reverbSend * 1.4) })
+  // Tape wow on the keys, and a gentle duck of keys and lead on every kick (the lofi pump).
+  const keysWow = new Tone.Vibrato({ context, frequency: 0.35, depth: 0.04 })
+  const pump = new Tone.Gain({ context, gain: 1 })
   const drums = new Tone.Sampler({ context, urls: { C2: audio.kick, D2: audio.snare, 'F#2': audio.hat }, release: 0.05 })
 
   const rain = new Tone.Player({ context, url: audio.rain, loop: true, fadeIn: 1.5, fadeOut: 1 })
@@ -124,10 +130,10 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
 
   drums.chain(drumsFilter, drumsBus)
   bass.connect(bassBus)
-  keys.connect(keysFilter)
+  keys.chain(keysWow, keysFilter)
   keysFilter.connect(keysBus)
   lead.chain(leadVibrato, leadFilter, leadEcho, leadBus)
-  leadBus.connect(master)
+  leadBus.connect(pump)
   leadBus.connect(leadSend)
   leadSend.connect(reverb)
   rain.connect(rainGain)
@@ -136,7 +142,8 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   crackleGain.connect(ambienceBus)
   drumsBus.connect(master)
   bassBus.connect(master)
-  keysBus.connect(master)
+  keysBus.connect(pump)
+  pump.connect(master)
   ambienceBus.connect(master)
   keysBus.connect(keysSend)
   drumsBus.connect(drumsSend)
@@ -150,7 +157,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   let ambienceStarted = false
   let disposed = false
   const audioNodes = [
-    drums, bass, keys, lead, leadVibrato, leadFilter, leadEcho, leadSend, leadBus,
+    drums, bass, keys, keysWow, pump, lead, leadVibrato, leadFilter, leadEcho, leadSend, leadBus,
     rain, crackle, drumsBus, bassBus, keysBus, ambienceBus, master,
     drumsFilter, keysFilter, bassEnvelopeScale, rainGain, crackleGain, reverb, keysSend, drumsSend,
     saturation, masterFilter, limiter,
@@ -172,6 +179,11 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
       if (event.layer === 'drums') {
         const note = event.drum === 'kick' ? 'C2' : event.drum === 'snare' ? 'D2' : 'F#2'
         drums.triggerAttack(note, time, event.velocity)
+        if (event.drum === 'kick') {
+          pump.gain.cancelScheduledValues(time)
+          pump.gain.setValueAtTime(1 - PUMP_DEPTH * event.velocity, time)
+          pump.gain.linearRampToValueAtTime(1, time + PUMP_RELEASE_SECONDS)
+        }
       } else if (event.midi !== null) {
         const hz = midiToHz(event.midi)
         if (event.layer === 'bass') bass.triggerAttackRelease(hz, durationSeconds, time, event.velocity)
