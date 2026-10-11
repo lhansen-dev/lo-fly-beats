@@ -14,11 +14,14 @@ import { createBrainModel, PLASTICITY_CONFIGURATION } from '../../src/brain/mode
 import { freshRuntime, perform, type PhraseActions } from '../../src/brain/perform'
 import { createRng } from '../../src/music/rng'
 import type { PresetId } from '../../src/presets/types'
+import { createTutor, tutorPhrase } from '../../src/brain/tutor'
 import { loadBrainFromDisk } from './load'
 
 const { values } = parseArgs({ options: {
   batches: { type: 'string', default: '800' }, sigma: { type: 'string', default: '0.05' }, rate: { type: 'string', default: '0.02' },
   control: { type: 'boolean', default: false }, tag: { type: 'string' },
+  /** Weight of the school anchor: mean bits per tutor decision under teacher forcing, subtracted from bananas. */
+  anchor: { type: 'string', default: '0' },
 } })
 const tag = values.tag ?? (values.control ? 'es-control' : 'es')
 const sigma = Number(values.sigma)
@@ -32,8 +35,28 @@ const noiseRng = createRng(`es-noise|${tag}`)
 const gaussian = () => { const u = Math.max(1e-12, noiseRng.float()); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * noiseRng.float()) }
 const clamp = (value: number) => Math.min(PLASTICITY_CONFIGURATION.maxGain, Math.max(PLASTICITY_CONFIGURATION.minGain, value))
 
+const anchorWeight = Number(values.anchor)
+
+/** How surprised the fly is by his tutor with these synapses (bits per decision, teacher forced). */
+function schoolSurprise(candidate: Float32Array, seed: string, presetId: PresetId): number {
+  const rng = createRng(`${seed}|school`)
+  const tutor = createTutor(presetId, rng)
+  // Two consecutive phrases, heard in order, so the second phrase's loops refer to bars the fly heard.
+  let runtime = freshRuntime(model, rng)
+  let bits = 0
+  let count = 0
+  for (let phrase = 0; phrase < 2; phrase++) {
+    const result = perform(model, readout, runtime, { temperature: 1, rng, presetId, gains: candidate, teacher: tutorPhrase(tutor, rng) })
+    runtime = result.runtime
+    for (const decision of result.decisions) bits -= Math.log2(Math.max(1e-9, decision.probability))
+    count += result.decisions.length
+  }
+  return bits / Math.max(1, count)
+}
+
 /** Score a gain vector on a short two-phrase song from a given seed. */
 function score(candidate: Float32Array, seed: string, presetId: PresetId): number {
+  const anchor = anchorWeight > 0 ? anchorWeight * schoolSurprise(candidate, seed, presetId) : 0
   const rng = createRng(seed)
   let runtime = freshRuntime(model, rng)
   const previous: PhraseActions[] = []
@@ -44,7 +67,7 @@ function score(candidate: Float32Array, seed: string, presetId: PresetId): numbe
     total += critique(result.actions, presetId, previous).total
     previous.push(result.actions)
   }
-  return total / 2
+  return total / 2 - anchor
 }
 
 function evaluate(): number {
