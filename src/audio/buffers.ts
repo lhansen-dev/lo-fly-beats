@@ -47,24 +47,6 @@ function drumEdgeGain(t: number, i: number, length: number, sampleRate: number, 
   return (1 - Math.exp(-t / attackSeconds)) * Math.min(1, (length - 1 - i) / (0.01 * sampleRate))
 }
 
-function crossfadeLoop(input: Float32Array, sampleRate: number): Float32Array {
-  const fadeSamples = Math.round(0.25 * sampleRate)
-  const output = input.slice(0, input.length - fadeSamples)
-  for (let i = 0; i < fadeSamples; i++) {
-    const p = i / fadeSamples
-    output[i] = input[i]! * Math.sqrt(p) + input[input.length - fadeSamples + i]! * Math.sqrt(1 - p)
-  }
-  // Bring the last few samples onto the loop's first sample after the long equal-power blend.
-  const seamSamples = Math.max(2, Math.round(0.001 * sampleRate))
-  const seamStart = output.length - seamSamples
-  const seamTarget = output[0]!
-  for (let i = seamStart; i < output.length; i++) {
-    const progress = (i - seamStart + 1) / seamSamples
-    output[i] += (seamTarget - output[i]!) * progress
-  }
-  return output
-}
-
 export function generateKick(sampleRate: number): SeededAudioBuffer {
   const rng = bufferRng('kick', sampleRate)
   const raw = new Float32Array(Math.round(0.5 * sampleRate))
@@ -108,64 +90,6 @@ export function generateHat(sampleRate: number): SeededAudioBuffer {
     filtered[i]! * Math.exp(-t / 0.018) * drumEdgeGain(t, i, length, sampleRate, 0.0004), 0.4)
 }
 
-function generateRainChannel(sampleRate: number, channelIndex: number, rng: ReturnType<typeof bufferRng>): Float32Array {
-  const length = sampleRate * 8
-  const raw = new Float32Array(length)
-  for (let i = 0; i < length; i++) raw[i] = noise(rng)
-  const filtered = highpass(lowpass(raw, 2500, sampleRate), 400, sampleRate)
-  const output = new Float32Array(length)
-  for (let i = 0; i < length; i++) {
-    const t = i / sampleRate
-    output[i] = filtered[i]! * (0.85 + 0.15 * Math.sin(2 * Math.PI * 0.13 * t + channelIndex * Math.PI / 2))
-  }
-  const dripCount = 24
-  for (let drip = 0; drip < dripCount; drip++) {
-    const start = Math.floor(rng.float() * (length - Math.round(0.05 * sampleRate)))
-    const frequency = 3000 + 3000 * rng.float()
-    const amplitude = 0.05 + 0.1 * rng.float()
-    const dripLength = Math.round(0.05 * sampleRate)
-    let phase = 0
-    for (let j = 0; j < dripLength && start + j < length; j++) {
-      const t = j / sampleRate
-      phase += 2 * Math.PI * frequency / sampleRate
-      output[start + j] += amplitude * Math.sin(phase) * Math.exp(-t / 0.01)
-    }
-  }
-  return crossfadeLoop(output, sampleRate)
-}
-
-export function generateRain(sampleRate: number): SeededAudioBuffer {
-  const rng = bufferRng('rain', sampleRate)
-  const channels = [generateRainChannel(sampleRate, 0, rng), generateRainChannel(sampleRate, 1, rng)]
-  scalePeak(channels, 0.5)
-  return { sampleRate, channels }
-}
-
-function generateCrackleChannel(sampleRate: number, rng: ReturnType<typeof bufferRng>): Float32Array {
-  const length = sampleRate * 6
-  const raw = new Float32Array(length)
-  for (let i = 0; i < length; i++) raw[i] = noise(rng)
-  const filtered = lowpass(raw, 6000, sampleRate)
-  const output = new Float32Array(length)
-  for (let i = 0; i < length; i++) output[i] = filtered[i]! * 0.01
-  const clicks = 72
-  for (let click = 0; click < clicks; click++) {
-    const start = Math.floor(rng.float() * (length - 3))
-    const amplitude = 0.05 + 0.35 * rng.float() ** 2
-    output[start] += amplitude
-    output[start + 1] -= amplitude * 0.5
-    output[start + 2] += amplitude * 0.25
-  }
-  return crossfadeLoop(output, sampleRate)
-}
-
-export function generateCrackle(sampleRate: number): SeededAudioBuffer {
-  const rng = bufferRng('crackle', sampleRate)
-  const channels = [generateCrackleChannel(sampleRate, rng), generateCrackleChannel(sampleRate, rng)]
-  scalePeak(channels, 0.5)
-  return { sampleRate, channels }
-}
-
 export function generateImpulse(sampleRate: number): SeededAudioBuffer {
   const rng = bufferRng('impulse', sampleRate)
   const start = Math.round(0.012 * sampleRate)
@@ -182,13 +106,11 @@ export function generateImpulse(sampleRate: number): SeededAudioBuffer {
   return { sampleRate, channels }
 }
 
-export function generateAudioBuffers(sampleRate: number): Record<'kick' | 'snare' | 'hat' | 'rain' | 'crackle' | 'impulse', SeededAudioBuffer> {
+export function generateAudioBuffers(sampleRate: number): Record<'kick' | 'snare' | 'hat' | 'impulse', SeededAudioBuffer> {
   return {
     kick: generateKick(sampleRate),
     snare: generateSnare(sampleRate),
     hat: generateHat(sampleRate),
-    rain: generateRain(sampleRate),
-    crackle: generateCrackle(sampleRate),
     impulse: generateImpulse(sampleRate),
   }
 }

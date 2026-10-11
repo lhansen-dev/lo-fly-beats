@@ -24,7 +24,6 @@ export const AUDIO_INTERRUPTED_NOTICE = 'Audio was interrupted by the browser. P
 
 export type MixPatch = {
   masterVolume?: number
-  ambienceOn?: boolean
   layers?: {
     drums?: Partial<MixSettings['layers']['drums']>
     bass?: Partial<MixSettings['layers']['bass']>

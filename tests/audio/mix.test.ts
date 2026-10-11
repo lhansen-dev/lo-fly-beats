@@ -48,7 +48,7 @@ function rms(samples: Float32Array, start: number, end: number) {
 
 describe('mixer offline rendering', () => {
   it('softens hats on a preset sound change while preserving the kick body', async () => {
-    const mix = { ...DEFAULT_MIX, ambienceOn: false }
+    const mix = DEFAULT_MIX
     const hits = (rig: ReturnType<typeof createRig>) => {
       for (const time of [0.1, 1.1]) rig.trigger({ ...note('drums'), drum: 'hat' }, time, 0)
       rig.trigger(note('drums'), 1.4, 0)
@@ -67,10 +67,9 @@ describe('mixer offline rendering', () => {
     }
   })
 
-  it('silences all layers and ambience at zero master while nonzero master is audible', async () => {
-    const silentMix: MixSettings = { ...DEFAULT_MIX, masterVolume: 0, ambienceOn: true }
+  it('silences all layers at zero master while nonzero master is audible', async () => {
+    const silentMix: MixSettings = { ...DEFAULT_MIX, masterVolume: 0 }
     const renderMix = (mix: MixSettings) => render(3, mix, rig => {
-      rig.startAmbience(0)
       rig.trigger(note('drums'), 0.1, 0.2)
       rig.trigger(note('bass'), 0.2, 0.3)
       rig.trigger(note('keys'), 0.3, 0.3)
@@ -95,7 +94,6 @@ describe('mixer offline rendering', () => {
         keys: { level: 0, muted: true },
         lead: { level: 0, muted: true },
       },
-      ambienceOn: false,
     }
     const hits = (rig: ReturnType<typeof createRig>) => {
       for (const time of [0.05, 0.25, 0.45, 0.65, 0.85, 1.05]) rig.trigger(note('drums'), time, 0)

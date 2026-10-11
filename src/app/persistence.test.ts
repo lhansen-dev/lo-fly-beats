@@ -27,7 +27,6 @@ const validSettings: RestoredSettings = {
       keys: { level: 0.5, muted: true },
       lead: { level: 0.55, muted: false },
     },
-    ambienceOn: true,
   },
   animationEnabled: null,
 }
@@ -41,6 +40,12 @@ describe('settings persistence', () => {
   it('loads valid stored settings', () => {
     const storage = memoryStorage(JSON.stringify(validSettings))
     expect(loadSettings(() => storage)).toEqual(validSettings)
+  })
+
+  it('loads settings saved before the lead layer existed and the ambience was removed', () => {
+    const { lead: _lead, ...oldLayers } = validSettings.mix.layers
+    const old = { ...validSettings, mix: { ...validSettings.mix, layers: oldLayers, ambienceOn: true } }
+    expect(loadSettings(() => memoryStorage(JSON.stringify(old)))).toEqual(validSettings)
   })
 
   it('returns null for invalid JSON or an invalid shape', () => {

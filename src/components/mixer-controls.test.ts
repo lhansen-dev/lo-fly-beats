@@ -25,14 +25,13 @@ describe('Mixer', () => {
       expect(markup).toContain(`type="checkbox"`)
       expect(markup).toContain(`<output for="layer-${id}-level" role="none">${initial}%</output>`)
     }
-    expect(markup).toContain('id="ambience-toggle"')
-    expect(markup).toContain('checked=""')
-    controller.setMix({ layers: { drums: { level: 0.33, muted: true } }, ambienceOn: false })
+    expect(markup).not.toContain('ambience')
+    // Nothing is muted by default.
+    expect(markup).not.toContain('checked=""')
+    controller.setMix({ layers: { drums: { level: 0.33, muted: true } } })
     markup = render(createElement(Mixer))
     expect(markup).toContain('<output for="layer-drums-level" role="none">33%</output>')
     expect(markup).toContain('id="layer-drums-mute" data-testid="layer-drums-mute" type="checkbox" checked=""')
-    expect(markup).toContain('id="ambience-toggle" data-testid="ambience-toggle" type="checkbox"')
-    expect(markup).not.toContain('id="ambience-toggle" data-testid="ambience-toggle" type="checkbox" checked=""')
     expect(markup).toContain('value="33"')
   })
 

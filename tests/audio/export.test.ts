@@ -42,7 +42,7 @@ async function checkedRender(snapshot: ReturnType<typeof createExportSnapshot>) 
   }
   return data
 }
-const makeSnapshot = (events: PhraseScore['events'], bpm: number, mix: MixSettings = { ...DEFAULT_MIX, ambienceOn: false }, swing = preset.swing) =>
+const makeSnapshot = (events: PhraseScore['events'], bpm: number, mix: MixSettings = DEFAULT_MIX, swing = preset.swing) =>
   createExportSnapshot(score(events), recipe(bpm), { ...preset, swing }, mix)
 
 describe('offline phrase rendering', () => {
@@ -54,7 +54,7 @@ describe('offline phrase rendering', () => {
     const before = structuredClone({ memory, prepared, model })
     // Isolate bass so accompaniment cannot satisfy the audibility assertion.
     const snapshot = createExportSnapshot(prepared.score, session, preset, {
-      ...DEFAULT_MIX, ambienceOn: false, layers: {
+      ...DEFAULT_MIX, layers: {
         ...DEFAULT_MIX.layers, drums: { level: 0, muted: true }, keys: { level: 0, muted: true }, lead: { level: 0, muted: true },
       },
     })
@@ -93,15 +93,15 @@ describe('offline phrase rendering', () => {
     expect(Math.abs(hatOnsets[0] - (0.233333 + limiterLatency))).toBeLessThan(0.005)
   }, 60000)
 
-  it('renders audible ambience for an empty score', async () => {
-    const data = await checkedRender(makeSnapshot([], 72, { ...DEFAULT_MIX, ambienceOn: true }))
-    expect(Math.max(rms(data.channels[0], 0, data.channels[0].length - 22050), rms(data.channels[1], 0, data.channels[1].length - 22050))).toBeGreaterThan(0.001)
+  it('renders an empty score as silence now that there is no ambience bed', async () => {
+    const data = await checkedRender(makeSnapshot([], 72))
+    expect(Math.max(rms(data.channels[0], 0, data.channels[0].length), rms(data.channels[1], 0, data.channels[1].length))).toBeLessThan(0.0005)
   }, 60000)
 
   it('repeats an identical deterministic branching-graph phrase', async () => {
     const session = recipe(preset.tempoBpm)
     const phrase = composePhrase(graph, session, 0)
-    const snapshot = createExportSnapshot(phrase, session, preset, { ...DEFAULT_MIX, ambienceOn: true })
+    const snapshot = createExportSnapshot(phrase, session, preset, DEFAULT_MIX)
     const first = await checkedRender(snapshot)
     const second = await checkedRender(snapshot)
     expect(first.channels[0].length).toBe(second.channels[0].length)

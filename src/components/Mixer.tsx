@@ -23,6 +23,5 @@ export default function Mixer() {
         <label className="mute-control" htmlFor={`layer-${key}-mute`}><span className="sr-only">{label} </span>mute <input id={`layer-${key}-mute`} data-testid={`layer-${key}-mute`} type="checkbox" checked={mix.layers[key].muted} onChange={event => controller.setMix({ layers: { [key]: { muted: event.target.checked } } })} /></label>
       </div>
     })}
-    <div className="ambience-row"><span>Rain & vinyl texture</span><label htmlFor="ambience-toggle">Ambience <input id="ambience-toggle" data-testid="ambience-toggle" type="checkbox" checked={mix.ambienceOn} onChange={event => controller.setMix({ ambienceOn: event.target.checked })} /></label></div>
   </fieldset>
 }

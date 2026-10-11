@@ -48,7 +48,6 @@ export async function renderPhrase(snapshot: ExportSnapshot): Promise<WavData> {
   try {
     context = new Tone.OfflineContext(2, exportSeconds(snapshot.recipe.tempoBpm), 44100)
     rig = createRig(context, snapshot.preset.sound, snapshot.mix)
-    if (snapshot.mix.ambienceOn) rig.startAmbience(0)
     for (const event of snapshot.score.events) {
       rig.trigger(event, eventTimeSeconds(event, snapshot.recipe.tempoBpm, snapshot.preset.swing), eventDurationSeconds(event, snapshot.recipe.tempoBpm))
     }
@@ -85,7 +84,6 @@ export async function renderTrack(scores: readonly PhraseScore[], recipe: Sessio
   const context = new Tone.OfflineContext(2, total, 44100)
   const rig = createRig(context, preset.sound, mix)
   try {
-    if (mix.ambienceOn) rig.startAmbience(0)
     scores.forEach((score, index) => {
       for (const event of score.events) {
         rig.trigger(event, index * phrase + eventTimeSeconds(event, recipe.tempoBpm, preset.swing), eventDurationSeconds(event, recipe.tempoBpm))

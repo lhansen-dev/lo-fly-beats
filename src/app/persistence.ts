@@ -91,8 +91,9 @@ export const settingsSchema = z.strictObject({
       // Settings saved before the fly learned to play lead melodies have no lead layer.
       lead: layerSchema.default({ level: 0.55, muted: false }),
     }),
-    ambienceOn: z.boolean(),
-  }),
+    // Settings saved before the rain and vinyl ambience was removed still carry this flag.
+    ambienceOn: z.boolean().optional(),
+  }).transform(({ ambienceOn: _removed, ...mix }) => mix),
   animationEnabled: z.boolean().nullable(),
 })
 

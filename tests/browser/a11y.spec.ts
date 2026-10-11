@@ -54,7 +54,7 @@ test('keyboard reaches every control with visible focus and starts audio', async
     expect(focus.outline, focus.id).not.toBe('none')
     visited.push(focus.id)
   }
-  for (const id of ['play-toggle', 'master-volume', 'layer-drums-level', 'layer-bass-level', 'layer-keys-level', 'layer-drums-mute', 'layer-bass-mute', 'layer-keys-mute', 'ambience-toggle', 'animation-toggle', 'tempo', 'variation', 'new-beat', 'export-button']) expect(visited).toContain(id)
+  for (const id of ['play-toggle', 'master-volume', 'layer-drums-level', 'layer-bass-level', 'layer-keys-level', 'layer-drums-mute', 'layer-bass-mute', 'layer-keys-mute', 'animation-toggle', 'tempo', 'variation', 'new-beat', 'export-button']) expect(visited).toContain(id)
 })
 
 test('shortcuts toggle only on the body or scene and keep announcements stable between beats', async ({ page }) => {

@@ -105,7 +105,6 @@ class PlaybackEngine implements EngineLike {
       }, recipe, scoreProvider)
       context.transport.bpm.value = recipe.tempoBpm
       context.transport.swing = 0
-      if (this.mix.ambienceOn) this.rig.startAmbience(context.currentTime)
       context.transport.scheduleRepeat(time => this.onStep(time), '16n', 0)
       this.repeatEvents = 1
       context.transport.start()
@@ -145,21 +144,14 @@ class PlaybackEngine implements EngineLike {
   }
 
   setMix(mix: MixSettings): void {
-    const previousAmbienceOn = this.mix.ambienceOn
     this.mix = mix
     if (!this.context || !this.rig) return
-    const now = this.context.currentTime
-    this.rig.setMix(mix, now)
-    if (this.status === 'playing' && previousAmbienceOn !== mix.ambienceOn) {
-      if (mix.ambienceOn) this.rig.startAmbience(now)
-      else this.rig.stopAmbience(now)
-    }
+    this.rig.setMix(mix, this.context.currentTime)
   }
 
   pause(): void {
     if (this.status !== 'playing' || !this.context || !this.rig) return
     const now = this.context.currentTime
-    this.rig.stopAmbience(now)
     this.rig.rampMasterGain(0, 0.08, now)
     this.context.transport.pause()
     this.rig.releaseAll(now + 0.09)
@@ -173,7 +165,6 @@ class PlaybackEngine implements EngineLike {
     if (!context || !rig || this.status !== 'playing' || context.state === 'running') return
     const now = context.currentTime
     context.transport.pause(now)
-    rig.stopAmbience(now)
     rig.releaseAll(now)
     this.playbackGeneration += 1
     this.setStatus('interrupted')
@@ -182,7 +173,6 @@ class PlaybackEngine implements EngineLike {
   private resumeTransport(): void {
     const now = this.context!.currentTime
     this.rig!.setMix(this.mix, now)
-    if (this.mix.ambienceOn) this.rig!.startAmbience(now)
     this.context!.transport.start()
     this.setStatus('playing')
   }

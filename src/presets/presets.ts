@@ -11,7 +11,7 @@ export const PRESETS: Record<PresetId, PresetDefinition> = {
       { symbol: 'Fmaj9', root: 5, quality: 'maj9' }, { symbol: 'Am7(11)', root: 9, quality: 'm7add11' },
     ],
     keysRange: { low: 50, center: 62, high: 76 }, embellishChance: 0.35, fillChance: 0.25,
-    sound: { drumsCutoffHz: 5200, keysCutoffHz: 2200, bassCutoffHz: 140, masterCutoffHz: 12000, reverbSend: 0.25, saturationWet: 0, rainLevel: 0.5, crackleLevel: 0.25 },
+    sound: { drumsCutoffHz: 5200, keysCutoffHz: 2200, bassCutoffHz: 140, masterCutoffHz: 12000, reverbSend: 0.25, saturationWet: 0 },
     visual: { wall: '#3b4a5a', windowSky: '#6f8ba3', glassTint: 'rgba(180, 205, 230, 0.25)', desk: '#6b4f3a', deskEdge: '#4f3a2b', lightColor: '#9fc3e6', lightOpacity: 0.18, shadowOpacity: 0.35, uiAccent: '#9fc3e6' },
     drums: {
       main: { kick: [[0, 0.9], [10, 0.75]], snare: [[4, 0.8], [12, 0.8]], hat: [[0, 0.5], [2, 0.3], [4, 0.45], [6, 0.3], [8, 0.5], [10, 0.3], [12, 0.45], [14, 0.35], [15, 0.18]] },
@@ -27,7 +27,7 @@ export const PRESETS: Record<PresetId, PresetDefinition> = {
       { symbol: 'Ebmaj9', root: 3, quality: 'maj9' }, { symbol: 'Gm7(11)', root: 7, quality: 'm7add11' },
     ],
     keysRange: { low: 48, center: 59, high: 72 }, embellishChance: 0.2, fillChance: 0.1,
-    sound: { drumsCutoffHz: 3800, keysCutoffHz: 1400, bassCutoffHz: 110, masterCutoffHz: 9000, reverbSend: 0.3, saturationWet: 0.35, rainLevel: 0.3, crackleLevel: 0.35 },
+    sound: { drumsCutoffHz: 3800, keysCutoffHz: 1400, bassCutoffHz: 110, masterCutoffHz: 9000, reverbSend: 0.3, saturationWet: 0.35 },
     visual: { wall: '#2a2320', windowSky: '#151b2b', glassTint: 'rgba(90, 110, 150, 0.2)', desk: '#4a3426', deskEdge: '#33241a', lightColor: '#ffb35c', lightOpacity: 0.35, shadowOpacity: 0.55, uiAccent: '#ffb35c' },
     drums: {
       main: { kick: [[0, 0.85], [11, 0.55]], snare: [[4, 0.7], [12, 0.7]], hat: [[0, 0.35], [4, 0.3], [8, 0.35], [12, 0.3], [14, 0.2]] },
@@ -43,7 +43,7 @@ export const PRESETS: Record<PresetId, PresetDefinition> = {
       { symbol: 'Em9', root: 4, quality: 'm9' }, { symbol: 'Bm7(11)', root: 11, quality: 'm7add11' },
     ],
     keysRange: { low: 52, center: 65, high: 79 }, embellishChance: 0.5, fillChance: 0.5,
-    sound: { drumsCutoffHz: 6500, keysCutoffHz: 3400, bassCutoffHz: 180, masterCutoffHz: 14000, reverbSend: 0.18, saturationWet: 0, rainLevel: 0.2, crackleLevel: 0.2 },
+    sound: { drumsCutoffHz: 6500, keysCutoffHz: 3400, bassCutoffHz: 180, masterCutoffHz: 14000, reverbSend: 0.18, saturationWet: 0 },
     visual: { wall: '#e9d8b8', windowSky: '#bcd9ea', glassTint: 'rgba(255, 255, 255, 0.18)', desk: '#a47449', deskEdge: '#7d5634', lightColor: '#ffe7a8', lightOpacity: 0.22, shadowOpacity: 0.2, uiAccent: '#e8a33d' },
     drums: {
       main: { kick: [[0, 0.95], [6, 0.6], [10, 0.8]], snare: [[4, 0.85], [12, 0.85], [15, 0.22]], hat: [[0, 0.55], [2, 0.35], [3, 0.2], [4, 0.5], [6, 0.35], [8, 0.55], [10, 0.35], [11, 0.2], [12, 0.5], [14, 0.4]] },

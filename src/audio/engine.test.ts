@@ -7,14 +7,14 @@ const mock = vi.hoisted(() => {
   let resolveStart: (() => void) | undefined
   const transport = { bpm: { value: 0, setValueAtTime: vi.fn() }, swing: 0, state: 'stopped', scheduleRepeat: vi.fn(), start: vi.fn(() => { transport.state = 'started' }), pause: vi.fn(() => { transport.state = 'paused' }), stop: vi.fn() }
   const context = { currentTime: 5, state: 'running' as string, on: vi.fn(() => mock.context), rawContext: { suspend: vi.fn(() => Promise.resolve()) }, sampleRate: 44100, transport, draw: { schedule: vi.fn() } }
-  const rig = { trigger: vi.fn(), applySound: vi.fn(), setMix: vi.fn((...args: unknown[]) => calls.push({ method: 'setMix', args })), startAmbience: vi.fn((...args: unknown[]) => calls.push({ method: 'startAmbience', args })), stopAmbience: vi.fn((...args: unknown[]) => calls.push({ method: 'stopAmbience', args })), releaseAll: vi.fn((...args: unknown[]) => calls.push({ method: 'releaseAll', args })), rampMasterGain: vi.fn((...args: unknown[]) => calls.push({ method: 'rampMasterGain', args })), keysActiveVoices: 0, dispose: vi.fn() }
+  const rig = { trigger: vi.fn(), applySound: vi.fn(), setMix: vi.fn((...args: unknown[]) => calls.push({ method: 'setMix', args })), releaseAll: vi.fn((...args: unknown[]) => calls.push({ method: 'releaseAll', args })), rampMasterGain: vi.fn((...args: unknown[]) => calls.push({ method: 'rampMasterGain', args })), keysActiveVoices: 0, dispose: vi.fn() }
   return { calls, context, transport, rig, resolveStart, start: vi.fn(() => Promise.resolve()), createRig: vi.fn(() => rig) }
 })
 
 vi.mock('tone', () => ({ start: mock.start, getContext: () => mock.context }))
 vi.mock('./rig', async importOriginal => ({ ...(await importOriginal<typeof import('./rig')>()), createRig: mock.createRig }))
 
-const mix = (ambienceOn: boolean, masterVolume = 0.8): MixSettings => ({ masterVolume, ambienceOn, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false }, lead: { level: 0.55, muted: false } } })
+const mix = (masterVolume = 0.8): MixSettings => ({ masterVolume, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false }, lead: { level: 0.55, muted: false } } })
 const graph = { manifest: { version: 1 } } as never
 const recipe = { presetId: 'overripe-2am', tempoBpm: 90, variation: 0.5, sessionSeed: 1 } as never
 
@@ -38,7 +38,7 @@ beforeEach(() => {
 describe('export lock', () => {
   it('locks playback during export and resumes paused playback afterward', async () => {
     const engine = await freshEngine()
-    await engine.start(graph, recipe, mix(true))
+    await engine.start(graph, recipe, mix())
     engine.beginExport()
     expect(engine.getDiagnostics()).toMatchObject({ status: 'exporting', exportInProgress: true })
     expect(mock.transport.pause).toHaveBeenCalled()
@@ -46,7 +46,7 @@ describe('export lock', () => {
     mock.transport.start.mockClear()
     mock.start.mockClear()
     engine.play()
-    await engine.start(graph, recipe, mix(true))
+    await engine.start(graph, recipe, mix())
     expect(mock.transport.start).not.toHaveBeenCalled()
     expect(mock.start).not.toHaveBeenCalled()
     expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
@@ -65,49 +65,41 @@ describe('export lock', () => {
 })
 
 describe('live mix lifecycle', () => {
-  it('routes mix to context time, and only transitions ambience during playback', async () => {
+  it('routes mix changes to the current context time', async () => {
     const engine = await freshEngine()
-    await engine.start(graph, recipe, mix(true))
+    await engine.start(graph, recipe, mix())
     expect(mock.rig.setMix).toHaveBeenLastCalledWith(expect.anything(), 5)
     mock.context.currentTime = 9
-    engine.setMix(mix(true, 0.4))
-    expect(mock.rig.startAmbience).toHaveBeenCalledTimes(1)
-    engine.setMix(mix(false))
-    expect(mock.rig.stopAmbience).toHaveBeenLastCalledWith(9)
-    engine.setMix(mix(false, 0.3))
-    expect(mock.rig.stopAmbience).toHaveBeenCalledTimes(1)
+    engine.setMix(mix(0.4))
+    expect(mock.rig.setMix).toHaveBeenLastCalledWith(expect.objectContaining({ masterVolume: 0.4 }), 9)
   })
 
   it('applies the latest mix after Tone.start resolves', async () => {
     const engine = await freshEngine()
     let resolveStart!: () => void
     mock.start.mockImplementation(() => new Promise<void>(resolve => { resolveStart = resolve }))
-    const pending = engine.start(graph, recipe, mix(true))
-    engine.setMix(mix(false, 0.25))
+    const pending = engine.start(graph, recipe, mix())
+    engine.setMix(mix(0.25))
     resolveStart()
     await pending
-    expect(mock.createRig).toHaveBeenCalledWith(mock.context, expect.anything(), expect.objectContaining({ masterVolume: 0.25, ambienceOn: false }))
-    expect(mock.rig.startAmbience).not.toHaveBeenCalled()
+    expect(mock.createRig).toHaveBeenCalledWith(mock.context, expect.anything(), expect.objectContaining({ masterVolume: 0.25 }))
     expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
   })
 
   it('fades, releases and restores latest master level on pause; paused edits apply on resume', async () => {
     const engine = await freshEngine()
-    await engine.start(graph, recipe, mix(true))
-    mock.rig.startAmbience.mockClear()
+    await engine.start(graph, recipe, mix())
     mock.context.currentTime = 10
-    engine.setMix(mix(false, 0.45))
+    engine.setMix(mix(0.45))
     engine.pause()
-    expect(mock.rig.stopAmbience).toHaveBeenLastCalledWith(10)
     expect(mock.rig.rampMasterGain).toHaveBeenLastCalledWith(0.45, 0.03, 10.12)
     expect(mock.rig.releaseAll).toHaveBeenLastCalledWith(10.09)
-    engine.setMix(mix(true, 0.3))
-    expect(mock.rig.startAmbience).not.toHaveBeenCalled()
+    engine.setMix(mix(0.3))
     engine.play()
-    expect(mock.rig.startAmbience).toHaveBeenLastCalledWith(10)
+    expect(mock.rig.setMix).toHaveBeenLastCalledWith(expect.objectContaining({ masterVolume: 0.3 }), 10)
     expect(mock.transport.state).toBe('started')
-    engine.setMix(mix(false))
-    engine.setMix(mix(false, 0.2))
+    engine.setMix(mix())
+    engine.setMix(mix(0.2))
     expect(engine.getDiagnostics()).toMatchObject({ status: 'playing', repeatEvents: 1 })
     expect(mock.transport.scheduleRepeat).toHaveBeenCalledTimes(1)
   })
@@ -122,7 +114,7 @@ describe('prepared learning transport', () => {
       initialPhraseIndex: 3, scoresHeld: 1, take: vi.fn(), update: vi.fn(), reset: vi.fn(),
       ensureReady: vi.fn(() => new Promise<void>(resolve => { release = resolve })),
     }
-    const starting = engine.start(graph, recipe, mix(false), provider)
+    const starting = engine.start(graph, recipe, mix(), provider)
     await Promise.resolve()
     expect(mock.transport.scheduleRepeat).not.toHaveBeenCalled()
     release()
@@ -147,7 +139,7 @@ describe('prepared learning transport', () => {
       initialPhraseIndex: 0, scoresHeld: 0, take: vi.fn(), update: vi.fn(), reset: vi.fn(),
       ensureReady: vi.fn(() => Promise.reject(new Error('worker failed'))),
     }
-    await engine.start(graph, recipe, mix(false), provider)
+    await engine.start(graph, recipe, mix(), provider)
     expect(engine.getDiagnostics()).toMatchObject({ status: 'playing', repeatEvents: 1 })
     expect(provider.take).not.toHaveBeenCalled()
   })

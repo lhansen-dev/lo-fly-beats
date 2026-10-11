@@ -47,7 +47,7 @@ for (const tape of (only ? tapes.filter(t => t.name === only) : stem ? tapes.sli
       sheets.push(`phrase ${index + 1}: ${phrase.bananas} bananas${phrase.notes.length ? ` (${phrase.notes.join('; ')})` : ''}\n${notate(phrase.score.brain.actions, tape.presetId)}`)
     }
     // STEM=drums|bass|keys|lead renders one layer alone, for checking the balance.
-    const mix = stem ? { ...DEFAULT_MIX, ambienceOn: false, layers: Object.fromEntries(Object.entries(DEFAULT_MIX.layers).map(([layer, value]) => [layer, { ...value, muted: layer !== stem }])) } : DEFAULT_MIX
+    const mix = stem ? { ...DEFAULT_MIX, layers: Object.fromEntries(Object.entries(DEFAULT_MIX.layers).map(([layer, value]) => [layer, { ...value, muted: layer !== stem }])) } : DEFAULT_MIX
     const wav = encodeWav16(await renderTrack(scores, recipe, preset, mix))
     const bytes = new Uint8Array(wav)
     let binary = ''
