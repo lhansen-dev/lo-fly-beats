@@ -37,7 +37,7 @@ node --import tsx scripts/brain/train.ts --school 1500 --practice 3000 --publish
 npm run dev -- --port 5173 & node scripts/brain/render-demos.mjs artifacts/brain/demos 5
 ```
 
-In the app, the fly runs in a worker one phrase ahead of playback. Only phrases that actually play advance his neural state and get practiced; preparation never changes him. New beat or a preset change wakes the same fly in a new mood (seeded spontaneous activity), keeping everything he learned. Variation sets how adventurous he is (sampling temperature 0.6–1.0). His browser-local practice is saved in IndexedDB; **Forget his practice here** returns to the shipped fly.
+In the app, the fly runs in a worker one phrase ahead of playback. Only phrases that actually play advance his neural state and get practiced; preparation never changes him. New beat or a preset change wakes the same fly in a new mood (seeded spontaneous activity), keeping everything he learned. Variation sets how adventurous he is (sampling temperature 0.6–1.0). In radio mode (on by default) he finishes each song after eight phrases, an intro, grooves, and a breakdown, and starts a new one in a new mood. **Save tape** exports the last six phrases he played. His browser-local practice is saved in IndexedDB; **Forget his practice here** returns to the shipped fly.
 
 ## Learning prototype (experiment 01)
 
