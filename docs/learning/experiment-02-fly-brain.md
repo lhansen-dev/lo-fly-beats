@@ -61,7 +61,24 @@ All 120 shipped phrases were distinct, and the shipped fly's per-part critic sco
 
 - Practice clearly helps: school alone reaches 8.4 bananas, and practice lifts it to 9.35, above the tutor it learned from. Most of what the fly plays is not in the tutor's repertoire.
 - The critic and the tutor share authors and ideas about lofi, so a high score means "matches our proxies", not "sounds good". **Listening is pending.**
-- **Wiring:** removing recurrent connections costs about one banana. The decoder then sees only seeded spontaneous offsets, and the phase pools play an average groove. A **source-permuted** wiring with the same spectral radius performs about as well as the real one on bananas, with a single seed each. So this experiment does not show that the fly's specific wiring makes better music; extra seeds are being trained (see the appendix). The real circuit's much larger natural spectral radius is a measured property of the anatomy, but the model rescales it away.
+- **Wiring:** removing recurrent connections costs about one banana. The decoder then sees only seeded spontaneous offsets, and the phase pools play an average groove. Source-permuted wiring (same row counts and weights, scaled to the same spectral radius) ties the real wiring on bananas. See the seed comparison below.
+
+### Real versus shuffled wiring across three model seeds
+
+The same budget was used for each run: 1,500 lessons and 3,000 practice batches. The table reports the shipped readout at temperature 0.8, over 30 sessions × 4 phrases.
+
+| Seed | Wiring | School bananas | Shipped bananas | Distinct progressions | Original drums / bass / lead |
+| --- | --- | ---: | ---: | ---: | --- |
+| 1 | Anatomical | 8.43 | 9.35 | 11 | 88 / 65 / 92% |
+| 1 | Source-permuted | 8.52 | 9.31 | 8 | 78 / 50 / 92% |
+| 2 | Anatomical | 8.30 | 9.20 | 15 | 90 / 60 / 92% |
+| 2 | Source-permuted | 8.92 | 9.19 | 9 | 79 / 56 / 81% |
+| 3 | Anatomical | 8.30 | 9.34 | 9 | 97 / 57 / 94% |
+| 3 | Source-permuted | 8.73 | 9.33 | 7 | 81 / 64 / 89% |
+| Mean | Anatomical | 8.34 | 9.30 | 11.7 | 92 / 61 / 93% |
+| Mean | Source-permuted | 8.72 | 9.28 | 8.0 | 79 / 57 / 87% |
+
+Bananas tie. In all three seed pairs, the anatomical fly imitated the tutor less closely after school, then practiced into more distinct chord progressions and more drum bars of its own. This is a consistent but small-sample pattern with no statistical test. It is a lead for a stronger experiment, not evidence that the fly's wiring is musically better. One plausible mechanism is the real circuit's structured recurrence: before rescaling, its spectral radius is 0.85 against 0.32 for the shuffled circuit. That structure could give the song neurons richer, less input-locked activity. This has not been tested.
 
 ## Listening status
 
