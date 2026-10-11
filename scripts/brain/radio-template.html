@@ -77,6 +77,8 @@ tr.fly td { color: var(--banana); }
 .role { border-top: 2px solid var(--c); padding-top: 8px; }
 .role b { display: block; font-family: var(--mono); font-size: 22px; font-weight: 500; }
 .role span { font-size: 13px; color: var(--muted); }
+audio { width: 100%; max-width: 640px; }
+.night-shift .prose { color: var(--fg); }
 .run { font-family: var(--mono); font-size: 13px; background: var(--shelf); border-radius: 6px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
 @media (max-width: 760px) { .split { grid-template-columns: minmax(0, 1fr); } .wrap { gap: 44px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -89,6 +91,12 @@ tr.fly td { color: var(--banana); }
     <p class="lede">Four tapes composed by a fruit fly. Every kick, snare, bass note, chord, and melody was chosen by a simulated network built from <strong>his real ear-to-song wiring</strong>. He learned from a tutor, then practiced on his own for bananas.</p>
     <p class="facts" id="facts"></p>
   </header>
+
+  <section aria-labelledby="set-title" class="night-shift">
+    <h2 id="set-title">The night shift</h2>
+    <p class="prose">Fourteen minutes of his radio: four songs in a row, each with an intro, three grooves, a breakdown, and the groove coming back, then a new song in a new mood.</p>
+    <audio controls preload="none" src="tapes/night-shift.mp3"></audio>
+  </section>
 
   <section aria-labelledby="tapes-title">
     <h2 id="tapes-title">The tapes</h2>
