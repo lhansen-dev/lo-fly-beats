@@ -122,7 +122,7 @@ Reward-driven plasticity made the fly worse, while random reward left it unchang
 | Readout practice only | 9.43 | 9.83 |
 | Readout practice + shuffled-reward plasticity | 9.43 | 9.83 |
 
-Even when the readout can follow, this plasticity rule cancels the gains from practice, while random plasticity of the same size is harmless. The phrase-level covariance rule is too blunt: one critic score per phrase cannot tell which of 18,341 synapses helped. Per-bar credit, eligibility filtered to the decisions a synapse feeds, or a slower separate timescale are the obvious next attempts. The app does not use internal plasticity.
+The 9.83 for readout-only practice is not a better fly. That practice has no school anchor, and the fly reaches the score by collapsing to 3 chord progressions and repeating nearly the same loop phrase after phrase. This shows directly that the critic can be over-optimized, which is why shipped training keeps the anchor and the repertoire term. Even when the readout can follow, this plasticity rule cancels the gains from practice, while random plasticity of the same size is harmless. The phrase-level covariance rule is too blunt: one critic score per phrase cannot tell which of 18,341 synapses helped. Per-bar credit, eligibility filtered to the decisions a synapse feeds, or a slower separate timescale are the obvious next attempts. The app does not use internal plasticity.
 
 ## Listening status
 
