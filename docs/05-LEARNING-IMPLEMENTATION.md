@@ -289,7 +289,7 @@ This went beyond the planned session 5. A new composer in `src/brain/` replaces 
 - **Training:** an original tutor (school), then per-bar policy gradient against an authored critic (practice). A section head chooses groove, breakdown, or intro for each phrase.
 - **In the app:** a worker runs the fly one phrase ahead, learns gently from played phrases, takes listener bananas, and saves per browser.
 - **Results:** shipped-fly measurements, controls, the three-seed wiring comparison, and caveats are in [experiment 02](./learning/experiment-02-fly-brain.md). Demo tapes are in `docs/demos/`.
-- **Not done:** human listening, production deployment review, and Firefox/WebKit runs of the new browser specs. In this Linux sandbox the existing Chromium suite fails 25 of 52 tests on the unchanged baseline as well, so those failures are environmental. The new `tests/browser/brain.spec.ts` passes in Chromium.
+- **Not done:** human listening, production deployment review, and WebKit. `tests/browser/brain.spec.ts` passes in Chromium and Firefox; WebKit could not launch in this sandbox because host libraries are missing. In this Linux sandbox the existing Chromium suite fails 25 of 52 tests on the unchanged baseline as well, so those failures are environmental. The new `tests/browser/brain.spec.ts` passes in Chromium.
 - **Next:** listen and compare against the walk; rerun the wiring comparison with more seeds and a statistical test; consider reward-modulated plasticity inside the circuit (the original stage 2).
 
 ## What follows the five sessions

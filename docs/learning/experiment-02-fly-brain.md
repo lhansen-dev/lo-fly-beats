@@ -151,6 +151,10 @@ Reward-driven plasticity made the fly worse, while random reward left it unchang
 
 The 9.83 for readout-only practice is not a better fly. That practice has no school anchor, and the fly reaches the score by collapsing to 3 chord progressions and repeating nearly the same loop phrase after phrase. This shows directly that the critic can be over-optimized, which is why shipped training keeps the anchor and the repertoire term. Even when the readout can follow, this plasticity rule cancels the gains from practice, while random plasticity of the same size is harmless. The phrase-level covariance rule is too blunt: one critic score per phrase cannot tell which of 18,341 synapses helped. Per-bar credit, eligibility filtered to the decisions a synapse feeds, or a slower separate timescale are the obvious next attempts. The app does not use internal plasticity.
 
+## Browser coverage
+
+`tests/browser/brain.spec.ts` covers composing, critique, bananas, reload persistence, the classic walk, and playing before the connectome loads. It passes in Chromium and Firefox. WebKit could not be launched in the build sandbox, so Safari remains unverified.
+
 ## Listening status
 
 Not done. Listening needs a person. Please compare the [demo tapes](../demos/) with the classic connectome walk (`/?composer=walk`), and record who listened and what they heard here.
