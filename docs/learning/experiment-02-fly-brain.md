@@ -137,6 +137,19 @@ In all six of those pairs the shuffled brain imitated the tutor better, and the 
 
 What holds up: **the shuffled circuit is a consistently better copier of the tutor**. After practice the two are equal. The real circuit's drums are somewhat more often its own, but that falls short of conventional significance. The connectome's structured recurrence measurably changes how the song neurons learn by imitation, and it does not by itself make better music by this critic. Before rescaling, the real circuit's spectral radius is 0.85 against 0.32 for the shuffled one.
 
+## Which neurons drive which sounds
+
+For every beat, the app names the most decisive sound and the three song-side neurons that pushed hardest for it. Each neuron's contribution is its readout weight for the chosen action, minus its mean weight for the alternatives, times its rate; the neurons are ringed on the brain map. `scripts/brain/who-plays-what.ts` aggregates these attributions over 180 phrases. The readout pool is 58% premotor, 39% song, and 3% wing motor neurons.
+
+| Layer | Premotor | Song | Wing motor | Top cell types |
+| --- | ---: | ---: | ---: | --- |
+| Drums | 78% | 13% | 9% | IN01A024, IN19A026, vpoIN, IN12A012, AOTU064 |
+| Bass | 63% | 33% | 4% | vMS11 (14.5%), IN08B051, IN06B013 |
+| Keys | 83% | 16% | 1% | SMP163, DNae009, DNa10, vMS13 |
+| Lead | 73% | 16% | 11% | IN07B031, IN06B047, DNge107, IN06A016, hg2 MN |
+
+Wing motor neurons drive drums and melody three to four times more often than their share of the pool. One of the top melody drivers is hg2 MN, a motor neuron of a wing steering muscle. The single strongest bass driver is vMS11, a courtship-song neuron in the nerve cord. These are attributions in a learned linear readout over correlated activity, not causal claims about what these neurons do in a real fly.
+
 ## Learning inside the circuit (stage 2): a first, negative result
 
 The original plan's stage 2 lets selected internal connections learn from reward, inspired by dopamine-gated plasticity. [`plasticityStep`](../../src/brain/learn.ts) gives each of the 18,341 premotor→song, song→song, and premotor/song→wing-motor synapses a gain in [0.5, 1.5] on its anatomical weight. Each gain moves by a three-factor rule: the covariance of presynaptic rate (one step earlier) with postsynaptic rate over the phrase, times the phrase's normalized critic advantage, times the synapse's sign. Anatomy itself never changes. [`scripts/brain/plasticity.ts`](../../scripts/brain/plasticity.ts) runs the experiment from the shipped fly.
