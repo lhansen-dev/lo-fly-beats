@@ -46,3 +46,4 @@
 .composer-switch { font-size: 12px; }
 .composer-switch--walk { margin-top: 26px; color: var(--ui-muted); }
 .phrase-section { font-size: 12px; color: #e7c7d3; margin-top: 2px; }
+.variation-hint { display: block; font-size: 11px; color: var(--ui-muted); margin-top: 2px; }

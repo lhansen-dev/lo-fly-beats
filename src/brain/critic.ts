@@ -23,7 +23,7 @@ export function realizesSection(actions: PhraseActions): boolean {
  * no substitute for listening. Layers are scored bar by bar so practice can credit each choice
  * to the bar it shaped, plus phrase-level qualities such as motifs, form, and novelty.
  */
-export const CRITIC_VERSION = 5
+export const CRITIC_VERSION = 6
 export const CRITIC_PARTS = ['drums', 'bass', 'harmony', 'keys', 'lead', 'structure'] as const
 export type CriticPart = typeof CRITIC_PARTS[number]
 export const BAR_PARTS = ['drums', 'bass', 'keys', 'lead'] as const
@@ -89,6 +89,11 @@ function drums(actions: PhraseActions): PartResult {
     const evenHats = h.filter((value, step) => value && step % 2 === 0).length
     let clashes = 0
     for (let step = 0; step < 16; step++) if (k[step] && s[step] === 2) clashes++
+    // Hat accents should follow one feel: on the beats, or on the off-beat eighths, not a mix.
+    const accents = h.flatMap((value, step) => value === 2 ? [step] : [])
+    const onBeat = accents.filter(step => step % 4 === 0).length
+    const offBeat = accents.filter(step => step % 4 === 2).length
+    const accentFeel = accents.length ? Math.max(onBeat, offBeat) / accents.length : 1
     // The downbeat kick and the backbeat are the groove; everything else only decorates it.
     const lightIntro = sectionOf(actions) === 'intro'
     const core = (k[0] === 2 ? 1 : k[0] === 1 ? 0.6 : lightIntro ? 0.7 : 0.1) * Math.max(0.1, backbeat) * 0.7 ** strayHits * (clashes ? 0.5 : 1)
@@ -99,6 +104,7 @@ function drums(actions: PhraseActions): PartResult {
       [band(hats, 4, 10, 4), 1],
       [hats ? evenHats / hats : 0.6, 1],
       [band(evenHats / 8, 0.5, 1, 0.4), 1],
+      [accentFeel, 1],
       [band(k.filter((value, step) => value && step % 2 === 1).length, 0, 1, 2), 0.5],
     ]))
   }

@@ -9,11 +9,11 @@
   "readoutNeurons": 887,
   "outputs": 683,
   "tutorVersion": 2,
-  "criticVersion": 5,
+  "criticVersion": 6,
   "learningVersion": 1,
   "experience": {
     "schoolLessons": 1500,
-    "practicePhrases": 42000,
+    "practicePhrases": 51000,
     "listeningPhrases": 0,
     "bananasFromListeners": 0
   },
@@ -417,13 +417,88 @@
       "stage": "practice",
       "phrases": 42000,
       "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 42600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 43200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 43800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 44400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 45000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 45600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 46200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 46800,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 47400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 48000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 48600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 49200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 49800,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 50400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 51000,
+      "bananas": 9.3
     }
   ],
-  "trainedAt": "2026-10-11T11:57:14.543Z",
+  "trainedAt": "2026-10-11T14:13:31.962Z",
   "readout": {
     "encoding": "int8-row-scaled-v1",
     "file": "readout.bin.gzip",
-    "bytes": 525567,
-    "sha256": "260810f675864b8cd9e3a95a680930fbda8f4d6cff00bfb88f54c288fda7cdc8"
+    "bytes": 526529,
+    "sha256": "17bf07e87624e207ab7d3d44297fba8256f8e3aa5ca81aee36824e760863407a"
   }
 }
