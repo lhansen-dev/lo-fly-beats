@@ -100,6 +100,23 @@ describe('controller export', () => {
     return score
   }
 
+  it('saves the recent phrases of one session as a tape and restarts the tape on a new session', async () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const engine = new FakeEngine()
+    const renderTrack = vi.fn(async () => wav)
+    const controller = new SessionController({ store, loadGraph: async () => graph, createEngine: async () => engine, saveSettings: () => undefined, renderTrack, createObjectUrl: () => 'blob:tape', revokeObjectUrl: () => undefined })
+    await controller.loadCircuit()
+    await controller.startListening()
+    const phrase = (phraseIndex: number, sessionSeed = 1) => ({ scoreVersion: 1, phraseIndex, presetId: 'rainy-windowsill', sessionSeed, events: [] }) as unknown as PhraseScore
+    for (let index = 0; index < 8; index++) engine.emit('phraseStarted', { score: phrase(index), recipe: store.getState().active })
+    expect(store.getState().tapePhrases).toBe(6)
+    await controller.exportTape()
+    expect((renderTrack.mock.calls[0] as unknown[])[0]).toHaveLength(6)
+    expect(store.getState().exportState).toMatchObject({ status: 'ready', fileName: 'lofly-tape-rainy-windowsill-seed-00000001.wav' })
+    engine.emit('phraseStarted', { score: phrase(0, 2), recipe: store.getState().active })
+    expect(store.getState().tapePhrases).toBe(1)
+  })
+
   it('renders the active phrase snapshot, reports progress, and holds the WAV URL', async () => {
     const subject = exportSetup()
     const score = await withScore(subject)

@@ -21,6 +21,8 @@ export interface AppState {
   position: { phraseIndex: number; bar: number; beat: number }
   mix: MixSettings
   activeScore: PhraseScore | null
+  /** How many recent phrases a saved tape would contain. */
+  tapePhrases: number
   exportState: { status: 'idle' | 'preparing' | 'rendering' | 'encoding' | 'ready' | 'error'; fileName: string | null; url: string | null; message: string | null }
   ui: { animationEnabled: boolean | null; storageAvailable: boolean }
 }
@@ -55,6 +57,7 @@ export type AppAction =
   | { type: 'exportStateChanged'; exportState: Partial<AppState['exportState']> }
   | { type: 'animationToggled'; enabled: boolean }
   | { type: 'storageUnavailable' }
+  | { type: 'tapeChanged'; phrases: number }
 
 export function createInitialState(restored: RestoredSettings | null): AppState {
   const presetId = restored?.presetId ?? DEFAULT_PRESET_ID
@@ -75,6 +78,7 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
     position: { phraseIndex: 0, bar: 0, beat: 0 },
     mix: restored?.mix ?? DEFAULT_MIX,
     activeScore: null,
+    tapePhrases: 0,
     exportState: { status: 'idle', fileName: null, url: null, message: null },
     ui: { animationEnabled: restored?.animationEnabled ?? null, storageAvailable: true },
   }
@@ -136,6 +140,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, exportState: { ...state.exportState, ...action.exportState } }
     case 'animationToggled':
       return { ...state, ui: { ...state.ui, animationEnabled: action.enabled } }
+    case 'tapeChanged':
+      return { ...state, tapePhrases: action.phrases }
     case 'storageUnavailable':
       return { ...state, ui: { ...state.ui, storageAvailable: false } }
     default:

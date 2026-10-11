@@ -1,5 +1,5 @@
 import type { EngineDiagnostics, EngineEventMap, EngineLike } from '../audio/engine'
-import { createExportSnapshot, renderPhrase } from '../audio/export'
+import { createExportSnapshot, renderPhrase, renderTrack } from '../audio/export'
 import type { ExportSnapshot } from '../audio/export'
 import { encodeWav16 } from '../audio/wav'
 import type { WavData } from '../audio/wav'
@@ -9,12 +9,15 @@ import type { CircuitGraph } from '../connectome/types'
 import { getPreset } from '../presets/presets'
 import { MAPPING_VERSION } from '../music/versions'
 import type { PresetId } from '../presets/types'
+import type { PhraseScore } from '../music/types'
 import { randomSessionSeed } from './seed'
 import type { AppAction, AppState, RestoredSettings } from './state'
 import type { MixSettings } from '../audio/rig'
 import type { LearningClient, LearningDiagnostics } from './learningClient'
 import type { BrainClient, BrainDiagnostics } from './brainClient'
 import type { BrainAtlas } from '../brain/protocol'
+
+export const TAPE_PHRASES = 6
 
 export const AUDIO_INTERRUPTED_NOTICE = 'Audio was interrupted by the browser. Press Play to resume.'
 
@@ -39,6 +42,7 @@ export interface SessionControllerOptions {
   saveSettings: (settings: RestoredSettings) => void
   randomSeed?: () => number
   renderPhrase?: (snapshot: ExportSnapshot) => Promise<WavData>
+  renderTrack?: typeof renderTrack
   createObjectUrl?: (blob: Blob) => string
   revokeObjectUrl?: (url: string) => void
   createLearningClient?: (graph: CircuitGraph) => LearningClient
@@ -53,6 +57,9 @@ export class SessionController {
   private readonly saveSettings: (settings: RestoredSettings) => void
   private readonly randomSeed: () => number
   private readonly renderPhrase: (snapshot: ExportSnapshot) => Promise<WavData>
+  private readonly renderTrack: typeof renderTrack
+  /** Phrases heard since the last preset or session change, for saving a tape. */
+  private tape: PhraseScore[] = []
   private readonly createObjectUrl: (blob: Blob) => string
   private readonly revokeObjectUrl: (url: string) => void
   private readonly createLearningClient?: (graph: CircuitGraph) => LearningClient
@@ -80,6 +87,7 @@ export class SessionController {
     this.saveSettings = options.saveSettings
     this.randomSeed = options.randomSeed ?? randomSessionSeed
     this.renderPhrase = options.renderPhrase ?? renderPhrase
+    this.renderTrack = options.renderTrack ?? renderTrack
     this.createObjectUrl = options.createObjectUrl ?? (blob => URL.createObjectURL(blob))
     this.revokeObjectUrl = options.revokeObjectUrl ?? (url => URL.revokeObjectURL(url))
     this.createLearningClient = options.createLearningClient
@@ -176,6 +184,10 @@ export class SessionController {
         }),
         engine.on('phraseStarted', ({ score }) => {
           this.store.dispatch({ type: 'phraseStarted', score })
+          const last = this.tape.at(-1)
+          if (last && (last.presetId !== score.presetId || last.sessionSeed !== score.sessionSeed)) this.tape = []
+          this.tape = [...this.tape, score].slice(-TAPE_PHRASES)
+          this.store.dispatch({ type: 'tapeChanged', phrases: this.tape.length })
           for (const handler of Array.from(this.phraseStartedListeners)) handler({ phraseIndex: score.phraseIndex })
         }),
         engine.on('applied', ({ recipe }) => {
@@ -310,6 +322,33 @@ export class SessionController {
       const url = this.createObjectUrl(new Blob([buffer], { type: 'audio/wav' }))
       this.heldUrls.add(url)
       this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'ready', fileName: `lofly-${snapshot.recipe.presetId}-seed-${seedHex(snapshot.recipe.sessionSeed)}.wav`, url, message: null } })
+    } catch (error) {
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'error', message: error instanceof Error ? error.message : String(error), url: null, fileName: null } })
+    } finally {
+      engine.endExport()
+      this.exporting = false
+    }
+  }
+
+  /** Save the last few phrases that played, back to back, as one WAV. */
+  async exportTape(): Promise<void> {
+    const engine = this.engine
+    const state = this.store.getState()
+    const scores = this.tape
+    if (!engine || scores.length === 0 || this.exporting) return
+    this.exporting = true
+    try {
+      for (const url of this.heldUrls) this.revokeObjectUrl(url)
+      this.heldUrls.clear()
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'preparing', fileName: null, url: null, message: null } })
+      engine.beginExport()
+      const recipe = { ...state.active, presetId: scores[0]!.presetId, sessionSeed: scores[0]!.sessionSeed }
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'rendering' } })
+      const data = await this.renderTrack(scores, recipe, getPreset(recipe.presetId), state.mix)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'encoding' } })
+      const url = this.createObjectUrl(new Blob([encodeWav16(data)], { type: 'audio/wav' }))
+      this.heldUrls.add(url)
+      this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'ready', fileName: `lofly-tape-${recipe.presetId}-seed-${seedHex(recipe.sessionSeed)}.wav`, url, message: null } })
     } catch (error) {
       this.store.dispatch({ type: 'exportStateChanged', exportState: { status: 'error', message: error instanceof Error ? error.message : String(error), url: null, fileName: null } })
     } finally {

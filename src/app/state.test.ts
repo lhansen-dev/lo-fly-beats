@@ -11,7 +11,7 @@ describe('app state', () => {
     expect(initial()).toEqual({
       circuit: { status: 'loading', manifest: null, error: null }, engineStatus: 'idle', audioNotice: null, learning: null, brain: null,
       active: { recipeVersion: 1, presetId: DEFAULT_PRESET_ID, sessionSeed: 1, variation: 0, tempoBpm: 72 },
-      pending: {}, position: { phraseIndex: 0, bar: 0, beat: 0 }, mix: DEFAULT_MIX, activeScore: null,
+      pending: {}, position: { phraseIndex: 0, bar: 0, beat: 0 }, mix: DEFAULT_MIX, activeScore: null, tapePhrases: 0,
       exportState: { status: 'idle', fileName: null, url: null, message: null },
       ui: { animationEnabled: null, storageAvailable: true },
     })
