@@ -39,6 +39,7 @@ export default function FlyBrainPanel() {
   const controller = useController()
   const brain = useAppState(state => state.brain)
   const [forgetting, setForgetting] = useState(false)
+  const radio = useAppState(state => state.radio)
   if (!brain) return null
   const experience = brain.experience?.experience
   const playing = brain.playing
@@ -73,6 +74,7 @@ export default function FlyBrainPanel() {
           <div><dt>Bananas from you</dt><dd>{experience.bananasFromListeners.toLocaleString()}</dd></div>
         </dl>}
         {brain.experience && <LearningCurve history={brain.experience.history} />}
+        <label className="radio-toggle"><input type="checkbox" data-testid="radio-toggle" checked={radio} onChange={event => controller.setRadio(event.target.checked)} /> Radio: he starts a new song after every eight phrases</label>
         <p className="composer-switch"><a href="?composer=walk">Hear the classic connectome walk instead</a></p>
         {brain.experience && (brain.experience.source === 'saved' || experience?.listeningPhrases) ? <p className="forget-row">
           {forgetting

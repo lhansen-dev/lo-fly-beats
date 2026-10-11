@@ -18,6 +18,7 @@ import type { BrainClient, BrainDiagnostics } from './brainClient'
 import type { BrainAtlas } from '../brain/protocol'
 
 export const TAPE_PHRASES = 6
+export const SONG_PHRASES = 8
 
 export const AUDIO_INTERRUPTED_NOTICE = 'Audio was interrupted by the browser. Press Play to resume.'
 
@@ -189,6 +190,9 @@ export class SessionController {
           this.tape = [...this.tape, score].slice(-TAPE_PHRASES)
           this.store.dispatch({ type: 'tapeChanged', phrases: this.tape.length })
           for (const handler of Array.from(this.phraseStartedListeners)) handler({ phraseIndex: score.phraseIndex })
+          // Radio: after the last phrase of a song begins, queue a new song (a new mood) for the next boundary.
+          const state = this.store.getState()
+          if (state.radio && score.brain && score.phraseIndex >= SONG_PHRASES - 1 && state.pending.sessionSeed === undefined && state.engineStatus === 'playing') this.newBeat()
         }),
         engine.on('applied', ({ recipe }) => {
           this.store.dispatch({ type: 'changesApplied', recipe })
@@ -370,6 +374,8 @@ export class SessionController {
   }
 
   teachMotif(): void { this.learning?.teach() }
+
+  setRadio(enabled: boolean): void { this.store.dispatch({ type: 'radioToggled', enabled }) }
 
   /** Reward what the fly is playing right now. */
   giveBanana(): void { this.brain?.giveBanana() }

@@ -21,7 +21,8 @@ const browser = await chromium.launch()
 const page = await browser.newPage()
 page.on('pageerror', error => console.error('page error', error.message))
 await page.goto(`${base}?composer=walk`)
-for (const tape of stem ? tapes.slice(0, 1) : tapes) {
+const only = process.env.TAPE ?? null
+for (const tape of (only ? tapes.filter(t => t.name === only) : stem ? tapes.slice(0, 1) : tapes)) {
   const result = await page.evaluate(async ({ tape, phrases, stem }) => {
     const [{ loadBrainCircuit }, { createBrainModel }, { checkpointSchema, decodeReadout }, { FlyMind }, { renderTrack }, { encodeWav16 }, { getPreset }, { DEFAULT_MIX }, { notate }] = await Promise.all([
       import('/src/brain/circuit.ts'), import('/src/brain/model.ts'), import('/src/brain/checkpoint.ts'), import('/src/brain/mind.ts'),

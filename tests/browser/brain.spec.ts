@@ -13,6 +13,7 @@ test('the fly composes, critiques his phrase, accepts a banana, and remembers it
   expect(bananas).toBeGreaterThanOrEqual(0)
   expect(bananas).toBeLessThanOrEqual(10)
   await expect(page.getByTestId('brain-experience')).toContainText('Phrases played for you1')
+  await expect(page.getByTestId('radio-toggle')).toBeChecked()
   await page.getByTestId('give-banana').click()
   await expect(page.getByTestId('give-banana')).toBeDisabled()
   await expect(page.getByTestId('brain-experience')).toContainText('Bananas from you1')

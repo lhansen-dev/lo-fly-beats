@@ -100,6 +100,25 @@ describe('controller export', () => {
     return score
   }
 
+  it('radio queues a new song when the last phrase of a fly song begins, unless switched off', async () => {
+    const store = createStore(appReducer, createInitialState(null))
+    const engine = new FakeEngine()
+    const controller = new SessionController({ store, loadGraph: async () => graph, createEngine: async () => engine, saveSettings: () => undefined, randomSeed: () => 77 })
+    await controller.loadCircuit()
+    await controller.startListening()
+    store.dispatch({ type: 'engineStatusChanged', status: 'playing' })
+    const phrase = (phraseIndex: number) => ({ scoreVersion: 1, phraseIndex, presetId: 'rainy-windowsill', sessionSeed: 1, events: [], brain: {} }) as unknown as PhraseScore
+    const requests = () => engine.calls.filter(call => call.method === 'request')
+    engine.emit('phraseStarted', { score: phrase(6), recipe: store.getState().active })
+    expect(requests()).toHaveLength(0)
+    engine.emit('phraseStarted', { score: phrase(7), recipe: store.getState().active })
+    expect(requests()).toEqual([{ method: 'request', arg: { kind: 'newBeat', sessionSeed: 77 } }])
+    store.dispatch({ type: 'changesApplied', recipe: { ...store.getState().active, sessionSeed: 77 } })
+    controller.setRadio(false)
+    engine.emit('phraseStarted', { score: phrase(7), recipe: store.getState().active })
+    expect(requests()).toHaveLength(1)
+  })
+
   it('saves the recent phrases of one session as a tape and restarts the tape on a new session', async () => {
     const store = createStore(appReducer, createInitialState(null))
     const engine = new FakeEngine()

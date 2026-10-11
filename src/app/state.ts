@@ -23,6 +23,8 @@ export interface AppState {
   activeScore: PhraseScore | null
   /** How many recent phrases a saved tape would contain. */
   tapePhrases: number
+  /** Radio: the fly finishes each song after a few phrases and starts a new one. */
+  radio: boolean
   exportState: { status: 'idle' | 'preparing' | 'rendering' | 'encoding' | 'ready' | 'error'; fileName: string | null; url: string | null; message: string | null }
   ui: { animationEnabled: boolean | null; storageAvailable: boolean }
 }
@@ -58,6 +60,7 @@ export type AppAction =
   | { type: 'animationToggled'; enabled: boolean }
   | { type: 'storageUnavailable' }
   | { type: 'tapeChanged'; phrases: number }
+  | { type: 'radioToggled'; enabled: boolean }
 
 export function createInitialState(restored: RestoredSettings | null): AppState {
   const presetId = restored?.presetId ?? DEFAULT_PRESET_ID
@@ -79,6 +82,7 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
     mix: restored?.mix ?? DEFAULT_MIX,
     activeScore: null,
     tapePhrases: 0,
+    radio: true,
     exportState: { status: 'idle', fileName: null, url: null, message: null },
     ui: { animationEnabled: restored?.animationEnabled ?? null, storageAvailable: true },
   }
@@ -140,6 +144,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, exportState: { ...state.exportState, ...action.exportState } }
     case 'animationToggled':
       return { ...state, ui: { ...state.ui, animationEnabled: action.enabled } }
+    case 'radioToggled':
+      return { ...state, radio: action.enabled }
     case 'tapeChanged':
       return { ...state, tapePhrases: action.phrases }
     case 'storageUnavailable':
