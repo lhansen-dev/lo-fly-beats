@@ -66,6 +66,7 @@ export default function FlyBrainPanel() {
           <div><dt>Bananas from you</dt><dd>{experience.bananasFromListeners.toLocaleString()}</dd></div>
         </dl>}
         {brain.experience && <LearningCurve history={brain.experience.history} />}
+        <p className="composer-switch"><a href="?composer=walk">Hear the classic connectome walk instead</a></p>
         {brain.experience && (brain.experience.source === 'saved' || experience?.listeningPhrases) ? <p className="forget-row">
           {forgetting
             ? <><span>Forget what he practiced in this browser?</span> <button type="button" onClick={() => { void controller.forgetBrainPractice(); setForgetting(false) }}>Forget</button> <button type="button" onClick={() => setForgetting(false)}>Keep</button></>

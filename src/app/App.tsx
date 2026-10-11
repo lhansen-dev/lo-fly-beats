@@ -35,6 +35,7 @@ export default function App() {
   useKeyboardShortcuts()
   const presetId = useAppState(state => state.active.presetId)
   const brainComposing = useAppState(state => state.brain !== null && state.brain.status !== 'error')
+  const walkRequested = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('composer') === 'walk'
   const debugMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1'
   const learningExperiment = import.meta.env.DEV && typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('learning') === '1'
@@ -65,6 +66,7 @@ export default function App() {
       </section>
     </div>
     <FlyBrainPanel />
+    {walkRequested && <p className="composer-switch composer-switch--walk">The classic seeded walk is composing. <a href="./">Let the fly compose</a></p>}
     <CircuitScanner />
     <div className="circuit-load"><CircuitStatus /></div>
     <div className="about-section"><ExplanationPanel /><Credits /></div>

@@ -43,3 +43,5 @@
   .fly-brain-heading { padding: 20px 16px 16px; }
   .fly-brain-heading h2 { font-size: 24px; }
 }
+.composer-switch { font-size: 12px; }
+.composer-switch--walk { margin-top: 26px; color: var(--ui-muted); }
