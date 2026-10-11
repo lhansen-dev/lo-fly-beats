@@ -23,6 +23,7 @@ export const DEFAULT_MIX: MixSettings = {
 }
 
 export const PUMP_DEPTH = 0.28
+export const MIN_ATTACK_GAP_SECONDS = 0.001
 export const PUMP_RELEASE_SECONDS = 0.22
 
 export interface InstrumentRig {
@@ -152,6 +153,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   reverb.connect(master)
   master.chain(saturation, masterFilter, limiter, context.destination)
 
+  const lastAttack = { bass: -Infinity, lead: -Infinity }
   let currentSound = sound
   let currentMix = initialMix
   let ambienceStarted = false
@@ -186,8 +188,13 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
         }
       } else if (event.midi !== null) {
         const hz = midiToHz(event.midi)
-        if (event.layer === 'bass') bass.triggerAttackRelease(hz, durationSeconds, time, event.velocity)
-        else if (event.layer === 'lead') lead.triggerAttackRelease(hz, durationSeconds, time, event.velocity)
+        // A late callback can clamp two notes to the same instant; a monophonic voice needs strictly increasing attacks.
+        const voice = event.layer === 'bass' || event.layer === 'lead' ? event.layer : null
+        if (voice) {
+          const at = Math.max(time, context.currentTime, lastAttack[voice] + MIN_ATTACK_GAP_SECONDS)
+          lastAttack[voice] = at
+          ;(voice === 'bass' ? bass : lead).triggerAttackRelease(hz, durationSeconds, at, event.velocity)
+        }
         else keys.triggerAttackRelease(hz, durationSeconds, time, event.velocity)
       }
     },
