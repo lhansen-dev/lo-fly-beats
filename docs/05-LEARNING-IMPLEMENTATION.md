@@ -281,6 +281,17 @@ Verification: `npm run check` passed (73 unit/data files, 389 tests, circuit val
 
 Next: session 5 adds deliberate production mode selection and Forget learning, recorded saved/unsaved facts, accurate accompaniment/activity explanations, paired listening bundles/review, and the 15-minute learning soak. Recheck preparation latency with a hardware renderer and keep the headless timing distinction visible.
 
+### Overnight handoff — October 11, 2026: the fly composes
+
+This went beyond the planned session 5. A new composer in `src/brain/` replaces the MBON bass experiment as the default listening mode. The MBON lab remains available at `/?learning=1` in development, and the classic walk at `/?composer=walk`.
+
+- **Circuit and model:** a 1,771-neuron ear-to-song circuit (`song-v1`) with transmitter signs. Rate dynamics run per sixteenth note, and every layer's decisions are read from 887 song-side neurons through phase-tuned readout pools.
+- **Training:** an original tutor (school), then per-bar policy gradient against an authored critic (practice). A section head chooses groove, breakdown, or intro for each phrase.
+- **In the app:** a worker runs the fly one phrase ahead, learns gently from played phrases, takes listener bananas, and saves per browser.
+- **Results:** shipped-fly measurements, controls, the three-seed wiring comparison, and caveats are in [experiment 02](./learning/experiment-02-fly-brain.md). Demo tapes are in `docs/demos/`.
+- **Not done:** human listening, production deployment review, and Firefox/WebKit runs of the new browser specs. In this Linux sandbox the existing Chromium suite fails 25 of 52 tests on the unchanged baseline as well, so those failures are environmental. The new `tests/browser/brain.spec.ts` passes in Chromium.
+- **Next:** listen and compare against the walk; rerun the wiring comparison with more seeds and a statistical test; consider reward-modulated plasticity inside the circuit (the original stage 2).
+
 ## What follows the five sessions
 
 Use the results to choose the next small milestone. If motif retention fails, improve the musical representation or decoder. If useful learning works but altered connectivity performs equally well, retain that finding and design a stronger temporal task before claiming anatomical benefit.

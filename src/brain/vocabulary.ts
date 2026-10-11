@@ -11,6 +11,8 @@ export const HEADS = Object.freeze({
   bass: ['hold', 'stop', 'root', 'fifth', 'octave', 'third', 'seventh', 'approach'],
   keys: ['hold', 'strike', 'strike-top', 'release'],
   lead: ['hold', 'rest', 'same', 'up1', 'down1', 'up2', 'down2', 'up3', 'down3', 'up4', 'down4', 'chord'],
+  /** Chosen once at the start of each phrase: the part of the song this phrase plays. */
+  section: ['groove', 'breakdown', 'intro'],
   chord: ['ring0', 'ring1', 'ring2', 'ring3', 'ring4', 'ring5'],
   loopDrums: ['fresh', 'repeat1', 'repeat2', 'repeat4'],
   loopBass: ['fresh', 'repeat1', 'repeat2', 'repeat4'],
@@ -37,10 +39,12 @@ export const CHORD_STEPS = 32
  * reads the brain through its own pool. Loop choices have one pool per bar, chords one per slot.
  */
 export function headPositions(head: HeadName): number {
+  if (head === 'section') return 1
   return head === 'chord' ? BARS / 2 : (LOOP_HEADS as readonly string[]).includes(head) ? BARS : STEPS_PER_BAR
 }
 
 export function positionOf(head: HeadName, step: number): number {
+  if (head === 'section') return 0
   return head === 'chord' ? Math.floor(step / CHORD_STEPS) : (LOOP_HEADS as readonly string[]).includes(head) ? Math.floor(step / STEPS_PER_BAR) : step % STEPS_PER_BAR
 }
 

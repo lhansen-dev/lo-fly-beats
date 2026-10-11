@@ -3,13 +3,15 @@ import { isChordTone as chordToneAt, leadDegrees } from './melody'
 import type { PhraseActions } from './perform'
 import { BARS, CHORD_STEPS, HEADS, LEAD_DEGREES, PHRASE_STEPS, STEPS_PER_BAR } from './vocabulary'
 
+const sectionOf = (actions: PhraseActions) => HEADS.section[actions.section] ?? 'groove'
+
 /**
  * The banana critic: authored musical proxies scored in [0, 1]. They reward lofi idioms
  * (a steady backbeat, rooted bass, sparse singable melodies, loops with small changes) and are
  * no substitute for listening. Layers are scored bar by bar so practice can credit each choice
  * to the bar it shaped, plus phrase-level qualities such as motifs, form, and novelty.
  */
-export const CRITIC_VERSION = 2
+export const CRITIC_VERSION = 4
 export const CRITIC_PARTS = ['drums', 'bass', 'harmony', 'keys', 'lead', 'structure'] as const
 export type CriticPart = typeof CRITIC_PARTS[number]
 export const BAR_PARTS = ['drums', 'bass', 'keys', 'lead'] as const
@@ -62,7 +64,9 @@ function drums(actions: PhraseActions): PartResult {
     const s = bar(snare, index)
     const h = bar(hat, index)
     const total = k.filter(Boolean).length + s.filter(Boolean).length + h.filter(Boolean).length
-    if (total === 0) { bars.push(0.5); continue }
+    const section = sectionOf(actions)
+    // A breakdown may rest the drums; an intro may keep them light. A groove should keep playing.
+    if (total === 0) { bars.push(section === 'breakdown' ? 0.95 : section === 'intro' ? 0.8 : 0.5); continue }
     playing++
     const isTurn = index === BARS - 1 || index === 3
     const halfTime = s[8] === 2 && s[4] !== 2 && s[12] !== 2
@@ -74,10 +78,11 @@ function drums(actions: PhraseActions): PartResult {
     let clashes = 0
     for (let step = 0; step < 16; step++) if (k[step] && s[step] === 2) clashes++
     // The downbeat kick and the backbeat are the groove; everything else only decorates it.
-    const core = (k[0] === 2 ? 1 : k[0] === 1 ? 0.6 : 0.1) * Math.max(0.1, backbeat) * 0.7 ** strayHits * (clashes ? 0.5 : 1)
+    const lightIntro = sectionOf(actions) === 'intro'
+    const core = (k[0] === 2 ? 1 : k[0] === 1 ? 0.6 : lightIntro ? 0.7 : 0.1) * Math.max(0.1, backbeat) * 0.7 ** strayHits * (clashes ? 0.5 : 1)
     bars.push(core * blend([
-      [k.slice(6, 16).some(value => value > 0) ? 1 : 0.3, 1],
-      [band(kicks, 2, 3, 2), 1],
+      [k.slice(6, 16).some(value => value > 0) || lightIntro ? 1 : 0.3, 1],
+      [lightIntro ? band(kicks, 0, 2, 2) : band(kicks, 2, 3, 2), 1],
       [band(s.filter(value => value === 1).length, 0, 2, 2), 0.5],
       [band(hats, 4, 10, 4), 1],
       [hats ? evenHats / hats : 0.6, 1],
@@ -85,12 +90,14 @@ function drums(actions: PhraseActions): PartResult {
       [band(k.filter((value, step) => value && step % 2 === 1).length, 0, 1, 2), 0.5],
     ]))
   }
-  if (playing < 6) notes.push('drums dropped out for a while')
+  const section = sectionOf(actions)
+  if (playing < 6 && section === 'groove') notes.push('drums dropped out for a while')
   // Loops: bars 2-3 and 6-7 should mostly echo the bar that opened their half.
   const pattern = (index: number) => [...bar(kick, index), ...bar(snare, index), ...bar(hat, index)]
   const loopiness = mean([1, 2, 5, 6].map(index => jaccard(pattern(index), pattern(index < 4 ? 0 : 4))))
   const turnaround = jaccard(pattern(7), pattern(6)) < 0.95 || jaccard(pattern(3), pattern(2)) < 0.95 ? 1 : 0.5
-  return { score: blend([[mean(bars), 6], [band(playing, 6, 8, 4), 1], [band(loopiness, 0.6, 1, 0.4), 1.5], [turnaround, 0.5]]), bars, notes }
+  const presence = section === 'breakdown' ? band(playing, 2, 5, 2) : section === 'intro' ? band(playing, 3, 8, 3) : band(playing, 6, 8, 4)
+  return { score: blend([[mean(bars), 6], [presence, 1], [band(loopiness, 0.6, 1, 0.4), 1.5], [turnaround, 0.5]]), bars, notes }
 }
 
 function bass(actions: PhraseActions): PartResult {
@@ -180,7 +187,11 @@ function lead(actions: PhraseActions, presetId: PresetId): PartResult {
   const steps = actions.steps.lead
   const resolved = leadDegrees(steps, actions.chords, presetId, actions.leadStart).degrees
   const onsets = resolved.flatMap((degree, step) => degree !== null ? [step] : [])
-  if (onsets.length === 0) return { score: 0.45, bars: Array<number>(BARS).fill(0.45), notes: ['no melody this time'] }
+  if (onsets.length === 0) {
+    const section = sectionOf(actions)
+    const score = section === 'intro' ? 0.85 : section === 'breakdown' ? 0.25 : 0.45
+    return { score, bars: Array<number>(BARS).fill(score), notes: section === 'intro' ? [] : ['no melody this time'] }
+  }
   const degree = (step: number) => resolved[step]!
   const isChordTone = (step: number) => chordToneAt(presetId, actions.chords[Math.floor(step / CHORD_STEPS)]!, degree(step))
   const notes: string[] = []
@@ -234,7 +245,16 @@ function structure(actions: PhraseActions, previous: readonly PhraseActions[]): 
   let novelty = 0.35
   if (recent.length) novelty = 1 - Math.max(...recent.map(earlier => similarity(actions, earlier)))
   if (novelty < 0.08) notes.push('played the exact same thing again')
-  return { score: mean([busy, band(novelty, 0.15, 0.6, 0.25)]), notes }
+  // Song form: intros open songs, breakdowns come after a few grooves and never twice running.
+  const section = sectionOf(actions)
+  const before = previous.map(sectionOf)
+  let form = 1
+  if (section === 'intro') form = before.length === 0 ? 1 : 0.25
+  else if (section === 'breakdown') form = before.length < 2 ? 0.35 : before.at(-1) === 'breakdown' || before.at(-2) === 'breakdown' ? 0.2 : 1
+  else if (before.length >= 3 && before.slice(-3).every(earlier => earlier === 'groove')) form = 0.45
+  if (form < 0.5) notes.push(`a ${section} felt out of place`)
+  if (form < 0.5 && section === 'groove') notes.push('the song needed a change of section')
+  return { score: mean([busy, band(novelty, 0.15, 0.6, 0.25), form, form]), notes }
 }
 
 /** `repertoire` lists progressions the fly recently opened songs with, most recent last. */

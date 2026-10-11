@@ -10,6 +10,7 @@ import {
 import type { BrainModel } from './model'
 import { cloneRuntime, freshRuntime, perform, readoutWidth, type FlyRuntime, type Performance, type PhraseActions } from './perform'
 import type { BrainExperience, ComposedPhrase } from './protocol'
+import { HEADS } from './vocabulary'
 
 /** What a browser keeps of its own fly between visits. */
 export interface SavedBrain {
@@ -131,7 +132,7 @@ export class FlyMind {
     const id = `${key}|${phraseIndex}|${++this.counter}`
     const score = arrangePhrase(this.model, this.experience.listeningPhrases, recipe, phraseIndex, result.actions, result.activity)
     const phrase: ComposedPhrase = {
-      id, score, bananas: bananas(critic), notes: critic.notes,
+      id, score, bananas: bananas(critic), notes: critic.notes, section: HEADS.section[result.actions.section] ?? 'groove',
       parts: { drums: critic.drums, bass: critic.bass, harmony: critic.harmony, keys: critic.keys, lead: critic.lead, structure: critic.structure },
       frames: result.frames!, composeMs: performance.now() - started,
     }

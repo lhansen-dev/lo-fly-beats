@@ -25,6 +25,8 @@ export interface FlyRuntime {
 export const HISTORY_BARS = 8
 
 export interface PhraseActions {
+  /** Index into HEADS.section. */
+  section: number
   /** Lead degree before the phrase; lead actions are relative moves from it. */
   leadStart: number
   steps: Record<StepHead, number[]>
@@ -142,7 +144,9 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   let heard: HeardSound = { ...start.heard }
   let chordRing = start.chordRing
   let leadDegree = options.teacher?.leadStart ?? start.leadDegree
+  let section = 0
   const actions: PhraseActions = {
+    section: 0,
     leadStart: leadDegree,
     steps: Object.fromEntries(STEP_HEADS.map(head => [head, Array<number>(PHRASE_STEPS).fill(0)])) as Record<StepHead, number[]>,
     chords: [],
@@ -195,12 +199,16 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   for (let step = 0; step < PHRASE_STEPS; step++) {
     const bar = Math.floor(step / STEPS_PER_BAR)
     const stepInBar = step % STEPS_PER_BAR
-    heard = { ...heard, chordRing }
+    heard = { ...heard, chordRing, section }
     stepBrain(model, state, senseInputs(step, heard, inputs), next)
     ;[state, next] = [next, state]
     gatherFeatures(model, state, current)
     if (features) features.push(current.slice())
 
+    if (step === 0) {
+      section = decide('section', step, undefined, options.teacher?.section)
+      actions.section = section
+    }
     if (step % CHORD_STEPS === 0) {
       chordRing = decide('chord', step, undefined, options.teacher?.chords[step / CHORD_STEPS])
       actions.chords.push(chordRing)
@@ -240,7 +248,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
       keysOnset: keysAction === 1 || keysAction === 2 ? 1 : 0,
       leadOnset: leadAction >= 2 ? 1 : 0,
       leadPitch: leadSounding ? leadPitchSense(leadDegree) : -1,
-      chordRing,
+      chordRing, section,
     }
 
     for (let neuron = 0; neuron < model.size; neuron++) {

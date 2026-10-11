@@ -32,7 +32,7 @@ export type EngineEventMap = {
 }
 export interface EngineLike {
   on<K extends keyof EngineEventMap>(name: K, handler: (payload: EngineEventMap[K]) => void): () => void
-  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void>
+  start(graph: CircuitGraph | null, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void>
   setMix(mix: MixSettings): void
   play(): void | Promise<void>
   debugInterrupt(): void
@@ -80,7 +80,7 @@ class PlaybackEngine implements EngineLike {
     this.emit('status', status)
   }
 
-  start(graph: CircuitGraph, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void> {
+  start(graph: CircuitGraph | null, recipe: SessionRecipe, mix: MixSettings, prepared?: PreparedScoreProvider): Promise<void> {
     if (this.status === 'exporting' || this.status === 'playing' || this.status === 'paused') return Promise.resolve()
     if (this.startPromise) return this.startPromise
     this.mix = mix
@@ -98,7 +98,11 @@ class PlaybackEngine implements EngineLike {
       const preset = getPreset(recipe.presetId)
       this.rig = createRig(context, preset.sound, this.mix)
       this.rig.setMix(this.mix, context.currentTime)
-      this.sequencer = new PlaybackSequencer((r, i) => composePhrase(graph, r, i), recipe, scoreProvider)
+      // The fly can start before the whole connectome arrives; the walk needs it only as a fallback.
+      this.sequencer = new PlaybackSequencer((r, i) => {
+        if (!graph) throw new Error('The connectome is still loading')
+        return composePhrase(graph, r, i)
+      }, recipe, scoreProvider)
       context.transport.bpm.value = recipe.tempoBpm
       context.transport.swing = 0
       if (this.mix.ambienceOn) this.rig.startAmbience(context.currentTime)

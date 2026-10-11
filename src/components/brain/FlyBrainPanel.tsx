@@ -4,6 +4,12 @@ import { useAppState } from '../../app/store'
 import type { BrainCheckpoint } from '../../brain/checkpoint'
 import BrainView from './BrainView'
 
+const SECTION_LABELS: Record<string, string> = {
+  groove: 'He chose a groove: the full band.',
+  breakdown: 'He chose a breakdown: drums rest while the melody carries it.',
+  intro: 'He chose an intro: easing in, light on the drums.',
+}
+
 const PART_LABELS = { drums: 'Groove', bass: 'Bass', harmony: 'Chords', keys: 'Keys', lead: 'Melody', structure: 'Form' } as const
 
 function LearningCurve({ history }: { history: BrainCheckpoint['history'] }) {
@@ -52,6 +58,7 @@ export default function FlyBrainPanel() {
         {playing && <div className="phrase-review" data-testid="phrase-review">
           <p className="detail-label">THIS PHRASE, BY HIS OWN CRITIC</p>
           <p className="phrase-bananas"><span data-testid="phrase-bananas">{playing.bananas.toFixed(1)}</span> / 10 bananas</p>
+          <p className="phrase-section" data-testid="phrase-section">{SECTION_LABELS[playing.section] ?? playing.section}</p>
           <dl className="part-meters">{(Object.keys(PART_LABELS) as (keyof typeof PART_LABELS)[]).map(part => <div key={part}>
             <dt>{PART_LABELS[part]}</dt><dd><meter min={0} max={1} value={playing.parts[part]} aria-label={`${PART_LABELS[part]} ${Math.round(playing.parts[part] * 100)} percent`} /></dd>
           </div>)}</dl>

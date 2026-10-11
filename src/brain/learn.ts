@@ -125,7 +125,7 @@ export function lesson(
 export const HEAD_CREDIT: Readonly<Record<HeadName, CriticPart>> = Object.freeze({
   kick: 'drums', snare: 'drums', hat: 'drums', loopDrums: 'drums',
   bass: 'bass', loopBass: 'bass', chord: 'harmony',
-  keys: 'keys', loopKeys: 'keys', lead: 'lead', loopLead: 'lead',
+  keys: 'keys', loopKeys: 'keys', lead: 'lead', loopLead: 'lead', section: 'structure',
 })
 
 type Tracked = CriticPart | 'total' | `bar:${BarPart}`

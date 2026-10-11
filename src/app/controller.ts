@@ -165,7 +165,7 @@ export class SessionController {
   }
 
   startListening(): Promise<void> {
-    if (!this.graph) return Promise.resolve()
+    if (!this.graph && !this.brain) return Promise.resolve()
     if (this.startPromise) return this.startPromise
     const operation = (async () => {
       const engine = await this.createEngine()
@@ -197,7 +197,8 @@ export class SessionController {
         engine.on('position', position => this.store.dispatch({ type: 'positionChanged', position })),
       ]
       const state = this.store.getState()
-      await engine.start(this.graph!, state.active, state.mix, this.provider ?? undefined)
+      if (!this.graph && !this.brain) return
+      await engine.start(this.graph, state.active, state.mix, this.provider ?? undefined)
     })()
     this.startPromise = operation
     void operation.finally(() => {

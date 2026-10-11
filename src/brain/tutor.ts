@@ -11,7 +11,7 @@ import {
  * The tutor is an authored, original lofi teacher. The fly hears it during school and learns to
  * anticipate its choices; the tutor is never consulted while the fly performs.
  */
-export const TUTOR_VERSION = 1
+export const TUTOR_VERSION = 2
 
 type Hits = Readonly<Record<number, 1 | 2>>
 interface Groove { id: string; kick: Hits; snare: Hits; hat: Hits }
@@ -166,16 +166,18 @@ export function tutorPhrase(tutor: TutorState, rng: Rng): PhraseActions {
   const history = tutor.history
 
   // Drums
-  const drumsPlay = section !== 'break'
-  const fillAtEnd = rng.float() < 0.7
+  // A breakdown drops the drums for the first half, then brings them back with a fill.
+  const isBreak = section === 'break'
+  const fillAtEnd = isBreak || rng.float() < 0.7
   const drumBars: Bar[] = []
   const look = (back: number, bar: number): Bar | undefined => bar - back >= 0 ? drumBars[bar - back] : history[history.length - (back - bar)]
   for (let bar = 0; bar < BARS; bar++) {
     let loop = 0
+    const drumsPlay = !isBreak || bar >= 4
     if (drumsPlay) {
       if (bar === 1 || bar === 5) loop = rng.float() < 0.85 ? 1 : 0
       else if (bar === 2 || bar === 6) loop = 2
-      else if (bar === 4) loop = rng.float() < 0.8 && look(4, bar) ? 3 : 0
+      else if (bar === 4) loop = !isBreak && rng.float() < 0.8 && look(4, bar) ? 3 : 0
       else if (bar === 7 && !fillAtEnd) loop = 3
       if (bar === 0 && tutor.phrase > 0 && section !== 'intro' && rng.float() < 0.5 && history.length >= 4) loop = 3
     }
@@ -270,7 +272,7 @@ export function tutorPhrase(tutor: TutorState, rng: Rng): PhraseActions {
   }
   tutor.history = [...history, ...bars].slice(-8)
   tutor.phrase++
-  return { leadStart, steps, chords, loops }
+  return { leadStart, section: actionIndex('section', section === 'intro' ? 'intro' : isBreak ? 'breakdown' : 'groove'), steps, chords, loops }
 }
 
 export const TUTOR_CHORD_STEPS = CHORD_STEPS

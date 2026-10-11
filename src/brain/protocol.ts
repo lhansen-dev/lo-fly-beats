@@ -26,6 +26,8 @@ export interface ComposedPhrase {
   id: string
   score: PhraseScore
   bananas: number
+  /** groove, breakdown, or intro */
+  section: string
   parts: Record<CriticPart, number>
   notes: string[]
   /** Rates of every neuron at the end of each beat, scaled to int8 (rate * 127). */

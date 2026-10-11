@@ -7,7 +7,7 @@ import { readoutWidth } from './perform'
 import { TUTOR_VERSION } from './tutor'
 
 /** Bump when the vocabulary, senses, readout layout, or dynamics change shape or meaning. */
-export const BRAIN_VERSION = 1
+export const BRAIN_VERSION = 2
 export const BRAIN_ID = 'fly-v1'
 
 const historyPoint = z.strictObject({

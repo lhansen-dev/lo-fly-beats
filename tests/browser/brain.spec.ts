@@ -28,3 +28,14 @@ test('the classic connectome walk remains available', async ({ page }) => {
   await expect(page.getByTestId('circuit-status')).toContainText('165122 neurons', { timeout: 60_000 })
   await expect(page.getByTestId('fly-brain')).toHaveCount(0)
 })
+
+test('the fly starts playing without waiting for the whole connectome', async ({ page }) => {
+  test.setTimeout(90_000)
+  // Hold back the 35 MB whole-CNS adjacency; the fly needs only his own circuit.
+  await page.route('**/whole-cns-v1/adjacency.bin.gzip', () => undefined)
+  await page.goto('/')
+  await expect(page.getByTestId('start-listening')).toBeEnabled({ timeout: 30_000 })
+  await page.getByTestId('start-listening').click()
+  await expect(page.getByTestId('brain-status')).toContainText('playing what it just composed', { timeout: 30_000 })
+  await expect(page.getByTestId('circuit-status')).not.toContainText('165122 neurons')
+})

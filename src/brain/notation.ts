@@ -2,12 +2,12 @@ import { getPreset } from '../presets/presets'
 import type { PresetId } from '../presets/types'
 import type { PhraseActions } from './perform'
 import { leadDegrees } from './melody'
-import { BARS, STEPS_PER_BAR } from './vocabulary'
+import { BARS, HEADS, STEPS_PER_BAR } from './vocabulary'
 
 /** A plain-text grid of one phrase, for reading what the fly played. */
 export function notate(actions: PhraseActions, presetId: PresetId, bars: readonly number[] = [0, 1, 2, 3, 4, 5, 6, 7]): string {
   const preset = getPreset(presetId)
-  const lines: string[] = [`chords: ${actions.chords.map(ring => preset.chordRing[ring]!.symbol).join(' | ')}`,
+  const lines: string[] = [`section: ${HEADS.section[actions.section]}`, `chords: ${actions.chords.map(ring => preset.chordRing[ring]!.symbol).join(' | ')}`,
     `loops d/b/k/l: ${Array.from({ length: BARS }, (_, bar) => ['loopDrums', 'loopBass', 'loopKeys', 'loopLead'].map(head => 'F124'[actions.loops[head as 'loopDrums'][bar]!]).join('')).join(' ')}`]
   const row = (label: string, render: (step: number) => string) =>
     lines.push(`${label.padEnd(5)}${bars.map(bar => Array.from({ length: STEPS_PER_BAR }, (_, step) => render(bar * STEPS_PER_BAR + step)).join('')).join('|')}`)

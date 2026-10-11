@@ -17,15 +17,17 @@ export interface HeardSound {
   /** Lead scale degree in [0,1], or -1 when silent. */
   leadPitch: number
   chordRing: number
+  /** The section the fly chose for this phrase; it hears its own plan. */
+  section: number
 }
 
 export const SILENCE: Readonly<HeardSound> = Object.freeze({
-  kick: 0, snare: 0, hat: 0, bassOnset: 0, bassPitch: -1, keysOnset: 0, leadOnset: 0, leadPitch: -1, chordRing: 0,
+  kick: 0, snare: 0, hat: 0, bassOnset: 0, bassPitch: -1, keysOnset: 0, leadOnset: 0, leadPitch: -1, chordRing: 0, section: 0,
 })
 
 const CLOCK_PERIODS = [4, 8, 16, 32, 64, 128] as const
 /** The eighth-note tick (+1 on eighths, -1 between) plus two phases for each longer period. */
-export const INPUT_SIZE = 1 + CLOCK_PERIODS.length * 2 + 8 + 6 + 1
+export const INPUT_SIZE = 1 + CLOCK_PERIODS.length * 2 + 8 + 6 + 3 + 1
 
 export function senseInputs(step: number, heard: Readonly<HeardSound>, out: Float32Array): Float32Array {
   if (out.length !== INPUT_SIZE) throw new RangeError('Sense buffer has the wrong size')
@@ -45,6 +47,7 @@ export function senseInputs(step: number, heard: Readonly<HeardSound>, out: Floa
   out[index++] = heard.leadOnset
   out[index++] = heard.leadPitch
   for (let ring = 0; ring < 6; ring++) out[index++] = heard.chordRing === ring ? 1 : 0
+  for (let section = 0; section < 3; section++) out[index++] = heard.section === section ? 1 : 0
   out[index++] = 1
   return out
 }

@@ -5,12 +5,12 @@
  *
  *   node --import tsx scripts/brain/train.ts [--connectivity anatomical] [--school 1500] [--practice 3000]
  */
-import { mkdir, rename, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
-import { gzipSync } from 'node:zlib'
+import { gunzipSync, gzipSync } from 'node:zlib'
 import { cpus } from 'node:os'
 import { parseArgs } from 'node:util'
-import { checkpointMetadata, decodeReadout, encodeReadout, type BrainCheckpoint } from '../../src/brain/checkpoint'
+import { checkpointMetadata, checkpointSchema, decodeReadout, encodeReadout, type BrainCheckpoint } from '../../src/brain/checkpoint'
 import { EVALUATION_PRESETS, flyPlayer, measurePlay, tutorPlayer, tutorVocabulary, type PlayMeasurement } from '../../src/brain/evaluate'
 import { createBaseline, createOptimizer, lesson, LEARNING_CONFIGURATION, mergeStats, practiceBatch, type LessonStats } from '../../src/brain/learn'
 import { BRAIN_CONFIGURATION, createBrainModel, type Connectivity } from '../../src/brain/model'
@@ -30,10 +30,12 @@ const { values } = parseArgs({
     'eval-sessions': { type: 'string', default: '30' },
     publish: { type: 'boolean', default: false },
     tag: { type: 'string' },
+    /** Continue from the published fly instead of a blank readout; school is skipped unless requested. */
+    resume: { type: 'boolean', default: false },
   },
 })
 const connectivity = values.connectivity as Connectivity
-const schoolLessons = Number(values.school)
+const schoolLessons = values.resume && process.argv.every(argument => !argument.startsWith('--school')) ? 0 : Number(values.school)
 const practiceBatches = Number(values.practice)
 const batchSize = Number(values.batch)
 const evalSessions = Number(values['eval-sessions'])
@@ -46,6 +48,15 @@ const model = createBrainModel(circuit, Number(values.seed), connectivity)
 const readout = createReadout(model)
 const presets = EVALUATION_PRESETS
 const history: BrainCheckpoint['history'] = []
+const prior = { schoolLessons: 0, practicePhrases: 0 }
+if (values.resume) {
+  const directory = new URL('../../public/data/brains/fly-v1/', import.meta.url)
+  const published = checkpointSchema.parse(JSON.parse(await readFile(new URL('checkpoint.json', directory), 'utf8')))
+  readout.set(decodeReadout(gunzipSync(await readFile(new URL(published.readout.file, directory))), model))
+  history.push(...published.history.filter(point => point.stage !== 'listening'))
+  prior.schoolLessons = published.experience.schoolLessons
+  prior.practicePhrases = published.experience.practicePhrases
+}
 const log = (message: string) => console.log(`[${values.tag ?? connectivity} ${elapsed()}] ${message}`)
 log(`brain: ${model.size} neurons, ${circuit.source.length} connections, readout from ${model.readoutNeurons.length} song-side neurons, ${readout.length} weights`)
 
@@ -68,7 +79,7 @@ for (let lessonIndex = 0; lessonIndex < schoolLessons;) {
     mergeStats(stats, result.stats)
     if ((lessonIndex + 1) % 150 === 0) {
       const bananas = quickBananas()
-      history.push({ stage: 'school', phrases: lessonIndex + 1, bananas })
+      history.push({ stage: 'school', phrases: prior.schoolLessons + lessonIndex + 1, bananas })
       log(`school ${lessonIndex + 1}/${schoolLessons} bananas ${bananas} ${Object.entries(stats).map(([head, value]) => `${head}:${(value.correct / value.count * 100).toFixed(0)}%`).join(' ')}`)
       stats = {}
     }
@@ -107,7 +118,7 @@ for (let batch = 1; batch <= practiceBatches; batch++) {
   })
   if (batch % 100 === 0) {
     const bananas = Math.round(running / runningCount * 100) / 10
-    history.push({ stage: 'practice', phrases: batch * batchSize, bananas })
+    history.push({ stage: 'practice', phrases: prior.practicePhrases + batch * batchSize, bananas })
     log(`practice ${batch}/${practiceBatches} bananas while practicing ${bananas}`)
     running = 0
     runningCount = 0
@@ -159,8 +170,9 @@ if (values.publish) {
   const compressed = gzipSync(encoded, { level: 9 })
   const checkpoint: BrainCheckpoint = {
     ...checkpointMetadata(model, {
-      schoolLessons, practicePhrases: practiceBatches * batchSize, listeningPhrases: 0, bananasFromListeners: 0,
-    }, history, new Date().toISOString()),
+      schoolLessons: prior.schoolLessons + schoolLessons, practicePhrases: prior.practicePhrases + practiceBatches * batchSize,
+      listeningPhrases: 0, bananasFromListeners: 0,
+    }, history.slice(-400), new Date().toISOString()),
     readout: { encoding: 'int8-row-scaled-v1', file: 'readout.bin.gzip', bytes: compressed.byteLength, sha256: createHash('sha256').update(compressed).digest('hex') },
   }
   await write(directory, 'readout.bin.gzip', compressed)

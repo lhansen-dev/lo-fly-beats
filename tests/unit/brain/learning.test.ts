@@ -83,7 +83,7 @@ describe('checkpoints and the persistent fly', () => {
     const model = await songModel()
     const shipped = createReadout(model)
     const metadata = {
-      schemaVersion: 1 as const, brainId: 'test', brainVersion: 1 as const, circuitChecksum: model.circuit.checksum, modelSeed: 1, modelVersion: 1,
+      schemaVersion: 1 as const, brainId: 'test', brainVersion: 2 as const, circuitChecksum: model.circuit.checksum, modelSeed: 1, modelVersion: 1,
       connectivity: 'anatomical' as const, readoutNeurons: model.readoutNeurons.length, outputs: OUTPUT_SIZE, tutorVersion: 1, criticVersion: 2, learningVersion: 1,
       experience: { schoolLessons: 10, practicePhrases: 20, listeningPhrases: 0, bananasFromListeners: 0 }, history: [], trainedAt: '2026-10-11T00:00:00.000Z',
       readout: { encoding: 'int8-row-scaled-v1' as const, file: 'readout.bin.gzip', bytes: 1, sha256: '0'.repeat(64) },

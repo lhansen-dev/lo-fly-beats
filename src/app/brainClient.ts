@@ -6,6 +6,7 @@ export interface PlayedPhraseSummary {
   id: string
   phraseIndex: number
   bananas: number
+  section: string
   parts: ComposedPhrase['parts']
   notes: string[]
   composeMs: number
@@ -207,7 +208,7 @@ export class BrainClient implements PreparedScoreProvider {
     this.onStatus({
       status: this.status, message: this.message, experience: this.experience,
       playing: active ? {
-        id: active.id, phraseIndex: active.score.phraseIndex, bananas: active.bananas, parts: active.parts,
+        id: active.id, phraseIndex: active.score.phraseIndex, bananas: active.bananas, section: active.section, parts: active.parts,
         notes: active.notes, composeMs: active.composeMs,
       } : null,
       bananaGiven: this.bananaGiven,
