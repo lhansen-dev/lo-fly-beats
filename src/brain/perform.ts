@@ -168,6 +168,14 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   let bassSounding = false
   let currentLoop: Record<LoopHead, number> = { loopDrums: 0, loopBass: 0, loopKeys: 0, loopLead: 0 }
 
+  /**
+   * Choosing a section works like a producer muting a channel: a breakdown rests the drums for the
+   * first four bars, and an intro keeps the kick to downbeats there. These are authored rules.
+   */
+  const gated = (layer: StepHead, bar: number, stepInBar: number) => bar < 4 && (
+    (HEADS.section[section] === 'breakdown' && (layer === 'kick' || layer === 'snare' || layer === 'hat'))
+    || (HEADS.section[section] === 'intro' && layer === 'kick' && stepInBar !== 0))
+
   const decide = (head: HeadName, step: number, mask?: readonly boolean[], forced?: number): number => {
     const count = HEADS[head].length
     headLogits(readout, width, head, positionOf(head, step), current, logits)
@@ -226,7 +234,9 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
     for (const head of LOOP_HEADS) {
       const back = LOOP_BACK[currentLoop[head]]!
       for (const layer of LOOP_LAYER[head]) {
-        if (back === 0) {
+        if (gated(layer, bar, stepInBar)) {
+          actions.steps[layer][step] = 0
+        } else if (back === 0) {
           actions.steps[layer][step] = decide(layer, step, undefined, options.teacher?.steps[layer][step])
         } else {
           actions.steps[layer][step] = history[history.length - back]![layer][stepInBar]!

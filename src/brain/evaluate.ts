@@ -1,6 +1,6 @@
 import { createRng } from '../music/rng'
 import type { PresetId } from '../presets/types'
-import { critique, CRITIC_PARTS, type CriticPart } from './critic'
+import { critique, CRITIC_PARTS, realizesSection, type CriticPart } from './critic'
 import type { BrainModel } from './model'
 import { freshRuntime, perform, type PhraseActions } from './perform'
 import { createTutor, tutorPhrase } from './tutor'
@@ -20,6 +20,8 @@ export interface PlayMeasurement {
   originality: Record<'drums' | 'bass' | 'lead', number>
   /** Share of phrases in each section. */
   sections: Record<string, number>
+  /** Share of intros and breakdowns whose music actually matches the section. */
+  realized: number
   /** Mean onsets per phrase for each layer. */
   density: Record<'kick' | 'snare' | 'hat' | 'bass' | 'keys' | 'lead', number>
 }
@@ -56,6 +58,8 @@ export function measurePlay(player: Player, sessions: number, phrasesPerSession:
   const progressions = new Set<string>()
   const novel = { drums: [0, 0], bass: [0, 0], lead: [0, 0] }
   const sections: Record<string, number> = { groove: 0, breakdown: 0, intro: 0 }
+  let special = 0
+  let realizedCount = 0
   const density = { kick: 0, snare: 0, hat: 0, bass: 0, keys: 0, lead: 0 }
   for (let session = 0; session < sessions; session++) {
     const presetId = EVALUATION_PRESETS[session % EVALUATION_PRESETS.length]!
@@ -72,6 +76,7 @@ export function measurePlay(player: Player, sessions: number, phrasesPerSession:
       if (phrase === 0) progressions.add(actions.chords.join())
       const section = HEADS.section[actions.section] ?? 'groove'
       sections[section] = (sections[section] ?? 0) + 1
+      if (section !== 'groove') { special++; if (realizesSection(actions)) realizedCount++ }
       density.kick += actions.steps.kick.filter(Boolean).length
       density.snare += actions.steps.snare.filter(Boolean).length
       density.hat += actions.steps.hat.filter(Boolean).length
@@ -104,7 +109,7 @@ export function measurePlay(player: Player, sessions: number, phrasesPerSession:
       bass: novel.bass[1] ? novel.bass[0]! / novel.bass[1]! : 0,
       lead: novel.lead[1] ? novel.lead[0]! / novel.lead[1]! : 0,
     },
-    sections, density,
+    sections, realized: special ? realizedCount / special : 1, density,
   }
 }
 

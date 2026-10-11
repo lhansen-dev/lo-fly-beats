@@ -48,7 +48,12 @@ describe('the fly performing', () => {
           const back = LOOP_BACK[loop]!
           if (!back) return
           const source = played[runtime.history.length + bar - back]!
-          for (const layer of LOOP_LAYER[head]) expect(result.actions.steps[layer].slice(bar * 16, bar * 16 + 16)).toEqual(source[layer])
+          // A breakdown or intro gates drums in its first four bars, overriding the loop.
+          const gatedSection = HEADS.section[result.actions.section] !== 'groove' && bar < 4
+          for (const layer of LOOP_LAYER[head]) {
+            if (gatedSection && head === 'loopDrums') continue
+            expect(result.actions.steps[layer].slice(bar * 16, bar * 16 + 16)).toEqual(source[layer])
+          }
         })
       }
       runtime = result.runtime

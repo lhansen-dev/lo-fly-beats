@@ -9,11 +9,11 @@
   "readoutNeurons": 887,
   "outputs": 683,
   "tutorVersion": 2,
-  "criticVersion": 4,
+  "criticVersion": 5,
   "learningVersion": 1,
   "experience": {
     "schoolLessons": 1500,
-    "practicePhrases": 18000,
+    "practicePhrases": 42000,
     "listeningPhrases": 0,
     "bananasFromListeners": 0
   },
@@ -217,13 +217,213 @@
       "stage": "practice",
       "phrases": 18000,
       "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 18600,
+      "bananas": 9
+    },
+    {
+      "stage": "practice",
+      "phrases": 19200,
+      "bananas": 9
+    },
+    {
+      "stage": "practice",
+      "phrases": 19800,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 20400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 21000,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
+      "phrases": 21600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 22200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 22800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 23400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 24000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 24600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 25200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 25800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 26400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 27000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 27600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 28200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 28800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 29400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 30000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 30600,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 31200,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 31800,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 32400,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 33000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 33600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 34200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 34800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 35400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 36000,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 36600,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 37200,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 37800,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 38400,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 39000,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 39600,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 40200,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 40800,
+      "bananas": 9.4
+    },
+    {
+      "stage": "practice",
+      "phrases": 41400,
+      "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 42000,
+      "bananas": 9.4
     }
   ],
-  "trainedAt": "2026-10-11T11:23:37.324Z",
+  "trainedAt": "2026-10-11T11:57:14.543Z",
   "readout": {
     "encoding": "int8-row-scaled-v1",
     "file": "readout.bin.gzip",
-    "bytes": 534876,
-    "sha256": "901f924283db0133e48f66f70d37a0cb7835ff3dde7eb3308140948e5dc7b025"
+    "bytes": 525567,
+    "sha256": "260810f675864b8cd9e3a95a680930fbda8f4d6cff00bfb88f54c288fda7cdc8"
   }
 }

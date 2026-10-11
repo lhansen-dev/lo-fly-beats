@@ -27,5 +27,5 @@ if (values.tutor) players.unshift(['tutor', tutorPlayer()])
 for (const [name, player] of players) {
   const result = measurePlay(player, sessions, 6, vocabulary)
   const pct = (value: number) => `${Math.round(value * 100)}%`
-  console.log(`${name.padEnd(6)} bananas ${(result.total * 10).toFixed(2)} progressions ${result.progressions} original d/b/l ${pct(result.originality.drums)}/${pct(result.originality.bass)}/${pct(result.originality.lead)} sections ${Object.entries(result.sections).map(([key, value]) => `${key} ${pct(value)}`).join(', ')} parts ${Object.entries(result.parts).map(([key, value]) => `${key}:${value.toFixed(2)}`).join(' ')}`)
+  console.log(`${name.padEnd(6)} bananas ${(result.total * 10).toFixed(2)} progressions ${result.progressions} original d/b/l ${pct(result.originality.drums)}/${pct(result.originality.bass)}/${pct(result.originality.lead)} sections ${Object.entries(result.sections).map(([key, value]) => `${key} ${pct(value)}`).join(', ')} realized ${pct(result.realized)} parts ${Object.entries(result.parts).map(([key, value]) => `${key}:${value.toFixed(2)}`).join(' ')}`)
 }

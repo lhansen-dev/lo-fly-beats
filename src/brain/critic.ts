@@ -5,13 +5,25 @@ import { BARS, CHORD_STEPS, HEADS, LEAD_DEGREES, PHRASE_STEPS, STEPS_PER_BAR } f
 
 const sectionOf = (actions: PhraseActions) => HEADS.section[actions.section] ?? 'groove'
 
+/** A section only counts when the music does what its name says. */
+export function realizesSection(actions: PhraseActions): boolean {
+  const section = sectionOf(actions)
+  const bars = Array.from({ length: BARS }, (_, index) => ({
+    kicks: actions.steps.kick.slice(index * STEPS_PER_BAR, (index + 1) * STEPS_PER_BAR).filter(Boolean).length,
+    snares: actions.steps.snare.slice(index * STEPS_PER_BAR, (index + 1) * STEPS_PER_BAR).filter(value => value === 2).length,
+  }))
+  if (section === 'breakdown') return bars.filter(bar => bar.kicks === 0 && bar.snares === 0).length >= 2
+  if (section === 'intro') return bars.slice(0, 4).reduce((sum, bar) => sum + bar.kicks, 0) <= 5
+  return true
+}
+
 /**
  * The banana critic: authored musical proxies scored in [0, 1]. They reward lofi idioms
  * (a steady backbeat, rooted bass, sparse singable melodies, loops with small changes) and are
  * no substitute for listening. Layers are scored bar by bar so practice can credit each choice
  * to the bar it shaped, plus phrase-level qualities such as motifs, form, and novelty.
  */
-export const CRITIC_VERSION = 4
+export const CRITIC_VERSION = 5
 export const CRITIC_PARTS = ['drums', 'bass', 'harmony', 'keys', 'lead', 'structure'] as const
 export type CriticPart = typeof CRITIC_PARTS[number]
 export const BAR_PARTS = ['drums', 'bass', 'keys', 'lead'] as const
@@ -252,7 +264,10 @@ function structure(actions: PhraseActions, previous: readonly PhraseActions[]): 
   if (section === 'intro') form = before.length === 0 ? 1 : 0.25
   else if (section === 'breakdown') form = before.length < 2 ? 0.35 : before.at(-1) === 'breakdown' || before.at(-2) === 'breakdown' ? 0.2 : 1
   else if (before.length >= 3 && before.slice(-3).every(earlier => earlier === 'groove')) form = 0.45
-  if (form < 0.5) notes.push(`a ${section} felt out of place`)
+  if (!realizesSection(actions)) {
+    form = 0.15
+    notes.push(`called it ${section === 'intro' ? 'an intro' : 'a breakdown'} but kept the drums going`)
+  } else if (form < 0.5) notes.push(`a ${section} felt out of place`)
   if (form < 0.5 && section === 'groove') notes.push('the song needed a change of section')
   return { score: mean([busy, band(novelty, 0.15, 0.6, 0.25), form, form]), notes }
 }
