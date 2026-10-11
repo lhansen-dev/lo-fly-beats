@@ -5,13 +5,15 @@
 import { readFile } from 'node:fs/promises'
 import { gunzipSync } from 'node:zlib'
 import { parseArgs } from 'node:util'
-import { checkpointSchema, decodeReadout } from '../../src/brain/checkpoint'
+import { checkpointSchema, decodeReadout, encodeReadout } from '../../src/brain/checkpoint'
+import { readoutWidth } from '../../src/brain/perform'
+import { writeFile } from 'node:fs/promises'
 import { EVALUATION_PRESETS, flyPlayer, measurePlay } from '../../src/brain/evaluate'
 import { FlyMind } from '../../src/brain/mind'
 import { createBrainModel } from '../../src/brain/model'
 import { loadBrainFromDisk } from './load'
 
-const { values } = parseArgs({ options: { phrases: { type: 'string', default: '6000' }, 'no-anchor': { type: 'boolean', default: false } } })
+const { values } = parseArgs({ options: { phrases: { type: 'string', default: '6000' }, 'no-anchor': { type: 'boolean', default: false }, out: { type: 'string' } } })
 const { circuit } = await loadBrainFromDisk()
 const model = createBrainModel(circuit)
 const directory = new URL('../../public/data/brains/fly-v1/', import.meta.url)
@@ -33,3 +35,4 @@ for (let played = 1; played <= total; played++) {
   mind.adopt(phrase.id)
   if (played % 1500 === 0) report(played)
 }
+if (values.out) await writeFile(values.out, encodeReadout(mind.readoutSnapshot(), readoutWidth(model)))

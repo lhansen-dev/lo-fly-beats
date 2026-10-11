@@ -13,7 +13,7 @@
   "learningVersion": 1,
   "experience": {
     "schoolLessons": 1500,
-    "practicePhrases": 51000,
+    "practicePhrases": 57000,
     "listeningPhrases": 0,
     "bananasFromListeners": 0
   },
@@ -492,13 +492,33 @@
       "stage": "practice",
       "phrases": 51000,
       "bananas": 9.3
+    },
+    {
+      "stage": "practice",
+      "phrases": 52500,
+      "bananas": 9.38
+    },
+    {
+      "stage": "practice",
+      "phrases": 54000,
+      "bananas": 9.46
+    },
+    {
+      "stage": "practice",
+      "phrases": 55500,
+      "bananas": 9.48
+    },
+    {
+      "stage": "practice",
+      "phrases": 57000,
+      "bananas": 9.55
     }
   ],
-  "trainedAt": "2026-10-11T14:13:31.962Z",
+  "trainedAt": "2026-10-11T15:45:42.383Z",
   "readout": {
     "encoding": "int8-row-scaled-v1",
     "file": "readout.bin.gzip",
-    "bytes": 526529,
-    "sha256": "17bf07e87624e207ab7d3d44297fba8256f8e3aa5ca81aee36824e760863407a"
+    "bytes": 531128,
+    "sha256": "3bbfc1384df47c83ecdeae7cd76d9d0375f2690f8ca313ceb90f3d2d23e5312f"
   }
 }

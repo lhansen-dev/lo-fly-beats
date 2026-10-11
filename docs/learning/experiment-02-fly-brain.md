@@ -50,14 +50,14 @@ Version 1 (all layers, no sections) is described by the first table. The shipped
 
 ### Shipped fly (version 3), 30 sessions × 6 phrases, three presets
 
-These measurements were taken after a final 1,500-batch lesson on hat accents, prompted by the independent judge below. That lesson traded about 0.1 banana for more idiomatic hats and more progressions (from 8 to 11), so the critic was version 6 at measurement time.
+These measurements were taken after a hat-accent lesson prompted by the independent judge (critic version 6) and then 6,000 phrases of anchored, song-structured practice at the gentle listening rate (57,000 practice phrases in total). The second step improved the critic score, the independent judge, and variety together, so it shipped.
 
 | Player | Bananas | Distinct progressions | Original drums / bass / lead | Sections (groove / breakdown / intro) | Sections realized |
 | --- | ---: | ---: | --- | --- | ---: |
-| Tutor | 9.36 | 11 | 0 / 0 / 23% | 67 / 17 / 17% | 100% |
-| **Shipped fly, temperature 0.8 (default Variation 0.5)** | **9.35** | 11 | 69 / 59 / 93% | 67 / 17 / 17% | 100% |
-| Shipped fly, temperature 1 | 9.27 | 13 | 80 / 67 / 96% | 67 / 17 / 17% | 100% |
-| Shipped fly, temperature 0.6 | 9.36 | 9 | 61 / 50 / 89% | 67 / 17 / 17% | 100% |
+| Tutor | 9.37 | 11 | 0 / 0 / 23% | 67 / 17 / 17% | 100% |
+| **Shipped fly, temperature 0.8 (default Variation 0.5)** | **9.56** | 14 | 69 / 55 / 93% | 67 / 17 / 17% | 100% |
+| Shipped fly, temperature 1 | 9.48 | 15 | 75 / 60 / 95% | 67 / 17 / 17% | 100% |
+| Shipped fly, temperature 0.6 | 9.58 | 13 | 51 / 54 / 89% | 67 / 17 / 17% | 100% |
 
 The fly opens each session with an intro, plays three grooves, and drops into a breakdown before the groove returns. That shape came from the tutor, but the fly chooses it, and he times it from his own habituation sense. Harmonic variety now matches the tutor's.
 
@@ -84,8 +84,8 @@ The critic is what the fly optimized, so it cannot also certify the result. [`sc
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Tutor, held-out seeds | 0.27 | 0.28 | 0.17 | 0.46 | 0.24 | 0.72 | 0.36 |
 | Fly before the hat lesson, temperature 0.8 | 0.36 | 0.33 | 1.08 | 0.87 | 0.25 | 1.89 | 0.80 |
-| **Shipped fly, temperature 0.8** | 0.37 | 0.31 | 0.68 | 0.75 | 0.33 | 1.93 | **0.73** |
-| Shipped fly, temperature 1 | 0.42 | 0.35 | 0.78 | 0.84 | 0.39 | 2.21 | 0.83 |
+| Fly after the hat lesson, temperature 0.8 | 0.37 | 0.31 | 0.68 | 0.75 | 0.33 | 1.93 | 0.73 |
+| **Shipped fly (after anchored song practice), temperature 0.8** | 0.31 | 0.32 | 0.69 | 0.61 | 0.32 | 1.76 | **0.67** |
 | Anchor-free over-optimized fly | 0.52 | 0.56 | 2.30 | 1.03 | 0.22 | 3.00 | 1.27 |
 | Untrained fly | 1.55 | 2.08 | 2.43 | 3.42 | 3.03 | 3.90 | 2.73 |
 

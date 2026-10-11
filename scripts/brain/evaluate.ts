@@ -2,7 +2,7 @@
  * Measure a trained fly without training it: the published brain by default, or a readout file.
  *   node --import tsx scripts/brain/evaluate.ts [--readout artifacts/brain/readout-long.bin] [--connectivity anatomical] [--sessions 30]
  */
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { gunzipSync } from 'node:zlib'
 import { parseArgs } from 'node:util'
 import { decodeReadout } from '../../src/brain/checkpoint'
@@ -12,7 +12,7 @@ import { loadBrainFromDisk } from './load'
 
 const { values } = parseArgs({ options: {
   readout: { type: 'string' }, connectivity: { type: 'string', default: 'anatomical' }, seed: { type: 'string', default: '1' },
-  sessions: { type: 'string', default: '30' }, tutor: { type: 'boolean', default: false },
+  sessions: { type: 'string', default: '30' }, tutor: { type: 'boolean', default: false }, json: { type: 'string' },
 } })
 const { circuit } = await loadBrainFromDisk()
 const model = createBrainModel(circuit, Number(values.seed), values.connectivity as Connectivity)
@@ -24,8 +24,11 @@ const vocabulary = tutorVocabulary()
 const sessions = Number(values.sessions)
 const players: [string, ReturnType<typeof flyPlayer>][] = [['T=1', flyPlayer(model, readout, 1)], ['T=0.8', flyPlayer(model, readout, 0.8)], ['T=0.6', flyPlayer(model, readout, 0.6)]]
 if (values.tutor) players.unshift(['tutor', tutorPlayer()])
+const results: Record<string, ReturnType<typeof measurePlay>> = {}
 for (const [name, player] of players) {
   const result = measurePlay(player, sessions, 6, vocabulary)
+  results[name === 'tutor' ? 'tutor' : `shipped${name.replace('T=', 'T').replace('.', '')}`] = result
   const pct = (value: number) => `${Math.round(value * 100)}%`
   console.log(`${name.padEnd(6)} bananas ${(result.total * 10).toFixed(2)} progressions ${result.progressions} original d/b/l ${pct(result.originality.drums)}/${pct(result.originality.bass)}/${pct(result.originality.lead)} sections ${Object.entries(result.sections).map(([key, value]) => `${key} ${pct(value)}`).join(', ')} realized ${pct(result.realized)} parts ${Object.entries(result.parts).map(([key, value]) => `${key}:${value.toFixed(2)}`).join(' ')}`)
 }
+if (values.json) await writeFile(values.json, JSON.stringify({ results }, null, 2))
