@@ -27,7 +27,7 @@ describe('Credits', () => {
     const markup = render(createElement(Credits))
     expect(markup).toContain('id="credits"')
     expect(markup).toContain('Loading the fly-brain wiring…')
-    expect(markup).toContain(`The musical mapping (version ${MAPPING_VERSION}) is authored and does not simulate neural activity.`)
+    expect(markup).toContain(`musical mapping (version ${MAPPING_VERSION}) is authored and does not simulate neural activity.`)
     expect(markup).not.toContain('aria-live')
     expect(markup).not.toContain('role=')
   })
@@ -43,7 +43,7 @@ describe('Credits', () => {
       `href="${manifest.source.paperUrl}"`, 'MaleCNS', 'male-cns:v1.0',
       'University of Cambridge Department of Zoology', manifest.source.citation,
       ...manifest.extraction.rules,
-      `The musical mapping (version ${MAPPING_VERSION}) is authored and does not simulate neural activity.`,
+      `musical mapping (version ${MAPPING_VERSION}) is authored and does not simulate neural activity.`,
     ]) expect(markup).toContain(expected)
     expect(markup).not.toContain('aria-live')
     expect(markup).not.toContain('role=')
