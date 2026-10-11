@@ -66,6 +66,20 @@ The fly opens each session with an intro, plays three grooves, and drops into a 
 3. Then the fly **reward-hacked**: it labelled phrases "breakdown" for the form bonus but kept the drums playing. Only 54% of its intros and breakdowns sounded like one. The critic now credits a section only when the music realizes it.
 4. Truthful breakdowns were then too hard to execute, because emptying four bars takes about 50 consecutive "off" decisions. The fly avoided them again (3%). Making the section choice gate the drums, as above, gave 100% realized sections at the tutor's proportions.
 
+### A second, independent judge
+
+The critic is what the fly optimized, so it cannot also certify the result. [`scripts/brain/judge.ts`](../../scripts/brain/judge.ts) fits a position-aware trigram model per layer on 1,800 tutor phrases from seeds the fly never trained on. It reports how surprising each player's choices are in bits per decision; lower means more idiomatic. Scores are averaged over 30 sessions × 6 phrases.
+
+| Player | Kick | Snare | Hat | Bass | Keys | Lead | Mean |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Tutor, held-out seeds | 0.27 | 0.28 | 0.17 | 0.46 | 0.24 | 0.72 | 0.36 |
+| **Shipped fly, temperature 0.8** | 0.36 | 0.33 | 1.08 | 0.87 | 0.25 | 1.89 | **0.80** |
+| Shipped fly, temperature 1 | 0.40 | 0.35 | 1.26 | 0.95 | 0.30 | 2.27 | 0.92 |
+| Anchor-free over-optimized fly | 0.52 | 0.56 | 2.30 | 1.03 | 0.22 | 3.00 | 1.27 |
+| Untrained fly | 1.55 | 2.08 | 2.43 | 3.42 | 3.03 | 3.90 | 2.73 |
+
+By this independent measure the shipped fly plays far closer to the idiom than noise, and its departures sit mostly in melody, where originality is expected, and in hat patterns. The judge independently flags the critic-gamed fly as less idiomatic, so the critic and the judge disagree exactly where reward hacking was suspected.
+
 ### Version 1 (no sections), model seed 1, 30 sessions × 4 phrases
 
 | Player | Bananas | Distinct progressions | Original drums / bass / lead |
