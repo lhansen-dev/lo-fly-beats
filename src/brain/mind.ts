@@ -1,4 +1,4 @@
-import { createRng } from '../music/rng'
+import { createRng, type Rng } from '../music/rng'
 import type { SessionRecipe } from '../music/types'
 import { arrangePhrase } from './arrange'
 import { BRAIN_VERSION, checkpointMatches, type BrainCheckpoint } from './checkpoint'
@@ -10,6 +10,7 @@ import {
 import type { BrainModel } from './model'
 import { cloneRuntime, freshRuntime, perform, readoutWidth, type FlyRuntime, type Performance, type PhraseActions } from './perform'
 import type { BrainExperience, ComposedPhrase } from './protocol'
+import { createTutor, tutorPhrase, type TutorState } from './tutor'
 import { HEADS } from './vocabulary'
 
 /** What a browser keeps of its own fly between visits. */
@@ -80,6 +81,27 @@ export class FlyMind {
   private sinceSave = 0
   private counter = 0
   private listeningBananas: number[] = []
+  private anchor: { tutor: TutorState; rng: Rng; runtime: FlyRuntime; phrases: number } | null = null
+
+  /** Hear one tutor phrase with teacher forcing and add its weighted school gradient. */
+  private schoolAnchor(presetId: SessionRecipe['presetId'], gradient: Float32Array): void {
+    if (!this.anchor || this.anchor.tutor.presetId !== presetId || this.anchor.phrases >= 6) {
+      const rng = createRng(`listening-school|${presetId}|${this.experience.listeningPhrases}`)
+      this.anchor = { tutor: createTutor(presetId, rng), rng, runtime: freshRuntime(this.model, rng), phrases: 0 }
+    }
+    const anchor = this.anchor
+    const school = perform(this.model, this.readout, anchor.runtime, {
+      temperature: 1, rng: anchor.rng, teacher: tutorPhrase(anchor.tutor, anchor.rng), presetId, record: true,
+    })
+    accumulate(this.readout, readoutWidth(this.model), school, gradient, {
+      scale: LEARNING_CONFIGURATION.practiceAnchor / Math.max(1, school.decisions.length / 64),
+    })
+    anchor.runtime = school.runtime
+    anchor.phrases++
+  }
+
+  /** Experiments can turn the school anchor off to measure what it prevents. */
+  schoolAnchorEnabled = true
 
   constructor(model: BrainModel, shippedReadout: Float32Array, checkpoint: BrainCheckpoint, store: BrainStore | null = null) {
     if (!checkpointMatches(checkpoint, model)) throw new Error('The shipped brain does not match this circuit')
@@ -166,6 +188,8 @@ export class FlyMind {
         scale: 1 / Math.max(1, prepared.performance.decisions.length / 64), advantage: advantageFor(critic, this.baseline),
         entropy: LEARNING_CONFIGURATION.entropyBonus,
       })
+      // Keep a little school in every step, as offline practice does; without it practice drifts into one safe loop.
+      if (this.schoolAnchorEnabled) this.schoolAnchor(prepared.presetId, gradient)
       adamStep(this.readout, gradient, this.optimizer, LEARNING_CONFIGURATION.listeningRate)
     }
     updateBaseline(this.baseline, critic, 0.1)
@@ -193,6 +217,9 @@ export class FlyMind {
     void this.persist()
     return true
   }
+
+  /** The fly's current readout, for measuring it. */
+  readoutSnapshot(): Float32Array { return this.readout.slice() }
 
   /** Forget this browser's practice and return to the fly as it left school and practice. */
   async forget(): Promise<void> {

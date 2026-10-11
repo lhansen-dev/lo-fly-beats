@@ -68,6 +68,10 @@ The fly opens each session with an intro, plays three grooves, and drops into a 
 3. Then the fly **reward-hacked**: it labelled phrases "breakdown" for the form bonus but kept the drums playing. Only 54% of its intros and breakdowns sounded like one. The critic now credits a section only when the music realizes it.
 4. Truthful breakdowns were then too hard to execute, because emptying four bars takes about 50 consecutive "off" decisions. The fly avoided them again (3%). Making the section choice gate the drums, as above, gave 100% realized sections at the tutor's proportions.
 
+### Learning while people listen stays anchored
+
+In the browser, every played phrase gets one gentle practice step. Without the school anchor, a simulated 6,000-phrase radio session (`scripts/brain/simulate-listening.ts`, about 45 hours at 72 BPM) raised bananas to 9.74 while distinct progressions fell from 8 to 6, the start of the one-loop collapse. With a teacher-forced tutor phrase in every step, as offline practice uses, bananas rose more gently to 9.55 and progressions rose to 13. The app uses the anchored version.
+
 ### More practice has plateaued
 
 A further 4,000 resumed batches from the shipped fly left bananas flat (9.34 against 9.35). The judge improved slightly overall (0.69 against 0.73 bits), but kick and bass became less idiomatic and distinct progressions fell from 11 to 8. It was not shipped. The shipping rule is that the critic and the independent judge must both improve without losing variety.
