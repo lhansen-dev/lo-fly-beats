@@ -88,8 +88,6 @@ export class BrainClient implements PreparedScoreProvider {
     return this.frames.get(phraseId) ?? null
   }
 
-  get playingId(): string | null { return this.active?.id ?? null }
-
   /** Which neurons pushed hardest for each beat's most decisive sound in a phrase. */
   explanationsFor(phraseId: string): ComposedPhrase['explanations'] | null {
     return this.explanations.get(phraseId) ?? null

@@ -3,7 +3,7 @@ import type { PresetId } from '../presets/types'
 import { chordToneDegrees, encodeLeadMove, LEAD_START_DEGREE, resolveLeadDegree } from './melody'
 import type { PhraseActions } from './perform'
 import {
-  actionIndex, BARS, CHORD_STEPS, HEADS, LEAD_DEGREES, LOOP_HEADS, PHRASE_STEPS, STEP_HEADS, STEPS_PER_BAR,
+  actionIndex, BARS, HEADS, LEAD_DEGREES, LOOP_HEADS, PHRASE_STEPS, STEP_HEADS, STEPS_PER_BAR,
   type LoopHead, type StepHead,
 } from './vocabulary'
 
@@ -275,4 +275,3 @@ export function tutorPhrase(tutor: TutorState, rng: Rng): PhraseActions {
   return { leadStart, section: actionIndex('section', section === 'intro' ? 'intro' : isBreak ? 'breakdown' : 'groove'), steps, chords, loops }
 }
 
-export const TUTOR_CHORD_STEPS = CHORD_STEPS
