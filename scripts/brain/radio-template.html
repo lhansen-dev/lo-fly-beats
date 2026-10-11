@@ -1,0 +1,268 @@
+<title>Lo-Fly Radio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a night-time cassette shelf. A thesis line, then the fly's tapes as J-cards, then how he learned. */
+:root {
+  --night: #15131a;
+  --shelf: #1e1a24;
+  --card: #241f2b;
+  --line: #3b3344;
+  --fg: #ece6ee;
+  --muted: #b5abbd;
+  --banana: #f2cf3a;
+  --song: #ff8db3;
+  --ear: #8ec5e2;
+  --motor: #8ee2cb;
+  --display: 'Young Serif', Georgia, 'Times New Roman', serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--night); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--banana); text-underline-offset: 3px; }
+.label { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 14px; max-width: 70ch; }
+header h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1; letter-spacing: -.01em; }
+header h1 span { color: var(--banana); }
+.lede { font-size: 18px; color: var(--fg); }
+.lede strong { color: var(--song); font-weight: 600; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.facts b { color: var(--fg); font-weight: 500; }
+section { display: grid; gap: 20px; }
+section > h2 { font-size: 30px; }
+.tapes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr)); gap: 22px; }
+.tape { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.tape.playing { border-color: var(--banana); }
+.tape-top { display: flex; gap: 14px; align-items: center; }
+.play { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--banana); background: transparent; color: var(--banana); cursor: pointer; display: grid; place-items: center; }
+.play:hover { background: color-mix(in srgb, var(--banana) 14%, transparent); }
+.play:focus-visible, .phrase:focus-visible { outline: 2px solid var(--banana); outline-offset: 3px; }
+.play svg { width: 20px; height: 20px; fill: currentColor; }
+.tape h3 { font-size: 22px; line-height: 1.15; }
+.tape .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.blurb { color: var(--muted); font-size: 14px; }
+.bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.bar span { display: block; height: 100%; width: 0; background: var(--banana); }
+.phrases { display: flex; flex-wrap: wrap; gap: 6px; }
+.phrase { font-family: var(--mono); font-size: 12px; padding: 4px 9px; border-radius: 99px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; font-variant-numeric: tabular-nums; }
+.phrase[aria-pressed="true"] { border-color: var(--banana); color: var(--banana); }
+.chords { font-family: var(--mono); font-size: 12px; color: var(--song); }
+.score { position: relative; overflow-x: auto; background: var(--shelf); border-radius: 6px; padding: 10px 12px; }
+.score pre { margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.5; white-space: pre; position: relative; }
+.row-kick { color: #f6a77b; } .row-snr { color: #f3d58a; } .row-hat { color: #c9c0cf; } .row-bass { color: var(--ear); } .row-keys { color: #c6b3f0; } .row-lead { color: var(--song); }
+.playhead { position: absolute; top: 0; bottom: 0; width: 1ch; background: color-mix(in srgb, var(--banana) 28%, transparent); pointer-events: none; display: none; }
+.legend { font-size: 12px; color: var(--muted); }
+.legend code { font-family: var(--mono); color: var(--fg); }
+.split { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.split > * { min-width: 0; }
+.curve { width: 100%; height: auto; display: block; }
+.curve text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.prose { display: grid; gap: 12px; max-width: 68ch; color: var(--fg); }
+.prose p { color: var(--fg); }
+code { font-family: var(--mono); font-size: .92em; color: var(--banana); }
+.prose .quiet { color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 14px; }
+.table-wrap { overflow-x: auto; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+td.num { text-align: right; font-family: var(--mono); }
+tr.fly td { color: var(--banana); }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.role { border-top: 2px solid var(--c); padding-top: 8px; }
+.role b { display: block; font-family: var(--mono); font-size: 22px; font-weight: 500; }
+.role span { font-size: 13px; color: var(--muted); }
+.run { font-family: var(--mono); font-size: 13px; background: var(--shelf); border-radius: 6px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+@media (max-width: 760px) { .split { grid-template-columns: minmax(0, 1fr); } .wrap { gap: 44px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="label">Lo-fly beats · overnight session</p>
+    <h1>Lo-Fly <span>Radio</span></h1>
+    <p class="lede">Four tapes composed by a fruit fly. Every kick, snare, bass note, chord, and melody was chosen by a simulated network built from <strong>his real ear-to-song wiring</strong>. He learned from a tutor, then practiced on his own for bananas.</p>
+    <p class="facts" id="facts"></p>
+  </header>
+
+  <section aria-labelledby="tapes-title">
+    <h2 id="tapes-title">The tapes</h2>
+    <p class="legend">Each tape is five phrases of eight bars, rendered by the app's own instruments. The grid under each tape is exactly what he played in one phrase, one character per sixteenth note. Kick <code>o</code> soft, <code>x</code> hard. Snare <code>g</code> ghost, <code>X</code> hit. Hat <code>-</code> soft, <code>+</code> accent. Bass <code>R</code> root, <code>5</code> fifth, <code>O</code> octave, <code>3</code> third, <code>7</code> seventh, <code>a</code> approach, <code>s</code> stop. Keys <code>#</code> full chord, <code>^</code> top notes. Lead digits are scale steps above the tonic (<code>A</code> = 10, <code>B</code> = 11), and <code>.</code> is a rest.</p>
+    <div class="tapes" id="tapes"></div>
+  </section>
+
+  <section aria-labelledby="learned-title">
+    <h2 id="learned-title">How he learned</h2>
+    <div class="split">
+      <figure style="margin:0">
+        <svg class="curve" id="curve" viewBox="0 0 640 240" role="img" aria-label="Bananas per phrase during school and practice"></svg>
+        <figcaption class="legend">Bananas per phrase (0–10, from his critic) while training. School: hearing the tutor and anticipating each choice. Practice: playing alone, with each bar credited by how much it earned. The dashed line is the tutor's own score.</figcaption>
+      </figure>
+      <div class="prose" id="learned"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="brain-title">
+    <h2 id="brain-title">His brain</h2>
+    <div class="prose"><p>1,771 neurons from the MaleCNS connectome of a male fruit fly, with 78,710 connections signed by predicted neurotransmitters. Sound and his own playing enter only through his ear and wing sensors. His choices are read only from premotor, song, and wing motor neurons, so the music has to cross real synapses.</p></div>
+    <div class="roles">
+      <div class="role" style="--c:#f2cf3a"><b>138</b><span>Johnston's organ (his ear)</span></div>
+      <div class="role" style="--c:#f4a46a"><b>150</b><span>Wing and haltere sensors</span></div>
+      <div class="role" style="--c:#8ec5e2"><b>596</b><span>Auditory relays</span></div>
+      <div class="role" style="--c:#b9a3e3"><b>516</b><span>Premotor</span></div>
+      <div class="role" style="--c:#ff8db3"><b>345</b><span>Courtship song (pIP10, vPR6, dPR1…)</span></div>
+      <div class="role" style="--c:#8ee2cb"><b>26</b><span>Wing motor neurons</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="results-title">
+    <h2 id="results-title">Measured, not yet listened to</h2>
+    <div class="table-wrap"><table id="results"></table></div>
+    <div class="prose">
+      <p>“Original” is the share of his drum, bass, and melody bars that never appear anywhere in 1,800 phrases of his tutor's playing.</p>
+      <p class="quiet">Bananas come from a critic we wrote, so a high score means the music matches our idea of lofi. It does not prove the music sounds good; that takes listening, which has not happened yet. A version of the fly with shuffled wiring trained about as well, so these results do not show that his particular wiring makes better music.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="run-title">
+    <h2 id="run-title">Hear him live</h2>
+    <div class="prose"><p>In the app he composes in real time, shows each neuron lighting up on the beat, keeps practicing while you listen, and takes bananas from you. The work is on the <code>fly-brain</code> branch.</p></div>
+    <div class="run">cd lo-fly-beats &amp;&amp; git checkout fly-brain &amp;&amp; make setup &amp;&amp; make run</div>
+  </section>
+</div>
+
+<script>
+const DATA = /*DATA*/null
+const fmt = n => n.toLocaleString('en-US')
+document.getElementById('facts').innerHTML = [
+  ['tutor lessons', fmt(DATA.experience.schoolLessons)],
+  ['solo practice phrases', fmt(DATA.experience.practicePhrases)],
+  ['bananas per phrase', DATA.results.shippedT08.bananas.toFixed(2)],
+  ['tutor', DATA.results.tutor.bananas.toFixed(2)],
+].map(([k, v]) => `<span><b>${v}</b> ${k}</span>`).join('')
+
+const ROWS = ['kick', 'snr', 'hat', 'bass', 'keys', 'lead']
+const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>'
+const PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>'
+const players = []
+const tapesEl = document.getElementById('tapes')
+DATA.tapes.forEach((tape, tapeIndex) => {
+  const card = document.createElement('article')
+  card.className = 'tape'
+  const mean = tape.phrases.reduce((s, p) => s + p.bananas, 0) / tape.phrases.length
+  card.innerHTML = `
+    <div class="tape-top">
+      <button class="play" type="button" id="play-${tapeIndex}" aria-label="Play ${tape.title}">${PLAY}</button>
+      <div><h3>${tape.title}</h3><p class="meta">${tape.key} · ${tape.bpm} BPM · ${tape.phrases.length} phrases · ${mean.toFixed(1)} bananas</p></div>
+    </div>
+    <p class="blurb">${tape.blurb}</p>
+    <div class="bar"><span></span></div>
+    <div class="phrases" role="group" aria-label="Phrases"></div>
+    <p class="chords"></p>
+    <div class="score"><pre></pre></div>`
+  const audio = new Audio(`tapes/${tape.slug}.mp3`)
+  audio.preload = 'metadata'
+  const button = card.querySelector('.play')
+  const fill = card.querySelector('.bar span')
+  const chips = card.querySelector('.phrases')
+  const pre = card.querySelector('pre')
+  const chordLine = card.querySelector('.chords')
+  const stepSeconds = 60 / tape.bpm / 4
+  const phraseSeconds = 128 * stepSeconds
+  let shown = -1
+  const show = index => {
+    if (index === shown) return
+    shown = index
+    const phrase = tape.phrases[index]
+    chordLine.textContent = `Phrase ${index + 1}: ${phrase.chords}${phrase.note ? ` · his own note: ${phrase.note}` : ''}`
+    pre.innerHTML = ROWS.map(row => `<span class="row-${row}">${row.padEnd(5)}${phrase.grid[row] ?? ''}</span>`).join('\n') + '<span class="playhead"></span>'
+    chips.querySelectorAll('.phrase').forEach((chip, i) => chip.setAttribute('aria-pressed', String(i === index)))
+  }
+  tape.phrases.forEach((phrase, index) => {
+    const chip = document.createElement('button')
+    chip.type = 'button'
+    chip.className = 'phrase'
+    chip.textContent = `${index + 1} · ${phrase.bananas.toFixed(1)}🍌`
+    chip.setAttribute('aria-label', `Phrase ${index + 1}, ${phrase.bananas} bananas`)
+    chip.addEventListener('click', () => {
+      show(index)
+      if (!audio.paused || audio.currentTime > 0) audio.currentTime = index * phraseSeconds
+    })
+    chips.append(chip)
+  })
+  show(1)
+  button.addEventListener('click', () => {
+    if (audio.paused) {
+      for (const other of players) if (other.audio !== audio) other.audio.pause()
+      if (audio.currentTime === 0 && shown > 0) audio.currentTime = shown * phraseSeconds
+      audio.play().catch(() => {})
+    } else audio.pause()
+  })
+  const sync = () => {
+    const playing = !audio.paused
+    button.innerHTML = playing ? PAUSE : PLAY
+    button.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${tape.title}`)
+    card.classList.toggle('playing', playing)
+  }
+  audio.addEventListener('play', sync)
+  audio.addEventListener('pause', sync)
+  audio.addEventListener('ended', () => { audio.currentTime = 0; sync() })
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) fill.style.width = `${(audio.currentTime / audio.duration) * 100}%`
+    const index = Math.min(tape.phrases.length - 1, Math.floor(audio.currentTime / phraseSeconds))
+    show(index)
+    const step = Math.floor((audio.currentTime - index * phraseSeconds) / stepSeconds)
+    const head = pre.querySelector('.playhead')
+    if (step >= 0 && step < 128 && !audio.paused) {
+      head.style.display = 'block'
+      head.style.left = `${5 + step + Math.floor(step / 16)}ch`
+    } else head.style.display = 'none'
+  })
+  players.push({ audio })
+  tapesEl.append(card)
+})
+
+// Learning curve: one point per logged checkpoint, school then practice.
+const svg = document.getElementById('curve')
+const history = DATA.history
+const W = 640, H = 240, L = 44, R = 12, T = 16, B = 34
+const lo = 6, hi = 10
+const x = i => L + (i / (history.length - 1)) * (W - L - R)
+const y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B)
+let marks = ''
+for (let v = lo; v <= hi; v++) marks += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#3b3344" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`
+const tutor = DATA.results.tutor.bananas
+marks += `<line x1="${L}" x2="${W - R}" y1="${y(tutor)}" y2="${y(tutor)}" stroke="#ff8db3" stroke-dasharray="5 5" stroke-width="1.5"/><text x="${L + 6}" y="${y(tutor) - 6}" style="fill:#ff8db3">tutor ${tutor.toFixed(1)}</text>`
+const firstPractice = history.findIndex(p => p.stage === 'practice')
+if (firstPractice > 0) {
+  const sx = (x(firstPractice - 1) + x(firstPractice)) / 2
+  marks += `<line x1="${sx}" x2="${sx}" y1="${T}" y2="${H - B}" stroke="#b5abbd" stroke-opacity=".4"/><text x="${L + 4}" y="${H - B + 20}">school</text><text x="${W - R}" y="${H - B + 20}" text-anchor="end">practice (${fmt(DATA.experience.practicePhrases)} phrases) →</text>`
+}
+const points = history.map((p, i) => `${x(i).toFixed(1)},${y(Math.max(lo, p.bananas)).toFixed(1)}`).join(' ')
+marks += `<polyline points="${points}" fill="none" stroke="#f2cf3a" stroke-width="2.5" stroke-linejoin="round"/>`
+const last = history.at(-1)
+marks += `<circle cx="${x(history.length - 1)}" cy="${y(last.bananas)}" r="4.5" fill="#f2cf3a"/>`
+svg.innerHTML = marks
+
+const R0 = DATA.results
+document.getElementById('learned').innerHTML = `
+  <p>Before school, his untrained readout scored <b>${R0.untrained.bananas.toFixed(1)}</b> bananas: noise. After listening to ${fmt(DATA.experience.schoolLessons)} tutor phrases he reached <b>${R0.schoolT08.bananas.toFixed(1)}</b>.</p>
+  <p>Practice took him to <b>${R0.shippedT08.bananas.toFixed(2)}</b>, above the tutor's ${R0.tutor.bananas.toFixed(2)}, while drifting away from the tutor's vocabulary: ${Math.round(R0.shippedT08.original.lead * 100)}% of his melody bars and ${Math.round(R0.shippedT08.original.drums * 100)}% of his drum bars are his own.</p>
+  <p class="quiet">In the browser he keeps practicing on every phrase he plays for you, and a banana from you reinforces the choices in that phrase.</p>`
+
+const pct = v => `${Math.round(v * 100)}%`
+const rows = [
+  ['The fly, shipped', R0.shippedT08, 'fly'],
+  ['His tutor', R0.tutor, ''],
+  ['The fly after school only', R0.schoolT08, ''],
+  ...(DATA.controls['source-permuted'] ? [['Shuffled wiring (control)', DATA.controls['source-permuted'], '']] : []),
+  ...(DATA.controls.zero ? [['No recurrent wiring (control)', DATA.controls.zero, '']] : []),
+  ['Untrained', R0.untrained, ''],
+]
+document.getElementById('results').innerHTML = `<thead><tr><th>Player</th><th style="text-align:right">Bananas</th><th style="text-align:right">Progressions</th><th style="text-align:right">Original drums</th><th style="text-align:right">Original melody</th></tr></thead><tbody>${rows.map(([name, r, cls]) => `<tr class="${cls}"><td>${name}</td><td class="num">${r.bananas.toFixed(2)}</td><td class="num">${r.progressions}</td><td class="num">${name === 'Untrained' ? '–' : pct(r.original.drums)}</td><td class="num">${name === 'Untrained' ? '–' : pct(r.original.lead)}</td></tr>`).join('')}</tbody>`
+</script>
