@@ -36,6 +36,23 @@ export interface PhraseActions {
   loops: Record<LoopHead, number[]>
 }
 
+/** Whether an action makes a sound now: a drum hit, a bass or lead onset, or a keys strike. */
+export function sounds(head: HeadName, action: number): boolean {
+  if (head === 'kick' || head === 'snare' || head === 'hat') return action > 0
+  if (head === 'bass' || head === 'lead') return action >= 2
+  if (head === 'keys') return action === 1 || action === 2
+  return false
+}
+
+export interface BeatExplanation {
+  head: StepHead
+  action: number
+  /** Circuit neuron indices, strongest push first. */
+  neurons: number[]
+  /** How much more likely the brain made this choice than the alternatives (logit margin). */
+  margin: number
+}
+
 export interface Decision {
   step: number
   head: HeadName
@@ -52,6 +69,8 @@ export interface Performance {
   features: Float32Array[] | null
   /** Covariance of presynaptic (previous step) and postsynaptic rates per plastic synapse. */
   eligibility: Float32Array | null
+  /** Per beat: the most decisive sounding choice and the circuit indices of its top contributing neurons. */
+  explanations: (BeatExplanation | null)[] | null
   frames: Int8Array | null
   runtime: FlyRuntime
   activity: PhraseActivity
@@ -127,6 +146,8 @@ export interface PerformOptions {
   record?: boolean
   /** Capture every neuron's rate at the end of each beat, as int8 (rate * 127), for display. */
   frames?: boolean
+  /** Record, for each beat, the song-side neurons that pushed hardest for its most decisive sounding choice. */
+  explain?: boolean
   /** Learned multipliers on the plastic synapses; anatomy alone when absent. */
   gains?: Float32Array
   /** Collect pre-before-post covariance for each plastic synapse, for reward-modulated plasticity. */
@@ -179,6 +200,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   const decisions: Decision[] = []
   const features: Float32Array[] | null = options.record ? [] : null
   const frames = options.frames ? new Int8Array(BARS * 4 * model.size) : null
+  const explanations: (BeatExplanation | null)[] | null = options.explain ? Array.from({ length: BARS * 4 }, () => null) : null
   const roleOf = model.circuit.neurons.map(neuron => neuron.role)
   const roleLevels: Record<string, number[]> = { ear: [], wing: [], auditory: [], premotor: [], song: [], motor: [] }
   const beatPeaks: number[] = []
@@ -225,6 +247,30 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
     }
     if (action < 0 || (mask && !mask[action])) throw new Error(`Illegal ${head} action`)
     decisions.push({ step, head, action, probability, mask })
+    if (explanations && sounds(head, action)) {
+      // Contribution of each neuron to this action relative to the average alternative: (w_a - mean w) * rate.
+      let margin = logits[action]!
+      let others = 0
+      for (let candidate = 0; candidate < count; candidate++) if (candidate !== action && (!mask || mask[candidate])) { margin -= logits[candidate]! / Math.max(1, count - 1); others++ }
+      const beat = Math.floor(step / 4)
+      const existing = explanations[beat]
+      if (others > 0 && (!existing || margin > existing.margin)) {
+        const position = positionOf(head, step)
+        const row = headRow(head, position, action) * width
+        const top: [number, number][] = []
+        for (let neuron = 0; neuron < current.length; neuron++) {
+          let mean = 0
+          for (let candidate = 0; candidate < count; candidate++) if (candidate !== action) mean += readout[headRow(head, position, candidate) * width + 1 + neuron]!
+          const push = (readout[row + 1 + neuron]! - mean / (count - 1)) * current[neuron]!
+          if (top.length < 3 || push > top[top.length - 1]![1]) {
+            top.push([neuron, push])
+            top.sort((a, b) => b[1] - a[1])
+            if (top.length > 3) top.pop()
+          }
+        }
+        explanations[beat] = { head: head as StepHead, action, margin, neurons: top.filter(([, push]) => push > 0).map(([neuron]) => model.readoutNeurons[neuron]!) }
+      }
+    }
     return action
   }
 
@@ -317,7 +363,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   }
   if (actions.chords.length !== BARS / 2) throw new Error('Expected four chord decisions')
   return {
-    actions, decisions, features, frames,
+    actions, decisions, features, frames, explanations,
     eligibility: sumPrePost && sumRate && sumPrevious ? Float32Array.from(sumPrePost, (sum, index) =>
       sum / PHRASE_STEPS - (sumPrevious[plasticSources[index]!]! / PHRASE_STEPS) * (sumRate[plasticTargets[index]!]! / PHRASE_STEPS)) : null,
     runtime: { state, leadDegree, heard, history, chordRing, grooveRun: section === 0 ? start.grooveRun + 1 : 0 },

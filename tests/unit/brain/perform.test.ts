@@ -132,3 +132,24 @@ describe('relative melodies', () => {
     expect(end).toBe(LEAD_START_DEGREE + 1)
   })
 })
+
+describe('explaining a phrase', () => {
+  it('names, per beat, a sounding choice and the song-side neurons that pushed hardest for it', async () => {
+    const { describeChoice } = await import('../../../src/brain/mind')
+    const { sounds } = await import('../../../src/brain/perform')
+    const model = await songModel()
+    const readout = randomReadout(OUTPUT_SIZE * (model.readoutNeurons.length + 1), 'explain')
+    const result = perform(model, readout, freshRuntime(model), { temperature: 1, rng: createRng('explain'), presetId: 'rainy-windowsill', explain: true })
+    const explained = result.explanations!.filter(explanation => explanation !== null)
+    expect(result.explanations).toHaveLength(32)
+    expect(explained.length).toBeGreaterThan(20)
+    const readoutSet = new Set(model.readoutNeurons)
+    for (const explanation of explained) {
+      expect(sounds(explanation!.head, explanation!.action)).toBe(true)
+      expect(explanation!.neurons.length).toBeLessThanOrEqual(3)
+      for (const neuron of explanation!.neurons) expect(readoutSet.has(neuron)).toBe(true)
+    }
+    expect(describeChoice('snare', 2)).toBe('snare hit')
+    expect(describeChoice('lead', HEADS.lead.indexOf('up2'))).toBe('melody skips up')
+  })
+})

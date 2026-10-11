@@ -57,6 +57,7 @@ export class BrainClient implements PreparedScoreProvider {
   private message = 'Waking the fly…'
   private bananaGiven: string | null = null
   private readonly frames = new Map<string, Int8Array>()
+  private readonly explanations = new Map<string, ComposedPhrase['explanations']>()
   private readonly waiters: Array<{ resolve: () => void; reject: (error: Error) => void }> = []
   private readonly pending = new Map<number, { resolve: (response: BrainResponse) => void; reject: (error: Error) => void; timer: ReturnType<typeof setTimeout> }>()
 
@@ -88,6 +89,11 @@ export class BrainClient implements PreparedScoreProvider {
   }
 
   get playingId(): string | null { return this.active?.id ?? null }
+
+  /** Which neurons pushed hardest for each beat's most decisive sound in a phrase. */
+  explanationsFor(phraseId: string): ComposedPhrase['explanations'] | null {
+    return this.explanations.get(phraseId) ?? null
+  }
 
   private send(body: BrainRequest extends infer R ? R extends { id: number } ? Omit<R, 'id'> : never : never, timeoutMs = 60_000): Promise<BrainResponse> {
     if (this.failed || this.disposed) return Promise.reject(new Error('The fly brain is unavailable'))
@@ -145,6 +151,7 @@ export class BrainClient implements PreparedScoreProvider {
         if (this.disposed) return
         if (previous && previous.id !== this.bananaGiven) this.frames.delete(previous.id)
         for (const id of this.frames.keys()) if (id !== this.active?.id && id !== this.bananaGiven) this.frames.delete(id)
+        for (const id of this.explanations.keys()) if (id !== this.active?.id) this.explanations.delete(id)
         this.bananaGiven = null
         void this.send({ type: 'adopt', phraseId: ready.phrase.id }).then(response => {
           if (response.type === 'adopted') { this.experience = response.state; this.publish() }
@@ -170,6 +177,7 @@ export class BrainClient implements PreparedScoreProvider {
       if (response.type !== 'composed') throw new Error('Unexpected brain response')
       if (this.disposed || forecast.generation !== this.generation || this.forecast !== forecast) return
       this.frames.set(response.phrase.id, response.phrase.frames)
+      this.explanations.set(response.phrase.id, response.phrase.explanations)
       this.ready = { forecast, phrase: response.phrase }
       for (const waiter of this.waiters.splice(0)) waiter.resolve()
       this.publish()
@@ -245,5 +253,6 @@ export class BrainClient implements PreparedScoreProvider {
     this.pending.clear()
     for (const waiter of this.waiters.splice(0)) waiter.reject(error)
     this.frames.clear()
+    this.explanations.clear()
   }
 }

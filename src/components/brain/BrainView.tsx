@@ -67,16 +67,34 @@ export default function BrainView() {
       context.fill()
     }
     context.globalAlpha = 1
+    // Ring the neurons that pushed hardest for this beat's most decisive sound.
+    const explanation = phraseId && engineStatus !== 'idle' ? controller.getBrainExplanations(phraseId)?.[beat] : null
+    if (explanation) {
+      context.strokeStyle = '#ffffff'
+      context.lineWidth = 1.5
+      for (const index of explanation.neurons) {
+        if (Number.isNaN(atlas.positions[index * 2]!)) continue
+        context.beginPath()
+        context.arc(geometry.x[index]!, geometry.y[index]!, 7, 0, Math.PI * 2)
+        context.stroke()
+      }
+    }
   }, [atlas, geometry, phraseId, beat, engineStatus, controller])
+  const explanation = atlas && phraseId && engineStatus !== 'idle' ? controller.getBrainExplanations(phraseId)?.[beat] ?? null : null
 
   if (!brain) return null
   const located = geometry?.located.length ?? 0
   return <figure className="brain-view" data-testid="brain-view">
     <canvas ref={canvas} className="brain-canvas" style={{ aspectRatio: `${WIDTH} / ${HEIGHT}` }} role="img"
       aria-label={atlas ? `The fly's song circuit: ${located.toLocaleString()} neurons at their measured cell-body positions, brightening with simulated activity on each beat.` : 'The fly brain is loading.'} />
+    <p className="brain-why" data-testid="brain-why" aria-live="off">{explanation && atlas
+      ? <>Bar {position.bar + 1}, beat {position.beat + 1}: <strong>{explanation.choice}</strong>{explanation.neurons.length ? <>, pushed hardest by {explanation.neurons.map((index, order) => <span key={index}>{order ? ' · ' : ''}{atlas.types[index] ?? 'an untyped neuron'} <span className="brain-why-role">({ROLE_STYLE[atlas.roles[index]!].label.toLowerCase()})</span></span>)}</> : null}</>
+      : phraseId && engineStatus !== 'idle'
+        ? <>Bar {position.bar + 1}, beat {position.beat + 1}: no new sound decided here; he is looping an earlier bar or letting notes ring.</>
+        : 'Press play to see which neurons drive each sound.'}</p>
     <figcaption>
       <ul className="brain-legend">{(Object.keys(ROLE_STYLE) as NeuronRole[]).map(role => <li key={role}><span style={{ background: ROLE_STYLE[role].color }} />{ROLE_STYLE[role].label}</li>)}</ul>
-      <p className="brain-caption">Front view of measured cell bodies (MaleCNS X–Z, the fly's left on the left). Brightness is the modeled firing rate at this beat{atlas ? `; ${(atlas.ids.length - located).toLocaleString()} neurons without a recorded position are not drawn` : ''}.</p>
+      <p className="brain-caption">Front view of measured cell bodies (MaleCNS X–Z, the fly's left on the left). Brightness is the modeled firing rate at this beat; white rings mark the neurons named above{atlas ? `; ${(atlas.ids.length - located).toLocaleString()} neurons without a recorded position are not drawn` : ''}.</p>
     </figcaption>
   </figure>
 }

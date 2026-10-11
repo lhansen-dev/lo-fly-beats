@@ -30,6 +30,8 @@ export interface ComposedPhrase {
   section: string
   parts: Record<CriticPart, number>
   notes: string[]
+  /** Per beat: the most decisive sounding choice ("snare hit") and the circuit indices of the neurons that pushed for it. */
+  explanations: ({ choice: string; neurons: number[] } | null)[]
   /** Rates of every neuron at the end of each beat, scaled to int8 (rate * 127). */
   frames: Int8Array
   composeMs: number

@@ -382,6 +382,7 @@ export class SessionController {
   forgetBrainPractice(): Promise<void> { return this.brain?.forget() ?? Promise.resolve() }
   getBrainAtlas(): BrainAtlas | null { return this.brain?.atlas ?? null }
   getBrainFrames(phraseId: string): Int8Array | null { return this.brain?.framesFor(phraseId) ?? null }
+  getBrainExplanations(phraseId: string) { return this.brain?.explanationsFor(phraseId) ?? null }
   cancelTeaching(): void { this.learning?.cancelTeaching() }
 
   getDiagnostics(): ControllerDiagnostics | null {

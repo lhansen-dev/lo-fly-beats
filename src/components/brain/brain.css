@@ -48,3 +48,6 @@
 .phrase-section { font-size: 12px; color: #e7c7d3; margin-top: 2px; }
 .variation-hint { display: block; font-size: 11px; color: var(--ui-muted); margin-top: 2px; }
 .radio-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #e9dce1; }
+.brain-why { margin: 10px 0 0; font-size: 13px; color: #f0e4ea; min-height: 2.6em; }
+.brain-why strong { color: #f2cf3a; font-weight: 600; }
+.brain-why-role { color: #c4b5bc; font-size: 12px; }

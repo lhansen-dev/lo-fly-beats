@@ -47,6 +47,26 @@ const SAVE_EVERY = 4
 const HISTORY_EVERY = 8
 const KEEP_PLAYED = 3
 
+const CHOICE_WORDS: Record<string, string> = {
+  'kick soft': 'soft kick', 'kick hard': 'kick', 'snare ghost': 'ghost snare', 'snare hit': 'snare hit',
+  'hat soft': 'soft hat', 'hat accent': 'accented hat', 'keys strike': 'chord', 'keys strike-top': 'chord top notes',
+}
+
+const LEAD_WORDS: Record<string, string> = {
+  same: 'repeated melody note', up1: 'melody steps up', down1: 'melody steps down', up2: 'melody skips up',
+  down2: 'melody skips down', up3: 'melody leaps up', down3: 'melody leaps down', up4: 'melody leaps up a fifth',
+  down4: 'melody leaps down a fifth', chord: 'melody lands on a chord tone',
+}
+
+export function describeChoice(head: string, action: number): string {
+  const name = (HEADS[head as keyof typeof HEADS] as readonly string[])[action] ?? String(action)
+  const key = `${head} ${name}`
+  if (CHOICE_WORDS[key]) return CHOICE_WORDS[key]!
+  if (head === 'bass') return `bass ${name}`
+  if (head === 'lead') return LEAD_WORDS[name] ?? `melody ${name}`
+  return key
+}
+
 /** Sampling temperature from the Variation control: steady at zero, adventurous at one. */
 export function temperatureFor(variation: number): number {
   return 0.6 + 0.4 * Math.max(0, Math.min(1, variation))
@@ -147,7 +167,7 @@ export class FlyMind {
     const start = newSession ? freshRuntime(this.model, createRng(`mood|${recipe.sessionSeed}|${recipe.presetId}`)) : this.runtime
     const rng = createRng(`play|${recipe.sessionSeed}|${recipe.presetId}|${phraseIndex}|${this.experience.listeningPhrases}`)
     const result = perform(this.model, this.readout, cloneRuntime(start), {
-      temperature: temperatureFor(recipe.variation), rng, presetId: recipe.presetId, record: true, frames: true,
+      temperature: temperatureFor(recipe.variation), rng, presetId: recipe.presetId, record: true, frames: true, explain: true,
     })
     const previous = newSession ? [] : this.previous
     const critic = critique(result.actions, recipe.presetId, previous, this.repertoire)
@@ -157,6 +177,8 @@ export class FlyMind {
       id, score, bananas: bananas(critic), notes: critic.notes, section: HEADS.section[result.actions.section] ?? 'groove',
       parts: { drums: critic.drums, bass: critic.bass, harmony: critic.harmony, keys: critic.keys, lead: critic.lead, structure: critic.structure },
       frames: result.frames!, composeMs: performance.now() - started,
+      explanations: result.explanations!.map(explanation => explanation
+        ? { choice: describeChoice(explanation.head, explanation.action), neurons: explanation.neurons } : null),
     }
     // Only the latest preparation can still be adopted.
     this.prepared.clear()
