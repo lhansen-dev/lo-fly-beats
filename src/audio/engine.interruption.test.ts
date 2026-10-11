@@ -24,7 +24,7 @@ vi.mock('./sequencer', () => ({ PlaybackSequencer: class {
   }
 } }))
 vi.mock('./rig', async importOriginal => ({ ...(await importOriginal<typeof import('./rig')>()), createRig: mock.createRig }))
-const mix = (ambienceOn: boolean): MixSettings => ({ masterVolume: 0.8, ambienceOn, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false } } })
+const mix = (ambienceOn: boolean): MixSettings => ({ masterVolume: 0.8, ambienceOn, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false }, lead: { level: 0.55, muted: false } } })
 const graph = { manifest: { version: 1 } } as never
 const recipe = { presetId: 'overripe-2am', tempoBpm: 90, variation: 0.5, sessionSeed: 1 } as never
 async function freshEngine() { vi.resetModules(); return (await import('./engine')).getEngine() }

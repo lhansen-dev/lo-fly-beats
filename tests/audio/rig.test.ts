@@ -64,6 +64,7 @@ describe('instrument rig browser audio rendering', () => {
         drums: { level: 0.8, muted: true },
         bass: { level: 0.7, muted: true },
         keys: { level: 0.6, muted: true },
+        lead: { level: 0.55, muted: true },
       },
       ambienceOn: false,
     }

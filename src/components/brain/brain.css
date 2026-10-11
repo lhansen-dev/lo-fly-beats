@@ -1,0 +1,45 @@
+.fly-brain { --brain-accent: #ff9fbf; margin-top: 26px; border: 1px solid #6b5562; border-radius: 14px; background: #1f1a20; overflow: hidden; }
+.fly-brain-heading { padding: 26px 28px 20px; }
+.fly-brain-heading .eyebrow { color: #f3b8cc; display: flex; align-items: center; gap: 8px; }
+.fly-brain-heading .status-dot { background: var(--brain-accent); }
+.fly-brain-heading h2 { font: 29px Georgia, serif; letter-spacing: -.8px; margin-top: 7px; }
+.fly-brain-heading h2 > span { color: var(--brain-accent); }
+.fly-brain-heading p:last-child { color: #d7c9cf; margin-top: 8px; max-width: 70ch; }
+.fly-brain-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); border-top: 1px solid #4a3a44; }
+.brain-view { margin: 0; background: radial-gradient(ellipse at 50% 30%, #2a1f2a, #120e13 70%); padding: 14px; min-width: 0; }
+.brain-canvas { display: block; width: 100%; height: auto; }
+.brain-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; list-style: none; padding: 0; margin: 8px 0 0; font: 10px var(--font-mono); color: #e4d6dc; }
+.brain-legend li { display: flex; align-items: center; gap: 6px; }
+.brain-legend span { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.brain-caption { font-size: 11px; color: #c4b5bc; margin-top: 6px; }
+.fly-brain-side { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; border-left: 1px solid #4a3a44; min-width: 0; }
+.brain-status { color: #e9dce1; font-size: 13px; }
+.phrase-review .detail-label { font: 10px var(--font-mono); letter-spacing: 1px; color: #d2a9b9; }
+.phrase-bananas { font: 26px Georgia, serif; margin-top: 4px; }
+.phrase-bananas span { color: #f2cf3a; }
+.part-meters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; margin: 10px 0 0; }
+.part-meters div { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: center; gap: 8px; }
+.part-meters dt { font-size: 11px; color: #d9cbd1; }
+.part-meters dd { margin: 0; }
+.part-meters meter { width: 100%; height: 8px; }
+.critic-notes { font-size: 12px; color: #d7c3cb; margin-top: 8px; font-style: italic; }
+.banana-button { background: #4a3d16; border-color: #c9a23a; color: #fff3c4; }
+.banana-button:hover:not(:disabled) { background: #5d4c1b; border-color: #f2cf3a; }
+.experience { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; margin: 0; }
+.experience div { border-left: 2px solid #6b5562; padding-left: 8px; }
+.experience dt { font-size: 10px; color: #cbb9c1; text-transform: uppercase; letter-spacing: .8px; }
+.experience dd { margin: 2px 0 0; font: 16px var(--font-mono); color: #f4e9ed; }
+.learning-curve { width: 100%; height: auto; }
+.curve-line { fill: none; stroke: #f2cf3a; stroke-width: 2; }
+.curve-guide { stroke: #f2cf3a; stroke-opacity: .25; stroke-dasharray: 3 4; }
+.curve-stage { stroke: #cbb9c1; stroke-opacity: .35; }
+.curve-label { fill: #cbb9c1; font: 9px var(--font-mono); }
+.forget-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: #d7c3cb; }
+.text-button { background: none; border: none; min-height: 32px; padding: 4px 0; color: #e8b7c8; text-decoration: underline; font-weight: 500; }
+.text-button:hover:not(:disabled) { background: none; color: #ffd2e1; }
+@media (max-width: 860px) {
+  .fly-brain-layout { grid-template-columns: minmax(0, 1fr); }
+  .fly-brain-side { border-left: none; border-top: 1px solid #4a3a44; }
+  .fly-brain-heading { padding: 20px 16px 16px; }
+  .fly-brain-heading h2 { font-size: 24px; }
+}

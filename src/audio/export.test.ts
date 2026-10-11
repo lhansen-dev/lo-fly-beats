@@ -28,7 +28,7 @@ const score: PhraseScore = {
   trace: [{ beat: 0, kind: 'start', neuronId: '1', bar: 0, beatInBar: 0, neuronType: 'MBON01', uses: ['chord Dm9'] }], fill: false,
 }
 const preset: PresetDefinition = structuredClone(PRESETS['rainy-windowsill'])
-const mix: MixSettings = { masterVolume: 0.8, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false } }, ambienceOn: true }
+const mix: MixSettings = { masterVolume: 0.8, layers: { drums: { level: 0.8, muted: false }, bass: { level: 0.7, muted: false }, keys: { level: 0.6, muted: false }, lead: { level: 0.55, muted: false } }, ambienceOn: true }
 
 function setupRig() {
   const rig = { trigger: vi.fn(), startAmbience: vi.fn(), dispose: vi.fn() }

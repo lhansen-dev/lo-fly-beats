@@ -12,6 +12,7 @@ import { loadCircuit } from './connectome/load'
 import { createSettingsSaver, isStorageAvailable, loadSettings } from './app/persistence'
 import { LearningClient } from './app/learningClient'
 import { createLearningPersistence } from './app/learningPersistence'
+import { BrainClient } from './app/brainClient'
 
 const getStorage = () => {
   try {
@@ -26,13 +27,20 @@ const saver = createSettingsSaver(getStorage, 500, () => store.dispatch({ type: 
 if (!isStorageAvailable(getStorage)) {
   store.dispatch({ type: 'storageUnavailable' })
 }
+const params = new URLSearchParams(window.location.search)
+const learningExperiment = import.meta.env.DEV && params.get('learning') === '1'
+// The fly's own brain composes unless the classic connectome walk is requested.
+const brainComposer = !learningExperiment && params.get('composer') !== 'walk' && typeof Worker !== 'undefined'
 const controller = new SessionController({
   store,
   createEngine: async () => (await import('./audio/engine')).getEngine(),
   loadGraph: () => loadCircuit(import.meta.env.BASE_URL),
   saveSettings: settings => saver.save(settings),
   randomSeed: randomSessionSeed,
-  ...(import.meta.env.DEV && new URLSearchParams(window.location.search).get('learning') === '1' ? {
+  ...(brainComposer ? {
+    createBrainClient: () => new BrainClient({ onStatus: brain => store.dispatch({ type: 'brainStatusChanged', brain }) }),
+  } : {}),
+  ...(learningExperiment ? {
     createLearningClient: (graph: import('./connectome/types').CircuitGraph) => new LearningClient({
       graph, persistence: createLearningPersistence(),
       onStatus: learning => store.dispatch({ type: 'learningStatusChanged', learning }),

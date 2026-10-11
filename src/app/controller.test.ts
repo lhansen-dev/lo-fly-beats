@@ -191,7 +191,7 @@ describe('controller mix settings', () => {
     expect(store.getState().mix.layers.drums).toEqual({ level: initial.layers.drums.level, muted: true })
     controller.setMix({ layers: { drums: { level: 0.25 }, bass: { level: 0, muted: false } }, masterVolume: 0, ambienceOn: false })
     const merged = store.getState().mix
-    expect(merged).toEqual({ masterVolume: 0, ambienceOn: false, layers: { drums: { level: 0.25, muted: true }, bass: { level: 0, muted: false }, keys: initial.layers.keys } })
+    expect(merged).toEqual({ masterVolume: 0, ambienceOn: false, layers: { drums: { level: 0.25, muted: true }, bass: { level: 0, muted: false }, keys: initial.layers.keys, lead: initial.layers.lead } })
     expect(initial.layers.drums).toEqual({ level: 0.8, muted: false })
     expect(store.getState().pending).toEqual({})
     expect(store.getState().active).toEqual(createInitialState(null).active)

@@ -25,6 +25,8 @@ import PlaybackStatus from '../components/PlaybackStatus'
 import { useKeyboardShortcuts } from './useKeyboardShortcuts'
 import Icon from '../components/Icon'
 import CircuitScanner from '../components/scanner/CircuitScanner'
+import FlyBrainPanel from '../components/brain/FlyBrainPanel'
+import '../components/brain/brain.css'
 
 const LearningLab = import.meta.env.DEV ? lazy(() => import('../components/learning/LearningLab')) : null
 
@@ -61,6 +63,7 @@ export default function App() {
         <PendingChanges /><StorageNote />
       </section>
     </div>
+    <FlyBrainPanel />
     <CircuitScanner />
     <div className="circuit-load"><CircuitStatus /></div>
     <div className="about-section"><ExplanationPanel /><Credits /></div>

@@ -38,7 +38,7 @@ function resolveDegree(degree: BassDegree, chord: ChordSlot, preset: ReturnType<
 }
 
 function compareEvents(a: NoteEvent, b: NoteEvent): number {
-  const layers = { drums: 0, bass: 1, keys: 2 } as const
+  const layers = { drums: 0, bass: 1, keys: 2, lead: 3 } as const
   const drums = { kick: 0, snare: 1, hat: 2 } as const
   return a.step - b.step || layers[a.layer] - layers[b.layer]
     || (a.layer === 'drums' && b.layer === 'drums' ? drums[a.drum!] - drums[b.drum!] : 0)

@@ -88,6 +88,8 @@ export const settingsSchema = z.strictObject({
       drums: layerSchema,
       bass: layerSchema,
       keys: layerSchema,
+      // Settings saved before the fly learned to play lead melodies have no lead layer.
+      lead: layerSchema.default({ level: 0.55, muted: false }),
     }),
     ambienceOn: z.boolean(),
   }),

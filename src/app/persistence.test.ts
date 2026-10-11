@@ -25,6 +25,7 @@ const validSettings: RestoredSettings = {
       drums: { level: 0.7, muted: false },
       bass: { level: 0.6, muted: false },
       keys: { level: 0.5, muted: true },
+      lead: { level: 0.55, muted: false },
     },
     ambienceOn: true,
   },

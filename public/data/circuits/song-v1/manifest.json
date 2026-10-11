@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "circuitId": "song-v1",
+  "title": "The fly's ear-to-song circuit",
+  "description": "Auditory Johnston's organ neurons, the wing and haltere sensory neurons that feed the song circuit, their strongest downstream auditory partners, male courtship-song neurons and wing motor neurons, and the strongest premotor inputs to that song circuit, with predicted neurotransmitters.",
+  "source": {
+    "dataset": "MaleCNS",
+    "release": "male-cns:v1.0",
+    "citation": "Berg, S., Beckett, I. R., Costa, M., Schlegel, P., Januszewski, M., et al. (2025). Sexual dimorphism in the complete connectome of the Drosophila male central nervous system. bioRxiv. https://doi.org/10.1101/2025.10.09.680999",
+    "derivedFrom": {
+      "circuitId": "whole-cns-v1",
+      "graphSha256": "ad42e3e52de41c931f79d4cbcc218f59f438387fec6a2abae8df7cc7046ca0cb"
+    },
+    "neurotransmitters": {
+      "name": "body-neurotransmitters-male-cns-v1.0.feather",
+      "url": "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome/body-neurotransmitters-male-cns-v1.0.feather",
+      "bytes": 43282834,
+      "md5Base64": "PYQrEv5cSe763lKNfdJKHw==",
+      "sha256": "95c9289220663abeb3409f3ad9e5a7f8a53f8093f5139d15502cd08da8879621",
+      "column": "consensus_nt"
+    }
+  },
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Connectome and neurotransmitter predictions from MaleCNS male-cns:v1.0 by FlyEM (HHMI Janelia), the University of Cambridge, the MRC Laboratory of Molecular Biology, and Google Research, licensed CC BY 4.0. Filtered to an ear-to-song subcircuit."
+  },
+  "extraction": {
+    "script": "scripts/data/extract_song_circuit.py",
+    "config": "scripts/data/config/song-v1.json",
+    "configSha256": "d2e8b0413c276961906261239ee7eee64bb1c975220607bb57ef867bc810f6eb",
+    "rules": [
+      "Ear: every neuron typed JO-A or JO-B (sound-sensitive Johnston's organ subgroups).",
+      "Wing sense: the 150 nerve-cord sensory neurons sending the most synapses onto the song set (wing campaniform sensilla and haltere afferents).",
+      "Auditory: the 300 neurons receiving the most synapses from the ear, then the 300 receiving the most from ear plus that first hop.",
+      "Song: male courtship-song and wing-song types (pC1, pIP10, vPR6, vPR9, dPR1, TN1, vMS, dMS, aSP, vpoEN/IN, pMP2, DNp13, CL062) and the direct wing motor neurons.",
+      "Premotor: the 300 neurons sending the most synapses to the song set, then the 250 sending the most to song plus that hop.",
+      "Connections keep the whole-CNS threshold of at least 3 synapses among selected neurons, with original counts.",
+      "Transmitters use upstream consensus_nt predictions; the model maps acetylcholine to excitation, GABA, glutamate, and histamine to inhibition, and monoamines to weak excitation. Unknown transmitters are treated as excitatory."
+    ]
+  },
+  "counts": {
+    "neurons": 1771,
+    "connections": 78710,
+    "synapses": 1481953,
+    "roles": {
+      "auditory": 596,
+      "ear": 138,
+      "motor": 26,
+      "premotor": 516,
+      "song": 345,
+      "wing": 150
+    },
+    "transmitters": {
+      "acetylcholine": 1135,
+      "dopamine": 2,
+      "gaba": 454,
+      "glutamate": 129,
+      "octopamine": 1,
+      "serotonin": 1,
+      "unknown": 49
+    }
+  },
+  "output": {
+    "file": "brain.json.gzip",
+    "bytes": 196467,
+    "sha256": "1a9c734397506da4dde2b66a237882c83c69e4b7a5f50b241b894a1ff784c404",
+    "uncompressedBytes": 1129132
+  }
+}

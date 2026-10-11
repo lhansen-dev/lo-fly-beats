@@ -6,6 +6,7 @@ const layers: { key: Layer; label: string }[] = [
   { key: 'drums', label: 'Drums' },
   { key: 'bass', label: 'Bass' },
   { key: 'keys', label: 'Keys' },
+  { key: 'lead', label: 'Lead' },
 ]
 
 export default function Mixer() {

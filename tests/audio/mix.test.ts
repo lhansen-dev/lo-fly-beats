@@ -93,6 +93,7 @@ describe('mixer offline rendering', () => {
         drums: { level: 0.8, muted: false },
         bass: { level: 0, muted: true },
         keys: { level: 0, muted: true },
+        lead: { level: 0, muted: true },
       },
       ambienceOn: false,
     }

@@ -55,7 +55,7 @@ describe('offline phrase rendering', () => {
     // Isolate bass so accompaniment cannot satisfy the audibility assertion.
     const snapshot = createExportSnapshot(prepared.score, session, preset, {
       ...DEFAULT_MIX, ambienceOn: false, layers: {
-        ...DEFAULT_MIX.layers, drums: { level: 0, muted: true }, keys: { level: 0, muted: true },
+        ...DEFAULT_MIX.layers, drums: { level: 0, muted: true }, keys: { level: 0, muted: true }, lead: { level: 0, muted: true },
       },
     })
     expect(snapshot.score.learning?.reservoirGraphChecksum).toBe(model.graph.checksum)

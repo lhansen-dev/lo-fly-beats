@@ -7,12 +7,15 @@ import { DEFAULT_PRESET_ID, getPreset } from '../presets/presets'
 import type { PresetId } from '../presets/types'
 import { DEFAULT_SESSION_SEED } from '../music/versions'
 import type { LearningStatus } from './learningClient'
+import type { BrainStatus } from './brainClient'
 
 export interface AppState {
   circuit: { status: 'loading' | 'ready' | 'error'; manifest: CircuitManifest | null; error: { code: CircuitErrorCode | 'unknown'; message: string } | null }
   engineStatus: EngineStatus
   audioNotice: string | null
   learning: LearningStatus | null
+  /** The fly's brain composer; null when the connectome walk composes. */
+  brain: BrainStatus | null
   active: SessionRecipe
   pending: Partial<Pick<SessionRecipe, 'tempoBpm' | 'variation' | 'sessionSeed' | 'presetId'>>
   position: { phraseIndex: number; bar: number; beat: number }
@@ -40,6 +43,7 @@ export type AppAction =
   | { type: 'engineStatusChanged'; status: EngineStatus }
   | { type: 'audioNoticeChanged'; notice: string | null }
   | { type: 'learningStatusChanged'; learning: LearningStatus }
+  | { type: 'brainStatusChanged'; brain: BrainStatus | null }
   | { type: 'tempoRequested'; tempoBpm: number; immediate: boolean }
   | { type: 'variationRequested'; variation: number; immediate: boolean }
   | { type: 'newBeatRequested'; sessionSeed: number; immediate: boolean }
@@ -59,6 +63,7 @@ export function createInitialState(restored: RestoredSettings | null): AppState 
     engineStatus: 'idle',
     audioNotice: null,
     learning: null,
+    brain: null,
     active: {
       recipeVersion: 1,
       presetId,
@@ -95,6 +100,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, audioNotice: action.notice }
     case 'learningStatusChanged':
       return { ...state, learning: action.learning }
+    case 'brainStatusChanged':
+      return { ...state, brain: action.brain }
     case 'tempoRequested':
       return action.immediate
         ? { ...state, active: { ...state.active, tempoBpm: action.tempoBpm }, pending: withoutPending(state.pending, 'tempoBpm') }

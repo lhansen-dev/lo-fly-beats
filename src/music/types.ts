@@ -1,13 +1,14 @@
 import type { PresetId } from '../presets/types'
 import type { BassCellId } from './patterns'
 import type { LearningProvenance } from './learning/types'
+import type { BrainProvenance } from '../brain/arrange'
 
 export type WalkStep =
   | { beat: number; kind: 'start' | 'restart'; neuronId: string }
   | { beat: number; kind: 'edge'; neuronId: string; from: string; synapseCount: number; probability: number }
   | { beat: number; kind: 'rest'; neuronId: null }
 
-export type Layer = 'drums' | 'bass' | 'keys'
+export type Layer = 'drums' | 'bass' | 'keys' | 'lead'
 export type DrumVoice = 'kick' | 'snare' | 'hat'
 
 export interface SessionRecipe {
@@ -82,4 +83,6 @@ export interface PhraseScore {
   trace: TraceStep[]
   fill: boolean
   learning?: LearningProvenance
+  /** Present when the fly's brain composed every layer of this phrase. */
+  brain?: BrainProvenance
 }

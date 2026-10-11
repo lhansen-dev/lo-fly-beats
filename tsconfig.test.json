@@ -17,5 +17,5 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["tests/**/*.ts", "scripts/learning/**/*.ts"]
+  "include": ["tests/**/*.ts", "scripts/learning/**/*.ts", "scripts/brain/**/*.ts"]
 }
