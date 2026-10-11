@@ -68,6 +68,10 @@ The fly opens each session with an intro, plays three grooves, and drops into a 
 3. Then the fly **reward-hacked**: it labelled phrases "breakdown" for the form bonus but kept the drums playing. Only 54% of its intros and breakdowns sounded like one. The critic now credits a section only when the music realizes it.
 4. Truthful breakdowns were then too hard to execute, because emptying four bars takes about 50 consecutive "off" decisions. The fly avoided them again (3%). Making the section choice gate the drums, as above, gave 100% realized sections at the tutor's proportions.
 
+### More practice has plateaued
+
+A further 4,000 resumed batches from the shipped fly left bananas flat (9.34 against 9.35). The judge improved slightly overall (0.69 against 0.73 bits), but kick and bass became less idiomatic and distinct progressions fell from 11 to 8. It was not shipped. The shipping rule is that the critic and the independent judge must both improve without losing variety.
+
 ### A second, independent judge
 
 The critic is what the fly optimized, so it cannot also certify the result. [`scripts/brain/judge.ts`](../../scripts/brain/judge.ts) fits a position-aware trigram model per layer on 1,800 tutor phrases from seeds the fly never trained on. It reports how surprising each player's choices are in bits per decision; lower means more idiomatic. Scores are averaged over 30 sessions × 6 phrases.
