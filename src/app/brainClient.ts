@@ -71,7 +71,9 @@ export class BrainClient implements PreparedScoreProvider {
 
   async initialize(baseUrl: string, recipe: SessionRecipe): Promise<void> {
     this.publish()
-    const response = await this.send({ type: 'initialize', baseUrl })
+    // The worker lives under assets/, so a relative deployment base must be resolved against the page.
+    const absolute = new URL(baseUrl, globalThis.document?.baseURI ?? globalThis.location?.href).href
+    const response = await this.send({ type: 'initialize', baseUrl: absolute })
     if (response.type !== 'initialized') throw new Error('Unexpected brain response')
     this.atlasValue = response.atlas
     this.experience = response.state
