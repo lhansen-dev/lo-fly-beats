@@ -29,6 +29,7 @@ const { values } = parseArgs({
     seed: { type: 'string', default: '1' },
     'eval-sessions': { type: 'string', default: '30' },
     publish: { type: 'boolean', default: false },
+    tag: { type: 'string' },
   },
 })
 const connectivity = values.connectivity as Connectivity
@@ -36,6 +37,7 @@ const schoolLessons = Number(values.school)
 const practiceBatches = Number(values.practice)
 const batchSize = Number(values.batch)
 const evalSessions = Number(values['eval-sessions'])
+const tag = values.tag ?? connectivity
 const started = performance.now()
 const elapsed = () => `${((performance.now() - started) / 1000).toFixed(0)}s`
 
@@ -44,7 +46,7 @@ const model = createBrainModel(circuit, Number(values.seed), connectivity)
 const readout = createReadout(model)
 const presets = EVALUATION_PRESETS
 const history: BrainCheckpoint['history'] = []
-const log = (message: string) => console.log(`[${connectivity} ${elapsed()}] ${message}`)
+const log = (message: string) => console.log(`[${values.tag ?? connectivity} ${elapsed()}] ${message}`)
 log(`brain: ${model.size} neurons, ${circuit.source.length} connections, readout from ${model.readoutNeurons.length} song-side neurons, ${readout.length} weights`)
 
 const quickBananas = () => {
@@ -147,8 +149,8 @@ const write = async (directory: URL, name: string, data: string | Uint8Array) =>
   await writeFile(temporary, data)
   await rename(temporary, new URL(name, directory))
 }
-await write(artifacts, `report-${connectivity}.json`, JSON.stringify(report, null, 2) + '\n')
-await write(artifacts, `readout-${connectivity}.bin`, encoded)
+await write(artifacts, `report-${tag}.json`, JSON.stringify(report, null, 2) + '\n')
+await write(artifacts, `readout-${tag}.bin`, encoded)
 
 if (values.publish) {
   if (connectivity !== 'anatomical') throw new Error('Only the anatomical fly is published')

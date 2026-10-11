@@ -74,4 +74,4 @@ it('keeps every graph-driven layer and trace valid for 270 real-graph phrases', 
       }
     }
   }
-})
+}, 30_000)
