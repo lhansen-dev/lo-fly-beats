@@ -1,7 +1,7 @@
 import type { PhraseScore, SessionRecipe } from '../music/types'
 import type { PresetDefinition } from '../presets/types'
 import type { MixSettings } from './rig'
-import { eventDurationSeconds, eventTimeSeconds, exportSeconds, EXPORT_FADE_SECONDS } from './timing'
+import { eventDurationSeconds, eventTimeSeconds, exportSeconds, EXPORT_FADE_SECONDS, EXPORT_TAIL_SECONDS, phraseSeconds } from './timing'
 import type { WavData } from './wav'
 
 export interface ExportSnapshot {
@@ -57,5 +57,40 @@ export async function renderPhrase(snapshot: ExportSnapshot): Promise<WavData> {
     rendered?.dispose()
     rig?.dispose()
     context?.dispose()
+  }
+}
+
+/**
+ * Render consecutive phrases into one continuous tape, the same way playback places them back to
+ * back. All scores must share the recipe's tempo; a short tail lets the last notes ring out.
+ */
+export async function renderTrack(scores: readonly PhraseScore[], recipe: SessionRecipe, preset: PresetDefinition, mix: MixSettings): Promise<WavData> {
+  if (scores.length === 0) throw new Error('A track needs at least one phrase')
+  const Tone = await import('tone')
+  const { createRig } = await import('./rig')
+  const phrase = phraseSeconds(recipe.tempoBpm)
+  const total = phrase * scores.length + EXPORT_TAIL_SECONDS
+  const context = new Tone.OfflineContext(2, total, 44100)
+  const rig = createRig(context, preset.sound, mix)
+  try {
+    if (mix.ambienceOn) rig.startAmbience(0)
+    scores.forEach((score, index) => {
+      for (const event of score.events) {
+        rig.trigger(event, index * phrase + eventTimeSeconds(event, recipe.tempoBpm, preset.swing), eventDurationSeconds(event, recipe.tempoBpm))
+      }
+    })
+    const rendered = await context.render()
+    try {
+      const buffer = rendered.get()!
+      const channels = [new Float32Array(buffer.getChannelData(0)), new Float32Array(buffer.getChannelData(1))]
+      const fadeLength = Math.round(EXPORT_FADE_SECONDS * 2 * 44100)
+      for (const channel of channels) {
+        for (let index = 0; index < fadeLength; index++) channel[channel.length - fadeLength + index]! *= 1 - index / (fadeLength - 1)
+      }
+      return { sampleRate: 44100, channels }
+    } finally { rendered.dispose() }
+  } finally {
+    rig.dispose()
+    context.dispose()
   }
 }

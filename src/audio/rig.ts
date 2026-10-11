@@ -68,7 +68,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   const keysFilter = new Tone.Filter({ context, type: 'lowpass', frequency: sound.keysCutoffHz, Q: 0.5 })
   const bass = new Tone.MonoSynth({
     context,
-    volume: -6,
+    volume: -8,
     oscillator: { type: 'triangle' },
     envelope: { attack: 0.008, decay: 0.25, sustain: 0.7, release: 0.2 },
     filter: { type: 'lowpass', Q: 0.8 },
@@ -85,7 +85,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
     context,
     voice: Tone.FMSynth,
     maxPolyphony: 8,
-    volume: -8,
+    volume: -1,
     options: {
       harmonicity: 3,
       modulationIndex: 2.5,
@@ -98,7 +98,7 @@ export function createRig(context: BaseContext, sound: SoundParams, initialMix: 
   // A soft, slightly detuned bell for the fly's melodies, with tape wobble and a short echo.
   const lead = new Tone.MonoSynth({
     context,
-    volume: -11,
+    volume: -1,
     portamento: 0.015,
     oscillator: { type: 'fattriangle', count: 2, spread: 12 },
     envelope: { attack: 0.012, decay: 0.6, sustain: 0.35, release: 0.6 },
