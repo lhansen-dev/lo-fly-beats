@@ -179,7 +179,7 @@ DATA.tapes.forEach((tape, tapeIndex) => {
     if (index === shown) return
     shown = index
     const phrase = tape.phrases[index]
-    chordLine.textContent = `Phrase ${index + 1}: ${phrase.chords}${phrase.note ? ` · his own note: ${phrase.note}` : ''}`
+    chordLine.textContent = `Phrase ${index + 1} (${phrase.section}): ${phrase.chords}${phrase.note ? ` · his own note: ${phrase.note}` : ''}`
     pre.innerHTML = ROWS.map(row => `<span class="row-${row}">${row.padEnd(5)}${phrase.grid[row] ?? ''}</span>`).join('\n') + '<span class="playhead"></span>'
     chips.querySelectorAll('.phrase').forEach((chip, i) => chip.setAttribute('aria-pressed', String(i === index)))
   }
@@ -187,7 +187,7 @@ DATA.tapes.forEach((tape, tapeIndex) => {
     const chip = document.createElement('button')
     chip.type = 'button'
     chip.className = 'phrase'
-    chip.textContent = `${index + 1} · ${phrase.bananas.toFixed(1)}🍌`
+    chip.textContent = `${index + 1} ${phrase.section === 'groove' ? '' : `${phrase.section} `}· ${phrase.bananas.toFixed(1)}🍌`
     chip.setAttribute('aria-label', `Phrase ${index + 1}, ${phrase.bananas} bananas`)
     chip.addEventListener('click', () => {
       show(index)

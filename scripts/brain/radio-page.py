@@ -30,8 +30,9 @@ for slug, title, key, blurb in TAPES:
             continue
         bananas = float(re.search(r': ([\d.]+) bananas', lines[0]).group(1))
         note = re.search(r'\((.*)\)$', lines[0])
-        grid = {line[:5].strip(): line[5:] for line in lines[3:9]}
-        phrases.append({'bananas': bananas, 'note': note.group(1) if note else '', 'chords': lines[1].removeprefix('chords: '), 'grid': grid})
+        fields = {line.split(':', 1)[0]: line.split(':', 1)[1].strip() for line in lines[1:] if line.split(':', 1)[0] in ('section', 'chords', 'loops d/b/k/l')}
+        grid = {line[:5].strip(): line[5:] for line in lines[1:] if line[:5].strip() in ('kick', 'snr', 'hat', 'bass', 'keys', 'lead')}
+        phrases.append({'bananas': bananas, 'note': note.group(1) if note else '', 'chords': fields.get('chords', ''), 'section': fields.get('section', 'groove'), 'grid': grid})
     shutil.copy(ROOT / f'docs/demos/{slug}.mp3', out / 'tapes' / f'{slug}.mp3')
     tapes.append({'slug': slug, 'title': title, 'key': key, 'blurb': blurb, 'bpm': bpm, 'phrases': phrases})
 data = {

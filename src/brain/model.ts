@@ -67,7 +67,7 @@ function calibrate(model: Omit<BrainModel, 'featureMean' | 'featureScale'>): { m
     const pick = (chance: number) => rng.float() < chance ? 1 : 0
     senseInputs(step, {
       kick: pick(0.15), snare: pick(0.12), hat: pick(0.45) * 0.6, bassOnset: pick(0.15), bassPitch: rng.float() < 0.7 ? rng.float() : -1,
-      keysOnset: pick(0.08), leadOnset: pick(0.2), leadPitch: rng.float() < 0.6 ? rng.float() : -1, chordRing: Math.floor(step / 32) % 6, section: Math.floor(step / 128) % 3,
+      keysOnset: pick(0.08), leadOnset: pick(0.2), leadPitch: rng.float() < 0.6 ? rng.float() : -1, chordRing: Math.floor(step / 32) % 6, section: Math.floor(step / 128) % 3, habituation: (Math.floor(step / 128) % 5) / 4,
     }, inputs)
     stepBrain(model as BrainModel, state, inputs, next)
     ;[state, next] = [next, state]

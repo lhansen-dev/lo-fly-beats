@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "brainId": "fly-v1",
-  "brainVersion": 2,
+  "brainVersion": 3,
   "circuitChecksum": "1a9c734397506da4dde2b66a237882c83c69e4b7a5f50b241b894a1ff784c404",
   "modelSeed": 1,
   "modelVersion": 1,
@@ -9,7 +9,7 @@
   "readoutNeurons": 887,
   "outputs": 683,
   "tutorVersion": 2,
-  "criticVersion": 3,
+  "criticVersion": 4,
   "learningVersion": 1,
   "experience": {
     "schoolLessons": 1500,
@@ -21,12 +21,12 @@
     {
       "stage": "school",
       "phrases": 150,
-      "bananas": 8.2
+      "bananas": 8.1
     },
     {
       "stage": "school",
       "phrases": 300,
-      "bananas": 8.9
+      "bananas": 8.8
     },
     {
       "stage": "school",
@@ -36,62 +36,62 @@
     {
       "stage": "school",
       "phrases": 600,
-      "bananas": 8.7
+      "bananas": 8.9
     },
     {
       "stage": "school",
       "phrases": 750,
-      "bananas": 8.4
+      "bananas": 8.8
     },
     {
       "stage": "school",
       "phrases": 900,
-      "bananas": 8.5
+      "bananas": 9
     },
     {
       "stage": "school",
       "phrases": 1050,
-      "bananas": 8.4
+      "bananas": 9
     },
     {
       "stage": "school",
       "phrases": 1200,
-      "bananas": 8.7
+      "bananas": 8.9
     },
     {
       "stage": "school",
       "phrases": 1350,
-      "bananas": 8.7
+      "bananas": 8.9
     },
     {
       "stage": "school",
       "phrases": 1500,
-      "bananas": 8.5
+      "bananas": 8.3
     },
     {
       "stage": "practice",
       "phrases": 600,
-      "bananas": 9
+      "bananas": 8.8
     },
     {
       "stage": "practice",
       "phrases": 1200,
-      "bananas": 9.1
+      "bananas": 8.9
     },
     {
       "stage": "practice",
       "phrases": 1800,
-      "bananas": 9.1
+      "bananas": 9
     },
     {
       "stage": "practice",
       "phrases": 2400,
-      "bananas": 9.2
+      "bananas": 9
     },
     {
       "stage": "practice",
       "phrases": 3000,
-      "bananas": 9.2
+      "bananas": 9.1
     },
     {
       "stage": "practice",
@@ -101,62 +101,62 @@
     {
       "stage": "practice",
       "phrases": 4200,
-      "bananas": 9.2
+      "bananas": 9.1
     },
     {
       "stage": "practice",
       "phrases": 4800,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 5400,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 6000,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 6600,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 7200,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 7800,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 8400,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 9000,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 9600,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 10200,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 10800,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
@@ -176,7 +176,7 @@
     {
       "stage": "practice",
       "phrases": 13200,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
@@ -186,22 +186,22 @@
     {
       "stage": "practice",
       "phrases": 14400,
-      "bananas": 9.3
-    },
-    {
-      "stage": "practice",
-      "phrases": 15000,
-      "bananas": 9.3
-    },
-    {
-      "stage": "practice",
-      "phrases": 15600,
       "bananas": 9.2
     },
     {
       "stage": "practice",
+      "phrases": 15000,
+      "bananas": 9.2
+    },
+    {
+      "stage": "practice",
+      "phrases": 15600,
+      "bananas": 9.1
+    },
+    {
+      "stage": "practice",
       "phrases": 16200,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
@@ -211,19 +211,19 @@
     {
       "stage": "practice",
       "phrases": 17400,
-      "bananas": 9.3
+      "bananas": 9.2
     },
     {
       "stage": "practice",
       "phrases": 18000,
-      "bananas": 9.3
+      "bananas": 9.1
     }
   ],
-  "trainedAt": "2026-10-11T10:52:47.881Z",
+  "trainedAt": "2026-10-11T11:23:37.324Z",
   "readout": {
     "encoding": "int8-row-scaled-v1",
     "file": "readout.bin.gzip",
-    "bytes": 543653,
-    "sha256": "0b3df0da6df13b9d681e0a09b1a12692486d829600856192a4d94637abb2290e"
+    "bytes": 534876,
+    "sha256": "901f924283db0133e48f66f70d37a0cb7835ff3dde7eb3308140948e5dc7b025"
   }
 }

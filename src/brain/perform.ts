@@ -20,6 +20,8 @@ export interface FlyRuntime {
   /** Most recent last. At most HISTORY_BARS bars. */
   history: readonly BarRecord[]
   chordRing: number
+  /** Consecutive groove phrases just played; drives the habituation sense. */
+  grooveRun: number
 }
 
 export const HISTORY_BARS = 8
@@ -66,13 +68,13 @@ export interface PhraseActivity {
 export function freshRuntime(model: BrainModel, mood?: Rng): FlyRuntime {
   const state = new Float32Array(model.size)
   if (mood) for (let neuron = 0; neuron < model.size; neuron++) state[neuron] = (2 * mood.float() - 1) * MOOD_AMPLITUDE
-  return { state, leadDegree: LEAD_START_DEGREE, heard: SILENCE, history: [], chordRing: 0 }
+  return { state, leadDegree: LEAD_START_DEGREE, heard: SILENCE, history: [], chordRing: 0, grooveRun: 0 }
 }
 
 export const MOOD_AMPLITUDE = 0.5
 
 export function cloneRuntime(runtime: FlyRuntime): FlyRuntime {
-  return { state: runtime.state.slice(), leadDegree: runtime.leadDegree, heard: { ...runtime.heard }, history: runtime.history.map(bar => ({ ...bar })), chordRing: runtime.chordRing }
+  return { state: runtime.state.slice(), leadDegree: runtime.leadDegree, heard: { ...runtime.heard }, history: runtime.history.map(bar => ({ ...bar })), chordRing: runtime.chordRing, grooveRun: runtime.grooveRun }
 }
 
 export function readoutWidth(model: BrainModel): number { return model.readoutNeurons.length + 1 }
@@ -145,6 +147,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   let chordRing = start.chordRing
   let leadDegree = options.teacher?.leadStart ?? start.leadDegree
   let section = 0
+  const habituation = Math.min(1, start.grooveRun / 4)
   const actions: PhraseActions = {
     section: 0,
     leadStart: leadDegree,
@@ -199,7 +202,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   for (let step = 0; step < PHRASE_STEPS; step++) {
     const bar = Math.floor(step / STEPS_PER_BAR)
     const stepInBar = step % STEPS_PER_BAR
-    heard = { ...heard, chordRing, section }
+    heard = { ...heard, chordRing, section, habituation }
     stepBrain(model, state, senseInputs(step, heard, inputs), next)
     ;[state, next] = [next, state]
     gatherFeatures(model, state, current)
@@ -248,7 +251,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
       keysOnset: keysAction === 1 || keysAction === 2 ? 1 : 0,
       leadOnset: leadAction >= 2 ? 1 : 0,
       leadPitch: leadSounding ? leadPitchSense(leadDegree) : -1,
-      chordRing, section,
+      chordRing, section, habituation,
     }
 
     for (let neuron = 0; neuron < model.size; neuron++) {
@@ -279,7 +282,7 @@ export function perform(model: BrainModel, readout: Float32Array, start: FlyRunt
   if (actions.chords.length !== BARS / 2) throw new Error('Expected four chord decisions')
   return {
     actions, decisions, features, frames,
-    runtime: { state, leadDegree, heard, history, chordRing },
+    runtime: { state, leadDegree, heard, history, chordRing, grooveRun: section === 0 ? start.grooveRun + 1 : 0 },
     activity: { beatPeaks, roleLevels },
   }
 }
