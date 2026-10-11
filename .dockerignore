@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+dist
+artifacts
+test-results
+playwright-report
+scripts/data/.cache
+scripts/data/.venv
+.venv
+.claude
+*.log
