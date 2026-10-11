@@ -172,6 +172,18 @@ Reward-driven plasticity made the fly worse, while random reward left it unchang
 
 The 9.83 for readout-only practice is not a better fly. That practice has no school anchor, and the fly reaches the score by collapsing to 3 chord progressions and repeating nearly the same loop phrase after phrase. This shows directly that the critic can be over-optimized, which is why shipped training keeps the anchor and the repertoire term. Even when the readout can follow, this plasticity rule cancels the gains from practice, while random plasticity of the same size is harmless. The phrase-level covariance rule is too blunt: one critic score per phrase cannot tell which of 18,341 synapses helped. Per-bar credit, eligibility filtered to the decisions a synapse feeds, or a slower separate timescale are the obvious next attempts. The app does not use internal plasticity.
 
+### Second attempt: paired weight perturbation inside the circuit
+
+[`scripts/brain/plasticity-es.ts`](../../scripts/brain/plasticity-es.ts) learns the same 18,341 synaptic gains by evolution strategies, with the readout frozen. Each round perturbs all gains with Gaussian noise (σ = 0.1), plays the same three two-phrase seeds with the noise added and subtracted, and moves the gains toward the side that earned more bananas (rate 0.2). The control uses the same noise and step size with a random sign. Results are after 1,600 rounds, measured over 24 or 30 sessions × 6 phrases.
+
+| Condition | Bananas | Distinct progressions | Original drums | Judge (bits, lower is better) |
+| --- | ---: | ---: | ---: | ---: |
+| Shipped fly, anatomical synapses | 9.51–9.56 | 14 | 69% | 0.67 |
+| Learned synapses, real reward | **9.71** | 9 | 58% | 0.72 |
+| Random-sign control | 9.42 | 20 | 69% | — |
+
+This is the first positive stage-2 result: **the circuit itself, with its decoder frozen, learned to score higher**, and the gain comes from reward rather than perturbation. But the learned synapses narrowed variety, and the independent judge rated the music less idiomatic, especially bass and melody. That is the same critic over-optimization seen when readout practice runs without the school anchor. It is not shipped. The next attempt would add the school anchor to the synaptic objective, or score candidates with critic and judge together.
+
 ## Browser coverage
 
 `tests/browser/brain.spec.ts` covers composing, critique, bananas, reload persistence, the classic walk, and playing before the connectome loads. It passes in Chromium and Firefox. WebKit could not be launched in the build sandbox, so Safari remains unverified.

@@ -114,7 +114,7 @@ export function measurePlay(player: Player, sessions: number, phrasesPerSession:
 }
 
 /** The fly plays seeded sessions from fresh moods; nothing about the tutor reaches it. */
-export function flyPlayer(model: BrainModel, readout: Float32Array, temperature: number, seed = 'evaluation'): Player {
+export function flyPlayer(model: BrainModel, readout: Float32Array, temperature: number, seed = 'evaluation', gains?: Float32Array): Player {
   let runtime = freshRuntime(model)
   let rng = createRng(seed)
   return (session, phrase, presetId) => {
@@ -122,7 +122,7 @@ export function flyPlayer(model: BrainModel, readout: Float32Array, temperature:
       rng = createRng(`${seed}|${session}`)
       runtime = freshRuntime(model, rng)
     }
-    const performance = perform(model, readout, runtime, { temperature, rng, presetId })
+    const performance = perform(model, readout, runtime, { temperature, rng, presetId, gains })
     runtime = performance.runtime
     return performance.actions
   }

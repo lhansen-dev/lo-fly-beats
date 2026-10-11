@@ -16,7 +16,7 @@ import { HEADS, STEP_HEADS, type StepHead } from '../../src/brain/vocabulary'
 import { createRng } from '../../src/music/rng'
 import { loadBrainFromDisk } from './load'
 
-const { values } = parseArgs({ options: { readout: { type: 'string', multiple: true, default: [] } } })
+const { values } = parseArgs({ options: { readout: { type: 'string', multiple: true, default: [] }, gains: { type: 'string' } } })
 type Counts = Map<string, Map<number, number>>
 const models = Object.fromEntries(STEP_HEADS.map(head => [head, new Map()])) as Record<StepHead, Counts>
 const key = (steps: readonly number[], step: number) => `${step % 16}|${steps[step - 1] ?? -1}|${steps[step - 2] ?? -1}`
@@ -58,11 +58,13 @@ const shipped = decodeReadout(gunzipSync(await readFile(new URL('../../public/da
 const players: [string, (session: number) => PhraseActions[]][] = [
   ['tutor (held-out seeds)', session => { const rng = createRng(`judge-heldout|${session}`); const tutor = createTutor(EVALUATION_PRESETS[session % 3]!, rng); return Array.from({ length: 6 }, () => tutorPhrase(tutor, rng)) }],
 ]
-const flyPlayer = (readout: Float32Array, temperature: number) => (session: number) => {
+const gains = values.gains ? new Float32Array(new Uint8Array(await readFile(values.gains)).buffer) : undefined
+const flyPlayer = (readout: Float32Array, temperature: number, withGains?: Float32Array) => (session: number) => {
   const rng = createRng(`judge-fly|${session}`)
   let runtime = freshRuntime(model, rng)
-  return Array.from({ length: 6 }, () => { const result = perform(model, readout, runtime, { temperature, rng, presetId: EVALUATION_PRESETS[session % 3]! }); runtime = result.runtime; return result.actions })
+  return Array.from({ length: 6 }, () => { const result = perform(model, readout, runtime, { temperature, rng, presetId: EVALUATION_PRESETS[session % 3]!, gains: withGains }); runtime = result.runtime; return result.actions })
 }
+if (gains) players.push(['shipped fly + learned synapses T=0.8', flyPlayer(shipped, 0.8, gains)])
 players.push(['shipped fly T=0.8', flyPlayer(shipped, 0.8)], ['shipped fly T=1', flyPlayer(shipped, 1)], ['untrained fly', flyPlayer(createReadout(model), 1)])
 for (const path of values.readout) players.push([path.split('/').pop()!, flyPlayer(decodeReadout(new Uint8Array(await readFile(path)), model), 0.8)])
 

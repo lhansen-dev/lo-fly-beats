@@ -12,7 +12,7 @@ import { loadBrainFromDisk } from './load'
 
 const { values } = parseArgs({ options: {
   readout: { type: 'string' }, connectivity: { type: 'string', default: 'anatomical' }, seed: { type: 'string', default: '1' },
-  sessions: { type: 'string', default: '30' }, tutor: { type: 'boolean', default: false }, json: { type: 'string' },
+  sessions: { type: 'string', default: '30' }, tutor: { type: 'boolean', default: false }, json: { type: 'string' }, gains: { type: 'string' },
 } })
 const { circuit } = await loadBrainFromDisk()
 const model = createBrainModel(circuit, Number(values.seed), values.connectivity as Connectivity)
@@ -20,9 +20,10 @@ const bytes = values.readout
   ? new Uint8Array(await readFile(values.readout))
   : new Uint8Array(gunzipSync(await readFile(new URL('../../public/data/brains/fly-v1/readout.bin.gzip', import.meta.url))))
 const readout = decodeReadout(bytes, model)
+const gains = values.gains ? new Float32Array(new Uint8Array(await readFile(values.gains)).buffer) : undefined
 const vocabulary = tutorVocabulary()
 const sessions = Number(values.sessions)
-const players: [string, ReturnType<typeof flyPlayer>][] = [['T=1', flyPlayer(model, readout, 1)], ['T=0.8', flyPlayer(model, readout, 0.8)], ['T=0.6', flyPlayer(model, readout, 0.6)]]
+const players: [string, ReturnType<typeof flyPlayer>][] = [['T=1', flyPlayer(model, readout, 1, 'evaluation', gains)], ['T=0.8', flyPlayer(model, readout, 0.8, 'evaluation', gains)], ['T=0.6', flyPlayer(model, readout, 0.6, 'evaluation', gains)]]
 if (values.tutor) players.unshift(['tutor', tutorPlayer()])
 const results: Record<string, ReturnType<typeof measurePlay>> = {}
 for (const [name, player] of players) {
